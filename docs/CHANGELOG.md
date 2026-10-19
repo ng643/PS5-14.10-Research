@@ -1,5 +1,13 @@
 # Changelog — PS5 14.10 Kernel Research
 
+## 2026-10-19: WebKit engine fingerprint, and why the metadata overflow is out of reach
+
+- New `probes/phase13_webkit/p162-engine-fingerprint.js`: 32 API checks each tagged with the Safari release that shipped it, plus non-allocating limit probes. Run on 14.10 through the User's Guide DNS redirect, it returns every 17.0 feature present (`Set.prototype.union`, RegExp `v`) and every 17.4 feature absent (`Object.groupBy`, `Promise.withResolvers`, `ArrayBuffer.prototype.transfer`), with the 18.x set absent too. The JS surface is the Safari 17.0-17.3 band; `navigator.hardwareConcurrency` is 4 and `deviceMemory` is absent. The UA string is pinned to `Version/17.0` on every firmware, so it could not have answered this.
+- `docs/WEBKIT_FINDINGS.md`: new "Measured engine level" table under Console Fingerprint recording that bitmap with its evidence, and the caveat that it dates the feature surface, not the security patch level - a fork freezes APIs and back-ports fixes on top.
+- `docs/WEBKIT_LENGTH_WINDOW_AUDIT.md` sections 7-9. Measured ceiling: 2,348,816 sites ran to the call path; 12,000,000 and 38,348,816 were both killed by the system for memory at the first call, after `COMPILED-OK`, so 4.29 GB of bytecode cannot be parsed before `finalize()` runs. The accumulator was fixed upstream in `319678@main` (bug 317632, 2026-08-24), and that patch's own regression test uses `n = 44739242`, i.e. 2^32 / 96 - the stride is 96, not the 112 the earlier note assumed. The 17.0-17.3 base predates the fix, but the patch state of a vendor fork is not observable from JavaScript.
+- Section 8 adds provenance for two inherited claims: `.length = 81400` and the p141 `SIGSEGV` row have no artifact in this repository, and the SIGSEGV row contradicts the measured ceiling.
+- `probes/phase13_webkit/p161-length-window.js`: the builder produced a 9 MB source while labelling it 146 MB, because `units.join('')` is 4 bytes while the counter advanced by 4,000,000. It now repeats the chunk text and self-checks `N_OVERFLOW * 4 + 53`, beaconing `BLOB-MISMATCH-<size>-expected-<expected>` instead of running a sweep that cannot wrap.
+
 ## 2026-10-19: thr_create(430) context decode and prepared probe 58e
 
 - New note `docs/THR_CREATE_430_CONTEXT.md`: decodes the 13.60 handler at `0x437cf0` (slot `0x265c10`). The entry `copyin`s exactly `0x500` bytes from arg0 into its own frame, stashes arg1 at `ctx+0x500`, and calls the worker shared with 455 at `0x437f30`; arg2 has no reader in the entry.
