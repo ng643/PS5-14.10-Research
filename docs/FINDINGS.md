@@ -1980,7 +1980,11 @@ had not seen from a syscall argument before.
 ```
 
 The upper bound is enforced twice; the lower bound is never checked, so the
-commands `0`..`0xFF` index the same table as `0x100`..`0x133`. The table base is
+commands `0`..`0xFF` index the same table as `0x100`..`0x133`. The bitmap names
+exactly 22 implemented commands in that window — `0x100`, `0x102`, `0x104`,
+`0x106`, `0x107`, `0x120`..`0x12B`, `0x12F`..`0x133` — so `0`..`0xFF`,
+`0x101`, `0x103`, `0x105`, `0x108`..`0x11F` and `0x12C`..`0x12E` all reach the
+table with an index the author never intended to be reachable. The table base is
 `0xffffffff8c140575`, which lies outside every captured region of
 `docs/dumps_13.60/` (`kernel_text.bin` ends at `0xffffffff8b82e5c0`,
 `kernel_data.bin` covers `0xffffffff8b9c0000`..`0xffffffff8bdc0000`), so the
