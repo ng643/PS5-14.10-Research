@@ -147,7 +147,7 @@ inert.
 | `kldstat` | 308 | Instantly kills process (probes 56k4, 2026-10-18) |
 | `kldnext` | 307 | Instantly kills process (probe 56k5, 2026-10-18) |
 | Sony sys 548 (batch VM ops) | 548 | A batch VM API, not a W^X bypass: op 1 unmaps, op 2 protects, op 3 maps an anonymous page, ops 0 and 4 are `-1`; the protect is clamped to the mapping's creation protection, so the exec bit cannot be added. The earlier "`-1` for all opcodes" reading used a record layout the handler does not read (probes 803d-803f, 2026-10-26; Finding 101) |
-| Sony sys 622 (device control) | 622 | **ABI corrected (241a-247a, 2026-10-21)**: six slots are `cmd, sub, buffer, secondary address, size <= 0x40, extra`. `0x200-0x270` and `0x813` run and return `0` with `0xFFFFFFFF`; `0x400-0x493` kills whenever the `copyin` from `arg3` succeeds, at any size. No data, no overrun, no pointer |
+| Sony sys 622 (device control) | 622 | **ABI corrected (241a-247a, 2026-10-21)**: six slots are `cmd, sub, buffer, secondary address, size <= 0x40, extra`. `0x200-0x270` and `0x813` run and return `0` with `0xFFFFFFFF`; `0x400-0x493` kills whenever the `copyin` from `arg3` succeeds, at any size. No data, no overrun, no pointer. **Lower bound missing (818a, 819a, 2026-10-26)**: the dispatcher subtracts `0x100` for the range check but then indexes the jump table with the raw command, so `0`..`0xFF` reach it unchecked. Command `0` with a NULL buffer **powers the console off** (kernel fault, `trap_fatal`); with a mapped buffer it only kills the process, and the buffer's contents are not followed. See [Finding 105](FINDINGS.md) |
 | Sony sys 601 (process control) | 601 | Most commands ret=-1, no init state (probe 55d, 2026-10-18) |
 | Sony sys 672 (dynlinker list) | 672 | ret=-1, predicate gate failed (probe 55e, 2026-10-18) |
 | Sony sys 676 (CPU mode) | 676 | ret=-1, gate failed (probe 55e, 2026-10-18) |
@@ -374,7 +374,7 @@ Capture: `results/phase15_native_sent/syscall_isolation_sweep_20261020_194148.tx
 | 619 | `test_debug_rwmem` | -1 |
 | 620 | `free_stack` | 0 |
 | 621 | `suspend_system` | kills |
-| 622 | `ipmimgr_call` | kills (returns 0 with a real request, `55c`) |
+| 622 | `ipmimgr_call` | `0` for bitmap commands (probe 55c); commands below `0x100` are unchecked and kill, command `0` panics on a NULL buffer (probe 819a) |
 | 623 | `get_gpo` | -1 |
 | 624 | `get_vm_map_timestamp` | 3377 |
 | 625 | `opmc_set_hw` | -1 |

@@ -1,3 +1,10 @@
+## 2026-10-26: syscall 622 dispatches low commands unchecked, and command 0 panics on a NULL buffer
+
+- The 622 dispatcher subtracts `0x100` for its range test but indexes the jump table with the raw command, so `0`..`0xFF` reach it with no lower bound (offset `0x7dced7`). Everything the earlier 400-command sweeps sent was inside the bitmap range, which is why this never showed.
+- Command `0` with six zero arguments powered the console off; the same command with a mapped buffer only kills the process. So the panic is the NULL buffer being dereferenced in kernel mode, and a buffer pre-filled with `0x41414141` does not panic — the value is read and not followed.
+- The control `622(0x100, 0, out, buf, 4, 0)` returns `0` and writes `0x8002004E` into the third slot, confirming the argument layout.
+- Recorded as Finding 105 and as a correction to the 622 row in `ATTACK_SURFACE.md`; the second confirmed kernel fault that escalates to a power-off, and the first reached through a syscall argument.
+
 ## 2026-10-26: the aio delete window is not reachable from a userland thread pool
 
 - Probes 817a, 817b and 818a.  Sixteen deleters aimed at one id, released two

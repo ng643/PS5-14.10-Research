@@ -1952,3 +1952,61 @@ and `0xD0 < 8` gates. There is no second, gate-free install path.
 own trapframe, and nothing in the path takes a pointer from user memory. A full 0x5a0 scan of
 the 13.60 text for writes to `+0x460` found 30 sites, all on other structures; none reads a
 user pointer into the frame slot (bg_15).
+
+## Finding 105: Syscall 622 indexes its command table without a lower bound, and command 0 panics on a NULL pointer (probes 818a, 819a, 2026-10-26)
+
+**How it surfaced.** Probe 818a's argument-shape sweep sends twelve shapes per
+syscall, starting with six zero arguments. On 622 that first shape **powered the
+console off** — the panic path, not a SIGSYS process kill, which this repository
+had not seen from a syscall argument before.
+
+**The dispatcher** (13.60 offset `0x7dcd40`, base `0xffffffff8a9c0000`):
+
+```
+7DCD66  mov  r14d,[rsi]        ; command
+7DCD69  mov  r15d,[rsi+8]      ; arg2
+7DCD6D  mov  r13,[rsi+0x18]    ; arg4, a user pointer
+7DCD71  mov  r12,[rsi+0x20]    ; arg5, a length, must be <= 0x40
+7DCD85  cmp  r12,0x40 / jbe    ; over 0x40 -> 0x800E0001 through arg3
+7DCE02  lea  eax,[r14-0x100] / cmp eax,0x33 / ja   ; 0x100..0x133 -> bitmap
+7DCE0E  movabs rcx,0xf8fff000000d5 / bt rcx,rax    ; which of those exist
+7DCE4F  ... bzero a 0x40 stack buffer ...
+7DCE62  cmp  r14d,0x301 / jle
+7DCED7  mov  ecx,r14d                              ; raw command, no lower check
+7DCEDA  lea  rdx,[rip+0xfa369b]
+7DCEE1  movsxd rcx,[rdx+rcx*4]
+7DCEE5  add  rcx,rdx
+7DCEE8  jmp  rcx
+```
+
+The upper bound is enforced twice; the lower bound is never checked, so the
+commands `0`..`0xFF` index the same table as `0x100`..`0x133`. The table base is
+`0xffffffff8c140575`, which lies outside every captured region of
+`docs/dumps_13.60/` (`kernel_text.bin` ends at `0xffffffff8b82e5c0`,
+`kernel_data.bin` covers `0xffffffff8b9c0000`..`0xffffffff8bdc0000`), so the
+targets cannot be resolved statically. That is why the earlier 400-command
+sweeps (probes 55b/55c) never saw this: every command they sent was inside the
+bitmap range.
+
+**Measured** (`probes/phase17_new_vectors/819a_devctrl_cmd0_shape.lua`,
+captures `..._20261026_184259.txt` and `..._20261026_184322.txt`):
+
+| call | outcome |
+|---|---|
+| `622(0x100, 0, out, buf, 4, 0)` | `ret=0`, `out[0]=0x8002004E`, `buf` untouched — the layout is right, the control returns |
+| `622(0, 0, out, buf, 4, 0)`, `buf` filled `0x41414141` | no return; the process dies, **the console stays up** |
+| `622(0, 0, 0, 0, 0, 0)` (818a shape 1) | **console powers off** |
+
+So the difference between the last two rows is the pointer argument alone. A
+NULL `arg4` faults in kernel mode where no `pcb_onfault` handler exists — the
+same mechanism as the `thr_create` panic — while a mapped `arg4` is read and the
+process is then killed by whatever check follows.
+
+**What it is not.** The page pre-filled with `0x41414141` did not panic, so the
+kernel reads `[arg4]` and does not follow the value; there is no pointer-follow,
+no copyout into `arg4`, and row 1 shows `arg4` is not written either. It is a
+NULL-dereference denial of service inside a validation path, reachable with one
+argument, and nothing more. It is recorded here because the *class* matters:
+this is the second confirmed kernel fault that `trap_fatal` escalates to a
+power-off, and the first one triggered by a syscall argument rather than a
+thread context.
