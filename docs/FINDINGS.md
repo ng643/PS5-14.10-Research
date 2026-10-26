@@ -2060,3 +2060,48 @@ source. It does mean the "639 returns -1 for all address ranges" dead-end entry
 in `docs/ATTACK_SURFACE.md` was a probe defect, and that any future claim about
 this syscall has to specify the four separate argument slots.
 
+## Finding 107: Syscall 548 op 0 Is a Handle-Backed Map, and op 3 Treats the Address as a Hint (probes 835a-838a, 2026-10-26)
+
+Finding 101 established 548's five-operation map and that the exec bit cannot be
+restored. Two details of that handler were left unresolved there: what op 0 does
+beyond failing, and whether op 3 honours the entry address.
+
+**Op 0 has a backend.** The gated case at `0xabbff3` copies the entry into a
+structure and calls `0xabd540(proc, &x)` with
+
+```
+x + 0x00 = entry + 0x00      x + 0x10 = prot (byte from entry + 0x18)
+x + 0x08 = entry + 0x10      x + 0x18 = arg2 (the syscall flag word)
+x + 0x20 = 0xffffffff        x + 0x28 = entry + 0x08
+```
+
+`0xabd540` reads those as: `[0]` a handle that must be `< 0x4000`
+(`mov rax,r12 / shl rax,0x32 / jne error`, i.e. bits 14 and above must be clear),
+`[8]` a length that must be `0x4000`-aligned and `>= 0x4000`, `[0x10]` the
+protection dword, `[0x18]` a byte whose promotion to the full dword depends on
+`[proc+0x5d4] >= 0x3000000`, `[0x20]` an id initialised to `-1`, `[0x28]` a
+second value. It then calls `0x609560`, `0x6095a0` and `0x6092d0` with the
+caller's credential before `0x3c33e0(handle, [proc+8])`. So op 0 maps an object
+named by a small integer handle and is credential-gated at three separate points,
+which is why it returns `-1` for every entry this process can build.
+
+**Op 3's address is a hint, not `MAP_FIXED`.** With a free hint the call returns
+exactly that address (`0x6000000000` and `0x7000000000` both came back
+unchanged). With a hint that is already mapped the call returns the *next* free
+page instead of clobbering: page `0x310C30000` in use, hint `0x310C30000` →
+returned `0x310C34000`, then `0x310C38000`, then `0x310C3C000` on repeated calls.
+A kernel hint (`0xFFFFFFFF8B000000`) returns `-1`, so the address is bounded to
+user space before the mapping exists.
+
+**The protection case**, for completeness, is the only 548 path that reaches
+`vm_map_protect`: case `0xabc0b0` requires the entry address and length to be
+`0x4000`-aligned (`test esi,0x3fff` / `test edx,0x3fff`), rejects `prot & 8`, adds
+the length to the address with a carry check, and calls `0x2cbdb0` with
+`rdi = [proc+0x200]`, so it operates on the process map only — never the kernel
+map, which is why a kernel address cannot be used to reach kernel memory through
+this syscall.
+
+Captures: `results/phase17_new_vectors/835a_sys548_prot_ops_20261026_193831.txt`,
+`836a_sys548_map_address_20261026_193919.txt`,
+`837a_sys548_exec_page_20261026_194014.txt`,
+`838a_sys548_op_isolated_20261026_194034.txt`.

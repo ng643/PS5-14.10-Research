@@ -1,4 +1,13 @@
 
+## 2026-10-26: 548 op 0 is a handle map, and op 3's address is a hint
+
+- Op 0 reaches `0xabd540`, which maps an object by a handle below `0x4000` after
+  three credential calls; the length must be `0x4000`-aligned and at least one page.
+- Op 3 returns a free hint address unchanged and the next free page when the hint
+  is busy, so it is not `MAP_FIXED`; a kernel hint returns `-1`.
+- The protect case calls `vm_map_protect` on `[proc+0x200]`, the process map, so
+  kernel addresses cannot reach kernel memory through 548. Finding 107.
+
 ## 2026-10-26: syscall 639 takes five arguments, and its table holds no kernel ranges
 
 - `54f`'s "639 returns -1 for every address range" was a probe defect: 639 is
