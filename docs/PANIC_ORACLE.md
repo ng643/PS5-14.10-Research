@@ -35,11 +35,38 @@ The watchdog polls TCP 9026 (loader port) and, with `--ping`, ICMP:
 | LOADER_DOWN | Host pings, port refused/timeout                   | Relaunch game   |
 | REBOOTING   | Ping fails too — console is rebooting              | Power-cycle     |
 | UNKNOWN     | No ping configured, port down                      | Ambiguous       |
+| WEDGED      | Port accepts, but a bare `print` never answers     | Relaunch game |
 
 Load-bearing distinction: LOADER_DOWN is recoverable by relaunching the
 game from userland; REBOOTING is not (only a power-cycle recovers it), and
 that irrecoverability is what makes it a kernel event rather than a loader
 or game event.
+
+### WEDGED is its own state (2026-10-26)
+
+A wedged loader is not a dead one: the TCP connection is accepted and then
+nothing is sent back, so a sender sees `IDLE_TIMEOUT` with **0 bytes received**
+rather than `CONNECTION_REFUSED`. The game is still running and the Lua thread
+is parked inside a syscall it cannot leave. Syscall 209 (`poll`) produced this
+and only a relaunch cleared it. Treat zero bytes plus an accepted socket as
+WEDGED, never as a slow reply, and relaunch before sending anything else - a
+probe queued behind the wedge just adds its own 30 s timeout to the confusion.
+
+### Measured kernel panic versus measured process kill (819a, 2026-10-26)
+
+Syscall 622 dispatches commands `0`..`0xFF` through a jump table with an upper
+bound check but no lower bound (see Finding 105 in `docs/FINDINGS.md`). Two
+calls of `622(0, 0, out, arg4, 4, 0)` separate the two failure classes:
+
+| `arg4` | Result | Class |
+|---|---|---|
+| `NULL` | console powered off | REBOOTING - kernel faulted with no fault handler, `trap_fatal` |
+| mapped page holding `0x41414141` | game closed, loader refused afterwards | LOADER_DOWN - the handler ran and killed the process |
+
+That is a usable oracle: a kernel-mode fault on a user pointer shows up as a
+power-off, while a handler that returns an error or kills the process does not.
+The console also confirmed nothing but the game was lost, and a relaunch
+recovered it.
 
 ## Recovery reality
 

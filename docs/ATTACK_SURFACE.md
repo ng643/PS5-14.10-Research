@@ -137,7 +137,7 @@ inert.
 | Sony sys 629 (jail bypass) | 629 | ret=-1 for all arg patterns; kld* retests crash (probe 54b, 2026-10-18) |
 | Sony sys 598 (dynlib context) | 598 | ret=-1 for all arg patterns (probe 54f, 2026-10-18) |
 | Sony sys 612 | 612 | ret=-1 for member values 0-8 (probe 54k, 2026-10-18) |
-| Sony sys 639/638 (memory region) | 639 | ret=-1 for all address ranges (probe 54f, 2026-10-18) |
+| Sony sys 639/638 (memory region) | 639 | Not `-1` — the 54f probe put its buffer in the wrong argument. Arg1 is the address to look up (`0x6be855 mov rdx,[rbx]`), arg2 a mode, and three copyouts follow: arg3 → 8 bytes (offset inside the region), **arg4 → 16 bytes (the region record)**, arg5 → 4 bytes (status). A user address returns a real record (`0xC3D1C000` → base `0xC34AE110`, status `0xE10`), but `0`, `0xFFFFFFFF8A9C0000`, `0xFFFFFFFF8B000000`, `0xFFFFFFFF8C140000` and `0xFFFFFFFFFFFFFFFF` all return the same sentinel `{0xFFFFFFFFFDC7BB70, 0xFFFFFFFF, 0xE10, 0}`, so it is a static device-memory table and not a KASLR source (probes 820a, 2026-10-26) |
 | `shm_open` | 482 | Crashes loader |
 | `sendto` | 133 | Crashes syscall.resolve() |
 | `recvfrom` | 29 | Crashes syscall.resolve() |

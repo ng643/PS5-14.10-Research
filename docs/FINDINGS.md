@@ -2014,3 +2014,49 @@ argument, and nothing more. It is recorded here because the *class* matters:
 this is the second confirmed kernel fault that `trap_fatal` escalates to a
 power-off, and the first one triggered by a syscall argument rather than a
 thread context.
+
+## Finding 106: Syscall 639 Translates an Address Through a Static Device-Region Table (probe 820a)
+
+`docs/ATTACK_SURFACE.md` recorded 639 as returning `-1` for every address range,
+including kernel addresses (probe 54f, 2026-10-18). That row was wrong about the
+arguments, not about the syscall: 54f passed its buffer in the wrong slot, so no
+copyout could ever run.
+
+**The body** (13.60 offset `0x6be800`, narg 5, base `0xffffffff8a9c0000`):
+`0x6be855 mov rdx,[rbx]` takes arg1 as the address to look up and
+`0x6be8d7 mov esi,[rbx+8]` takes arg2 as a mode. It binary-searches a sorted
+table of 16-byte records `{qword base, dword length, dword extra}` comparing
+`arg1` against `base + length` (`0x6be8b3 movsxd r14,[r10+rdi+8]` /
+`add r14,[r10+rdi]` / `add r14,r11`), then performs three copyouts:
+
+| argument | bytes | meaning |
+|---|---|---|
+| arg3 (`[rbx+0x10]`, `0x6bea57`) | 8 | offset of the address inside the region |
+| arg4 (`[rbx+0x18]`, `0x6bea8c`) | 16 | the record itself |
+| arg5 (`[rbx+0x20]`, `0x6beac1`) | 4 | status, the record's `+0xc` field |
+
+**Measured** (`probes/phase17_new_vectors/820a_sys639_region_record.lua`,
+capture `results/phase17_new_vectors/820a_sys639_region_record_20261026_185757.txt`,
+0.032 s, 674 reports 316 regions): a user address inside a device mapping
+returns a real record — `0xC3D1C000` → base `0xC34AE110`, offset `0xC3D1C000`,
+status `0xE10`; the heap and `0x100000000` both return base `0xF615DB90` with the
+address itself as the offset.
+
+Every kernel address is answered with one identical sentinel:
+
+| arg1 | record | status |
+|---|---|---|
+| `0` | `{0xFFFFFFFFFDC7BB70, 0xFFFFFFFF, 0xE10, 0}` | `0` |
+| `0xFFFFFFFF8A9C0000` (13.60 kernel base) | same | `0` |
+| `0xFFFFFFFF8B000000` | same | `0` |
+| `0xFFFFFFFF8C140000` | same | `0` |
+| `0xFFFFFFFFFFFFFFFF` | same | `0` |
+
+**What it is not.** The sentinel is returned for `0` and for `0xFFFFFFFFFFFFFFFF`
+alike, so it is the table's floor entry, not a lookup result tied to a kernel
+range: the table is a fixed list of device-memory spans, and no kernel address is
+selectable through it. 639 therefore leaks no kernel pointer and is not a KASLR
+source. It does mean the "639 returns -1 for all address ranges" dead-end entry
+in `docs/ATTACK_SURFACE.md` was a probe defect, and that any future claim about
+this syscall has to specify the four separate argument slots.
+

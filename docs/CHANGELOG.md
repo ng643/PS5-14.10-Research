@@ -1,3 +1,20 @@
+
+## 2026-10-26: syscall 639 takes five arguments, and its table holds no kernel ranges
+
+- `54f`'s "639 returns -1 for every address range" was a probe defect: 639 is
+  `(address, mode, offset_out, record_out, status_out)` and the record only
+  appears through arg4 (offset `0x6bea8c`, 16 bytes). Finding 106 has the body
+  and the copyout table.
+- Measured with 820a on 14.10: a user address returns a real device region
+  (`0xC3D1C000` -> base `0xC34AE110`, status `0xE10`), while `0`, the 13.60
+  kernel base, `0xFFFFFFFF8B000000`, `0xFFFFFFFF8C140000` and all-ones all
+  return one identical sentinel - so the table is static device memory and
+  639 is not a KASLR source.
+- `docs/PANIC_ORACLE.md` gained the `WEDGED` state (port accepts, zero bytes
+  back, syscall 209) and the measured NULL-vs-mapped table that separates a
+  kernel `trap_fatal` power-off from a process kill.
+- `docs/ATTACK_SURFACE.md`: the 639 row now states the argument layout and the
+  sentinel result instead of "ret=-1 for all address ranges".
 ## 2026-10-26: syscall 622 dispatches low commands unchecked, and command 0 panics on a NULL buffer
 
 - The 622 dispatcher subtracts `0x100` for its range test but indexes the jump table with the raw command, so `0`..`0xFF` reach it with no lower bound (offset `0x7dced7`). Everything the earlier 400-command sweeps sent was inside the bitmap range, which is why this never showed.
