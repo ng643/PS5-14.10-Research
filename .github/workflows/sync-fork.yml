@@ -1,0 +1,44 @@
+name: Sync fork with upstream
+
+# Keeps ng643/PS5-14.10-Research level with ZigZagBoi1/PS5-14.10-Research.
+# Runs daily and on demand. Never force-pushes: if master has local commits the
+# upstream history is merged in instead, so fork-only files (this workflow) survive.
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-fork
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: [master, main]
+    steps:
+      - name: Check out ${{ matrix.branch }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+          fetch-depth: 0
+
+      - name: Merge upstream/${{ matrix.branch }}
+        run: |
+          git config user.name "Rithik Janarthanan"
+          git config user.email "janarthananrithik@gmail.com"
+          git remote add upstream https://github.com/ZigZagBoi1/PS5-14.10-Research.git
+          git fetch --no-tags upstream "${{ matrix.branch }}"
+          if git merge-base --is-ancestor "upstream/${{ matrix.branch }}" HEAD; then
+            echo "already up to date"
+            exit 0
+          fi
+          git merge --no-edit "upstream/${{ matrix.branch }}"
+          git push origin "HEAD:${{ matrix.branch }}"
