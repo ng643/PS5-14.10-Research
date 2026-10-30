@@ -1,3 +1,23 @@
+## 2026-10-30: the aio submit path is real, and delete refuses in-flight entries
+
+- 954a: `669(cmd=0x1001, reqs, count, 3, ids)` submits real reads on a socketpair.
+  Polling reports `2` for dispatched entries; `662` on one of them returns
+  `0x80020010` in its element slot; writing data into the peer moves it to `3`, after
+  which the same delete returns `0`.  The earlier "the family is bookkeeping only"
+  reading came from polling without a queued read.
+- 956a: a child thread calling `662` on the same in-flight ids returns in
+  microseconds - delete does not block.  955a's apparent blocking delete was a
+  blocking `write()` of 32 KB filling a socket whose reads had not completed, which
+  wedged the single-threaded loader; every parent-side call here must be
+  `sendto(..., MSG_DONTWAIT)`.
+- 957a/958a: 32 rounds of slot reuse under a concurrent delete produced no double
+  free (`freed_total=0`; every fresh object allocated normally).  The 14.20
+  generation check therefore still has no reachable trigger on 14.10 in these shapes.
+- 959a: the dispatch depth is smaller than the submitted count - four reads stay at
+  state `1`, two reach `2` and then `3` - which is why earlier state readings
+  disagreed between runs.
+- `docs/AIO_INFLIGHT_14_10.md`.
+
 ## 2026-10-29: the freed CSSFontFace is reclaimable, and the engine writes heap pointers into it
 
 - p563: with the Finding 12 trigger, thirteen `ArrayBuffer` size classes allocated in
