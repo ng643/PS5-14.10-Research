@@ -1,3 +1,14 @@
+## 2026-11-04 (sixteenth boot): the user-access helper family is classified, Route 3 closed
+
+- Enumerated all 17 entries of the uaccess block (`0xffffffff8ac18ff0`-`0xffffffff8ac19bff`) and named
+  each one: copyout, copyin, two `lock cmpxchg` variants, four `fueword`-style reads, `movzx` word/byte
+  reads, three user writes, a validate-only probe, and a `lodsb/stosb` string copy. Every check constant is
+  `0x7fff...` minus the access width.
+- Audit answer: **15 of 15 user-accessing entries validate the same register they dereference.** No operand
+  swap, no width mismatch. Passing a kernel address fails the range check at every entry, so a user-access
+  helper cannot be inverted into a kernel read. `docs/CREATIVE_ROUTES_14_10.md` Route 3 is marked CLOSED.
+  New doc: `docs/USER_ACCESS_FAMILY_AUDIT.md`.
+
 ## 2026-11-04 (fifteenth boot, cont.): the function-pointer whitelist gets a census
 
 - Measured the CFI idiom that `docs/THR_CREATE_430_CONTEXT.md` first described: `5,676` `ror rax,3`

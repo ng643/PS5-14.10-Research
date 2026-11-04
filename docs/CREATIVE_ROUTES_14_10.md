@@ -215,6 +215,11 @@ the ordering is known.
 ---
 
 ## Route 3 — audit the fourteen unaudited copy helpers for a uap-derived source
+
+> **CLOSED, 2026-11-04.** All 17 entries of the family are now classified; 15 of 15
+> user-accessing entries validate the exact register they dereference, and no handler-reachable call site
+> passes a kernel address to a read variant. See `docs/USER_ACCESS_FAMILY_AUDIT.md`.
+
 **EV: medium-high, the only shape that yields arbitrary kernel read. Kill risk: none offline / low on target.**
 
 (a) Mechanism. 638 gives 16 bytes because its copyout source is a *global table* indexed by a
