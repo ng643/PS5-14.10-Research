@@ -1,3 +1,111 @@
+## 2026-11-05 (nineteenth boot): argument 4 is recoverable from the import tables, not from a gadget
+
+The blocker from the last boot is not a missing syscall, it is a missing `mov r10, rcx`. Offline on the
+1 MB eboot dump: `49 89 ca 0f 05` 0 hits, `0f 05 c3` 0 hits, `41 5a c3` 0 hits, `xchg r10,rcx` 0 hits,
+`0f 05` exactly 1 hit and that one is the displacement of `mov qword ptr [rip+0x8e050f], rax` at
+`eboot+0x93CBA` — a byte-scan false positive, not an instruction. 35 `mov r10, r64` sites exist in that
+megabyte and every one of the six `mov r10, rcx` instances continues into strtol/memchr/memcpy
+arithmetic, never into a `ret` and never near a syscall. Sony userland simply never executes `syscall`;
+it calls libkernel stubs. So the gadget hunt is structurally dead rather than unlucky.
+
+What is alive is the stub table itself. `syscall.lua` already jumps at `*libc_gettimeofday_import + 7`,
+and 1183b measured `sa - stub = 7`: the prologue is exactly 7 bytes, so `stub + 7` is an instruction
+boundary for every stub in the table. For a two-argument stub it is `0f 05` (what we have been using);
+for a four-or-more-argument stub it is `49 89 ca ; 0f 05` — a generic `mov r10, rcx ; syscall` trampoline
+that would put argument 4 under control for 663, 379, 547, 572 and everything else the corpus marked
+"arg4 never arrived". Stub addresses are readable even though stub bytes are not: they sit in ordinary
+import tables. Probe 1213a harvests them from the libc window and from eboot's data segments, verifies
+each candidate by asking it for our own pid, and then uses it on 663 mode 0, where the kernel's only
+two EINVAL sites make the answer unambiguous. Written, not yet run: the console was rebooting.
+
+Docs: `docs/SYSCALL_ARG4_R10_14_10.md` sections 10.1-10.6.
+
+## 2026-11-04 (eighteenth boot, cont.): the capability context is write-once, and three pinned-address routes die
+
+Syscall 636 is a timezone table loader that `copyin`s up to 0x200 entries of 16 bytes into a static
+kernel array at RVA 0x3915920 — and it refuses us with EPERM first, because its gate is bit 62 of
+`[ctx+0x60]` where ctx = `[td+0x140]`. The accepted count equals the array size exactly
+(`0x3917920 - 0x3915920 = 0x200 * 16`), so there is no overflow behind the gate either. Measured:
+counts 1, 0x200, 0x201 and 0 all return EPERM, which proves the gate precedes the bound check.
+
+The same connection then showed sys 638 returning real timezone data (`0xE13` = 3603, `0xE10` = 3600,
+`0xF10` = 3856) **while `get_error_string` still reported the previous EPERM**. Errno is written only
+on failure, so a stale code survives a successful call; the output buffer is the only proof of success.
+That correction applies to every measurement in the corpus that trusted the string per call.
+
+Sys 643 is the strongest-looking shape in the table — an unprivileged, unvalidated 32-bit OR into a
+fixed offset of `struct proc` (`or [proc+0xa34], eax`, no gate, no bound) — and it is worthless:
+only bits 0/1/2 of that dword have any reader in the image (five instructions, all branch selectors),
+and a 32-round live sweep that accumulated all 32 bits changed nothing in a seven-call oracle battery.
+
+The structural result: `[td+0x140]` points at a family of predicate stubs at RVA 0x608e00-0x609600
+(bit 62 with **508 call sites**, bit 61 with 3, bit 60 with 3, a range test with 42, and per-tag
+equality tests feeding sys 612/649/594/532/604/535/536/455/466/482/346/253/232/670). Of 1,551
+instructions that load a pointer from `[reg+0x140]`, **zero** store to `[ctx+0x58]` or `[ctx+0x60]`:
+the capability context is installed at process creation and immutable from userland.
+
+Written up in `docs/CAPABILITY_CONTEXT_14_10.md`.
+
+## 2026-11-04 (eighteenth boot): a magic-word gateway into Sony's service dispatcher
+
+Syscall 605 is `service_rpc(magic)`: it whitelists five 32-bit service identifiers and hands the
+winner to the Sony service dispatcher, writing the result straight into `td_retval[0]`. Measured
+live, all five return `0x800d0203` — the code that is materialised at exactly one instruction,
+reached only when the per-process service command table is empty. The table is in .data, absent
+from every dump, and nothing reachable from userland fills it.
+
+The lasting value is the **channel**: the loader hands back 32-bit Sony status codes intact, so
+`0x800d0201` / `0x800d0203` / `0x800d0208` / `0x800d020d` tell us *which guard fired* inside
+kernel code we cannot read. That is a branch oracle for the whole Sony syscall range.
+
+Also this boot: the uap over-read class is measured and closed — three handlers (665, 668, 113)
+read one argument past `narg*8`, but the bytes they read are our own previous arguments, so the
+over-read yields nothing the caller did not supply. Two scan bugs had to be fixed first (walks into
+the next function; no stop at a tail `jmp`), and both had produced plausible fake findings.
+
+## 2026-11-04 (seventeenth boot, cont.): 379 and 547 are measured and closed
+
+- 547 `query_memory_protection` returns **map-entry metadata**, not a PTE: start, end, protection
+  dword 3 and flag dword 0x00610020 for a page we own, identical for an aligned and an unaligned va.
+  No physical address and no kernel pointer, which also proves `proc+0xc81 == 0` at runtime and
+  retires the PTE/physical-address route by measurement rather than by inference.
+- 379 `mtypeprotect` really has no bound check: a kernel address returns **EACCES 13, not EINVAL**,
+  the same as an in-range address with no VMA, so the handler does reach `vm_map_protect` with a
+  kernel address. It cannot act on one, because the map being searched is our own vmspace. Only
+  **id 10** passes the policy gate at 0x8ad833e0, and with id 10 every protection the map accepts
+  comes back EACCES - a refusal, never a mutation. New section 6 and 7 in
+  `docs/ROUTE_379_547_14_10.md`.
+- Copyin length screen: of 432 direct copyin sites, 12 have a stack destination and a non-constant
+  length; eight were a parse artifact (`mov edx, 8` printed without a `0x` prefix) and the remaining
+  three are guarded by `cmp r14,0xa9; jae` immediately above the call, into a frame buffer larger
+  than the bound. No kernel stack smash in the direct call graph. New doc:
+  `docs/COPYIN_LENGTH_SCREEN_14_10.md`.
+
+## 2026-11-04 (seventeenth boot): the return value is not rax, and the devfs ioctl surface was never reached
+
+- Measured the loader's failure path (probe 1200d, reproduced twice, identical): a failing syscall returns
+  **0**, and the real error code is only available through the loader's own `get_error_string()`. Successes
+  return their true value (`fcntl(fd,F_GETFL)` = 2, `open` = the descriptor). Every conclusion in this
+  corpus that was drawn from `rv == 0` (`success`) or `rv == -1` (`unsupported`) is unfounded, and an
+  `open()` failure returns 0 - which is stdin - so probes that tested `fd < 0` then operated on the loader's
+  own socket. New doc: `docs/ERRNO_CHANNEL_14_10.md`.
+- Re-measured the devfs ioctl surface with the working channel: 256 commands x 6 nodes answer **ENOTTY 25**
+  on every command, including `/dev/null`; `/dev/usbctl` open fails EACCES 13; and `ioctl(9999,...)` answers
+  ENOTTY rather than EBADF, which proves syscall 54 as reached from this host never resolves the descriptor.
+  The "19 live commands on /dev/ugen0.2" of probe 288a and the EPERM/ENXIO pairs of 1165a were return-value
+  artifacts. No device driver has ever been entered from userland through ioctl on 14.10 - the surface is
+  reopened, not closed. 615/616/617/618 answer the same for fd 9999 as for a live descriptor; 619/620 are
+  ENOSYS and match their 9-byte static stubs.
+- Corrected two claims in `docs/CREATIVE_ROUTES_II_14_10.md` from the disassembly: 379 `mtypeprotect`
+  **cannot** read `proc+0xc81` (0x4000 is accepted by both the loose and the strict prot table, and every
+  prot the map accepts is accepted by both), and 547's PTE branch needs `c81 != 0` **and**
+  `proc+0x5d8 >= 0x6000000`. The only writer of c81 in the whole image is 0x38f7bf, inside process creation,
+  selected by a launch parameter - not a syscall. New doc: `docs/ROUTE_379_547_14_10.md`.
+- Operational: a dead payload process does not kill the listener (port_witness answers immediately after
+  597 wedges), and a refused connection is not a syscall verdict - the earlier sweep recorded eighteen
+  consecutive "deaths" that were one dead listener. The sweep driver now witnesses before every number and
+  runs one syscall per connection.
+
 ## 2026-11-04 (sixteenth boot): the user-access helper family is classified, Route 3 closed
 
 - Enumerated all 17 entries of the uaccess block (`0xffffffff8ac18ff0`-`0xffffffff8ac19bff`) and named
