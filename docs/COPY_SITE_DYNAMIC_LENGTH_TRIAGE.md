@@ -143,3 +143,32 @@ cannot reach (`docs/DEVFS_GAP_ANALYSIS_14_10.md` §11).
 2. **`td_retval` stores computed from an argument** - a handler that returns a value derived from a
    pointer it was given. Not searched for yet; the search shape is "load through an argument, store to
    `[td+0x...]`", which is a different dataflow direction from everything above.
+
+## 6. Audit A's C1 (`0x70322d`) is an internal object-fill helper
+
+Audit A ranked `0x70322d` - `memcpy(*(arg2+0x20), arg3, arg4)` - as its shallowest user-flavoured
+destination. Reading it shows a five-field constructor, not a syscall path:
+
+```
+703210  push rbp / mov rbp,rsp / push r15,r14,rbx / push rax
+70321a  mov r15, rsi                 ; object
+70321d  lea rdi, [rsi + 0x20]        ; dst = obj+0x20
+703221  mov rsi, rdx                 ; src
+703224  mov rdx, rcx                 ; len
+703227  mov ebx, r8d                 ; trailing int
+70322d  call 0xffffffff8ac190b0      ; bare memcpy, no stac
+703232  movsxd rax, ebx
+703235  mov byte [r15+0x38], r14b    ; obj+0x38 = len
+703239  lea rax, [r15+rax+0x20]
+70323e  mov [r15+0xa0], rax          ; obj+0xa0 = obj+0x20+int
+703245  or byte [r15+0x70], 8
+70324a  or byte [r15+0x3c], 1
+```
+
+All four call sites (`0x6b4743`, `0x95a4f8`, `0x9c5ab6`, `0xa875b4`) pass the same shape: a stack
+descriptor, a length out-param filled by `0x703380`, and the destination object in `rsi`. `0x703380` is
+the *user-facing* end: it bzeroes the caller's buffer with the length the caller supplied
+(`mov rsi,[r8]` before `call 0x258ff0`), fills a 0x38-byte descriptor, and makes a guarded indirect call
+through `[rbx+0x4d8]` (see `docs/CFI_CENSUS_13_60.md`). The copy length handed back to the fill helper is
+the length the VOP wrote, bounded by the buffer the caller bzeroed. Nothing here reads a pointer out of
+the uap.

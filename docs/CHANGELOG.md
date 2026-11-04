@@ -1,3 +1,17 @@
+## 2026-11-04 (fifteenth boot, cont.): the function-pointer whitelist gets a census
+
+- Measured the CFI idiom that `docs/THR_CREATE_430_CONTEXT.md` first described: `5,676` `ror rax,3`
+  sequences in the image, `16,396` indirect call sites, `4,794` of them (29.2%) with a whitelist check
+  in the preceding 0x60 bytes. Resolved three `K/N` pairs by hand (`0x267008/0x3a5`, `0x26C670/0x22`,
+  `0x269338/3`) and confirmed the admitted targets are 8-byte-stride `e9 rel32; cc cc cc` stubs. New doc:
+  `docs/CFI_CENSUS_13_60.md`.
+- Conclusion recorded there: a hijacked function pointer can only be redirected to a *whitelisted stub*,
+  i.e. to another legitimate handler, so control-flow hijack is not a substitute for a data-only
+  arbitrary-read/write primitive.
+- Closed audit A's C1: `0x70322d` is an object-fill constructor (five field stores around a bare memcpy),
+  fed by the VOP length out-param in `0x703380`; the destination is a kernel object, never a uap value.
+  Appended to `docs/COPY_SITE_DYNAMIC_LENGTH_TRIAGE.md` §6.
+
 ## 2026-11-04 (fifteenth boot): dynamic-length copies triage clean, cdevsw proven absent
 
 - Re-walked the whole syscall layer from the 301 resolved handler bodies (depth-4 CFG-aware BFS, 1,678
