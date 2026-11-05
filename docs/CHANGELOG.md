@@ -1,3 +1,29 @@
+## 2026-11-05 (twenty-fourth boot): the aio guard is a value test, not a path test
+
+Probe 1235b decoded `aio_multi_wait` (663) from the 13.60 body and found the shape the 14.10 guard sits
+on. `docs/AIO_MODE_GUARD_GAP_14_10.md`.
+
+The dispatch is three lines: `cmp eax,1 / jne 0x3b0839 ; cmp eax,2 / jne 0x3b08e5`. Modes 1 and 2 link
+`r14`, the per-index node of a `count*0x38` array. **Mode 0 and every mode >= 3** fall to `0x3b08e5`,
+which reloads `rcx = [rbx+0x40]` - the fixed array base - every iteration, so the same `node[0]` is
+linked onto every request and its `owner` field is overwritten each pass. The cleanup unlinks the node
+from the list of the *last* owner only, then frees the array at `0x3b0f93`; every earlier request keeps
+`request->waiters` pointing into the freed block, and the node's own `lock`/`chan` fields are the
+departed thread's stack addresses (`[rbx+0x104]`, `[rbx+0xe0]`).
+
+14.10 refuses mode 0 at `count > 1` before copying the id list in. That is a test of the value 0, not of
+the path - and modes 3..0xFF were never measured. Also decoded: the fifth argument is a **pointer to a
+4-byte value**, not a value (`0x3b04f3` is a 4-byte copyin into `[rbx+0x108]`).
+
+Runtime cost: probe 1235b called mode 0 `count 1` with one real pending read and a timeout dword of 20,
+and the call never returned - LOADER-STUCK, and a second connection got zero bytes. A pending request
+does not time out; the wait must be woken by the request completing, so any UAF test needs the 663 call
+on a child thread (child-syscall capability, 1234a) while the parent completes the request.
+
+Probe 1236a is written and non-blocking: zero ids never sleep (the validation loop skips them with
+status `0x80020003`), so a `count 2` sweep over modes 0..0xFF answers "value test or path test" with no
+thread and no wedge. It has not run: the loader needs a relaunch.
+
 ## 2026-11-05 (twenty-third boot, cont.): the spinning-child hazard, and 1234b lost to it
 
 1234a built every child with `jmp $` as its return address, so the 60 poll children did not exit when
