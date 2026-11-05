@@ -50,3 +50,64 @@ kernel thread structure" hypothesis before anyone spends more runs on it.
 3. The thread family is otherwise now proven end to end, which matters for every race in the plan
    (a suspended-and-resumed thread is a deterministic scheduler lever the earlier probes did not
    have).
+
+
+## 5. 635 thr_set_ucontext does not exist, and the context layout is now mapped
+
+### 5.1 635 is an ENOSYS stub
+
+Body at `0x4393A0` is four instructions:
+
+```
+4393a0 push rbp
+4393a1 mov rbp,rsp
+4393a4 mov eax,0x4e        ; 78 = ENOSYS
+4393a9 pop rbp
+4393aa ret
+```
+
+The corpus already records `635` as an ENOSYS stub (the `78` trampoline family with 619 and 620), so
+the "inverse direction" - installing a caller context into a suspended thread, and with it the idea of
+smuggling a kernel `CS` selector through the setter - **does not exist on this firmware**. Reading the
+body first saved a run; this is the second time this session that a static read prevented a duplicate
+probe.
+
+### 5.2 Empirical ucontext layout (probe 1229a)
+
+Created a child whose fifteen GPR slots at `+0x48..+0xB8` carried a marker, suspended it with 632,
+read it back with 634:
+
+| offset | value seen | meaning |
+|---|---|---|
+| +0x048 .. +0x0B8 | 0x1111000000000000 (all fifteen) | the GPR block is preserved verbatim |
+| +0x0C0 | 0x1B001300000000 | kernel-computed selector blob; a caller write here does **not** survive |
+| +0x0D0 | 0x3B003B00000000 | two 0x3B selectors |
+| +0x0E0 | 0x206D5481 | **RIP** (our `jmp $`) |
+| +0x0E8 | 0x43 | **CS** |
+| +0x0F0 | 0x202 | **RFLAGS** |
+| +0x0F8 | 0x3113BBF00 | **RSP** (our stack top) |
+| +0x100 | 0x3B | **SS** |
+| +0x108 | 0x480 | the magic 430 validates |
+| +0x110 / +0x118 | 0x10002 / 0x20002 | type / subtype, normalised by the kernel |
+| +0x140 | 0x37F | small state field |
+| +0x158 | 0x2FFFF00009FC0 | packed small values |
+| +0x340 | 3 | |
+| +0x480 | 0x881FFC080 | user-range pointer (TLS/FPU area) |
+
+Two corrections to the working recipe follow from this:
+
+* the field the create path reads is **CS at +0x0E8**, not +0x0C0 as 156c's comment suggests; +0x0C0 is
+  overwritten by the kernel on the way out. The create call still succeeds because the kernel derives
+  CS from the type/subtype pair, and the 0x43 the earlier probes wrote at +0xc0 was never the input.
+* the kernel **normalises** `+0x110 = 0x10000` to `0x10002` and `+0x118 = 0` to `0x20002`, which is
+  why the "type in {0x10000,0x10002}" note in `THR_CREATE_430_CONTEXT.md` is a read-back range and
+  not a write requirement.
+
+### 5.3 What the family is good for, and what it is not
+
+* **Not** a leak: every value in the 0x4c0 bytes is user state or a normalised small constant; there is
+  no supervisor-range qword, and suspension appears to take effect at the user-return boundary, so a
+  thread cannot be frozen *inside* a syscall and read there.
+* **Is** a deterministic scheduling lever: a thread can be created, verified alive (`433(tid,0)=0`),
+  suspended (`632=0`) and resumed (`633=0`) at will, which turns every two-thread gate in the plan
+  from a timing guess into a controlled sequence.

@@ -1,3 +1,19 @@
+## 2026-11-05 (twenty-first boot, cont.): ucontext layout mapped; 635 is ENOSYS
+
+Probe 1229a put a marker in each of the fifteen GPR slots, created a child, suspended it with 632 and
+read it back with 634. The GPR block at +0x48..+0xB8 is preserved verbatim, and the real field
+offsets are **RIP +0x0E0, CS +0x0E8, RFLAGS +0x0F0, RSP +0x0F8, SS +0x100, magic +0x108** - not the
++0xC0 that 156c's comment claims: +0xC0 is a kernel-computed selector blob (0x1B001300000000) that
+ignores caller writes, and the kernel normalises +0x110/+0x118 from 0x10000/0 to 0x10002/0x20002. No
+supervisor-range value appears anywhere in the 0x4c0 bytes, so the getter mirrors user state and
+cannot be used to freeze-and-read a thread inside a syscall.
+
+Static first: 635 `thr_set_ucontext` is an ENOSYS stub (`mov eax,0x4e ; ret` at 0x4393A0), already
+recorded in the corpus as one of the 78-trampoline family with 619 and 620, so the whole "install a
+caller context into a suspended thread" idea - including smuggling a kernel CS selector through the
+setter - does not exist on 14.10. Reading the body first saved a run for the second time this
+session. `docs/UCONTEXT_FAMILY_14_10.md` section 5.
+
 ## 2026-11-05 (twenty-first boot, cont.): copyin-then-sleep census - only aio qualifies, and the extents need work
 
 A static census of the 301 distinct handler bodies for the shape that produced the public aio bug
