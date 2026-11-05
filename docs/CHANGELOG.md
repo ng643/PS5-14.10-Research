@@ -1,3 +1,18 @@
+## 2026-11-05 (twenty-first boot, cont.): 632/634/633 work, and 634 returns user state only
+
+The thread-context family is now proven end to end for the first time. `430 thr_create` succeeds
+only with the 156c offsets (CS +0xc0, RIP +0xe0, RSP +0xf8, SS +0x100, magic +0x108 = 0x480, flags
++0x0d0 = 0, type +0x110 = 0x10000); the 156a layout returns EINVAL, which two probes confirmed
+before the index row was re-read. With a live spinning child, `632 thr_suspend_ucontext` returns 0,
+`634 thr_get_ucontext` returns 0 and overwrites the caller's 0xA5-filled buffer, and `633
+thr_resume_ucontext` returns 0 with the thread still alive. That also explains 1227b's EINVAL: 634
+refuses a running thread at `cmp dword [thread+0xe4],0 ; jns error`.
+
+The 0x4c0-byte copy contains **zero supervisor-range qwords** - for a user thread suspended in a
+`jmp $` the saved context is user state only. The "634 leaks the kernel thread structure" hypothesis
+is closed before it cost more runs. Next: dump the context in full to confirm the field layout, then
+exercise `635 thr_set_ucontext` as the inverse direction. `docs/UCONTEXT_FAMILY_14_10.md`.
+
 ## 2026-11-05 (twenty-first boot, cont.): dmem container refused, thr_self works, 634 wants a shaped context
 
 `586 dmem_container` answers its query form (rv 1) but refuses every index with EPERM: the
