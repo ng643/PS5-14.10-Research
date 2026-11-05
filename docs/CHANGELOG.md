@@ -1,3 +1,17 @@
+## 2026-11-05 (twenty-eighth boot, continued): the aio mode guard covers every mode
+
+**The last lifetime-census survivor is closed on 14.10.** The census
+(`docs/KERNEL_LIFETIME_CENSUS_14_10.md`) reduced 301 bodies to one lifetime defect - the 663
+`aio_multi_wait` waiter-node escape, where every mode except 1 and 2 relinks the same node onto each
+request, cleanup unlinks it only from the last owner, and the array is freed at `0x3b0f9e`. Probe
+1244a sent the never-measured modes with ids `{0,0}` (id 0 is skipped with `0x80020003`, so nothing is
+waited on): modes 1 and 2 return 0 with two `80020003` words, and modes 0, 3, 4, 5, 6, 7, 8, 0x10,
+0x40 and 0xFF all return -1 with the output array untouched. The controls are repeated after the
+sweep and are unchanged, so the refusals are the handler. The 14.10 guard therefore rejects every
+mode outside {1,2} at count > 1, which is the shared-node path, and the Bagagwa/Relapse class is
+patched in both directions. The census itself found zero double frees and zero use-after-frees after
+validation, with every dismissal recorded against the instruction that kills it.
+
 ## 2026-11-05 (twenty-eighth boot, continued): sendfile works, 532 cmd 0x31 is capability-refused,
 ## uninitialised-copyout census comes up empty
 
