@@ -1,3 +1,40 @@
+## 2026-11-05 (twenty-seventh boot): 637's store lands, and physhm was never a mapping
+
+**637 is an unprivileged kernel qword store, and the field it writes is a page limit.** The body at
+`0xabd930` gates on `value >= 17`, on `pid == 0 || pid == p_pid`, on `[proc+0xb0] & 0x2200`, on
+`[proc+0xb8] == 1`, then stores the caller's qword **verbatim** at `[p_vmspace + 0x280]`
+(`00abda0c mov qword [r12 + 0x280], rax`) and calls `0x691c70`. Every earlier probe that recorded
+`637(0, big) = 0` was therefore already performing a kernel write; nothing was observing it.
+
+Both existing explanations of the wedge in `docs/PROC_LOCK_WEDGE_637_14_10.md` are wrong and are
+corrected there. `0x53aa10` is nine bytes - `test byte [rdi+0xb3], 0x10; je <printf(fmt); ud2>` - a
+fatal assert that a returning 637 never enters, not a worker. The wedge is the post-store callee:
+`0x6918a0` compares `[vmspace + 0x280]` against `capacity - (bytes_in_use >> 14)` and, when the limit
+is lower, walks the vm_map entry list calling the pageout path until the comparison is satisfied. The
+value is in **16 KiB pages**, so 17 pages is unreachable for a live process and the loop has no exit.
+That is an unbounded reclaim under a mutex, not a self-deadlock.
+
+The primitive is inert because a 252-site census of `[reg + 0x280]` finds the qword field read in
+exactly one place, as a comparison target - never dereferenced, never indexed, never copied out. The
+A/B experiment (state-and-plan item 4) is withdrawn: every value small enough to change an allocation
+ceiling is inside the wedge window. `docs/FMEM_LIMIT_637_14_10.md`.
+
+**physhm: `mmap` succeeded, and the page does not exist.** Probe 1240a mapped a `629` descriptor
+(`mmap(0, 0x4000, 3, MAP_SHARED, 24, 0)` -> `0x310D3C000`) and asked the *kernel* to read it:
+`write(sock, 0x310D3C000, 0x20)` = **-1 errno 14 EFAULT**. The uaccess guard passes for that address
+(`rsi + rdx <= 0x800000000000`), the `stac` window opens, and the `rep movs` faults anyway - which a
+present supervisor PTE cannot do. The object never populates the mapping; the first touch on either
+side of the privilege boundary is a not-present fault. `docs/CHANGELOG.md:2012`'s
+"supervisor-accessible mapping" reading is corrected in place. Note the test itself was the strongest
+form of the idea and it is now spent: the physhm route is closed for reads *and* writes,
+`docs/PHYSHM_COPYIN_14_10.md`.
+
+**Probe defect, second occurrence of the same class.** 1240a wedged the loader by calling `read`(3)
+with a flags argument on a socket with nothing queued; `read` has no flags and blocks. On this loader
+the non-blocking receive is `recvfrom`(29) with `0x80` = MSG_DONTWAIT - `MSG_WAITALL` is `0x40` and is
+one keystroke away. Rule added: never issue a receive unless the preceding send returned more than
+zero. Probe 1240b (`mincore`-based residency, no faulting child) is written and unrun.
+
 ## 2026-11-05 (twenty-sixth boot): the thr_* family is process-scoped, and a probe artifact retired
 
 Probe 1238a closed the last open direction in the thread family. Resolver **0xb92420** is the kernel's
@@ -2009,7 +2046,7 @@ Captures: `results/phase17_new_vectors/{330a_dmem_open,331a_mmap_dmem_matrix,332
 - **Sys 629 `physhm_open` had only ever been called with six zeros.** With its recovered four slots it takes the sentinel `arg0 = 1` and returns a **descriptor** for `arg1 = 2` and `arg3` in `0..3`: `629(1, 2, any, 0..3) -> 22 / 26 / 27`. Every other `arg1` from 0 to 0x120, every page multiple and every power of two is refused; `arg2` is ignored; `arg3 = 0x1000` is refused, so it is a mode enum and not a length.
 - **The path branch is closed**: every path tested (`/`, `/dev`, `/dev/physhm0`, `/physhm0`, `/tmp`, `/app0`, `/dev/physhm`, `/dev/dce`) returns `-1`, `open("/dev/physhm*")` returns `-1` in both modes, and `630 physhm_unlink` returns `-1` for both a path and the sentinel. A game process can only reach the sentinel branch.
 - **The descriptor refuses every file operation**: `FIODTYPE`, `0x4004667B`, `FIONBIO`, `read`, `write` all `-1`, and `628 mmap_dmem` refuses it in four argument positions.
-- **The mapping exists and is fatal on first access**: `mmap(0, 0x1000, RW, MAP_SHARED, fd, 0)` succeeds and returns a full 34-bit address (`0x3_10F10000`), and the first read at that address terminates the process inside `pcall` - four probes, the last using the correct untruncated pointer. A successful `mmap` whose first user access faults is a supervisor-accessible mapping, not user memory, so the object holds nothing reachable and there is no write path.
+- **The mapping exists and is fatal on first access**: `mmap(0, 0x1000, RW, MAP_SHARED, fd, 0)` succeeds and returns a full 34-bit address (`0x3_10F10000`), and the first read at that address terminates the process inside `pcall` - four probes, the last using the correct untruncated pointer. A successful `mmap` whose first user access faults is a supervisor-accessible mapping, not user memory, so the object holds nothing reachable and there is no write path. **Correction, 2026-11-05 (probe 1240a): it is not a supervisor-accessible mapping - the page is not present at all.** The kernel's own `copyin` from the mapped address returns `EFAULT` (`write(sock, 0x310D3C000, 0x20)` = -1 errno 14), and a PTE with U/S=0 cannot fault inside a `stac` window. The object never populates the mapping, so `mmap` returns an address and nothing else. Read `docs/PHYSHM_COPYIN_14_10.md` for the measurement and for the standing rule: a successful `mmap` is not evidence of a mapping, only a successful access is.
 - **Probe bug recorded**: `sgn()` returns only the low 32 bits, so three of those probes read a truncated address. Addresses must be carried as `(high, low)` and rebuilt with `uint64(string.format("0x%X%08X", h, l))`.
 
 
