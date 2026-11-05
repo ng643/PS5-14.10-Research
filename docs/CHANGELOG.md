@@ -1,3 +1,22 @@
+## 2026-11-05 (twenty-second boot, close): the reader search closes all four copy-shaped classes
+
+Read the three bodies that could still have carried a double fetch. 29 `recvfrom` copies the user
+length **once** (0x532925) and the later reload at 0x532932 is the uap slot, not user memory; 105/118
+do the same through 0x53307D and use the kernel copy at 0x5330D5; 41/90/92 and 165 copy **constant**
+sizes (0x20/0x18 and 0xc/8) into stack buffers. So every repeated copy in the image is either
+constant-sized or reads the length from the kernel's own stack copy - the double-fetch class is empty.
+
+That makes four independent closures of the copy-shaped reader idea: aio (mask rejects a kernel
+address, measured), direct argument dereference (10/10 candidates are kernel loads), double fetch
+(constant sizes / kernel-held lengths), and the interprocedural audit's 0/301 for a user-derived
+copy source or destination. **A reader cannot come from the copy semantics of this syscall table.**
+
+It has to come from a memory-safety bug whose damaged object is then read back through an interface -
+a freed object still referenced, an out-of-bounds index, or a type confusion. The surfaces the corpus
+has not exhausted are the object families whose lifetime the loader can influence (osem, evf,
+namedobj, kqueue knotes) and the blockpool page work, which is closed only because no userland path
+creates the type-0xb object. `docs/KERNEL_READ_SEARCH_14_10.md` sections 9-10.
+
 ## 2026-11-05 (twenty-second boot, close): double-copyin census - 43 bodies, 14 with a reused source register
 
 Scanned all 301 handler bodies for two or more copyin calls and recorded which register fed `rdi` at

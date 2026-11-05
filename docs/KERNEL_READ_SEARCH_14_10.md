@@ -148,3 +148,51 @@ With 632/633 now giving a deterministic suspend, the race can be made controllab
 The corpus's copyout audits say every non-constant length is clamped, so the expected outcome is
 "clamped, nothing leaks" - but those audits measured the *copy length against the buffer*, not the
 *re-read of the user length between two calls*, which is the shape here.
+
+
+## 9. The double-fetch lead is closed by inspection, and so is the whole copy-source class
+
+Three bodies were read in full to test the shape "user length validated once, address copied around it":
+
+**29 `recvfrom`, body 0x5328D0.** `r15 = [rsi+0x28]` is the fromlen pointer; `copyin(r15, [rbp-0x58], 4)` at
+0x532925 reads the length **once**, and the syscall is then called with the kernel copy. The later
+`copyout([rbp-0x58], r15, 4)` at 0x5329B2 writes it back. The reload at 0x532932 is
+`mov r15,[r14+0x28]` - the **uap slot**, i.e. kernel memory, not the user buffer. There is no second
+read of user memory.
+
+**105 `setsockopt` / 118 `getsockopt`, body 0x533050.** `r15 = [rsi+0x10]` is the optlen pointer;
+`copyin(r15, [rbp-0x3c], 4)` at 0x53307D, then `call 0x532e60` uses `[rbp-0x3c]` and `[rbp-0x38]`, and the
+copyout at 0x5330D5 uses `r14 = [rbp-0x3c]` - again the **kernel copy** of the length, not a re-read.
+
+**41/90/92, body 0x729A40.** Two copyins from the same register, at 0x729E6A (0x20 bytes) and 0x729F29
+(0x18 bytes) - both **constant sizes** into stack buffers. No user length at all.
+
+**165, body 0x47B030.** Two copyins of 0xc and 8 bytes from the same register - constant sizes into two
+different stack slots.
+
+So every repeated copy in the image is either constant-sized or reads the length from the kernel's own
+stack copy. **The double-fetch class is empty**, and it was the last copy-shaped route.
+
+That agrees with the earlier interprocedural audit in `docs/INTERPROC_COPYOUT_SOURCES.md`, whose verdict
+is explicit: *"no such primitive exists in this image. 0 of 301 bodies performs a raw memory access
+whose base derives from a syscall argument; 0 of 39 reachable copyout sites take their source from user
+input; 0 of 57 reachable copyin sites take their destination from user input."*
+
+## 10. What this means for the reader problem
+
+Four independent searches now agree:
+
+| class | result |
+|---|---|
+| aio copies from a kernel address (source and destination) | **closed** - the user-range mask rejects it, measured |
+| a handler that dereferences an argument value directly | **closed** - 10/10 candidates are kernel loads |
+| a double fetch of a user length or pointer | **closed** - constant sizes, or the kernel copy is used |
+| a copyout whose source or copyin whose destination comes from user input | **closed** by the interprocedural audit, 0/301 |
+
+A reader therefore cannot come from the *copy semantics* of this syscall table. It has to come from a
+memory-safety bug - a freed object still referenced, an out-of-bounds index into a kernel array, or a
+type confusion - and then the leak has to be harvested through an interface that returns the damaged
+object's bytes. The remaining unexplored surfaces of that shape are the ones the corpus has not
+exhausted: the object families whose lifetime the loader can influence (osem, evf, namedobj, kqueue
+knotes), and the blockpool family's page work, which is closed only because no userland path creates
+the type-0xb object.
