@@ -1,3 +1,8 @@
+> **Superseded in part (2026-11-05):** probe 1254a measured 661 `aio_submit`, 665
+> `aio_get_data` and 668 `aio_create` as `-1 / ENOSYS` under `SIG_IGN` for SIGSYS, i.e.
+> absent on 14.10, not merely unreachable. No AIO context can be created at all. See
+> `docs/AIO_ABSENT_AND_KILL_LIST_RECLASSIFIED_14_10.md`.
+
 # The AIO 661-670 "hard wall" rests on one syscall
 
 Status: **scope correction.** No new console evidence. This note re-reads the

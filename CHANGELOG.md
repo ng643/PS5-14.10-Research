@@ -1,5 +1,12 @@
 # Changelog
 
+## AIO is absent on 14.10; 631 and 677/678 are nosys, not hostile (2026-11-05)
+
+- **`aio_submit`(661), `aio_get_data`(665) and `aio_create`(668) return `-1 / ENOSYS` under `SIG_IGN` for SIGSYS** (probe 1254a): they are absent on 14.10. No AIO ID can ever be created, so the `aio_multi_delete`(662) TOCTOU — the Lapse/Prolapse bug, patched in 14.20 — is unreachable on this firmware despite 14.10 being inside the announced vulnerable range. This supersedes "unreachable by construction": there is no entry point at all.
+- **631, 677 and 678 are `nosys` slots, not lethal handlers.** 631 "killed the process" (52a) and 677/678 "killed the process and crashed the game" (2026-10-20) only because the default SIGSYS disposition terminates the process; with SIG_IGN all three return ENOSYS and the process is untouched. The syscall map's "lethal" column was measuring the process's signal disposition, not the kernel's behaviour, and must be re-derived with the oracle.
+- **628, 629 and 630 are present and rejecting zeros** (EINVAL 22, EFAULT 14, EFAULT 14) — the first clean errno readings for 629/630, which 52a had recorded as PCALL-FAIL.
+- New doc `docs/AIO_ABSENT_AND_KILL_LIST_RECLASSIFIED_14_10.md`; `docs/AIO_RANGE_14_10_EVIDENCE.md` carries a supersession note.
+
 ## The sysent tail is absent, measured; three more static closures (2026-11-05)
 
 - **The 14.10 sysent ends at 676 — measured, not inferred** (probe 1253a). With `SIG_IGN` for SIGSYS installed and verified by read-back, the control number 4095 returns `-1 / ENOSYS` with the process alive, and so do 705 `get_phys_page_size` (called with no arguments), 687 `pipe2`, 690 `ppoll`, 728 `virtual_query_by_pid`, 725 `mmap2` and 715 `ioreq`, each with valid non-faulting arguments. The earlier 677-707 kills were the default SIGSYS disposition, not faulting handlers. The table resolves 677 entries against the 13.60 capture's 735; `wait6`, `procctl`, `apr_*`, `get_phys_page_size`, `begin_app_mount` and the rest of the tail are unreachable. New doc `docs/SYSENT_TAIL_ABSENT_14_10.md`.
