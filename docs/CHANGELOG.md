@@ -1,3 +1,30 @@
+## 2026-11-05 (static only): the last indexed-load unknown is a linear-sweep artefact, and the read atlas is corrected
+
+**The double-fetch direction was checked before it was started, and it was already closed.** The
+proposal was a census of user pointers read twice across all 679 sysent bodies, raced with a second
+thread. `docs/KERNEL_READ_SEARCH_14_10.md` section 9 already closes the class by inspection (29 body
+0x5328D0 copyins the length once at 0x532925 and writes back the kernel copy; 41/90/92 and 165 use
+constant sizes), and `.local/double_fetch.py` is the script that produced the census. The generic
+"race the syscall" idea is also the AIO 662 TOCTOU, which this tree probed as 65l and which
+`docs` under `.local/tmp/up/docs/2026-10-25/25_GENERATION_CHECK_ANALYSIS.md` line 70 closes for the
+662-vs-662 variant. Nothing was run.
+
+**Sys 341's indexed load at 0x55f0cb is closed.** The census row recorded `mov rax,[rbx+rax*8]` with
+`lea eax,[r14-1]` and r14 = [uap] "after a ret". Both halves are wrong. The block is inside the
+separate function 0x55f010 (`55 48 89 e5`, `sub rsp,0xb8`), whose index is its own argument
+(`0x55f032 mov r14d,edi`); the body's `mov r14,[rsi]` at 0x55ed94 is dead by 0x55ef69 `mov r14,r13`.
+Both `e8` callers pass `edi = eax` from the id-table iterator 0x55c920 (`0x55ef60/0x55ef70` in body
+0x55ed70, `0x4ea5a3/0x4ea5ac` in function 0x4ea300), which walks the bitmap at `[td+0xa0]` with
+exclusion masks at `+0x3b0/+0x3b4/+0x3b8` and returns the next present id. No absolute qword pointer to
+0x55f010 exists in the image. The indexed-load census therefore stands at 176 sites, all bounded or
+gated, with no unknown. `docs/SYS341_INDEXED_LOAD_CLOSURE_14_10.md`.
+
+**`docs/READ_IDEA_ATLAS_14_10.md` carried a stale verdict.** Its Verdict section still ranks P2
+(proc+0xc81 -> 532) as the best idea while its own P2 entry says CLOSED behind `priv_check(0x2aa)`, and
+four rows it lists as open are closed elsewhere (601, 604, P5/H1 YMM, the census unknown). A status
+corrections section now sits above the table. What is actually unrun is P1, P4, P8 and P9, and all four
+are console measurements.
+
 ## 2026-11-05 (twenty-eighth boot, continued): the aio mode guard covers every mode
 
 **The last lifetime-census survivor is closed on 14.10.** The census

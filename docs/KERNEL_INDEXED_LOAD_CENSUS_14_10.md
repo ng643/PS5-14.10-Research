@@ -180,3 +180,12 @@ Capstone notes that cost time and are worth keeping: `md.detail = True` must be 
 ## Provenance
 
 All findings are static, from the 13.60 image named above; no probe was run and no live target was touched. Syscall numbers are the 13.60 sysent numbers and the target firmware is 14.10, so numbering and code may differ. The image is a retained 13.60 dump whose acquisition authenticity the repository records as unresolved; treat the 532 finding as a strong static candidate for a 14.10 check, not as a 14.10 result.
+
+
+## Resolution of the one unknown row (2026-11-05)
+
+The 0x55f0cb row is closed as a linear-sweep artefact: the block belongs to the separate function
+0x55f010, whose index argument is the return value of the id-table iterator 0x55c920 at both of its
+call sites (0x55ef72 in body 0x55ed70, 0x4ea5ae in function 0x4ea300), not `[uap]`. The body's
+`mov r14,[rsi]` at 0x55ed94 is dead by 0x55ef69. No absolute pointer to 0x55f010 exists in the image.
+Detail and the instruction listings: `docs/SYS341_INDEXED_LOAD_CLOSURE_14_10.md`.
