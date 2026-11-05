@@ -1,3 +1,25 @@
+## 2026-11-05 (nineteenth boot): rcx arrives, and the import table is not all stubs
+
+Probe 1213b settles the ambiguity 1213a left open. Three `mov rax, rcx ; ret` gadgets in eboot
+(0xCC627, 0xCC657, 0xD5878) return exactly the rcx value they are handed through
+`native.fcall_with_rax` (0x4444, control 0), so the native fcall handler marshals rcx faithfully and a
+`mov r10, rcx` trampoline would deliver syscall argument 4. The eight verified stubs below 0x1100 are
+therefore genuinely two-or-three-argument stubs.
+
+libkernel module info gives the extent for the first time: text base = libkernel_base with size
+0x48000, data base +0x48000 with size 0x38000, and the segment records are `{u64 base, u32 type, u32
+size}` at mi+0x160 / mi+0x170.
+
+The same probe shows why the harvest cannot be trusted as a stub list: the first getpid test at an
+offset >= 0x1000 killed the payload and wedged the loader. An import slot can point at an ordinary
+libkernel function (`function+7` is then mid-instruction). Blind testing costs a relaunch per
+candidate, so the remaining two routes are the safe ones: finish the eboot census for a
+`mov r10, rcx` shim that reaches `ret` (probe 1213c), or dump libc .text and prove which import slot
+is called with four or more argument registers before touching any address.
+
+Instrument fix: `tools/send_probe.py` died on a cp1252 encode error while writing a dying payload's
+binary output, destroying the tail of the record. stdout is now UTF-8 with errors=replace.
+
 ## 2026-11-05 (nineteenth boot): argument 4 is recoverable from the import tables, not from a gadget
 
 The blocker from the last boot is not a missing syscall, it is a missing `mov r10, rcx`. Offline on the

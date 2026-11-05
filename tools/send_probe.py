@@ -22,6 +22,12 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+# A dying payload can emit arbitrary bytes; keep the log instead of failing on them.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 
 STATUS_COMPLETE = "COMPLETE"
 STATUS_IDLE_TIMEOUT = "IDLE_TIMEOUT"
@@ -87,6 +93,46 @@ def _save_capture(lua_file, response, metadata, write_metadata=False):
             f.write("\n")
         print("[*] Run record: %s" % meta_path)
     return out_path, meta_path
+
+
+def loader_is_up(ip, port, connect_timeout=3.0):
+    """True when the loader port accepts a connection. Sends nothing."""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(connect_timeout)
+    try:
+        sock.connect((ip, port))
+        return True
+    except OSError:
+        return False
+    finally:
+        sock.close()
+
+
+def wait_for_loader(ip, port, timeout=900.0, poll=2.0, log=None):
+    """Block until the loader accepts a connection again, or the budget runs out.
+
+    A killed probe leaves the game process dead while the console stays up, so
+    the loader port refuses connections until the game is started again. This
+    turns that wait into a resume point instead of a manual restart of the run:
+    call it after a probe dies and continue where the run left off.
+    """
+    log = log or (lambda _m: None)
+    started = time.monotonic()
+    announced = False
+    while True:
+        if loader_is_up(ip, port):
+            if announced:
+                log("[+] Loader is accepting connections again after %.0fs"
+                    % (time.monotonic() - started))
+            return True
+        if not announced:
+            log("[!] Loader is down - relaunch the game. Waiting up to %.0fs..."
+                % timeout)
+            announced = True
+        if timeout and time.monotonic() - started >= timeout:
+            log("[!] Gave up waiting for the loader after %.0fs" % timeout)
+            return False
+        time.sleep(poll)
 
 
 def send_lua(ip, port, lua_file, save=False, timeout=30.0, total_timeout=0.0,
@@ -163,11 +209,21 @@ def send_lua(ip, port, lua_file, save=False, timeout=30.0, total_timeout=0.0,
 
     response = b"".join(response_parts)
     elapsed = time.monotonic() - started
+    # A clean close after any data is reported as COMPLETE, but the loader closes the socket both
+    # when a script returns and when its process dies, so COMPLETE alone does not mean the probe
+    # finished. Probes that can die part-way print a "=== DONE" line as their last output; when
+    # that line is missing, say so instead of letting the status imply a finished run.
+    # Observed: 1074a arm 4 reported COMPLETE while the capture stopped at its first command.
+    finished = b"=== DONE" in response
+    if status == STATUS_COMPLETE and not finished:
+        print("[!] No '=== DONE' marker in the output — the connection may have closed on a "
+              "process death rather than a finished probe")
     metadata.update({
         "ended_at": _iso_timestamp(),
         "elapsed_seconds": round(elapsed, 3),
         "status": status,
         "response_bytes": len(response),
+        "done_marker": finished,
     })
     if error:
         metadata["error"] = error

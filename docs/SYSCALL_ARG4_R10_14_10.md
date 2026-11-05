@@ -337,3 +337,88 @@ no such gadget, so this fallback needs the rest of the image first.
 | `mov r10, rcx ; syscall` found in readable text | CLOSED (negative) — 0 hits, 1 MB eboot; `syscall;ret` 0 over 4.3 MB |
 | `pop r10 ; ret` in readable text | CLOSED (negative) — 0 hits in 1 MB; no r10 gadget in any of the 11 game gadget tables |
 | **stub-harvest trampoline (1213a)** | **OPEN — probe written, needs a live loader** |
+
+
+## 11. rcx does arrive, and the reachable import set mixes stubs with real functions
+
+Measured 2026-11-05 (nineteenth boot, loader pid 80) with probe 1213b, one connection.
+
+### 11.1 The marshalling question is settled: rcx arrives
+
+eboot contains three `48 89 c8 c3` = `mov rax, rcx ; ret` gadgets (offsets 0xCC627, 0xCC657,
+0xD5878 in the 1 MB dump). Called through `native.fcall_with_rax(gadget, 0, 0x1111, 0x2222, 0x3333, 0x4444, 0x5555, 0x6666)`:
+
+| gadget | returned rax |
+|---|---|
+| eboot+0xCC627 | **0x4444** |
+| eboot+0xCC657 | **0x4444** |
+| eboot+0xD5878 | **0x4444** |
+| control, rcx = 0 | 0x0 |
+
+So the native fcall handler does marshal `rcx` faithfully. That removes reading (b) from 1213a: the
+eight verified stubs in 0x3B0..0x10F0 really are two-or-three-argument stubs, and a correct
+`mov r10, rcx` trampoline would work.
+
+### 11.2 libkernel's true extent
+
+`sceKernelGetModuleInfoFromAddr(libkernel_base, 1, mi)` returns 0 and the same segment layout as
+eboot, with `{u64 base, u32 type, u32 size}` records at `+0x160` and `+0x170`:
+
+| field | value | meaning |
+|---|---|---|
+| mi+0x110 | 0x83D58C000 | text base (= libkernel_base) |
+| mi+0x168 | 0x00000005_00048000 | text, type 5, **size 0x48000** |
+| mi+0x170 | 0x83D5F8000 | data base |
+| mi+0x178 | 0x00000003_00038000 | data, type 3, size 0x38000 |
+| mi+0x128 | text base + 0x10 | init proc |
+| mi+0x148 | 0x83D5D4000 | eh_frame_hdr |
+| mi+0x150 | 0x83D5D82D0 | eh_frame |
+
+So libkernel text is 288 KB and anything we read from an import slot is a pointer into
+`[libkernel_base, libkernel_base + 0x48000)`. The harvested offsets 0x5BD0 .. 0x44xxx are inside
+that; offsets that appeared above 0x48000 in 1213a's histogram are therefore **not** libkernel text
+and belong to some other object that merely fell inside the 2 MB window.
+
+### 11.3 96 offsets, and the first one past the stub table killed the payload
+
+The full harvested list begins:
+
+    3B0 3F0 410 B50 B70 D50 FF0 10F0 2E10 5BD0 64C0 7820 7CD0 A820 B100 B370 C1E0 DF60
+    F0A0 F220 10D30 13960 13A00 13A20 13A40 13D00 13D20 ...
+
+The eight verified stubs are all below 0x1100. Candidate testing then started at 0x1000 and the
+payload **died on the first unverified candidate at or above 0x1000** (the log ends inside the list,
+the connection delivered binary, and `port_witness.py` reported LOADER-STUCK afterwards). So an
+entry in a libc import slot is not necessarily a syscall stub: it can be an ordinary libkernel
+function such as `memcpy`, and `function+7` is then mid-instruction.
+
+Two instrument lessons:
+
+- `send_probe.py` died with `UnicodeEncodeError: 'charmap' codec can't encode` while writing the
+  death bytes to a cp1252 console, which destroyed the tail of the log. Fixed in
+  `tools/send_probe.py` by reconfiguring stdout to UTF-8 with `errors="replace"`; a dying payload
+  now keeps its full record.
+- Never test an address that has not been printed, flushed, and (if possible) verified. One
+  unverified candidate per connection is the only sane budget: each death costs a manual relaunch.
+
+### 11.4 What that leaves
+
+| route | state |
+|---|---|
+| rcx marshalling through the native handler | **WORKS** (measured, 3 gadgets) |
+| the 8 import-table stubs below 0x1100 | all two-or-three-argument, none can carry argument 4 |
+| the rest of the import table | untested; mixes stubs with real functions, blind testing is 1 relaunch per candidate |
+| eboot `mov r10, rcx ; syscall` | impossible (no syscall instruction anywhere in 4.3 MB of swept text) |
+| eboot `mov r10, rcx` reaching `ret` through register-only code | **only 1 MB searched so far** (six hits, all arithmetic tails) |
+
+The two live options are therefore:
+
+1. **Finish the eboot census.** 4.6 MB of readable, executable text at zero risk. probe 1213c does it
+   with `string.find(..., plain)` over `string.char(0x49,0x89,0xca)` and prints every hit with a
+   24-byte tail, so a `mov r10, rcx` that reaches `ret` without touching memory can be found offline.
+   A shim found there needs chain execution, which the corpus has via `thr_create(430)` and the
+   loader's own `ropchain`.
+2. **Name the stubs instead of guessing.** Dump libc's readable .text, find the call site that
+   loads each import slot, and read off whether `rcx` is set before that call: a callee reached with
+   four or more argument registers is a >=4-argument stub by construction, so `+7` is the trampoline.
+   This turns a guess into an inference and needs no risky execution at all.
