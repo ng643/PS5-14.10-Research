@@ -111,3 +111,65 @@ Two corrections to the working recipe follow from this:
 * **Is** a deterministic scheduling lever: a thread can be created, verified alive (`433(tid,0)=0`),
   suspended (`632=0`) and resumed (`633=0`) at will, which turns every two-thread gate in the plan
   from a timing guess into a controlled sequence.
+
+### 5.4 Correction: a thread *can* be frozen inside a syscall, and the context it exports is still the user frame (probe 1237c)
+
+Section 5.3 asserted that "suspension appears to take effect at the user-return boundary, so a thread
+cannot be frozen *inside* a syscall and read there". Half of that was reasoning and half of it was
+wrong, and 1237c separates the two.
+
+Method: one child created with the working recipe, `rax = 209` (poll), `rdi = struct pollfd *`,
+`rsi = 1`, `rdx = 6000`, `RIP = syscall stub`, stack return slot holding 1. After 150 ms the child
+is inside `poll` with a 6 s timeout and no data on the socketpair. Then:
+
+| call | result |
+|---|---|
+| 433(tid,0) | 0 (the tid resolves while the thread is in-kernel) |
+| 632(tid) | **0 - the suspend is accepted while the thread is inside poll** |
+| 634(tid,buf) | **0 - the context is copied** |
+| 633(tid) | 0 |
+
+So the scheduling claim in 5.3 is refuted: an in-syscall thread *can* be frozen and resumed at will.
+
+The leak claim survives, and this is the measurement that had been missing. The copied frame for that
+in-kernel thread (eboot base 0x0C560000, stub 0x0818858B57):
+
+| offset | value | reading |
+|---|---|---|
+| +0x048 | 0x31069DA40 | rdi, the `struct pollfd *` we passed |
+| +0x050 | 1 | rsi, nfds |
+| +0x058 | 0x1770 | rdx, the 6000 ms timeout - preserved verbatim |
+| +0x078 | 0xD1 | rax, 209 - the syscall number is still in the frame |
+| +0x090 | 0x515CA11 | continuation pointer, user range |
+| +0x0E0 | 0x0818858B5C | RIP, which is **stub + 5** - the instruction after `syscall` |
+| +0x0E8 | 0x43 | CS |
+| +0x0F0 | 0x202 | RFLAGS |
+| +0x0F8 | 0x31070BF00 | RSP, our stack |
+
+Scan of the full 0x500-byte copy: **160 qwords, 0 supervisor-range, 0 with hi32 >= 0xFFFF0000.** The
+frame the kernel hands back is the *user* trap frame at the syscall boundary - the argument registers
+intact, RIP already advanced past the `syscall` instruction. Nothing on the kernel stack, no frame
+pointer, no return address into the kernel, no per-thread kernel pointer.
+
+Two secondary observations:
+
+* ~~634 wrote the 16-bit value 0x0400 at buffer+0 on a failed call (1237b, ESRCH path).~~
+  **RETRACTED 2026-11-05 (probe 1238a).** That was a Lua numeric-precision artifact, not a kernel
+  write. `0xA5A5A5A5A5A5A5A5` is not representable as a double; `uint64:tonumber()` rounds it, and
+  the probe compared the rounded value with the exact one, so every qword read as "changed". A
+  38-call sweep with the same fill pattern shows the buffer **untouched** on both the EINVAL and the
+  ESRCH path: 634 writes nothing at all before it refuses. Do not read the first bytes of that buffer
+  as an output header.
+* Both 1237b and 1237c took the loader process down a few hundred milliseconds after a **suspended**
+  child was resumed, allowed to finish its syscall and then returned to unmapped address 1. The
+  connection received a 0x80-byte binary record (the fault blob) and then closed with no `=== DONE`.
+  A child parked with `jmp $` and never resumed only starves the loader (1234a); a child that is
+  suspended, resumed and then faults appears to kill it. Record this as a deployment hazard: any probe
+  that combines 632/633 with a faulting exit needs the child to be released by allowing its syscall to
+  complete and to spin briefly, not to fault, or the loader has to be relaunched afterwards.
+
+Primitive worth keeping: **632 on a thread inside a syscall is a controllable in-kernel pause.** A
+thread can be stopped mid-syscall, the parent can run an arbitrary sequence of other syscalls, and
+then 633 releases it. Every two-thread gate that previously needed a sleep can be made deterministic.
+No in-kernel state is readable through the pause itself.
+

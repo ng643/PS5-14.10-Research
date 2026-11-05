@@ -1,3 +1,31 @@
+## 2026-11-05 (twenty-sixth boot): the thr_* family is process-scoped, and a probe artifact retired
+
+Probe 1238a closed the last open direction in the thread family. Resolver **0xb92420** is the kernel's
+global thread hash, keyed by a 32-bit tid (`and rcx,[rip+0x31ef9a3]` bucket mask, chain on
+`cmp dword [rax+0x9c],r14d`), and its second argument is a **`p_pid` filter**:
+`mov rdi,[rax+8] ; cmp ebx,-1 ; cmp dword [rdi+0xbc],ebx ; jne <keep walking>`. 632 (body 0x438e30)
+and 633 (0x439070) pass `[curproc+0xbc]`; 634 (0x439150) passes the same. None of the three ever passes
+the `-1` that would disable the filter, so a thread belonging to another process - including any kernel
+thread - can never be named. Measured over 38 calls: own tid -> EINVAL 22, own tid + 2^32 -> EINVAL 22
+(the handler reads the **dword**), and thirty foreign ids (1-12, 16, 20, 24, 32, 40, 48, 64, 80, 96,
+128, 160, 192, 256, 512, 1024, 4096, 0x7FFFFFFF, 0xFFFFFFFF, 0x1_0000_0000) all -> **ESRCH 3 with the
+buffer untouched** and zero supervisor-range qwords. `docs/THR_LOOKUP_14_10.md`.
+
+632 and 633 read arg1 as a qword while the resolver truncates to `edi`, so `tid | 0x100000000` defeats
+the self-check at 0x438e41. What that buys is not a suspend: 632 then sets `or dword [td+0xe4],
+0x80000800`, `mov dword [td+0x400],4` and spins at 0x438ef0 waiting for **the calling thread itself**
+to reach state 3/4. In-kernel spin, loader wedge. 634 reads the dword and has no mismatch.
+
+**Retraction.** 1237b reported that 634 writes `0x0400` at buffer+0 on the ESRCH path, and
+`UCONTEXT_FAMILY_14_10.md` §5.4 recorded it as an output header. It was the probe:
+`0xA5A5A5A5A5A5A5A5` is not representable as a double, `uint64:tonumber()` rounds it to
+`0xA5A5A5A5A5A5A800`, and the equality scan therefore reported all 152 qwords changed on every call.
+634 writes nothing on either error path. Section retracted in place; standing rule added (fill below
+2^53, or scan for supervisor-range values only).
+
+Also recorded from this boot: the safe child exit is a return to an unmapped address, since the loader's
+SIGSEGV chain runs `thr_exit(431)`; a child parked at `jmp $` only starves the loader, and a child that
+is suspended, resumed, finishes its syscall and then faults takes the whole loader down.
 ## 2026-11-05 (twenty-fifth boot): the aio guard is a path test - class closed
 
 Probe 1236a, zero ids, `count 2`, modes 0x00-0xFF: mode 0 and **every** mode from 0x03 upward return

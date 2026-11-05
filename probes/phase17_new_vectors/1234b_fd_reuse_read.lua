@@ -28,7 +28,7 @@ local function spawn(rax, rdi, rsi, rdx)
   local stk = N(mk(477)(uint64(0),uint64(0x10000),uint64(3),uint64(0x1002),uint64(0xFFFFFFFF),uint64(0)))
   if stk == 0 then return nil end
   local top = stk + 0x10000 - 0x100
-  wq(top, uint64(jmp_self))
+  wq(top, uint64(1))   -- unmapped return address: child faults, loader chain calls thr_exit(431)
   local ctx = memory.alloc(0x500)
   for i = 0, 0x4F8, 8 do wq(ctx + i, 0) end
   wq(ctx + 0x48, uint64(rdi)) wq(ctx + 0x50, uint64(rsi)) wq(ctx + 0x58, uint64(rdx)) wq(ctx + 0x78, uint64(rax))
