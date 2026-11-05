@@ -1,3 +1,22 @@
+## 2026-11-05 (twenty-second boot): aio cmd=2 runs, and FreeBSD's MSG_DONTWAIT is 0x80
+
+Testing the one idea that directly targets the missing capability - a *reader* - rather than another
+closed bug: `669 aio_submit_cmd` cmd=2 is a **write**, so the kernel reads from the buffer pointer in
+the request. If that copy does not validate the pointer as a user address, a kernel address there
+turns the write into an arbitrary kernel read, with the bytes landing in a socket we own.
+
+Probe 1231a got the first half: cmd=1 submits and polls to state 2, and cmd=0x1002 (write) submits and
+polls to **state 3**, so the source-driven path really executes. The caller's result dword stayed
+untouched. The run then died on a flag bug of mine: `recvfrom(..., 0x40)` is `MSG_WAITALL` on FreeBSD,
+not `MSG_DONTWAIT` - that is **0x80** - so the payload sat in a blocking receive and the loader ended
+up LOADER-STUCK. The corpus's own aio notes already said every parent-side call in this family must be
+non-blocking; the Linux value was the wrong one.
+
+Next: 1231b (written) repeats it with 0x80 and a user marker buffer as the positive control. If the
+marker arrives on the peer, the next run points the same field at the kernel base from the fault
+oracle - EFAULT means the copy validates, code bytes mean a reader, a fault costs a relaunch.
+`docs/AIO_WRITE_SOURCE_14_10.md`.
+
 ## 2026-11-05 (twenty-first boot, close): the blockpool family is closed at its entry
 
 Reading the last unread member, 657 `blockpool_batch` (body 0x9A9F40), completes the family: it
