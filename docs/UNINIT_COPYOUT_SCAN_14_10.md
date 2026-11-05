@@ -85,3 +85,44 @@ cannot.
 Known scanner defects, all encountered here: a window that starts mid-instruction desynchronises the
 whole pass (this hid a bzero at 0x73a73a on the first attempt); `mov esi,<len>` is not an immediate
 operand of the helper call; and helper addresses beyond the two named ones are invisible.
+
+## 9. Dynamic test (probe 1245a) and the memory-length site scan
+
+Two follow-ups closed the remaining doubt in this census without adding a survivor.
+
+**The 34 sites whose copy length is read from memory.** For every one of them the slot is written
+earlier in the enclosing body, so a length can never be uninitialised:
+
+| site | direction | length slot | last write before the call |
+|---|---|---|---|
+| `0x33b026` | copyout | `[rbp-0x68]` | `0x33aeb4 mov qword [rbp-0x68],rdi` |
+| `0x483946` | copyout | `[rbp-0x38]` | `0x4838b9 mov qword [rbp-0x38],rdi` |
+| `0x6a14a7` | copyin | `[rbp-0x160]` | `0x6a1404 mov qword [rbp-0x160],r8` |
+| `0x6e5b6a` | copyout | `[rbp-0x78]` | `0x6e5b2f mov qword [rbp-0x78],rdx` |
+| `0x73a2f9` | copyout | `[rbp-0x48]` | `0x73a2b2 mov qword [rbp-0x48],rax` |
+| `0x73c4b0` | copyout | `[rbp-0x48]` | `0x73c477 mov qword [rbp-0x48],r12` |
+
+and the same holds for the other 28 (`0x6feef3`, `0x6ff1c8`, `0x6ff34d`, `0x730b17`, `0x73b502`,
+`0x73b860`, `0x73ba9f`, `0x73bc75`, `0x73c285`, `0x73c8b7`, `0x73d131`, `0x74d1cd`, `0x7a4edd`,
+`0x7a6742`, `0x7ac747`, `0xabbcd6`, `0xb5926b`, `0xbb183e`, `0xbfdf76`, `0xc00e2b`, `0xc00e6e`,
+`0xc010a7`, `0xc51cd6`, `0xc9ef0a`, plus the three register-relative aio sites). Script:
+`.local/memslots5.py`, report `.local/memslot_report.txt`. Note the scanner bug that cost two runs:
+`allcopy_sites.json` stores `rva` as an RVA, so comparing `ins.address - kernel_base` against it
+breaks every loop on the first instruction - and capstone stops at the first undecodable byte unless
+`skipdata=True`.
+
+**The dynamic test.** `probes/phase17_new_vectors/1245a_uninit_copyout_dynamic.lua`
+(`results/phase17_new_vectors/1245a_uninit_copyout_dynamic_20261105_151028.txt`, COMPLETE) calls each
+syscall twice on the same buffer and compares all 0x100 bytes:
+
+| call | bytes the kernel wrote | bytes differing between the two runs |
+|---|---|---|
+| `fstat(189)` on a socketpair member | 120 | 0 |
+| `gettimeofday(116)` | 16 | 2 (`+0x08`, `+0x09` = the microseconds field) |
+| `593(1, buf)` with a 0x160 size field | 0 (returns -1 with this handle) | 0 |
+
+So `fstat` fills 120 bytes deterministically and leaves the rest of the caller buffer alone; the only
+two bytes that move in `gettimeofday` are the timer value. No kernel stack residue in either. This
+does not exhaust the class - the honest statement is that the sampled calls are clean, the static scan
+found no short fill, and a full answer would sweep all 450 stack-source sites the same way.
+
