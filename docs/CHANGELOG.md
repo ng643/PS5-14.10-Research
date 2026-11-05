@@ -1,3 +1,18 @@
+## 2026-11-05 (twentieth boot, cont.): socket ioctl is gated, and the Sony net extensions are empty at first contact
+
+Upstream open row O10 said socket-level ioctls had never been swept. They have now. syscall 54 does
+resolve a socket descriptor — `FIONBIO` returns EACCES 13, not ENOTTY — so the old "54 never
+resolves the descriptor" line only ever described device nodes. The request code decides the
+answer: recognised `SIOC*` (0xC02xxxxx) are denied with EACCES 13, legacy 0x89xx fall through to
+ENOTTY 25. That is a permission gate on the network ioctl path, consistent with this process's
+credential context, and it is not bypassable with a different code.
+
+No leak: 37 requests, 0x100-byte zeroed ifreq buffers, **0 supervisor-range qwords**. The Sony
+extensions 102 `netgetsockinfo`, 125 `netgetiflist`, 113 `socketex`, 141 `kqueueex` had never been
+called; 102 keys on the descriptor (rv 1 with a real fd, EBADF with a buffer address), 125 does not,
+and neither copied anything. 113 and 141 were lost to a probe-side Lua type error, not to a kernel
+result. `docs/SOCKET_IOCTL_14_10.md`.
+
 ## 2026-11-05: retraction - argument 4 was never broken, and 663's EINVAL is a kernel guard
 
 Probe 1221a ran the same calls through the loader's stock syscall stub and through
