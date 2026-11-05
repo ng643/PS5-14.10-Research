@@ -1,3 +1,18 @@
+## 2026-11-05 (twenty-first boot, cont.): the blockpool handle is a control descriptor, not a mappable one
+
+Probe 1230a settles the last ambiguity in route R1. `653 blockpool_open` returns a genuine descriptor:
+`fstat` succeeds on it and `close` succeeds on it. But the device behind it is control-only - `read`
+gives EBADF, `ioctl(FIONBIO)` gives ENOTTY - and `mmap` refuses it with EINVAL for every flags shape
+tried across two probes. So the "mmap the handle, get a type-0xb object" step cannot work on 14.10,
+and `654`/`655` therefore never see the mapping their `vm_map_lookup` + class-0xb test requires.
+
+The family now reads: 653 opens a control descriptor (slots are a small consumable table); 654 and
+655 look up an existing mapping and demand class 0xb; 673 moves pages inside such a mapping; and 657
+`blockpool_batch` is the only unread member - its body starts at 0x9A9F40 and copies 0x20 bytes from
+the caller at 0x9a9fff before dispatching. No userland path to a type-0xb mapping has been found, so
+547's physical-half branch at 0xaba5d4 remains unreachable.
+`docs/BLOCKPOOL_ROUTE_14_10.md` sections 7-8.
+
 ## 2026-11-05 (twenty-first boot, cont.): ucontext layout mapped; 635 is ENOSYS
 
 Probe 1229a put a marker in each of the fifteen GPR slots, created a child, suspended it with 632 and

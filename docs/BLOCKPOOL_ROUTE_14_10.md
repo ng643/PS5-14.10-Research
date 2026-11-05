@@ -118,3 +118,46 @@ the next places to read are `0x9ABCA0` (called at 0x9a76a5) and the page worker 
 **One more operational note worth carrying forward:** 1224a's very first call already failed with
 EMFILE while 1223d's returned -1 with a stale errno, so the exhaustion happened between 1223c and
 1223d. Anything that opens blockpool slots should be treated as consumable and counted.
+
+
+## 7. The handle is a descriptor, and mmap still refuses it
+
+Probe 1230a, same session:
+
+| call | result |
+|---|---|
+| `653(0,0)` | 0x18 (24) |
+| `189 fstat(handle, buf)` | **0** - the descriptor resolves |
+| `3 read(handle, 16)` | -1, EBADF 9 |
+| `54 ioctl(handle, FIONBIO)` | -1, ENOTTY 25 |
+| `477 mmap(0,0x10000,3,WHATEVER,fd=handle,0)` | EINVAL for flags 1, 2 and 0x1002 |
+| `6 close(handle)` | **0** |
+
+So `blockpool_open` really does install a descriptor in the process table - `fstat` and `close`
+both succeed on it - but the descriptor's device has no `d_mmap` that the Sony wrapper will use, or
+the wrapper refuses the object class before reaching it. `read` and `ioctl` are refused by the device
+itself (EBADF/ENOTTY), which is what a control-only cdev looks like.
+
+Consequences:
+
+* the "mmap the handle" step of route R1 is **wrong on 14.10**; the EINVAL is the wrapper's, not the
+  pager's, and no prot/flags combination changes it (eight shapes tried across 1223a and 1230a);
+* `654 blockpool_map` therefore never gets the mapping it needs, because the only way to create a
+  type-0xb mapping that the body accepts is through that same pager;
+* the remaining candidate for installing pages is `657 blockpool_batch` (narg 4), which is also the
+  only other member of the family with a user buffer. Its body starts at `0x9A9F40` and copies
+  **0x20 bytes** from the caller (`0x9a9fff mov edx,0x20 ; call 0x259280`) into `[rbp-0x58]` before
+  dispatching. That is the next thing to read, and it is the last unexplored member of the family.
+
+## 8. What is now established about the blockpool family
+
+| member | behaviour |
+|---|---|
+| 653 blockpool_open | opens a control descriptor, returns it; slots are a small consumable table |
+| 654 blockpool_map | `vm_map_lookup` on an existing VA; requires `entry->object->class == 0xb` |
+| 655 blockpool_unmap | same lookup, same class test |
+| 657 blockpool_batch | 4 args, copies 0x20 bytes from the caller, unread |
+| 673 blockpool_move | class-0xb consumer at `0x9ab2d7` |
+
+**No userland path to a type-0xb mapping has been found.** Until one is, 547's physical-half branch
+at `0xaba5d4` is unreachable, and with it the physical-address idea that made R1 attractive.
