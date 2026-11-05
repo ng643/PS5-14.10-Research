@@ -1,3 +1,39 @@
+## 2026-11-05 (twenty-eighth boot): 532's OOB read is gated four ways; sendfile and 565/566 decoded
+
+**The last unchecked caller-indexed kernel load is closed.** The indexed-load census
+(`docs/KERNEL_INDEXED_LOAD_CENSUS_14_10.md`) left exactly one site where a caller-supplied index
+reaches a kernel load with no bound: syscall 532, body `0xaf0040`, instruction
+`af06d9 movzx eax,word ptr [rax+rcx*2+4]`. Decoding the whole body shows four independent gates
+that all have to pass, and one of them cannot: the command must be `0x31` (14.10 measurement 87a
+reaches only `0x18-0x1E`, `0x20`, `0x2F`), the id must be present in a table at RVA `0x3CF7E38`
+that a 157-reference image sweep shows is written only by boot-time device attach and read by
+nothing else in any sysent body, three boot flags at `0x3AF7C00`/`0x3AF7C04`/`0x3AF7BC0` must carry
+specific values, and `proc+0xc81` must be non-zero to skip the clamp that pins the index to 2 -
+and `c81 == 0` is measured for every process this loader can create. `docs/SYS532_OOB_GATE_14_10.md`.
+
+**syscall 393 (sendfile) exists in the 13.60 table with a real handler.** Entry 393 has `narg = 7`
+and thunk `0x265b88` -> body `0x8340e0`, referenced once image-wide. The body is the standard
+FreeBSD marshalling: `offset < 0` -> EINVAL, a fixed 0x20-byte `copyin` of `sf_hdtr`, two
+`copyinuio` calls whose counts are bounded by that helper, an `fget` with a capability check, and
+a CFI-whitelisted file-type call with nine arguments (three on the stack). No caller-controlled
+copy length exists in it, so the syscall layer is not the surface. The 14.10 presence test
+(`probes/phase17_new_vectors/1241a_sendfile_presence.lua`) is written and **could not be run**:
+the loader was still wedged from the earlier `read()`-with-flags probe (connect accepted, 0 bytes,
+IDLE_TIMEOUT 30.03 s). `docs/SENDFILE_393_STATIC_14_10.md`.
+
+**565 and 566 write six caller-chosen qwords into a per-thread block.** 565 (`0x6034e0`) stores a
+masked value at `[[thread+0x3f8] + idx*8 + 0x160]` for idx 0..5; 566 (`0x603710`) stores an
+**unmasked** 64-bit value at `[[thread+0x3f8] + idx*8 + 0x190]` for idx -1..5, where -1 writes all
+six. Both resolve the thread through `0xb92420(tid, cur_pid)` so only same-process threads are
+reachable, and both then kick it through an IPI path. The block at `[thread+0x3f8]` is not
+identified; the debug-register reading was tested and rejected (the DR installer at `0xa07860`
+loads DR0-3 and DR6/DR7 from globals, not from this structure), and none of the 37 image-wide
+`[reg+0x190]`-load-then-deref sites is shown to take its base from it. A lead, not a primitive:
+the next step is to find the store that installs `[thread+0x3f8]`.
+`docs/SYS565_566_SIX_QWORD_ARRAYS_14_10.md`.
+
+**Loader state at the end of this entry: STUCK.** Every runtime probe from here needs a relaunch.
+
 ## 2026-11-05 (twenty-seventh boot): 637's store lands, and physhm was never a mapping
 
 **637 is an unprivileged kernel qword store, and the field it writes is a page limit.** The body at
