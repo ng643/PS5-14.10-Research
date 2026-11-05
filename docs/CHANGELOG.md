@@ -1,3 +1,21 @@
+## 2026-11-05 (twenty-first boot, cont.): 604, 656 and 560 close; 572 stays silent
+
+Four first-contact calls from the route list, plus one full-image reference scan. **604
+dl_get_metadata** returns EPERM for every shape, so the `ctx+0x58` tag is neither `...06` nor
+`...07` and that path is closed. **656 dynlib_get_info_for_libdbg** returns EPERM with the caller's
+0x160 sentinel unwritten, so both debug-unit predicates are false and 672/601-stage-two cannot open.
+**572 virtual_query** accepts (va, flags, out) for five flag words including the strict-mask pair
+and returns 0 with an all-zero buffer, which corroborates the old dead-end rather than overturning
+it. **560 debug_init** is a genuine write-once caller-chosen dword into 0x3543A5C (0x41 -> 0,
+0x41 -> 0, 0x42 -> EBUSY), and the decisive question was whether anything reads it: a full-image
+sweep of 5,343,048 instructions with rip-relative targets resolved finds exactly two references to
+that address, the read and the write inside 560 itself. The value is inert, exactly like 643's
+proc+0xa34 OR. Route R5 closes with a measurement.
+
+Also settled: blockpool handles are slots in a small consumable table (0x16 and 0x17 in the first
+two opens of a fresh session), and `mmap(477)` refuses all eight prot/flags shapes against one.
+`docs/ROUTES_FIRST_CONTACT_14_10.md`, `docs/BLOCKPOOL_ROUTE_14_10.md`.
+
 ## 2026-11-05 (twenty-first boot, cont.): the loader process persists, and blockpool slots are consumable
 
 Two operational facts that change how every future probe is run. First, the pid is **80 in every
