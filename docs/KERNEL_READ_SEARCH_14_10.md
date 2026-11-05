@@ -57,3 +57,46 @@ straight out of `[rsi+slot]` with no intervening copyin, mask or kernel load.
 A true candidate would be a *reader*: point the argument at a known kernel address
 (`0xFFFFFFFF85000000` this boot), have the handler dereference it, and recover the loaded value in
 whatever it returns or copies back.
+
+
+## 5. Triage of the ten deref candidates: all ten are kernel loads
+
+Each window was read instruction by instruction. Every "user register" in the heuristic was actually
+overwritten by a kernel load before the dereference:
+
+| syscall | site | what the base register really is |
+|---|---|---|
+| 592 / 659 | `0x34b7d4 mov r14,[rax+0x3e8]` | `rax = [rdi+8]` = `td_proc`, then a `proc` field at +0x3e8 |
+| 663 | `0x3b0247 mov rax,[rax]` | `lea rax,[rip+0x356c0de]` - a **global** (stack canary) |
+| 664 | `0x3b0ffd mov rax,[rax]` | same pattern, global canary |
+| 30 | `0x5310be mov rax,[rcx]` | `lea rcx,[rip+0x33eb255]` - global canary |
+| 629 physhm_open | `0x91c917 mov rcx,[rax+0x10]` | `rax` is a **list node** walked from a kernel list, not an argument |
+| 477 mmap | `0xab84bd mov r14,[rcx+0x40]` | `rcx = [rdi+0x460]` - a thread field |
+| 65 / 73 | `0xab8bfb mov rbx,[rcx+0x200]` | `rcx = [rdi+8]` = `td_proc`, then a `proc` field at +0x200 |
+| 404 | `0xc4279b mov rax,[rdx]` | `lea rdx,[rip+0x2cd9b75]` - global canary |
+
+**Zero survivors.** The heuristic is defeated by its own simplicity: any kernel load into the tracked
+register silently replaces the "user value", and the bodies that do unpack the argument array
+(`mov rax,[rsi]` … `jmp body`) hand the *value* over in rsi, where a later dereference usually goes
+through a procedure that reloads the register first.
+
+There is also a structural reason the shape is rare: the copy helpers wrap user accesses in
+`stac`/`clac`, so a raw dereference of a user-supplied pointer would fault under SMAP unless the
+handler had already opened a window. A real bug of this class would have to sit *inside* such a
+window, after a validated copy, and look like "re-read the pointer from the kernel struct and use
+it" - which is the double-fetch shape, not the direct-deref shape.
+
+## 6. Where that leaves the reader question
+
+Ranked by what is still unexplored rather than by what is easy:
+
+1. **Double-fetch inside the copy windows.** The census in `docs/COPYIN_SLEEP_CENSUS_14_10.md` found
+   only the aio family with copyin-then-sleep, but its extents were unreliable. A correct
+   function-extent pass plus a search for "copyin, then a *second* load from the same user pointer"
+   is the honest version of that census and has not been done.
+2. **OBJECT-sourced copyouts** (`docs/INTERPROC_COPYOUT_SOURCES.md`): sites that copy out of a kernel
+   object field. If any object field can be made to hold a kernel address we influence, the copyout
+   becomes a reader. None of them has been called with real arguments.
+3. **A pointer stored by one syscall and dereferenced by another.** The aio request holds a buffer
+   pointer; kqueue knote holds udata; sigevent holds a function. The question is which subsystem
+   dereferences a stored pointer *without* the mask.

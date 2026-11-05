@@ -1,3 +1,21 @@
+## 2026-11-05 (twenty-second boot, close): all ten deref candidates are kernel loads
+
+Triaged the ten sites from the heuristic one by one. Every one is a kernel load that overwrote the
+tracked register: `td_proc` fields at +0x3e8 and +0x200, thread fields at +0x460/+0x40, stack-canary
+globals behind `lea rip`, and a list node walked from a kernel list. **Zero survivors** - there is no
+handler in the 301 bodies that dereferences an argument value before validating it in the way the
+heuristic guessed.
+
+The structural explanation is SMAP: user accesses go through `stac`/`clac` inside the copy helpers,
+so a raw dereference of a caller-supplied pointer would fault unless the handler had already opened a
+window. The real shape would be a double fetch *inside* such a window, or a pointer stored by one
+syscall and dereferenced by another without the mask.
+
+Reader work therefore moves to three unexplored places, ranked in `docs/KERNEL_READ_SEARCH_14_10.md`
+§6: a correct function-extent pass over the copyin census looking for a second load from the same
+pointer; the OBJECT-sourced copyout set; and cross-syscall stored-pointer dereferences (aio buffer,
+kqueue udata, sigevent function).
+
 ## 2026-11-05 (twenty-second boot, cont.): reader hunt - base in hand, aio validated, kernel files absent
 
 The base is now a solved input: upstream's 1001a sweep gives 50 mapped / 462 absent in one connection
