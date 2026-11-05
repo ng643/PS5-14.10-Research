@@ -1,5 +1,13 @@
 # Changelog
 
+## The sysent tail is absent, measured; three more static closures (2026-11-05)
+
+- **The 14.10 sysent ends at 676 — measured, not inferred** (probe 1253a). With `SIG_IGN` for SIGSYS installed and verified by read-back, the control number 4095 returns `-1 / ENOSYS` with the process alive, and so do 705 `get_phys_page_size` (called with no arguments), 687 `pipe2`, 690 `ppoll`, 728 `virtual_query_by_pid`, 725 `mmap2` and 715 `ioreq`, each with valid non-faulting arguments. The earlier 677-707 kills were the default SIGSYS disposition, not faulting handlers. The table resolves 677 entries against the 13.60 capture's 735; `wait6`, `procctl`, `apr_*`, `get_phys_page_size`, `begin_app_mount` and the rest of the tail are unreachable. New doc `docs/SYSENT_TAIL_ABSENT_14_10.md`.
+- **Call-aware direct-deref census: 0 bodies** (`.local/deref_callee_saved.py`). Keeping taint across `call` for callee-saved registers, tracking `[rbp+disp]` spills and seeding `rsi = uap`, no body dereferences a user-derived value. The closure holds under the model it was accused of missing; plan rows P1 and P8 lose their justification.
+- **The blockpool installer hypothesis is refuted.** Decoding 0x9a6c00-0x9a7d10 and 0x9a7f00-0x9a9560 gives 68 call targets and **zero** calls to mmap's insert wrapper `0xab9f60` or its apply helper `0x2d2e50`. Blockpool builds a type-0xb `vm_object` and never inserts it into a map.
+- **R1 is dead twice over.** `547(va,out)` returns the non-PTE branch (`out+0x10` low dword 3 = RW), which measures `proc+0xc81 == 0` at runtime; `0xc81` has one writer image-wide, RVA `0x38f7bf`, inside process creation. And 379's `vm_map_protect` only searches the caller's vmspace, so no foreign PTE is reachable. R1 needed the PTE branch, so a type-0xb mapping would not have produced physical addresses.
+- **Four rows the plan still listed as open were already closed**: the 17 OBJECT-sourced copyout candidates (upstream, 2026-10-28, zero kernel pointers), CVE-2026-49412 IPV6_MSFILTER (measured clean, probe 50w), CVE-2026-45251 poll+close (60 raced closes, no corruption, probe 1234a), and socket-level SIOC\* (probe 1222a). New doc `docs/STATIC_CLOSURES_2026_11_05.md`.
+
 ## Three more routes closed: Spectre transmitters, 674 bounds, tag provenance (2026-11-05)
 
 - **No Spectre v1 transmitter exists in the 13.60 text.** Full linear capstone sweep (6,134,149 instructions) for indexed-load -> shift -> indexed-store on the same register found exactly one hit, and its second access is a load, not a store. The CPU route has no kernel-side gadget to build on.

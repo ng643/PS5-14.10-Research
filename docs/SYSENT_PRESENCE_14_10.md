@@ -183,6 +183,17 @@ arguments, one connection per number.
 | 708 | `fsc2h_ctrl` | ? | CONNECT_FAILED |
 <!-- presence-table:end -->
 
+## Superseded 2026-11-05: the tail is ABSENT, measured with SIG_IGN (probe 1253a)
+
+The "ends at 676" conclusion below was an inference from kills. It is now a measurement: with
+`SIG_IGN` installed for SIGSYS, the control number 4095 returns `-1 / ENOSYS` with the
+process alive, and so do 705 `get_phys_page_size` (no arguments at all), 687 `pipe2`,
+690 `ppoll`, 728 `virtual_query_by_pid`, 725 `mmap2` and 715 `ioreq`, each called with
+valid non-faulting arguments. A present handler with nothing to get wrong had to answer; none
+did. The 14.10 table resolves 677 entries (0-676) against the 13.60 capture's 735, and the
+58 numbers above 676 are out of the search space. See `docs/SYSENT_TAIL_ABSENT_14_10.md`.
+Capture: `results/phase17_new_vectors/1253a_sysent_tail_sigsys_20261105_210052.txt`.
+
 ## The table ends at 676 (2026-10-20)
 
 The sweep of 677-734 killed the process on all 31 numbers it reached (677-707) before the
