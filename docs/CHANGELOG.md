@@ -21,15 +21,19 @@ copy length exists in it, so the syscall layer is not the surface. The 14.10 pre
 the loader was still wedged from the earlier `read()`-with-flags probe (connect accepted, 0 bytes,
 IDLE_TIMEOUT 30.03 s). `docs/SENDFILE_393_STATIC_14_10.md`.
 
-**565 and 566 write six caller-chosen qwords into a per-thread block.** 565 (`0x6034e0`) stores a
+**565 and 566 are the OPMC setters, and the six qwords are PMC slots.** 565 (`0x6034e0`) stores a
 masked value at `[[thread+0x3f8] + idx*8 + 0x160]` for idx 0..5; 566 (`0x603710`) stores an
 **unmasked** 64-bit value at `[[thread+0x3f8] + idx*8 + 0x190]` for idx -1..5, where -1 writes all
 six. Both resolve the thread through `0xb92420(tid, cur_pid)` so only same-process threads are
-reachable, and both then kick it through an IPI path. The block at `[thread+0x3f8]` is not
-identified; the debug-register reading was tested and rejected (the DR installer at `0xa07860`
-loads DR0-3 and DR6/DR7 from globals, not from this structure), and none of the 37 image-wide
-`[reg+0x190]`-load-then-deref sites is shown to take its base from it. A lead, not a primitive:
-the next step is to find the store that installs `[thread+0x3f8]`.
+reachable, and both then kick it through an IPI path. An earlier revision of this paragraph left the
+block unidentified; the 13.60 name table settles it - 563 `opmc_enable`, 564 `opmc_disable`, 565
+`opmc_set_ctl`, 566 `opmc_set_ctr`, 567 `opmc_get_ctr`, 625 `opmc_set_hw`, 626 `opmc_get_hw` - so the
+two six-entry arrays are per-thread performance-counter control words and counter values, the mask on
+the control words is the reserved/counter-select field set, and the IPI restarts the counters. The
+debug-register reading was tested and rejected on the way (the DR installer at `0xa07860` loads DR0-3
+and DR6/DR7 from globals, not from this structure). Bound is 6 before the store, so no OOB; values
+are never read back, and 177a-177d already showed 567 rejects twelve layouts, so the family is a stub
+with no read side. Closed as a configuration write, not a primitive.
 `docs/SYS565_566_SIX_QWORD_ARRAYS_14_10.md`.
 
 **Loader state at the end of this entry: STUCK.** Every runtime probe from here needs a relaunch.
