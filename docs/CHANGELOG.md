@@ -1,3 +1,26 @@
+## 2026-11-05 (nineteenth boot, cont.): eboot is closed, libc's import table is mapped, and argument 4 has a one-syscall test
+
+The whole 0x494000-byte eboot .text is now dumped and reassembled (`.local/dumps/eboot_full.bin`,
+full coverage). At real instruction boundaries it contains 14 `mov r10, rcx`, 0 `pop r10`, and
+**0 `syscall`** — every `0f 05` byte in the image is a displacement or an immediate, including the
+convincing `0F 05 C1 E6 10 09 CE` at 0x1017E2 and the `0x93CBD` one. A forward walk from each of the
+14 sites, stopping at the first memory operand, call, branch or r10 clobber, reaches a `ret` zero
+times. eboot is therefore closed for argument 4 by construction, not by luck.
+
+libc is the opposite: readable, and its libkernel import slots sit in the gap
+`[libc+0x114000, libc+0x118000)`. The slot at +0x1179A8 held 0x832BDCB50, which pins
+`libkernel_base = 0x832BDC000` and re-confirms stub offset 0xB50 from a second direction. That
+window holds 94 distinct libkernel pointers, and libc reaches them through 94 `jmp [rip+disp]` PLT
+thunks; walking the `call rel32` sites that hit each thunk gives call counts and whether an rcx write
+precedes the call. Four stubs are called with a 4th argument at every site (0x15830 4/4, 0x15900 3/3,
+0x18DF0 3/3, 0x13E60 2/2); 0x3B0 scores 2/1 but 1213a already proved it has no `mov r10, rcx`, so the
+heuristic is advisory only.
+
+The aio-based argument-4 test was the reason the stub walk outlived its client (1216a, LOADER-STUCK).
+The 13.60 body permits a cheaper one: with `count = 1` and `id = 0`, EINVAL 22 can only come from the
+mode bound, while a mode that actually arrives as 0 reaches the id loop and writes 0x80020003 into the
+status slot. One syscall, no descriptors, no requests: probe 1216b walks 0x3B0..0x10F0 at 0x20 stride.
+
 ## 2026-11-05 (nineteenth boot): rcx arrives, and the import table is not all stubs
 
 Probe 1213b settles the ambiguity 1213a left open. Three `mov rax, rcx ; ret` gadgets in eboot

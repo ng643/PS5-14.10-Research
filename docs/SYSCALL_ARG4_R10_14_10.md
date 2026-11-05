@@ -422,3 +422,97 @@ The two live options are therefore:
    loads each import slot, and read off whether `rcx` is set before that call: a callee reached with
    four or more argument registers is a >=4-argument stub by construction, so `+7` is the trampoline.
    This turns a guess into an inference and needs no risky execution at all.
+
+
+## 12. The whole eboot image, and a cheap argument-4 discriminator
+
+Measured 2026-11-05 (nineteenth boot). Probes 1213c, 1213d, 1214a-c, 1215a, 1215b, 1216a.
+
+### 12.1 eboot has no argument-4 route at instruction level
+
+The full 0x494000-byte eboot .text was read back with 0x1000-byte `read_buffer` chunks and
+reassembled offline into `.local/dumps/eboot_full.bin` (4,800,512 bytes, complete coverage).
+
+Census by linear sweep with capstone at real instruction boundaries:
+
+| shape | count |
+|---|---|
+| `mov r10, rcx` | **14** |
+| `mov r10, rdx` | 17 |
+| `mov r10, rbx` / `r12` / `r14` / `r8` / `r9` / `rsi` / `r13` / `rax` / `r11` / `r15` / `rdi` | 16 / 20 / 16 / 14 / 13 / 14 / 11 / 10 / 10 / 9 / 6 |
+| `pop r10` | **0** |
+| `syscall` | **0** |
+
+The zero `syscall` count is the important one: every `0f 05` seen by a raw byte scan is a
+`rip`-relative displacement or an immediate, never an instruction. The one at `eboot+0x1017E2`
+looks convincing in a byte dump (`0F 05 C1 E6 10 09 CE`) but capstone finds no instruction
+boundary at that byte in the surrounding code; the same is true of the `0x2BBC23` and `0x12403C`
+hits. `0x93CBD` is the displacement of `mov qword ptr [rip + 0x8e050f], rax`.
+
+A forward walk from each of the 14 `mov r10, rcx` instructions, stopping at the first memory
+operand, call, branch or `r10` clobber, reaches a `ret` **zero** times. The closest shapes:
+
+| site | what follows |
+|---|---|
+| `0xD728A` | `neg r10 ; test rdi,rdi ; cmovs rdx,rsi ; cmovns r10,rcx ; xor ecx,ecx ; jmp` (strtol loop) |
+| `0x1862C6` | `mov r11,r8 ; mov rdi,r9 ; jmp +0x479` (inside an AVX-512 memcpy) |
+| `0x1D3A0A` | `jmp -0x4F` (loop head of a memset-like function) |
+| `0x2EDF77` | `mov ecx,[rdx+0xC] ; ... ; push r11 ; push r10 ; call ; add rsp,0x10 ; pop rbp ; ret` |
+| `0x10AFCF` | `mov r13d,edx ; test edx,edx ; mov rax,[rdi]` (first memory operand kills it) |
+
+Conclusion: eboot is a dead end for argument 4, not by bad luck but because it contains no
+`syscall` instruction at all. The 4.6 MB search is now complete and closed.
+
+### 12.2 libc's import table, and what libc actually calls
+
+libc module info: text `libc_base + 0`, `{type 5, size 0x114000}`; data `libc_base + 0x118000`,
+`{type 3, size 0x8000}`. The libkernel import slots are **not** in either segment: they sit in the
+0x4000 window `[libc_base + 0x114000, libc_base + 0x118000)`. `libc_addrofs.gettimeofday_import`
+is `libc_base + 0x1179A8` in that window, and its contents were `0x832BDCB50` in the dump run,
+which pins `libkernel_base = 0x832BDC000` and confirms the stub offset 0xB50 again.
+
+That window holds **94 distinct libkernel pointers**. libc reaches them through 94 PLT thunks of the
+form `jmp qword ptr [rip + disp]` (107 such thunks exist; 94 resolve to a libkernel slot). Walking
+the `call rel32` sites that target each thunk gives, per stub, how often it is called and whether an
+`rcx`/ `ecx` write precedes the call:
+
+| lk offset | calls | rcx set | note |
+|---|---|---|---|
+| 0x15830 | 4 | **4** | every call site prepares a 4th argument |
+| 0x15900 | 3 | **3** | same |
+| 0x18DF0 | 3 | **3** | same |
+| 0x13E60 | 2 | **2** | same |
+| 0x2E10 | 63 | 24 | printf/format family, almost certainly a real function |
+| 0x3B0 | 2 | 1 | **contradicted**: 1213a proved 0x3B0 has no `mov r10,rcx` |
+
+The 0x3B0 row is why this table is advisory and not decisive: a single stray `mov ecx` in the
+13-instruction window can fake a 4th argument. The four rows with `rcx set == calls` are the only
+serious candidates, and each still has to be verified by execution.
+
+### 12.3 A cheap, unambiguous argument-4 test
+
+The aio-based test needs a socketpair and two pending requests per candidate, which is why 1216a
+was slow enough to outlive its client. The 13.60 body gives a cheaper one:
+
+* EINVAL 22 is produced at exactly two instructions, `0x3b03a3` (count bound) and `0x3b041c`
+  (mode >= 3). Count 1 passes the count bound.
+* therefore **EINVAL means the mode that arrived was >= 3**, i.e. a stale r10, i.e. no trampoline.
+* if the mode that arrives is 0, the bound is passed and the id loop runs. With `id = 0` the lookup
+  fails at `0x3b06c0` and writes `0x80020003` into the status slot, then returns.
+
+So `663(ids = {0}, count = 1, out, mode = 0, timeout = 0)` through `stub + 7` distinguishes the two
+cases with one syscall, no descriptors and no request objects:
+
+| out[0] | errno | meaning |
+|---|---|---|
+| 0xAAAAAAAA (untouched) | 22 | two-or-three-argument stub |
+| 0x80020003 | not 22 | **argument 4 arrived — trampoline found** |
+
+### 12.4 Status
+
+| route | state |
+|---|---|
+| eboot `mov r10, rcx` shim | **CLOSED** - 4.6 MB swept, 14 sites, none reaches a ret, no syscall instruction exists |
+| libc PLT analysis | DONE - 94 stubs characterised, 4 candidates with `rcx set == calls` (0x15830, 0x15900, 0x18DF0, 0x13E60) |
+| stub-table walk | probe 1216b written (0x3B0..0x10F0 at 0x20 stride, one syscall per slot); 1216a was killed mid-walk by its own client deadline |
+| argument 4 through a libkernel stub | still the only live route |
