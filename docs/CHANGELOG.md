@@ -1,3 +1,28 @@
+## 2026-11-05 (twentieth boot): argument 4 works, and it proves the aio bug is patched
+
+The trampoline is real and it is libkernel+0x3B0+7. 1216b's cheap test was ambiguous — a stale r10
+below 3 produces the same 0x80020003 as a delivered mode 0 — so 1218a settled it differentially:
+through `lk+0x3B7`, mode 0 writes 0x80020003 into the status slot while mode 4 leaves it untouched
+and returns EINVAL, on two adjacent calls that share one chain. Argument 4 (r10) is now under
+control for the first time.
+
+The first thing it closed is the aio route. Through the trampoline, `aio_multi_wait` runs mode 0
+with count 1 but returns **EINVAL with the status array untouched** for count 2, 3 and 0x80; modes 1
+and 2 work at any count. The rejection survives a NULL id pointer (EINVAL, not EFAULT) and a NULL
+timeout, so it happens before the id list is read. The 13.60 body only has two EINVAL sites and
+count 2 passes the count bound, so 14.10 adds an explicit `mode == 0 && count > 1` check — exactly
+the Bagagwa/Relapse shape. **The aio_multi_wait use-after-free is patched on 14.10**, and the
+mode-0 dangling-node route is closed for good. Also a correction: 1211a's EINVAL was this guard,
+not a stale r10.
+
+Argument 4's first live use is 379 mtypeprotect. With prot finally delivered, the returns are
+prot-dependent for the first time: 0x00/0x01/0x10/0x40/0x100 give EOPNOTSUPP 45, 0x02..0x07 and
+0x200 give EACCES 13, 0x08 gives EINVAL (the loose-table bit 3 reject the statics predict), and
+0x300 killed the payload on a type-0x33 direct-memory mapping. 0x200 is the plausible PS5 execute
+bit — the body maps bit 9 onto FreeBSD's PROT_EXEC via `((prot>>1)&0x141)|prot` — and it is the one
+accepted-by-the-mask value that still dies inside vm_map_protect. Next: decode 379's return-code
+table from kernel_data.bin, then sweep prot on an anonymous mapping instead of a device one.
+
 ## 2026-11-05 (nineteenth boot, cont.): eboot is closed, libc's import table is mapped, and argument 4 has a one-syscall test
 
 The whole 0x494000-byte eboot .text is now dumped and reassembled (`.local/dumps/eboot_full.bin`,
