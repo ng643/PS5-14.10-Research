@@ -132,3 +132,35 @@ unavailable to a game process.
 Runtime facts quoted from probe 87a: results/phase17_new_vectors/87a_sys532_gpu_dispatch_nopriv_20261022_120531.txt
 and the 864a matrix: results/phase17_new_vectors/864a_sys532_matrix_20261022_222612.txt
 (0x800D0203 = 2148336131 at cmd 0x18-0x1D with page pointers, -1 with zeros).
+
+## 6. Runtime: command 0x31 is reachable but refused (probe 1242a)
+
+Probe `probes/phase17_new_vectors/1242a_sys532_cmd31_gate.lua`
+(`results/phase17_new_vectors/1242a_sys532_cmd31_gate_20261105_135459.txt`) calls
+`532(cmd, selector, outbuf, &index, 0)` and reads the status dword the handler writes into `outbuf`.
+Both control calls prove the argument shape reaches the body:
+
+| call | ret | outbuf[0] |
+|---|---|---|
+| cmd 0x18, sel 0 | 0 | `0x800D0203` |
+| cmd 0x20, sel 0 | 0 | `0x800D0208` |
+| cmd 0x31, sel 0x10..0x16 | -1 | untouched (`0xCDCDCDCD`) |
+| cmd 0x31, sel 0x0 / 0x17 | -1 | untouched |
+| cmd 0x32 | -1 | untouched |
+
+`errno` is 1 `EPERM` for every 0x31 and 0x32 call, with the buffer untouched, and the refusal comes
+before the selector bound is applied (selector 0 is refused the same way as 0x10). That matches the
+body: commands outside `{0x18..0x1E, 0x20, 0x2F}` jump to `0xaf011c`, which does
+`mov rdi,[rbx+0x140] ; call 0xafc9080 ; cmp eax,1` and returns EPERM unless the helper answers 1.
+
+A second gate sits behind it, from the privilege census: an exact-match comparison of the credential
+role tag against `0x4800000000010003` at `0xaf0123` (helper family 0x609080), plus privilege number
+682 = `0x2aa` at `0xaf00e6` on the same path (`docs/PRIV_CHECK_CENSUS_14_10.md`). The branch needs a
+capability tag our credential does not carry, in addition to the four static gates. The unchecked
+indexed load therefore has **five** gates, and the runtime settles the one static analysis could not:
+the 0x31 branch is reachable and it is refused, not unreachable.
+
+Practical value: this is now a cheap, non-lethal capability oracle. `-1` with `EPERM` means "no tag";
+`0` with `0x800D0203` in the buffer means "tag held, id-table miss"; any other `0` status means the
+gated path executed. Nothing else in the reachable surface reports credential state that directly.
+

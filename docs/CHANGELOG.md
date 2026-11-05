@@ -1,3 +1,43 @@
+## 2026-11-05 (twenty-eighth boot, continued): sendfile works, 532 cmd 0x31 is capability-refused,
+## uninitialised-copyout census comes up empty
+
+**393 sendfile is present and it transfers.** With the loader relaunched, probe 1241a opened
+`/app0/eboot.bin` (fd 22), made a socketpair (23/24) and called
+`393(fd=22, s=24, off=0, nbytes=0x100, hdtr=NULL, sbytes=&out)`: `rv=0`, `sbytes=256`, and 256 bytes
+arrived on the peer. This is the first live confirmation of the slot on 14.10 and it retires the
+absence assumption behind one long-standing offline-suite failure. The probe then died in its own
+formatter (uint64 from `memory.read_byte` passed to `format`) - a probe defect, fixed by coercion,
+not a kernel result. The syscall layer stays uninteresting (`copyinuio` at `0x7828a0` caps `iovcnt`
+at 0x400, allocates `cnt*16+0x30`, copies exactly `cnt*16`), so any value in 393 lives in the socket
+`fo_sendfile` path. `docs/SENDFILE_393_STATIC_14_10.md`.
+
+**532 command 0x31 is reachable and refused.** Probe 1242a sent `532(cmd, sel, buf, &index, 0)` with
+five arguments. Controls behave (`cmd 0x18` -> `outbuf[0]=0x800D0203`, `cmd 0x20` -> `0x800D0208`,
+both `ret 0`), while `cmd 0x31` for every selector tested, plus `cmd 0x32`, returns `-1` with
+`errno 1 EPERM` and the buffer untouched - the refusal precedes the selector bound. That matches
+`0xaf011c mov rdi,[rbx+0x140] ; call 0xafc9080 ; cmp eax,1`, and the privilege census adds a second
+gate on the same path: an exact-match role-tag test against `0x4800000000010003` at `0xaf0123`
+(priv 682 = `0x2aa` at `0xaf00e6`). The unbounded indexed load therefore has five gates, and this
+call is now a cheap, non-lethal capability oracle: EPERM means "no tag", `0` with `0x800D0203` means
+"tag held, id table missed". `docs/SYS532_OOB_GATE_14_10.md` section 6.
+
+**Privilege-gate census: 99 gates, all checked, no accidental bug.**
+`docs/PRIV_CHECK_CENSUS_14_10.md` walks all 300 non-nosys bodies: 46 `priv_check`/`priv_check_cred`
+sites and 53 capability sites, every one of them on the path before the operation it guards, zero
+ignored, zero late, zero raw-bit. The survivors it hands forward are same-object shortcuts rather
+than defects: the `0xb2bb00` test that returns ALLOW when `[proc+0x3e8]` is NULL (used by 547, 572,
+591, 608, 674), `671` selector `-1` reading `[proc+0x5c0]` without the bit-62 test, and the fact that
+`532`'s opcodes `0x18-0x1f`/`0x20`/`0x2f` skip both of its gates and jump straight to `0xaf02a6`.
+
+**No uninitialised-stack copyout found in 450 sites.** `docs/UNINIT_COPYOUT_SCAN_14_10.md` censuses
+every stack-source copyout with an immediate length (450 of 539 copyout sites) for a buffer that is
+only partly written. Zero sites have a `bzero` shorter than the length; 56 flagged by a store-coverage
+heuristic, 30 of those cleared by a full-length `bzero`/`memset` found on an aligned re-scan, and every
+hand-inspected survivor (0x4f71e0, 0x73a7b4, 0x73b144, 0xab81fa, 0x7016c3) is cleared by a helper the
+scanner did not model (0x258ff0 bzero, 0x8ae5af30 memset variant). The lesson is in the document: a
+coverage model that only sees `[rbp-disp]` stores in the same function cannot distinguish "unfilled"
+from "filled by a callee", and the dynamic two-run diff described in section 4 is the way to settle it.
+
 ## 2026-11-05 (twenty-eighth boot): 532's OOB read is gated four ways; sendfile and 565/566 decoded
 
 **The last unchecked caller-indexed kernel load is closed.** The indexed-load census

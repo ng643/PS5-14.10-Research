@@ -1,4 +1,4 @@
-# syscall 393 (sendfile): static decode on 13.60, presence unmeasured on 14.10
+# syscall 393 (sendfile): present and working on 14.10; static decode of the 13.60 body
 
 ## Why this was opened
 
@@ -71,13 +71,13 @@ The 7th argument is worth a note for anyone running this: it cannot be set from 
 the loader's stub only fills the six SysV argument registers and the kernel takes arg 6 from the
 user stack. FreeBSD rejects unknown `SF_*` bits with EINVAL, so the garbage value cannot do damage.
 
-## Measurement status
+## Measurement status: MEASURED, present and working
 
-Probe `probes/phase17_new_vectors/1241a_sendfile_presence.lua` is written and NOT RUN. The loader
-was wedged when it was sent: TCP connect succeeded, 0 bytes were returned, IDLE_TIMEOUT at 30.03 s.
-That is the LOADER-STUCK condition left by the earlier `read()`-with-flags probe. A relaunch is
-required before the presence test can be measured. The probe prints a marker immediately before the
-call, so a SIGSYS death from an absent slot is visible as "marker printed, nothing after it".
+Probe `probes/phase17_new_vectors/1241a_sendfile_presence.lua` now has a result: the slot exists,
+`rv = 0`, `sbytes = 256`, and 256 bytes of `eboot.bin` arrived on the peer socket. See the runtime
+section at the end of this document. The first attempt at this probe was sent while the loader was
+still wedged from the earlier `read()`-with-flags probe (connect accepted, 0 bytes, IDLE_TIMEOUT
+30.03 s), which is why the capability was recorded as untested for a while.
 
 ## Reproduce
 
@@ -85,3 +85,41 @@ call, so a SIGSYS death from an absent slot is visible as "marker printed, nothi
 
 reads `docs/dumps_13.60/kernel_text.bin` at file offset 0x8340e0 (offset == RVA in this capture)
 and prints the body with copyin/copyout/bzero/memcpy call targets annotated.
+
+## 14.10 runtime result: 393 is present and it works
+
+Probe `probes/phase17_new_vectors/1241a_sendfile_presence.lua`, run after the loader was relaunched
+(result `results/phase17_new_vectors/1241a_sendfile_presence_20261105_135444.txt`):
+
+    [id] pid=101
+    [setup] open(/app0/eboot.bin) -> 22
+    [setup] socketpair rv=0 fds=23,24
+    [call] 393(fd=22, s=24, off=0, nbytes=0x100, hdtr=NULL, sbytes=&out)
+    [call] rv=0 sbytes=256
+    [recv] n=256
+
+So the slot exists on 14.10, it is callable with six arguments, and it performed a real transfer:
+256 bytes of `eboot.bin` arrived on the socketpair peer. That settles the question the probe was
+written for, and it retires the assumption in the older triage note that `sendfile` is absent from
+this image (the pytest corpus-absence test was already signalling that the absence claim was wrong).
+
+The probe then died in its own formatting code (`bad argument #2 to format` on a uint64 returned by
+`memory.read_byte`), which is a probe defect, not a kernel result; the fix (wrap in the numeric
+coercion helper) is in the committed probe.
+
+What this changes: the syscall layer is the part that is safe (fixed 0x20 `sf_hdtr` copyin,
+`copyinuio` bounded at 0x400 iovecs - see below), so any value in 393 now lies in the socket
+`fo_sendfile` implementation it hands off to, which is ordinary FreeBSD socket-buffer code. That is a
+new live path on a firmware where most of the interesting ones are gated, and it is worth a pass
+before anything else in the socket family.
+
+### copyinuio is bounded (static, 0x7828a0)
+
+    mov eax,0x16 ; mov qword [rdx],0 ; cmp esi,0x400 ; ja EINVAL
+    shl r12d,4 ; lea rax,[r12+0x30] ; call 0x8b5c8b50(malloc)
+    copyin(iov, buf+0x30, iovcnt*16)
+    loop: mov r12,[r15] ; call 0x8aeabfb0 ; cmp r12,rax ; ja EINVAL ; add [r14+0x18],[r15]
+
+iovcnt is capped at 0x400 before the multiply, the allocation is `cnt*16+0x30`, the copyin is exactly
+`cnt*16`, and each iov_base is checked against a limit from 0x8aeabfb0. No overflow, no uninitialised
+slot in the uio it builds.
