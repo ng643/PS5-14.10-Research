@@ -133,12 +133,11 @@ Runtime facts quoted from probe 87a: results/phase17_new_vectors/87a_sys532_gpu_
 and the 864a matrix: results/phase17_new_vectors/864a_sys532_matrix_20261022_222612.txt
 (0x800D0203 = 2148336131 at cmd 0x18-0x1D with page pointers, -1 with zeros).
 
-## 6. Runtime: command 0x31 is reachable but refused (probe 1242a)
+## 6. Runtime: command 0x31 is refused one gate earlier than the capability test (probe 1242a)
 
 Probe `probes/phase17_new_vectors/1242a_sys532_cmd31_gate.lua`
 (`results/phase17_new_vectors/1242a_sys532_cmd31_gate_20261105_135459.txt`) calls
-`532(cmd, selector, outbuf, &index, 0)` and reads the status dword the handler writes into `outbuf`.
-Both control calls prove the argument shape reaches the body:
+`532(cmd, selector, outbuf, &index, 0)` and reads the status dword the handler writes into `outbuf`:
 
 | call | ret | outbuf[0] |
 |---|---|---|
@@ -148,19 +147,40 @@ Both control calls prove the argument shape reaches the body:
 | cmd 0x31, sel 0x0 / 0x17 | -1 | untouched |
 | cmd 0x32 | -1 | untouched |
 
-`errno` is 1 `EPERM` for every 0x31 and 0x32 call, with the buffer untouched, and the refusal comes
-before the selector bound is applied (selector 0 is refused the same way as 0x10). That matches the
-body: commands outside `{0x18..0x1E, 0x20, 0x2F}` jump to `0xaf011c`, which does
-`mov rdi,[rbx+0x140] ; call 0xafc9080 ; cmp eax,1` and returns EPERM unless the helper answers 1.
+`errno` is 1 `EPERM` for every 0x31 and 0x32 call, and the refusal comes before the selector bound
+is applied. An earlier revision of this section read that EPERM as the capability test refusing the
+call. That was wrong about which branch is which, and the correction matters because it changes what
+the measurement proves.
 
-A second gate sits behind it, from the privilege census: an exact-match comparison of the credential
-role tag against `0x4800000000010003` at `0xaf0123` (helper family 0x609080), plus privilege number
-682 = `0x2aa` at `0xaf00e6` on the same path (`docs/PRIV_CHECK_CENSUS_14_10.md`). The branch needs a
-capability tag our credential does not carry, in addition to the four static gates. The unchecked
-indexed load therefore has **five** gates, and the runtime settles the one static analysis could not:
-the 0x31 branch is reachable and it is refused, not unreachable.
+**Branch sense.** `0xaf00e6` calls `priv_check(0x2aa)`; `0xaf00f2 test eax,eax` and
+`0xaf00f4 je 0xaf011c` send `eax == 0` - priv_check **success** - to `0xaf011c`, which is the body of
+the handler. The refusal path is the fallthrough at `0xaf00f6`: a command whitelist (`0x18..0x1E`,
+`0x20`, `0x2F` -> `0xaf02a6`, everything else -> `0xaf1223` with `eax = 1`). The capability test at
+`0xaf0123` is inside the granted path, and when it fails it does `jne 0xaf02a6`, which builds a
+`0x800D0202` status word and returns **0** - it never produces EPERM.
 
-Practical value: this is now a cheap, non-lethal capability oracle. `-1` with `EPERM` means "no tag";
-`0` with `0x800D0203` in the buffer means "tag held, id-table miss"; any other `0` status means the
-gated path executed. Nothing else in the reachable surface reports credential state that directly.
+So 1242a proves that `priv_check(0x2aa)` was refused for this process, and that the capability test
+never ran for `cmd 0x31`. The two control calls reached the same status builders through the
+refusal path's whitelist, so they prove the argument shape and the routing, not a tag pass. 532 is
+closed at the privilege gate for a uid-1 game process, and a matching role tag would not open it.
 
+**The tag this body actually tests** is `0x4800000000010003`, compared as a full 64-bit equality
+against `cred+0x58` by the 25-byte helper at RVA `0x609080`:
+
+    609080  push rbp / mov rbp,rsp
+    609084  movabs rcx,0x4800000000010003
+    60908e  xor eax,eax / 609090 cmp qword [rdi+0x58],rcx / 609094 sete al
+    609097  pop rbp / ret
+
+No mask, no shift, no second field, no fail-open (a NULL cred faults rather than returning 1). 532's
+extent `0xaf0040-0xaf133e` calls no other capability helper. `0x4800000000020002` belongs to
+0x6091d0, whose three callers (0x69a180, 0xada436, 0xc36e1f) 532 does not reach; the pairing in
+`docs/CAPABILITY_CONTEXT_14_10.md` was wrong on that point and is fixed there.
+
+**What our credential does carry** (from the 587 record, `docs/PRIV_CHECK_CENSUS_14_10.md` section 4a):
+`cred+0x60 & 0x7000000000000000 == 0x2000000000000000`, i.e. bit 61 set, bits 62 and 60 clear. That is
+the level-2 capability bit. `cred+0x58` is unknown, not zero: 587 copies it only on its granted path,
+and the 55e capture (`ret 0`, only `+0x0C = 0x20000000`) is the denied stub.
+
+**Practical value.** `532(cmd=0x31)` is a cheap non-lethal probe of privilege number `0x2aa` for this
+process - EPERM is a definite "refused at the privilege gate", and it says nothing about the tag.

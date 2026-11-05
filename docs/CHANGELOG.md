@@ -11,15 +11,19 @@ not a kernel result. The syscall layer stays uninteresting (`copyinuio` at `0x78
 at 0x400, allocates `cnt*16+0x30`, copies exactly `cnt*16`), so any value in 393 lives in the socket
 `fo_sendfile` path. `docs/SENDFILE_393_STATIC_14_10.md`.
 
-**532 command 0x31 is reachable and refused.** Probe 1242a sent `532(cmd, sel, buf, &index, 0)` with
-five arguments. Controls behave (`cmd 0x18` -> `outbuf[0]=0x800D0203`, `cmd 0x20` -> `0x800D0208`,
-both `ret 0`), while `cmd 0x31` for every selector tested, plus `cmd 0x32`, returns `-1` with
-`errno 1 EPERM` and the buffer untouched - the refusal precedes the selector bound. That matches
-`0xaf011c mov rdi,[rbx+0x140] ; call 0xafc9080 ; cmp eax,1`, and the privilege census adds a second
-gate on the same path: an exact-match role-tag test against `0x4800000000010003` at `0xaf0123`
-(priv 682 = `0x2aa` at `0xaf00e6`). The unbounded indexed load therefore has five gates, and this
-call is now a cheap, non-lethal capability oracle: EPERM means "no tag", `0` with `0x800D0203` means
-"tag held, id table missed". `docs/SYS532_OOB_GATE_14_10.md` section 6.
+**532 command 0x31 is refused at the privilege gate, one step before the capability test.** Probe
+1242a sent `532(cmd, sel, buf, &index, 0)` with five arguments. Controls route (`cmd 0x18` ->
+`outbuf[0]=0x800D0203`, `cmd 0x20` -> `0x800D0208`, both `ret 0`), while `cmd 0x31` for every selector
+tested, plus `cmd 0x32`, returns `-1` with `errno 1 EPERM` and the buffer untouched, refusal before
+the selector bound. The first reading of that result - "the capability test refused it" - had the
+branch sense backwards: `0xaf00f2 test eax,eax ; 0xaf00f4 je 0xaf011c` sends `eax == 0`, i.e.
+priv_check **success**, into the body, so EPERM can only come from the fallthrough whitelist at
+`0xaf00f6` after `priv_check(0x2aa)` is refused. The capability test at `0xaf0123` is inside the
+granted path and its failure branch builds a `0x800D0202` status and returns 0, never EPERM. The tag
+it tests is an exact 64-bit compare of `cred+0x58` against `0x4800000000010003` by the 25-byte helper
+`0x609080` - not `0x4800000000020002`, which belongs to `0x6091d0` and is unreachable from 532. So
+532 is closed at the privilege gate for a uid-1 process, and `532(cmd=0x31)` is a cheap probe of
+privilege number `0x2aa`, not of the tag. `docs/SYS532_OOB_GATE_14_10.md` section 6.
 
 **Privilege-gate census: 99 gates, all checked, no accidental bug.**
 `docs/PRIV_CHECK_CENSUS_14_10.md` walks all 300 non-nosys bodies: 46 `priv_check`/`priv_check_cred`

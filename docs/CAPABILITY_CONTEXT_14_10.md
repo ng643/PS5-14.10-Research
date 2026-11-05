@@ -198,8 +198,15 @@ and `0x68feb9` shows how the two bits combine into a level:
 So the context carries a 2-bit level plus a set of named tags, and **bit 62 alone gates 508 call
 sites** - by far the most valuable single bit in the image, and 636 proves we do not have it. The
 tags (`0x4800000000000003/06/07/15/1e/1f/21/22/36/3b/3f/100c`, `0x4800000010000003/05/09/0f/10`,
-`0x4800000000020002`) are consumed by sys 612, 649, 594, 532, 604, 535, 536, 455, 466, 482, 346,
+`0x4800000000020002`) are consumed by sys 612, 649, 594, 604, 535, 536, 455, 466, 482, 346,
 253, 232 and 670.
+
+Correction (2026-11-05): **532 does not belong in that list.** Its extent `0xaf0040-0xaf133e` calls
+exactly one capability helper, `0xaf0123 -> 0x609080`, and that helper compares `cred+0x58` against
+`0x4800000000010003` (25 bytes, one basic block, exact 64-bit equality, no mask and no fail-open).
+`0x4800000000020002` is the immediate of `0x6091d0`, whose callers - `0x69a180`, `0xada436`,
+`0xc36e1f` - 532 never reaches. The pairing was produced by matching the constant to the wrong
+helper in a cluster listing and is withdrawn.
 
 The decisive question is whether anything reachable *writes* `[ctx+0x58]` or `[ctx+0x60]`.
 Whole-image scan: 1,551 instructions load a pointer from `[reg+0x140]`; **zero** of them are
