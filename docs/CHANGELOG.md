@@ -1,3 +1,17 @@
+## 2026-11-05 (twenty-first boot, cont.): dmem container refused, thr_self works, 634 wants a shaped context
+
+`586 dmem_container` answers its query form (rv 1) but refuses every index with EPERM: the
+`priv_check(0x2ad)` at 0x3ce18f runs before the `proc+0x5c4` write, and `559` carries the same check,
+so routes R2 and R3 close together. `628 mmap_dmem` without a container gives EBUSY for prot 3/0 and
+EINVAL for 0x33/0x1002 - a handler past its argument checks with nothing selected.
+
+`thr_self(432)` takes a pointer and works: tid 0x18D99. With a valid tid, `634 thr_get_ucontext`
+returns EINVAL and copies nothing, while a bad tid returns ESRCH, so the lookup is real and the
+context argument is validated - most likely against the same shape `635 thr_set_ucontext` accepts.
+`659 dynlib_get_list2` writes 0x00000000, 0x00000013, 0x00000014 into the buffer before failing with
+EFAULT, which reads as a count and a capacity; a larger buffer is the next call. No supervisor-range
+value appeared in any of them. `docs/DMEM_UCONTEXT_FIRST_CONTACT_14_10.md`.
+
 ## 2026-11-05 (twenty-first boot, cont.): 604, 656 and 560 close; 572 stays silent
 
 Four first-contact calls from the route list, plus one full-image reference scan. **604
