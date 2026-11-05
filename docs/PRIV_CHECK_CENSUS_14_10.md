@@ -613,3 +613,34 @@ Capability mask test @0xb2bb00 (7 callers, 6 inside bodies):
   after the syscall body returns (taskqueues, VFS layers): the census follows
   direct calls into bodies, not indirect dispatch.
 - It does not cover the 368 nosys entries or the shared stub 0x5620e0.
+
+## 4b. 14.10 runtime: 587 argument order and the denied record (probe 1243a)
+
+`probes/phase17_new_vectors/1243a_sys587_shape.lua`
+(`results/phase17_new_vectors/1243a_sys587_shape_20261105_140511.txt`, status COMPLETE) settles the
+argument order and confirms the stub path empirically. The call is `587(pid, buf)`:
+
+| call | ret | buffer |
+|---|---|---|
+| `587(0x3109A6500, 0x88)` (buffer as arg1) | -1 | untouched |
+| `587(0, 0x3109A6500)` | 0 | record written |
+| `587(0x65, 0x3109A6500)` (explicit own pid) | 0 | record written |
+| `587(0x88, 0x3109A6500)` | -1 | untouched |
+| `587(0, 0)` | -1 | untouched |
+
+So arg1 is a pid (`0` means self, and the explicit own pid is accepted) and arg2 is the buffer; a
+small arg1 such as 0x88 is refused as an invalid pid rather than treated as a size. The successful
+call zeroes the whole 0x88-byte record and writes exactly one value: the qword at `+0x08` is
+`0x2000000000000000`, i.e. `cred+0x60 & 0x7000000000000000`. Everything else, including the tag dword
+at `+0x00`, is zero - so the tag was not one of the five values the denied path recognises, and
+`cred+0x58` is therefore not in
+`{0x4800000000000003/06/07/15/1e/1f/21/22/36/3b/3f/100c, 0x4800000010000003/05/09/0f/10, 0x4800000000020002}`
+unless the record shape differs from the static reading.
+
+**This is a positive, independent confirmation of the capability level**: bit 61 set, bits 62 and 60
+clear, measured through a syscall rather than inferred from a static chain, and consistent with the
+14.10 measurement that bit 62 is absent. It also shows the pid gate is not the thing blocking us -
+`pid = 0` and `pid = getpid()` behave identically, so the self path reaches the record builder and the
+record builder then takes its denied branch. The remaining question is what that branch tests; that is
+now the top item in the capability table (`docs/BIT61_AND_PRIV_MAP_14_10.md`, in progress).
+
