@@ -183,6 +183,12 @@ arguments, one connection per number.
 | 708 | `fsc2h_ctrl` | ? | CONNECT_FAILED |
 <!-- presence-table:end -->
 
+## Measured map 538-621 (2026-11-05)
+
+Probe 1255a replaced the kill column with the SIG_IGN oracle for 538-621: 53 present, 26 absent,
+with per-number errno. Table and caveats in `docs/SYSENT_PRESENCE_MAP_538_621_14_10.md`.
+The 2026-10-20 kill-based rows below are superseded wherever they conflict.
+
 ## Superseded 2026-11-05: the tail is ABSENT, measured with SIG_IGN (probe 1253a)
 
 The "ends at 676" conclusion below was an inference from kills. It is now a measurement: with

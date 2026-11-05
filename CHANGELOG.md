@@ -1,5 +1,12 @@
 # Changelog
 
+## First measured sysent presence map: 538-621 (2026-11-05)
+
+- **Probe 1255a mapped 538-621 with the SIG_IGN oracle in one connection**: 53 present, 26 absent. Present: 538-560, 567, 572, 586-588, 591-596, 598-608, 611-613, 615-618, 620. Absent: 561-562, 568-571, 573-584, 589-590, 597, 609-610, 614, 619, 621. The twelve consecutive absent slots 573-584 are a removed family, the same shape as the earlier 561/562 and 568-571 removals.
+- **Each present handler now has a clean errno for zeroed arguments** — the first such reading for most of the range. EPERM/EACCES rows are the capability gate refusing zeros; `ret=0` rows (548, 560, 596, 602, 606, 617, 620) accept a zero argument and are the only ones that reach real code without a valid argument shape.
+- **622 is a real handler that faults on a NULL first argument.** `622(0,0,...)` (1255a) and `622(0,valid_buf,...)` (1256a) both killed the process under SIG_IGN, so arg1 = 0 is the trigger, not a missing handler. The 55b/55c command sweep used 0x100-0x520 in arg1 and never hit it. 622 must always be called with a non-zero first argument.
+- New doc `docs/SYSENT_PRESENCE_MAP_538_621_14_10.md`; probes `1255a_presence_map_538_676.lua`, `1256a_presence_map_622_676.lua`.
+
 ## AIO is absent on 14.10; 631 and 677/678 are nosys, not hostile (2026-11-05)
 
 - **`aio_submit`(661), `aio_get_data`(665) and `aio_create`(668) return `-1 / ENOSYS` under `SIG_IGN` for SIGSYS** (probe 1254a): they are absent on 14.10. No AIO ID can ever be created, so the `aio_multi_delete`(662) TOCTOU — the Lapse/Prolapse bug, patched in 14.20 — is unreachable on this firmware despite 14.10 being inside the announced vulnerable range. This supersedes "unreachable by construction": there is no entry point at all.
