@@ -1,3 +1,20 @@
+## 2026-11-05 (twenty-third boot, cont.): the spinning-child hazard, and 1234b lost to it
+
+1234a built every child with `jmp $` as its return address, so the 60 poll children did not exit when
+their poll returned - they spun. The next probe got **zero bytes** (connection accepted, no answer) and
+`port_witness` reports LOADER-STUCK: the process was starved, not crashed.
+
+The rule: a probe that spawns N children must assume all N are still running when it ends. Children need
+an exit path - the 999a confinement (fault on an unmapped return address, loader chain runs
+`thr_exit(431)`, pid survives) - and a probe that needs a parked child should park exactly one and then
+complete or close the object it waits on.
+
+1234b (fd-number reuse against a blocked read) never ran, but it is written and its design stands: park
+one child in `read(fd0)`, close fd0, take the same descriptor number with a new socketpair, write to
+the new peer, and check the child's buffer. A `0x4B4B4B4B` there would mean the blocked read followed
+the descriptor *number* rather than the file - an fd ABA. Expected "no" because `read` holds an `fget`
+reference, but unmeasured. `docs/CHILD_SYSCALLS_AND_POLL_CLOSE_14_10.md` section 4.
+
 ## 2026-11-05 (twenty-third boot): children can issue arbitrary syscalls; poll+close survives 60 races
 
 Two results, one of them a capability. Probe 1234a created a child with `rdi` at ctx+0x48 and `rax = 6`

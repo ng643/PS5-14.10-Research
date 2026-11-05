@@ -63,3 +63,27 @@ The races that previously needed a parent-side syscall and a lucky window can no
 * optionally a second child issuing the third syscall of a three-way race.
 
 Combined with 632/633 suspend/resume, the only remaining nondeterminism is the kernel's own scheduling.
+
+
+## 4. The cost of a spinning child: 1234a starved the loader
+
+Every child in 1234a was built with `jmp $` as its return address, so after the poll returned (the parent
+had closed the descriptor) the child did **not** exit - it spun on its own core forever. 60 of them
+accumulated in one process. The next probe (1234b) received **zero bytes**: the connection was
+accepted and the loader never answered, and `port_witness` reports **LOADER-STUCK**.
+
+So a spinning child is not free. Consequences, and the rule that follows:
+
+* a probe that spawns N children must assume every one of them is still running when the probe ends;
+* children must **exit** after their work. The documented confinement from 999a is the right one: let
+  the child fault on an unmapped return address so the loader's SIGSEGV chain runs `thr_exit(431)`,
+  which ends that thread and leaves the process alive with the same pid;
+* if a probe must keep a child parked (a poll, a blocking read, an aio wait), it should park exactly
+  one and close/complete the object it waits on so the child returns and exits.
+
+1234b itself (fd-number reuse against a blocked read) never ran; it is written and correct, but it was
+sent to a starved loader. Its design stands: park one child in `read(fd0)`, close fd0, take the same
+descriptor number with a new socketpair, write to the new peer, and check whether the child's buffer
+receives the bytes. `0x4B4B4B4B` in the buffer would mean the blocked read followed the descriptor
+number rather than the file it was opened on - an fd ABA. The expected answer is "no", because `read`
+holds a reference from `fget`, but it has not been measured.
