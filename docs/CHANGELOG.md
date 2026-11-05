@@ -1,3 +1,19 @@
+## 2026-11-05 (twenty-first boot, cont.): copyin-then-sleep census - only aio qualifies, and the extents need work
+
+A static census of the 301 distinct handler bodies for the shape that produced the public aio bug
+(copyin a user struct, sleep, then use it) finds 85 bodies with a copyin, 8 with an msleep, and 6
+with both - every one of them in the aio cluster 0x3AF8E0-0x3B6BA8 (661/662/663/664/666/668/669).
+The two non-aio rows (534 jitshm_alias, and the body the table maps to 643) do not survive scrutiny:
+534 sleeps *before* its copyin, and the 643 row's msleep belongs to a different function that the
+naive "body runs until the next body start" window swallowed.
+
+That window is the caveat: handler bodies are not contiguous, and the second-pass heuristic (stop at
+a ret followed by padding) fails to terminate on this image, reporting the same end for every body.
+So the census establishes the aio family positively and establishes nothing negative about the other
+295 bodies. Finishing it needs a real function-extent pass. Also recorded: capstone returns `call
+rel32` operands as RVAs when the image is disassembled at file offsets; subtracting the kernel base
+from them produces nonsense and cost one pass. `docs/COPYIN_SLEEP_CENSUS_14_10.md`.
+
 ## 2026-11-05 (twenty-first boot, cont.): 632/634/633 work, and 634 returns user state only
 
 The thread-context family is now proven end to end for the first time. `430 thr_create` succeeds
