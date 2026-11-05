@@ -1,3 +1,19 @@
+## 2026-11-05 (twenty-third boot): children can issue arbitrary syscalls; poll+close survives 60 races
+
+Two results, one of them a capability. Probe 1234a created a child with `rdi` at ctx+0x48 and `rax = 6`
+at ctx+0x78, RIP at the syscall stub, and the parent's `fstat` on that descriptor came back **EBADF** -
+the child really called `close(fd)`. That pins the GPR block functionally (FreeBSD order, fifteen slots
+from +0x48: rdi, rsi, rdx, rcx, r8, r9, rax, rbx, rbp, r10, r11, r12, r13, r14, r15) and gives the
+corpus something it did not have: **a thread that can issue any syscall with chosen arguments**.
+
+With that, upstream's untested O11 path could be built properly: for 60 iterations a child parked in
+`poll(fd, 1, 3000ms)` while the parent closed the descriptor 2 ms later. All 60 children were created,
+all 60 closes happened under an outstanding poll, and the process stayed alive with no crash, hang or
+corrupted return. At this shape poll's registration holds a reference that survives the close, like
+kevent+close; 60 iterations cannot prove the race absent, but it is the first measurement of the path.
+
+`docs/CHILD_SYSCALLS_AND_POLL_CLOSE_14_10.md`.
+
 ## 2026-11-05 (twenty-second boot, close): the stale-handle hunt stops at the missing second reference
 
 Worked the Bagagwa mechanism against 14.10's object families. The public chain needs two ingredients: a
