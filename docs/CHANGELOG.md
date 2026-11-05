@@ -1,3 +1,22 @@
+## 2026-11-05 (twenty-first boot, close): the blockpool family is closed at its entry
+
+Reading the last unread member, 657 `blockpool_batch` (body 0x9A9F40), completes the family: it
+copyin's a 0x20-byte command record from the caller, does `vm_map_lookup` + the class-0xb test, then
+dispatches command 1..5 through a jump table at 0x9AA0C4 to five handlers that each take the map, the
+object and a cursor. Like 654, 655 and 673, it **requires an existing class-0xb mapping**; none of them
+creates one.
+
+The constructor (0x9A75B0) is reached through a function pointer - it has no direct caller in the
+image - and the only descriptor 653 hands out is a control-only cdev that `mmap` refuses with EINVAL
+(probe 1230a: fstat and close succeed, read gives EBADF, ioctl ENOTTY). So route R1 is closed at the
+**entry**: no userland call produces the class-0xb object, and 547's physical-half branch at 0xaba5d4
+is unreachable. If it is ever reopened, the thing to find is whatever invokes the pager at 0x9A75B0.
+
+Also closed this session before they cost a run: 635 `thr_set_ucontext` is an ENOSYS stub
+(`mov eax,0x4e`), and 634's copy is user state only - its layout is now mapped empirically
+(RIP +0x0E0, CS +0x0E8, RFLAGS +0x0F0, RSP +0x0F8, SS +0x100, magic +0x108, +0xC0 kernel-computed).
+`docs/BLOCKPOOL_ROUTE_14_10.md` sections 9-10, `docs/UCONTEXT_FAMILY_14_10.md` section 5.
+
 ## 2026-11-05 (twenty-first boot, cont.): the blockpool handle is a control descriptor, not a mappable one
 
 Probe 1230a settles the last ambiguity in route R1. `653 blockpool_open` returns a genuine descriptor:

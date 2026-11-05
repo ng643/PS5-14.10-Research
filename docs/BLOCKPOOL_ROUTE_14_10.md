@@ -161,3 +161,51 @@ Consequences:
 
 **No userland path to a type-0xb mapping has been found.** Until one is, 547's physical-half branch
 at `0xaba5d4` is unreachable, and with it the physical-address idea that made R1 attractive.
+
+
+## 9. 657 blockpool_batch: the family's last unread member, and it too needs the mapping
+
+Body `0x9A9F40`. Shape read from the disassembly:
+
+```
+9a9f65 cmp dword [rsi+0x18], 0        ; uap[3] selects the batch form
+9a9f6c mov rbx,[rsi]                  ; uap[0] = va
+9a9fff mov edx, 0x20
+9aa002 call 0x259280                  ; copyin(va_of_cmd, 0x20)   <- 0x20-byte command record
+9aa02a call 0x2c6820                  ; mtx_lock(map)
+9aa03a call 0x2c6c40                  ; vm_map_lookup(map, uap[?], &entry)
+9aa070 cmp byte [r14+0x9d], 0xb       ; entry->object class must be 0xb
+9aa0b9 dec eax ; cmp eax,4 ; ja       ; command 1..5
+9aa0d2 jmp rax                        ; jump table at 0x9AA0C4
+```
+
+Five handlers: `0x9AA250`, `0x9AB160`, `0x9AA860`, `0x9AA8D0`, `0x9AA380`. Each is called with
+`(map, object, rdx, rcx, &record, &cursor)` and the two large ones also take a stack argument
+(`mov [rsp], r15`). After the handler returns, the loop re-copies the **next** 0x20-byte record from
+the caller's buffer at `0x9AA197-0x9AA1A3` and repeats.
+
+So 657 is a batched page operation over an existing type-0xb mapping - the same precondition as 654,
+655 and 673. It is not the installer either.
+
+## 10. Final verdict on the blockpool route
+
+Every member of the family has now been read:
+
+| member | precondition | what it does |
+|---|---|---|
+| 653 blockpool_open | none | opens a control descriptor (slots in a small table) |
+| 654 blockpool_map | existing class-0xb mapping at the VA | page work |
+| 655 blockpool_unmap | same | page work |
+| 657 blockpool_batch | same | five batched page commands, 0x20-byte records |
+| 673 blockpool_move | same | moves pages inside the mapping |
+| 0x9A75B0 (pager) | called indirectly | copies pages and builds the type-0xb object |
+
+**Nothing in userland creates the class-0xb mapping.** The constructor is reached through a function
+pointer, the only descriptor 653 returns is a control-only cdev that `mmap` refuses with EINVAL, and
+every other member demands the mapping as a precondition. Route R1 is therefore **closed at the
+entry**, not at the exploit step: there is no first call that produces the object, so 547's
+physical-half branch at `0xaba5d4` cannot be reached from this process.
+
+If the route is ever reopened, the thing to find is whatever invokes the pager at `0x9A75B0` - a
+`d_mmap` registration in a cdevsw, or a Sony syscall that hands a blockpool object to
+`vm_map_insert`. Neither has surfaced in 15.1 MB of text.
