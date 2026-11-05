@@ -1,3 +1,20 @@
+## 2026-11-05 (twenty-second boot, close): double-copyin census - 43 bodies, 14 with a reused source register
+
+Scanned all 301 handler bodies for two or more copyin calls and recorded which register fed `rdi` at
+each. 43 bodies copy twice or more; 14 of them reuse the *same* register, which is the double-fetch
+shape. The socket-address family (29, 32, 41, 90, 92, 98, 105, 118 - all funnelling through the same
+bodies) copies a user length and a user address in separate calls, which is the canonical layout: the
+length is validated once and the address copied around it. 598/599 copy a descriptor struct twice and
+598 has never been called in this corpus.
+
+That is a lead list, not a reader. It matters because it is the one shape that does not need SMAP to be
+off - both accesses are legitimate user copies, and the bug would be that the second sees different
+bytes. With 632/633 suspend/resume now deterministic, the race can be made controllable: pass a valid
+length, rewrite it from a second thread, and see whether the copy-out returns more than the structure
+holds. The corpus's copyout audits clamp non-constant lengths, so the expectation is "nothing leaks" -
+but they measured the copy length against the buffer, not a re-read of the user length between calls.
+`docs/KERNEL_READ_SEARCH_14_10.md` sections 7-8.
+
 ## 2026-11-05 (twenty-second boot, close): all ten deref candidates are kernel loads
 
 Triaged the ten sites from the heuristic one by one. Every one is a kernel load that overwrote the

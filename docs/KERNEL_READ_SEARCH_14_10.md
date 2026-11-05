@@ -100,3 +100,51 @@ Ranked by what is still unexplored rather than by what is easy:
 3. **A pointer stored by one syscall and dereferenced by another.** The aio request holds a buffer
    pointer; kqueue knote holds udata; sigevent holds a function. The question is which subsystem
    dereferences a stored pointer *without* the mask.
+
+
+## 7. Double-copyin census: 43 bodies, 14 of them reuse the same source register
+
+A double fetch needs the handler to copy from user memory **twice** through the same pointer. Scanning
+all 301 bodies for two or more calls to copyin (`0x259280`) and recording the register that fed `rdi`
+at each call gives 43 bodies; the ones where the *same* register is reused are the interesting set:
+
+| syscall | body | copyin sites (same register) |
+|---|---|---|
+| 659 dynlib_get_list2 / 593 dynlib_get_info | 0x34B790 / 0x34B7B0 | rbx, rbx (0x34b820, 0x34bcd0) |
+| 598 / 599 | 0x34C990 / 0x34CAA0 | r14, r14 (0x34cd7c, 0x34cdac) |
+| 165 | 0x47B030 | r13, r13 (0x47b0fd, 0x47b13b) |
+| 98 connect | 0x531260 | r12, r12 (0x5312cb, 0x5316db) |
+| 29 recvfrom | 0x5328D0 | r15 three times (0x532925, 0x532a2b, 0x532d22) |
+| 27 | 0x5329E0 | r15, r15 |
+| 105 setsockopt | 0x532BC0 | r15, r15 |
+| 118 getsockopt | 0x532CD0 | r15, r15 |
+| 32 | 0x533030 | r15, r15 |
+| 90 / 41 / 92 | 0x729A40 / 0x729D80 / 0x729DC0 | r14, r14 |
+| 138 utimes | 0x8FA310 | r14, r14 |
+| 345 sigtimedwait | 0x55E550 | r12, r12 |
+
+Two shapes stand out:
+
+* **the socket-address family** (29, 32, 41, 90, 92, 98, 105, 118) all funnel through the same bodies and
+  copy a user length and a user address in separate calls. That is the canonical double-fetch
+  layout - the length is validated once and the address is copied around it - and the corpus has never
+  raced it.
+* **598 / 599 and 605-608** copy a descriptor struct twice from one register; 598 was never called at
+  all in this corpus.
+
+Neither is a reader by itself. They are the *places to look* for one, and the difference from the
+direct-deref class is that a double fetch does not need SMAP to be off: both accesses are legitimate
+user copies, and the bug is that the second one sees different bytes.
+
+## 8. The experiment this points to
+
+With 632/633 now giving a deterministic suspend, the race can be made controllable rather than timed:
+
+1. call the target with a user length that is valid (e.g. `sizeof(sockaddr_in)`);
+2. from a second thread, rewrite the length field to a larger value;
+3. observe whether the copy-out returns more bytes than the structure holds - kernel stack bytes in the
+   reply buffer are the leak.
+
+The corpus's copyout audits say every non-constant length is clamped, so the expected outcome is
+"clamped, nothing leaks" - but those audits measured the *copy length against the buffer*, not the
+*re-read of the user length between two calls*, which is the shape here.
