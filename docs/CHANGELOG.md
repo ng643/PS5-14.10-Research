@@ -1,3 +1,23 @@
+## 2026-11-05 (twenty-first boot): blockpool_map is a lookup, not a creator
+
+Route R1 was taken live. `653 blockpool_open(0,0)` returns a small per-process handle (0x17, 0x18,
+0x19 in three consecutive runs, then -1 in a fourth with the identical shape, so a precondition
+exists). `mmap(477)` with that handle as `fd` is refused with EINVAL for four prot/flags shapes, and
+`654 blockpool_map` is refused with EINVAL for every VA/access/length combination tried, twelve of
+twelve. The body explains both: 0x9a9560 locks `[proc+0x200]` (the vm_map), calls `vm_map_lookup`
+at 0x9a96a0 with the caller's address, then requires `entry->object->class == 0xb` at 0x9a96cf. It
+manipulates a mapping that must already exist; it never creates one. `655` has the same shape.
+
+So the missing link is whichever call installs a type-0xb object into a user mapping - the only
+instruction that constructs one is `0x9a77c7 mov edi,0xb` inside the blockpool code, and 653 itself
+is the prime suspect once its precondition is met. `docs/BLOCKPOOL_ROUTE_14_10.md` records the
+four probe results, the disassembly, and the three experiments that would find the installer.
+
+Also this boot: socket ioctl is gated rather than missing (`docs/SOCKET_IOCTL_14_10.md`), 638's
+timezone read is a bounded binary search over a counted table (no index can walk it out of the
+array), and the argument-4/trampoline theory was retracted after a stock-vs-trampoline comparison
+came back byte-identical.
+
 ## 2026-11-05 (twentieth boot, cont.): socket ioctl is gated, and the Sony net extensions are empty at first contact
 
 Upstream open row O10 said socket-level ioctls had never been swept. They have now. syscall 54 does
