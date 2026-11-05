@@ -1,3 +1,21 @@
+## 2026-11-05 (twenty-second boot, close): the stale-handle hunt stops at the missing second reference
+
+Worked the Bagagwa mechanism against 14.10's object families. The public chain needs two ingredients: a
+second reference obtainable **by name** (`osem_open`) and a delete that skips the refcount
+(`osem_delete` with `attr = 0`). 14.10 has neither half: the 549-556 block has create/delete/wait/post/
+cancel and no open-by-name at all (552 returns -1 on a live semaphore, measured in 88a), and a handle is
+typed and generation-checked on every call, so a cross-family retarget is refused.
+
+The three-bit generation wrap (period eight, shared slot table, LIFO free list) is an ABA worth naming
+but not a primitive: the old and new handles are the same 64-bit value, freeing does not advance the
+generation (reuse does, so a live handle never goes stale mid-flight), and the type byte is checked on
+every call. Without a second reference there is nothing to dangle and nothing to double-free.
+
+That closes the object-lifetime route at the same place the public chain starts - a structural answer,
+not a failed probe. The surfaces with an *explicit* shared reference are what remain: file descriptors,
+kqueue knotes, and the aio request's file reference, where a double close or a knote left on a closed
+fd is the analogue of `osem_open`. `docs/STALE_HANDLE_HUNT_14_10.md`.
+
 ## 2026-11-05 (twenty-second boot, close): the reader search closes all four copy-shaped classes
 
 Read the three bodies that could still have carried a double fetch. 29 `recvfrom` copies the user
