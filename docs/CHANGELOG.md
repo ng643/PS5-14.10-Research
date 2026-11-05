@@ -1,3 +1,25 @@
+## 2026-11-05 (twenty-second boot, cont.): the base is 0xFFFFFFFF85000000, and aio validates its pointers
+
+Ran the upstream fault-code oracle probe (1001a) rather than re-deriving it: 512 `thr_create`
+children, each faulting at one 2 MB candidate, and the SIGSEGV chain writing the fault context back
+over the probe socket. Parsing `(ctx+0x130 >> 8) & 0xF` gives 50 mapped / 462 unmapped in one
+connection, with the image at **0xFFFFFFFF85000000..0xFFFFFFFF8B000000** (98 MB). That is this boot's
+kernel base, and the sweep costs no relaunch.
+
+With the base in hand the aio read idea could finally be tested properly. 1231b first proved the
+mechanism on a user source: `669(cmd=0x1002)` from a marker buffer completes (state 3) and the exact
+sixteen marker bytes arrive on the peer. (`MSG_DONTWAIT` is **0x80** on FreeBSD - the 0x40 used in
+1231a is `MSG_WAITALL` and is what wedged the loader.) Then 1232a pointed the same field at
+0xFFFFFFFF85000000 and 0xFFFFFFFF85400000: the submit is accepted, the poll reports completion, and
+**not one byte is delivered**. The user-range mask that `copyin` applies turns the kernel address into
+0x7FFFFFFF85000000, an unmapped user address, so the copy takes the bad-pointer path instead of
+reading kernel memory.
+
+**aio_submit_cmd is not a kernel reader**, in either direction, and that is a clean closure - no
+panic, no relaunch. A reader now has to come from a kernel *dereference* of an influenceable pointer,
+not from a copy helper; the OBJECT-sourced copyout set in `docs/INTERPROC_COPYOUT_SOURCES.md` is the
+remaining surface of that shape. `docs/AIO_NOT_A_READER_14_10.md`.
+
 ## 2026-11-05 (twenty-second boot): aio cmd=2 runs, and FreeBSD's MSG_DONTWAIT is 0x80
 
 Testing the one idea that directly targets the missing capability - a *reader* - rather than another
