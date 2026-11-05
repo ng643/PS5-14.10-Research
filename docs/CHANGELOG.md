@@ -1,3 +1,19 @@
+## 2026-11-05 (twenty-first boot, cont.): the loader process persists, and blockpool slots are consumable
+
+Two operational facts that change how every future probe is run. First, the pid is **80 in every
+probe of this boot** (1213a through 1224b), so the loader reuses one process across TCP connections;
+the "fresh process per connection" assumption this corpus has carried is wrong for this loader, and
+state accumulates. Second, `653 blockpool_open` returns **EMFILE 24** on the first call of a fresh
+connection while `RLIMIT_NOFILE` is 13952, and the three earlier successes returned consecutive
+values 0x17/0x18/0x19 — so the handle is a slot in a small per-process table that is now exhausted,
+not a descriptor from the fd table. The blockpool route needs a game relaunch to continue, and any
+probe that opens slots must count them.
+
+Static follow-up: the type-0xb constructor lives in a page mover that starts at 0x9A75B0, checks a
+privilege threshold at `[proc+0x5d4]`, bumps `[proc+0x58c]`, copies 0x4000-byte pages through
+0x8de950, and only then builds the object. The map insertion that `654`/`655` need is still not
+identified; the next reads are 0x9ABCA0 and the page worker 0x9A97A0.
+
 ## 2026-11-05 (twenty-first boot): blockpool_map is a lookup, not a creator
 
 Route R1 was taken live. `653 blockpool_open(0,0)` returns a small per-process handle (0x17, 0x18,

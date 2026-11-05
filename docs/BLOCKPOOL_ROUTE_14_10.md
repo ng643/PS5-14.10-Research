@@ -74,3 +74,44 @@ EINVAL on four prot/flags shapes, and the failure came before any pager message.
    the one that takes an object pointer) and for `0x9a77c7`'s caller. That gives the syscall that
    installs the object, which is the missing link.
 3. Only then retry `654` with the VA of an installed mapping and read `547`.
+
+
+## 5. The payload process persists across connections, and blockpool slots run out
+
+Probes 1224a and 1224b, same boot:
+
+* `653(0,0)` returns **-1 with errno 24 EMFILE** on the *first* call of a fresh connection.
+* `getrlimit(RLIMIT_NOFILE=8)` returns `cur = max = 13952`, so the process descriptor table is
+  nowhere near full. `setrlimit` is therefore not the answer and was skipped.
+* The **pid is 80 in every probe of this boot** (1213a through 1224b). A new process per TCP
+  connection would not keep one pid; the loader reuses one process, and its state accumulates
+  across connections.
+
+That explains the earlier sequence: `653` returned 0x17, 0x18, 0x19 in three consecutive probes
+(23, 24, 25 - consecutive slots), and then EMFILE forever after. The handle is a **slot in a small
+per-process table**, not a file descriptor from the 13952-entry fd table, and that table is now
+exhausted for this game session. EMFILE is therefore an operational state, not a property of the
+call.
+
+Consequences for the route:
+
+* the blockpool experiment can only continue after the game (or at least the loader) is relaunched;
+* any future probe that allocates a blockpool slot must run **first** in a fresh session, and must
+  free it with `655`/`657` if it wants to run more than a handful of shapes;
+* the earlier `mmap(fd=handle)` EINVAL results from 1223a-c are still valid as measured, but they
+  were taken when the handle was one of slots 23-25, so they cannot be blamed on exhaustion.
+
+## 6. Where the installer hunt stands
+
+The function containing the type-0xb constructor starts at `0x9A75B0`. It is a page mover, not an
+installer: it checks a privilege threshold (`cmp dword [proc+0x5d4], 0x4ffffff` at 0x9a75d6 and
+`0x6000000` at 0x9a760e), bumps a per-process counter at `[proc+0x58c]` with `lock xadd`
+(0x9a7626), allocates a buffer, copies 0x4000-byte pages through `0x8de950` in a loop
+(0x9a7746/0x9a775a/0x9a776e/...), and only then builds the type-0xb object at `0x9a77c7` to hold
+them. The map insertion that would make `654`/`655` accept an address is still not identified;
+the next places to read are `0x9ABCA0` (called at 0x9a76a5) and the page worker `0x9A97A0`
+(called by 654 at 0x9a971c).
+
+**One more operational note worth carrying forward:** 1224a's very first call already failed with
+EMFILE while 1223d's returned -1 with a stale errno, so the exhaustion happened between 1223c and
+1223d. Anything that opens blockpool slots should be treated as consumable and counted.
