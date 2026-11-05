@@ -1,3 +1,15 @@
+## 2026-11-05 (twenty-fifth boot): the aio guard is a path test - class closed
+
+Probe 1236a, zero ids, `count 2`, modes 0x00-0xFF: mode 0 and **every** mode from 0x03 upward return
+`-1 err 22` with the status buffer untouched, while modes 1 and 2 return 0 with one `0x80020003` per id.
+`count 3` repeats it. So 14.10 refuses `mode not in {1,2}` at `count > 1` - the exact set that reaches
+the shared-node path `0x3b08e5` in the 13.60 body. The aio shared-waiter use-after-free is closed on
+14.10 as a class, not just at the literal mode 0. `docs/AIO_MODE_GUARD_GAP_14_10.md` §8.
+
+Also settled: `aio_multi_wait` blocks until the request completes. Probe 1235b passed a 20-unit timeout
+pointer with one real pending read and never returned (LOADER-STUCK, then zero bytes on a second
+connection). Any aio timing work from here needs the call on a child thread with an exit path.
+
 ## 2026-11-05 (twenty-fourth boot): the aio guard is a value test, not a path test
 
 Probe 1235b decoded `aio_multi_wait` (663) from the 13.60 body and found the shape the 14.10 guard sits

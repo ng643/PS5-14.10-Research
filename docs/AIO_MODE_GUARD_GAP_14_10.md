@@ -151,3 +151,41 @@ pending read and the timeout dword set to 20, and the call never came back (LOAD
 has to be woken by the request completing, so any use-after-free test needs the 663 call on a child
 thread (the child-syscall capability from probe 1234a) while the parent completes the request. That is
 the follow-up, and it is only worth building if the zero-id sweep says the path is open.
+
+## 8. Measured: the guard covers the path, not the value (probe 1236a, 2026-11-05)
+
+Boot: reboot, so the kernel moved; the probe derives `libkernel_base` at run time
+(`0x839AF03B7 + 0x3B7`). Zero ids, `count = 2`, timeout NULL, one call per mode:
+
+| mode | ret | status words |
+|---|---|---|
+| 0x00 | -1, err 22 | untouched |
+| 0x01 | 0 | 80020003 80020003 |
+| 0x02 | 0 | 80020003 80020003 |
+| 0x03 | **-1, err 22** | untouched |
+| 0x04 | -1, err 22 | untouched |
+| 0x05 | -1, err 22 | untouched |
+| 0x06 | -1, err 22 | untouched |
+| 0x07 | -1, err 22 | untouched |
+| 0x08 | -1, err 22 | untouched |
+| 0x10 | -1, err 22 | untouched |
+| 0x40 | -1, err 22 | untouched |
+| 0xFF | -1, err 22 | untouched |
+
+and at `count = 3`, modes 0x03/0x04/0x05/0x10/0xFF are all `-1 err 22` with the status buffer
+untouched. `pid` stayed 80 throughout.
+
+**Verdict: the 14.10 guard is a path test.** It refuses `mode not in {1,2}` at `count > 1`, which is
+exactly the set of values that reach the shared-node path `0x3b08e5` in 13.60. There is no integer
+neighbour that reopens the aio shared-waiter use-after-free: the whole class is closed, not just the
+literal mode 0. The reasoning in §6 that a cheap value test would be "one integer away" was the right
+question and the wrong answer.
+
+This also retires the child-thread follow-up sketched in §7: there is no reachable state in which
+`count >= 2` links one node twice, so there is nothing to race.
+
+**Residual, not a route:** a real pending request cannot be waited on from a single-threaded probe at
+all. Probe 1235b called mode 0 `count 1` with one pending read and a 20-unit timeout pointer and never
+returned; a second connection then got zero bytes. Whatever the timeout dword means, `aio_multi_wait`
+blocks until the request completes, so any future aio timing work must put the call on a child thread
+(1234a capability) with an exit path (1234a's `jmp $` mistake).
