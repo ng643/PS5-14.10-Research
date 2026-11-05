@@ -117,3 +117,42 @@ Three things worth keeping:
 3. Re-audit the other 4-argument handlers with a working argument 4. Probe 1213c's eboot work and
    the libc PLT map in `docs/SYSCALL_ARG4_R10_14_10.md` section 12 give the tooling; the ranking
    belongs to `docs/ARG4_RETEST_PLAN_14_10.md`.
+
+### 3.1 What the 379 return codes mean
+
+The body ends with
+
+```
+ABBE27  call 0x2cd3c0                 ; vm_map_protect
+ABBE2C  mov ecx, eax
+ABBE2E  mov eax, 0x16                 ; EINVAL by default
+ABBE33  cmp ecx, 9
+ABBE36  ja  0xabbe44                  ; code > 9 -> EINVAL
+ABBE3A  lea rdx, [rip + 0xe20173]     ; RVA 0x18DBFB4 - outside every retained dump
+ABBE41  mov eax, [rdx + rax*4]
+```
+
+so the call returns a **0..9 code** from `vm_map_protect` mapped through a table that was not
+captured. A 0..9 code with this shape is FreeBSD's `kern_return_t`:
+
+| code | name | likely errno |
+|---|---|---|
+| 0 | KERN_SUCCESS | 0 |
+| 1 | KERN_INVALID_ADDRESS | EFAULT |
+| 2 | KERN_PROTECTION_FAILURE | **EACCES 13** |
+| 3 | KERN_NO_SPACE | ENOMEM |
+| 4 | KERN_INVALID_ARGUMENT | EINVAL / EOPNOTSUPP |
+| 5 | KERN_FAILURE | ? |
+| 6 | KERN_RESOURCE_SHORTAGE | ENOMEM |
+| 8 | KERN_NO_ACCESS | EPERM / EACCES |
+
+Measured: prot 0x02..0x07 and 0x200 give 13, i.e. **KERN_PROTECTION_FAILURE**, not a parameter
+error. The call is well formed; the VM layer refuses the change. For a type-0x33 direct-memory
+mapping that is expected: it is device memory owned by another mtype, so 0x0A cannot re-protect it.
+prot 0x00/0x01/0x10/0x40/0x100 giving 45 EOPNOTSUPP is consistent with code 4
+(KERN_INVALID_ARGUMENT), i.e. an empty or meaningless protection mask.
+
+The consequence for the next run is concrete: 0x200 is not being rejected as an illegal value, it
+is being rejected as an illegal *change to that mapping*. The experiment has to be repeated on a
+mapping this process owns outright - a page-aligned anonymous region - before any conclusion about
+W^X can be drawn.
