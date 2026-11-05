@@ -1,5 +1,40 @@
 # The fourth syscall argument never reached the kernel
 
+> ## RETRACTION (2026-11-05, probe 1221a)
+>
+> **The central claim of this document is wrong.** Argument 4 has always reached the kernel.
+>
+> The loader calls `gettimeofday_import + 7`, and libkernel's wrapper is
+> `mov rax, <num> ; mov r10, rcx ; syscall ; ret`, so `+7` is `mov r10, rcx`, not `0f 05`.
+> Upstream already records that shape in `docs/THREADING_ALIVE_14_10.md:130` and
+> `docs/PROBE_INDEX.md` row 157a; this document was written without checking it.
+>
+> Probe 1221a settles the question by running identical calls through the stock stub and through
+> `libkernel+0x3B7`:
+>
+> | call | stock | 0x3B7 |
+> |---|---|---|
+> | `379(va,0x1000,0x0A,prot=2)` | ret -1, errno 13 | ret -1, errno 13 |
+> | `379(...,prot=8)` | ret -1, errno 22 | ret -1, errno 22 |
+> | `379(...,prot=0x10)` | ret -1, errno 45 | ret -1, errno 45 |
+> | `379(...,prot=0x200)` | ret -1, errno 13 | ret -1, errno 13 |
+> | `663(ids,1,out,0,tmo)` | out 0x80020003 | out 0x80020003 |
+> | `663(ids,2,out,0,tmo)` | out untouched, errno 22 | out untouched, errno 22 |
+> | `663(ids,2,out,1,tmo)` | out 0x80020003 | out 0x80020003 |
+>
+> Byte-identical in every row. There is no instrument bug, no missing `mov r10, rcx`, and every
+> 4th-argument measurement in this corpus was valid.
+>
+> What actually happened: `663` with `mode == 0` and `count > 1` is **refused by the kernel** with
+> EINVAL before it reads the id list (1219a/1219b: the same EINVAL with `ids = NULL`). That guard,
+> not a stale register, is what 1211a/1213a measured. Section 5 ("what this invalidates") and
+> sections 10-12 ("trampoline") are void; the guard itself is the real result and is recorded in
+> `docs/AIO_MODE0_GUARD_14_10.md`.
+>
+> The one surviving correction from this work is about method: a negative result must be compared
+> against a second, independent route before it is called an instrument fault, and the upstream
+> tree must be searched for the mechanism first.
+
 Date: 2026-11-04 (eighteenth boot). Firmware target 14.10, measurements taken with the
 Lua loader on TCP 9026 at 192.168.1.121, statics from `docs/dumps_13.60/kernel_text.bin`
 (base `0xffffffff8a9c0000`, file offset == RVA).
@@ -516,3 +551,23 @@ cases with one syscall, no descriptors and no request objects:
 | libc PLT analysis | DONE - 94 stubs characterised, 4 candidates with `rcx set == calls` (0x15830, 0x15900, 0x18DF0, 0x13E60) |
 | stub-table walk | probe 1216b written (0x3B0..0x10F0 at 0x20 stride, one syscall per slot); 1216a was killed mid-walk by its own client deadline |
 | argument 4 through a libkernel stub | still the only live route |
+
+
+## 13. Why the retraction is in this file and not a new one
+
+The structure of the mistake is worth keeping, because it is repeatable:
+
+1. `663(ids, count=2, mode=0)` returned EINVAL. The 13.60 body materialises EINVAL at exactly two
+   instructions (count bound `0x3b03a3`, mode bound `0x3b041c`), and count 2 passes the count bound.
+2. From that alone this document concluded that the *mode* value in `uap[3]` must be a stale r10.
+   That is a valid deduction only if argument 4 is known to travel in r10 and known not to be
+   loaded by the stub — and the second half was assumed, never measured.
+3. `mode 1` on the same run *waited and timed out* while `mode 0` returned EINVAL. A stale register
+   cannot produce two different behaviours from one argument slot. That observation was already in
+   the 1211a capture and was read past.
+4. The differential test in 1218a "proved" the 0x3B7 trampoline works, which it does — but it never
+   compared against the stock stub, so it could not distinguish "a trampoline exists here" from
+   "every stub has this byte at +7, including the one already in use".
+
+Probe 1221a is the comparison that should have been step 1 of the whole investigation.
+

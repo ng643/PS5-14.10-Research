@@ -1,3 +1,23 @@
+## 2026-11-05: retraction - argument 4 was never broken, and 663's EINVAL is a kernel guard
+
+Probe 1221a ran the same calls through the loader's stock syscall stub and through
+`libkernel+0x3B7` and got byte-identical answers in every row (379 prot 2/8/0x10/0x200 ->
+13/22/45/13; 663 count 1 mode 0 -> 0x80020003; count 2 mode 0 -> untouched + EINVAL; count 2 mode 1
+-> 0x80020003). Argument 4 has always been delivered: libkernel's wrapper is
+`mov rax,<num>; mov r10,rcx; syscall; ret`, so the loader's `gettimeofday_import + 7` lands on
+`mov r10, rcx`. Upstream already documented that in `docs/THREADING_ALIVE_14_10.md:130` and
+`docs/PROBE_INDEX.md` row 157a, and this session's `docs/SYSCALL_ARG4_R10_14_10.md` was written
+without checking it. That document is now retracted at the top, with the reasoning error spelled out:
+1211a already showed mode 1 timing out while mode 0 returned EINVAL, which a stale register cannot
+do.
+
+What is real, and not in the upstream tree, is the mechanism behind that EINVAL: `663` refuses
+`mode == 0` with `count > 1` **before it copies the id list in** — the same EINVAL with a NULL id
+pointer (not EFAULT), a NULL timeout, and real pending requests; modes 1 and 2 work at any count.
+The 13.60 body only produces EINVAL at the count bound and the mode bound, and count 2 passes both,
+so 14.10 carries an explicit guard of exactly the shape the public Bagagwa/Relapse bug needs. The
+public aio kernel bug is patched on 14.10. Recorded in `docs/AIO_MODE0_GUARD_14_10.md`.
+
 ## 2026-11-05 (twentieth boot): argument 4 works, and it proves the aio bug is patched
 
 The trampoline is real and it is libkernel+0x3B0+7. 1216b's cheap test was ambiguous — a stale r10
