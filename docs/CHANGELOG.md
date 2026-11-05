@@ -1,3 +1,23 @@
+## 2026-11-05 (twenty-second boot, cont.): reader hunt - base in hand, aio validated, kernel files absent
+
+The base is now a solved input: upstream's 1001a sweep gives 50 mapped / 462 absent in one connection
+and puts this boot's image at **0xFFFFFFFF85000000 .. 0xFFFFFFFF8B000000** (98 MB), with
+`spawned=512 failed=0 alive`.
+
+That let the aio read idea be tested properly. 1231b proved the mechanism on a user source: `669
+cmd=0x1002` from a marker buffer completes and the exact marker bytes arrive on the peer. 1232a then
+pointed the same field at the image base and at base+4 MB: accepted, state 3, **zero bytes**. The
+`and rdi,0x7fffffffffff` mask turns the kernel address into an unmapped user address, so aio is a
+validated copy in both directions and is not a reader.
+
+The classic files are gone as well: `/proc/kcore`, `/proc/kallsyms`, `/proc/self/mem`,
+`/dev/kmem`, `/dev/mem` and friends all return ENOENT.
+
+So a reader has to be a kernel *dereference* of an influenceable pointer. A first heuristic over the
+301 handler bodies (track `mov rX,[rsi+slot]`, flag a later `mov rY,[rX+disp]` before any call) gives
+ten candidates - 592, 659, 663, 664, 30, 629, 477, 65, 73, 404 - listed in
+`docs/KERNEL_READ_SEARCH_14_10.md` §4. None is triaged yet, and most are likely false positives.
+
 ## 2026-11-05 (twenty-second boot, cont.): the base is 0xFFFFFFFF85000000, and aio validates its pointers
 
 Ran the upstream fault-code oracle probe (1001a) rather than re-deriving it: 512 `thr_create`
