@@ -142,3 +142,31 @@ timing behaviour itself.
   behaviour on a non-Meltdown CPU.
 - "Do not run probe 1246a before 1248a succeeds" - 1246a should now be considered void
   as written, for the reason above rather than for lack of an exec page.
+
+## 7. Three follow-ups measured the same session (all negative, all cheap)
+
+**(a) Spectre v1 transmitter census, whole 13.60 text.** Linear capstone sweep,
+6,134,149 instructions, searching for the only shape that can serve as a transmitter:
+indexed load -> `shl reg,k` (k in 6..12) -> indexed store using the *same* register,
+within three instructions of each other. **One** hit image-wide:
+`0xFFFFFFFF8AEB405A` `movsxd rcx,[r12+r8*4+0x4d0]; shl rcx,7; mov esi,[r14+rcx+0x38]` -
+a 128-byte struct-array lookup whose second access is a **load**, not a store. There is
+no classic user-probe transmitter in this image. Script `.local/spectre_gadget_census2.py`.
+
+**(b) 674's handler is bounded by construction.** Thunk `0x265FA0` -> body `0xABB980`
+(`narg=5`). Decoded:
+- `cmp dword [uap+0x20], 0x40000000; jne -> EINVAL` - arg5 is an exact flag, as 55f found.
+- `mov r12,[uap+8]` (stride), then `cmp r12,0x48; mov eax,0x48; cmovb rax,r12` ->
+  **copyout length = min(stride, 0x48)**, stored at `[rbp-0x108]`.
+- `mov rax,[uap+0x10]` (max) -> `[rbp-0xf0]`, used only as `cmp r13,[rbp-0xf0]; jae` -
+  a loop bound, never an allocation size.
+- The record is a **fixed 0x48-byte stack slot** at `[rbp-0x78]`, memset then filled.
+So neither `max` nor `stride` can overflow anything: stride is clamped, max only limits
+iterations, and the source buffer is a fixed local. 674 is a dead end for memory safety.
+
+**(c) Every capability tag is read from a kernel credential, never from user memory.**
+239 call sites to the 45 tag helpers. `rdi` provenance: 148 sites load
+`[reg+0x140]`, 11 load `[reg+0x40]` (`reg` always derived from `gs:[0]` -> `[td+8]` ->
+proc), 15 pass a register set from one of those, 85 inherit. The two offsets are both
+proc fields (`[proc+0x40]` and `[proc+0x140]`), so no call site lets us forge a tag.
+The 607-unlock idea is closed. Script `.local/tag_arg_source.py`, `.local/tag_40_sites.py`.

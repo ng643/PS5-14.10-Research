@@ -1,5 +1,11 @@
 # Changelog
 
+## Three more routes closed: Spectre transmitters, 674 bounds, tag provenance (2026-11-05)
+
+- **No Spectre v1 transmitter exists in the 13.60 text.** Full linear capstone sweep (6,134,149 instructions) for indexed-load -> shift -> indexed-store on the same register found exactly one hit, and its second access is a load, not a store. The CPU route has no kernel-side gadget to build on.
+- **674's handler is bounded by construction** (thunk `0x265FA0` -> body `0xABB980`, narg=5): `copyout` length is `min(stride,0x48)`, `max` is only a loop bound, and the record is a fixed 0x48-byte stack slot. No integer or count overflow is available there.
+- **Every capability tag is read from a proc field, never from user memory.** Of 239 call sites to the 45 tag helpers, all `rdi` provenance resolves to `[proc+0x40]` or `[proc+0x140]` via `gs:[0]`. Forging a tag to unlock 607 is not possible.
+
 ## PROT_EXEC is stripped for vnode mappings too; the CPU route is a Meltdown design (2026-11-05)
 
 - **674 is now a calibrated oracle that reports EFFECTIVE protection** (probe 1251a). One call with 55f's shape returns 322 regions; the record is start +0x00, end +0x08, prot +0x18, length-prefixed name at +0x20. Calibration against four knowns: anon `prot=7` records as `0x3` rw-, file `prot=5` as `0x1` r--, file `prot=7` as `0x3` rw-, and eboot's own `.text` as `0x5` r-x.
