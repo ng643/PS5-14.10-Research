@@ -136,3 +136,29 @@ correction that the gate reports EACCES rather than zeroing the block and return
 Residual value: 607 is a free filesystem oracle. ENOENT / EINVAL / EACCES distinguishes
 "does not exist" / "exists but is not a regular file" / "exists and is a regular file",
 from an unprivileged process, with no crash cost. It leaks no pointers.
+
+## 6. 674 argument shapes are not interchangeable - a blind sweep took the game down (2026-11-05 17:03)
+
+Probe 1251a was first written to calibrate 674 by trying three argument shapes in
+sequence and keeping the first that worked. The first call (55f's shape:
+`674(buf, 72, 512, countp, 0x40000000)`) returned normally, but the probe never
+reached its end marker and the loader - and the game behind it - went away. The
+remaining two shapes were `arg5 = 0` and a plain-Lua-number variant, and one of them
+is the prime suspect. There is no capture, so the fatal step is not identified; the
+rewritten probe prints a `step N ok` marker after every section so the next run
+localises it if it happens again.
+
+Rules that come out of it:
+
+- **Call 674 once, with the shape that is already known to work**:
+  `STRIDE = 72`, `MAX = 512`, `arg5 = 0x40000000`, buffer size
+  `STRIDE * MAX + 0x100`. The slack is not decoration - 55f allocates it.
+- **Never probe an unknown syscall argument shape "just to see"** when the previous
+  shape already worked. A wrong flag on 674 costs a relaunch at best.
+- **Create every mapping before taking the snapshot.** A 674 snapshot cannot describe
+  a mapping that did not exist when it was taken; the first draft reported "no record
+  covers it" for all five targets for exactly this reason.
+- **`memory.read_dword` and `memory.read_byte` return uint64 tables, not numbers.**
+  The first run died at `attempt to compare table with number` on
+  `n < 0 or n > 512`. Every read needs `N()` before any arithmetic, comparison or
+  `%X` formatting.
