@@ -76,16 +76,19 @@ EINVAL on four prot/flags shapes, and the failure came before any pager message.
 3. Only then retry `654` with the VA of an installed mapping and read `547`.
 
 
-## 5. The payload process persists across connections, and blockpool slots run out
+## 5. blockpool slots are a small consumable table (persistence model unresolved)
 
 Probes 1224a and 1224b, same boot:
 
 * `653(0,0)` returns **-1 with errno 24 EMFILE** on the *first* call of a fresh connection.
 * `getrlimit(RLIMIT_NOFILE=8)` returns `cur = max = 13952`, so the process descriptor table is
   nowhere near full. `setrlimit` is therefore not the answer and was skipped.
-* The **pid is 80 in every probe of this boot** (1213a through 1224b). A new process per TCP
-  connection would not keep one pid; the loader reuses one process, and its state accumulates
-  across connections.
+* The **pid is 80 in every probe of this boot** (1213a through 1224b), which is consistent with the
+  loader forking one child per connection from a single parent. The libkernel base does change
+  between some probes (0x83D58C000 in 1213a/b, 0x817E1C000 in 1216b-1219a, 0x803534000 in 1221a),
+  so new address spaces do appear; a forked child would inherit the parent's layout and repeat the
+  base, which is what the consecutive identical runs look like. The exact model is unproven, and the
+  earlier sentence in this document that called the process persistent should not be relied on.
 
 That explains the earlier sequence: `653` returned 0x17, 0x18, 0x19 in three consecutive probes
 (23, 24, 25 - consecutive slots), and then EMFILE forever after. The handle is a **slot in a small
