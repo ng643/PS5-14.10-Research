@@ -67,7 +67,7 @@ for _, idx in ipairs(good) do
     end
     pa = pa + STEP
   end
-  print(string.format("[B] idx=%d mapped %d of %d steps", idx, hits, SCAN_LEN // STEP))
+  print(string.format("[B] idx=%d mapped %d of %d steps", idx, hits, math.floor(SCAN_LEN / STEP)))
 end
 
 -- ------------------------------------------------------------------ C: flag coverage at the first good idx

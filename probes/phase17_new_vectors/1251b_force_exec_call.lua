@@ -52,7 +52,7 @@ for i = 0, 0x3F do memory.write_dword(st + i * 4, 0) end
 local ok2, rv2 = pcall(function() return sc189(fd, st) end)
 local fsize = 0
 if ok2 and N(rv2) == 0 then
-  fsize = memory.read_dword(N(st) + 0x58) + memory.read_dword(N(st) + 0x5C) * 4294967296
+  fsize = N(memory.read_dword(N(st) + 0x58)) + N(memory.read_dword(N(st) + 0x5C)) * 4294967296
 end
 print(string.format("[2] fstat -> rv=%s size=%s", tostring(rv2), hex(fsize)))
 
@@ -72,7 +72,7 @@ print(string.format("[3] mmap(len=%s, prot=7, MAP_PRIVATE) -> %s", hex(len), hex
 local code = {0xB8, 0x34, 0x12, 0x00, 0x00, 0xC3}
 for i = 1, 6 do memory.write_byte(target + i - 1, code[i]) end
 local back = ""
-for i = 0, 5 do back = back .. string.format("%02X ", memory.read_byte(target + i)) end
+for i = 0, 5 do back = back .. string.format("%02X ", N(memory.read_byte(target + i))) end
 print(string.format("[4] wrote B8 34 12 00 00 C3, read back %s", back))
 
 -- [5] mprotect(EXEC) as a separate data point; known to fail, cannot hurt

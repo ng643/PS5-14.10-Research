@@ -375,7 +375,7 @@ If set_mcontext() doesn't force SEL_RPL_MASK, sigreturn/setcontext give: control
 - [ ] **Run probe 59a** (`linux_abi_detection`) — Linuxulator presence for KASLR defeat
 - [ ] **Run probe 58d** (`shm_sendfile_reachability`) — CVE-2026-49427/49428 path
 - [ ] **Run probe 57e** (`jail_reachability`) — CVE-2026-49419 jail refcount
-- [ ] **Run probe 57a** (`native_survey_677_734`) — 58 untested native syscalls
+- [x] ~~**Run probe 57a** (`native_survey_677_734`)~~ — closed: 677-734 are outside the 14.10 dispatch table (677/678 panic the console). See `docs/AIO_DEBUG_726_727_13_60.md`
 - [ ] **Measure sys 662-670** — use `tools/syscall_isolation_sweep.py`, one connection per number
 
 ## PRIORITY 3 — Evidence-Audit Retests

@@ -230,3 +230,14 @@ sentinel line before the call, wraps `make_syscall(N)` (six zero args) in
 (which aborts the sweep). `--repeat` re-runs each number; `--save` writes the
 table and JSON under `results/phase15_native_sysent/`. See
 `docs/AIO_RANGE_14_10_EVIDENCE.md` for the measurement gap that motivated it.
+
+`--wait-for-loader SECONDS` waits out a process that died and resumes the same
+range once the game has restarted the loader (it comes back on its own in 4-9 s,
+sometimes slower). `--skip 430` leaves out slots that are known to take more than
+the process with them - 430 `thr_create` panics the kernel on a zeroed context.
+The wedge guard (on by default, `--no-wedge-guard` disables it) retries a number
+that answers nothing and aborts if it answers nothing again: a call that parks
+the Lua thread in the kernel leaves the socket accepting while every later probe
+times out. `--resume` drops every number that already has a record under
+`results/`, so an interrupted range can be restarted where it stopped rather
+than from the top.

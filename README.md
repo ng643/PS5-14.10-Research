@@ -39,7 +39,7 @@ Ivan Milinski · Felix Dietz · Brian Alejandro Camacho · Jonathan Moreau · Fr
 
 ## What's New (October 2026)
 
-**Phase 15 — Native Sysent Survey (677–734):** The ELF64 sysent table has 735 entries. We've only surveyed up to 676. **58 native-only syscalls remain completely untested**, including `virtual_query_by_pid` (728, potential KASLR via cross-process VM query) and `mmap2` (725, potential W^X bypass via alternate mapping path). Probes 57a/57b are written and queued.
+**Phase 15 — Native Sysent Survey (677–734): closed, out of range.** The 13.60 ELF64 sysent table has 735 entries, but the 14.10 console dispatches through a 677-entry table: 677 and 678 panic the console, and every accounted number at or below 676 answers. The native tail (`mmap2` 725, `get_aio_debug_submit_info` 726, `get_aio_debug_request_info` 727, `virtual_query_by_pid` 728, the `apr_*`/`fgcinfo_*` families) is unreachable on this firmware. 726/727 do export raw kernel pointers, statically — see `docs/AIO_DEBUG_726_727_13_60.md`. Probes 57a/57b are withdrawn.
 
 **Phase 14 results (54a–56l):**
 - **CClosure +0x20 redirect confirmed** — Selected existing Lua C functions (rawequal→rawget, rawget→type) produced target-like outputs with successful restoration (probes 56c/56f). This is the strongest userland code execution primitive we have.
@@ -202,7 +202,7 @@ probes/                          # 233+ Lua probe scripts
   phase13_52batch/               # 52a–52b: Sony syscall survey + 624 oracle
   phase13_53batch/               # 53a–53d: evidence-audit retests
   phase14_final_push/            # 54a–56l: deep syscall survey, CClosure, KASLR
-  phase15_native_sysent/         # 57a–57b: native sysent 677–734 (unrun)
+  phase15_native_sysent/         # 57a–57b: native sysent 677–734 (withdrawn, out of range)
 results/                         # 700+ raw output captures
 tools/                           # send_probe.py, send_probe.ps1, kaslr_bruteforce.py
 docs/

@@ -83,7 +83,7 @@ if rv == 0 and s1 and s1 > 0 then
   if n > 0 then
     local out = {}
     for i = 0, math.min(n, 32) - 1 do
-      out[#out + 1] = string.format("%02X", memory.read_byte(buf + i))
+      out[#out + 1] = string.format("%02X", N(memory.read_byte(buf + i)))
     end
     print("[recv] first bytes = " .. table.concat(out, " "))
     local ok, hdr = pcall(function() return memory.read_qword(buf) end)

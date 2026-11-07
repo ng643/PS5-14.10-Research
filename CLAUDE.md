@@ -4,6 +4,57 @@
 
 Systematic kernel exploit research on PlayStation 5 firmware 14.10. The goal is: **userland code exec → kernel R/W → hypervisor bypass**. We have userland code execution via a Lua 5.1 loader on TCP 9026. We need kernel memory access.
 
+## Session Protocol — read this first
+
+Context compacts; memory does not survive it, files do. Two files carry a session:
+`results/STATE.md` (mutable, one block, rewritten in place) and `results/INDEX.md`
+(append-only, one line per console run). Everything below keeps facts in those
+files instead of in a conversation.
+
+**Start, in this order:**
+
+1. `python tools/state.py check --ip <console>` — prints the state block, the last ten
+   ledger rows, and whether 9026 answers. Unreachable means the game process is dead:
+   ask the user to relaunch; do not send probes.
+2. Re-measure the kernel base with `.local/1331a.lua`. It re-randomises on every console
+   reboot, and `STATE.md` only holds the last measurement, never the current truth.
+3. `grep -rn "<syscall number or topic>" results/INDEX.md docs/ probes/` before writing
+   a probe. Paste the hits into the probe header as `-- prior art:`. No prior-art line,
+   no send.
+   Grep a **clean clone** as well as this working tree — a scratch tree drifts, and the
+   docs that close a question are the ones upstream has merged. Pull the clone first,
+   then `python tools/state.py seed` so its new captures join the ledger.
+
+**After every run:** `python tools/state.py row <probe> --claim "..." --result "..." --grade M|V|S|D`
+then `python tools/state.py set last_probe=... next_action=...`
+
+**Using the two files:**
+
+- `STATE.md` is **not a diary**. Overwrite each line; if it grows past ~12 lines,
+  something belongs in a doc instead. Every value is the *last measurement*, so a
+  reader must be able to date it — put the time inside the value when it matters.
+- `INDEX.md` takes **one row per run, written right after that run**, while the
+  capture is still the newest file for that probe (that is how `row` finds it).
+  `--claim` is one sentence saying what the run shows; `--result` is the number or
+  the return code; point at the capture and let it carry the rest.
+- Run `seed` after pulling upstream, so newly merged captures get indexed. It is
+  idempotent: a second run adds nothing, and it never rewrites history.
+- Never edit or delete an indexed row. A wrong row is corrected by appending a
+  newer row that says so, exactly as `results/INDEX.md` does for 55c.
+
+**Grades.** `M` measured on the console this session · `S` read from a source file or dump ·
+`I` inference · `V` **void** — the probe died, or never reached the handler, so the row
+proves nothing · `D` dead end, with the reason in `--result`. A negative without a capture
+path does not exist; a `V` row is not a dead end and must never be cited as one.
+
+**Known void captures:** `results/phase14_final_push/55c_sys622_careful_20261018_095816.txt`
+— every call passed `arg4=0x100`, rejected at the 622 entry check, so no command ever
+dispatched. The "all 400+ commands return 0x800E0001" reading came from that capture; the
+sys 622 entry further down already corrects it, and any pre-2026-11-06 622 number elsewhere
+in this file should be treated as suspect. Also void: 54o/54p/55g (no post-call marker) and
+1334a's budget rows (died at 568). Re-running a void probe is a correction, not a
+discovery, and correcting one is a publishable contribution.
+
 ## Critical Context
 
 ## Current Evidence Correction — 2026-10-18
@@ -16,7 +67,7 @@ This section scopes the current claims; older notes describe their cited probe s
 - **Selected userland CClosure redirects are supported** (56c/56f, 2026-10-18): 56c records rawequal→rawget and rawget→type with distinguishing outputs and restoration; its tostring targets print 42 without a return-type check. 56f adds string.len/math.abs target-like values. General executable-target support, native-register argument control and internal calls to type() remain unverified. A 14.10 kernel vulnerability, kernel read/write, and KASLR defeat are not demonstrated.
 - Probes 43o, 43p, 43a/43b, and 47b have evidence gaps. Retest 53d established qword writability/restoration across the tested CClosure offsets; 54o/54p remain incomplete redirect experiments. The older audit predates the saved 52a/52b outputs noted next.
 - Scripts 52a/52b now have saved outputs (2026-10-18): 52a crashed at sys 631 (627-630 PCALL-FAIL); 52b confirmed sys 624 as a VM operation counter (+5 per mmap, zero jitter).
-- **thr_create(430) kernel panic root cause identified** (PRs #30/#31, 2026-10-19): 13.60 Ghidra decompile of 22 functions shows `set_mcontext()` copies CS register from user ucontext without OR-ing `SEL_RPL_MASK` (0x3). CS=0 from zeroed context → `ISPL(0)=0` → kernel-mode fault path → `pcb_onfault==NULL` → `trap_fatal` → panic. Fix hypothesis: CS=0x43/SS=0x3B should produce a user-mode thread. This is a 13.60 analysis; behavioral match with 14.10 panic (rv=0, TID returned, delayed panic, entry point irrelevant) is strong but identical code is not proven. Probe 80a tests the CS=0x43 fix on 14.10.
+- **thr_create(430) kernel panic root cause identified** (PRs #30/#31, 2026-10-19): 13.60 Ghidra decompile of 22 functions shows `set_mcontext()` copies CS register from user ucontext without OR-ing `SEL_RPL_MASK` (0x3). CS=0 from zeroed context → `ISPL(0)=0` → kernel-mode fault path → `pcb_onfault==NULL` → `trap_fatal` → panic. Fix hypothesis: CS=0x43/SS=0x3B should produce a user-mode thread. This is a 13.60 analysis; behavioral match with 14.10 panic (rv=0, TID returned, delayed panic, entry point irrelevant) is strong but identical code is not proven. Probe 80a tests the CS=0x43 fix on 14.10. **Probe 189a (2026-10-20) contradicts the missing-mask reading for 14.10**: CS=0x40 (same index, RPL 0) produced a live thread with no panic, so this firmware forces or replaces the selector; the defect is panic-only and cannot raise CPL.
 - **The "umtx" probes called syscall 557, not `_umtx_op(454)** (2026-10-19): phase-1/2 probes 04/10-13 and the first revision of 82a bound `sc_umtx_op` to 557 (namedobj_create in the 13.60 capture). 56i2's section [F] is the only saved 454 execution (ops 5/21 ret=0, op 5 wrote a TID-shaped owner word). UMTX_OP_SHM(25) and UMTX_OP_ROBUST_LISTS(26) were never exercised on 454, and FreeBSD 11 reads their key/params pointer from uaddr1. Do not treat probe 10's SHM/robust findings as umtx evidence. Probe 110a prepared; see docs/UMTX_454_EVIDENCE.md.
 - The captures labeled 13.60 are fixed ranges, not complete kernel sections; acquisition authenticity remains unresolved; no verified 14.10 kernel image is present in this repository.
 
@@ -38,14 +89,18 @@ This section scopes the current claims; older notes describe their cited probe s
 | Network packet injection | RAW socket + IP_HDRINCL, TCP connect-back with ARP responder |
 | sys 649 module member query | Returns userland addresses for member types 1-4, 7, 8 across module handles (no kernel pointers). Probe 54k, 2026-10-18 |
 | CClosure function redirect | Selected existing Lua C targets produced target-like outputs and restore checks (56c/56f); arbitrary target/ABI and ROP support remain unverified |
+| native.fcall_with_rax | Arbitrary userland function calls: getpid=0x22a, socket=0x16, close=0x0 confirmed (probe 129b) |
+| C11 threading (Thrd_create) | 5+ concurrent threads with join; Atomic_fetch_add_8 as thread entry verified (probes 126g/126h) |
+| UMTX_OP functional (op 5/21) | UMTX_OP_WAIT blocks correctly on value match; NWAKE_PRIVATE returns 0; MUTEX_LOCK writes owner TID (probes 56i2, 152k) |
 
 ### What's Blocked (Hard Walls)
 - **fn_addr/ROP execution is not demonstrated** — 45c undermines that earlier model for tested calls. Later selected CClosure redirects are separate userland evidence; neither identifies the complete syscall dispatcher
 - **W^X enforced** — `mmap(RWX)` gives RW only; `mprotect(EXEC)` always fails; mtypeprotect returns do not prove execute permissions or execution of the allocated test page
 - **Execute-only memory (XOM)** — system lib .text is XO (reading crashes); eboot is RX
-- **No threading (partially revised)** — `fork`, `rfork`, `thr_new` all blocked. `thr_create(430)` returns rv=0 with a real TID but panics the kernel (confirmed 14.10). Root cause (13.60 decompile, PRs #30/#31): `set_mcontext()` copies CS=0 from zeroed ucontext without forcing `SEL_RPL_MASK`; `ISPL(0)=0` makes the trap handler treat the child's fault as kernel-mode → `pcb_onfault==NULL` → `trap_fatal` → panic. **Hypothesis:** CS=0x43/SS=0x3B should prevent the panic and yield a live user-mode thread. Untested on 14.10 — probe 80a is the decisive test.
-- **Sys 661 kills the process** — kills instantly on 14.10 for the two tested argument shapes (probes 54c and 54f section G, 2026-10-18). But both captures stop at 661, so 662-670 were never executed: the range-wide "AIO hard wall" is an n=1 generalization. See `docs/AIO_RANGE_14_10_EVIDENCE.md`.
-- **No kernel pointers found** — extensive scanning has found none. AF_ROUTE retest 53b confirmed kernel sanitizes route messages (zero kernel pointers). kldstat/kldsym (43a/43b) retest 53c never ran (connection refused). No KASLR defeat path identified.
+- **Threading works via `thr_create(430)`** — `fork`, `rfork`, `thr_new` stay blocked, but `thr_create(430)` starts a second userland thread when the context carries the handler's three gates (`+0x108 = 0x480`, `+0x0d0 <= 7`, `+0x110 = 0x10000`) plus `CS = 0x43` at `+0x0c0`, `RIP` at `+0x0e0`, `RSP` at `+0x0f8`, `SS = 0x3b` at `+0x100`; GP registers come from `+0x048..+0x0b8`. Probes 156c/156d: `rv = 0`, `thr_kill(tid, 0) = 0`, and the child executed `mov [rdi], rax; ret` in eboot and wrote `0xdeadbeefcafe` into a mapped page. The `+0x90..+0xb0` offsets used by 80a are not the fields the handler reads; that context is rejected at `+0x108` (`rv = -1`) with a TID written before validation. `thr_suspend(442)` returns -1 for the child, so a spinning thread outlives the probe; no kernel primitive and no TLS inside the child yet. See `docs/THREADING_ALIVE_14_10.md`.
+- **A kill does not prove the slot is absent** (2026-10-20). It did, by the 173a reading: `make_syscall(4095)` kills and 4095 cannot have a handler. But 622 `ipmimgr_call` kills on six zeros and returned `ret=0` to a real request in 55c, so a present handler that faults on the arguments dies the same way, and a kernel that kills on a forbidden call would look identical. A kill is a result about the call, never about the handler. The range 661-670: 662, 663, 664, 666, 667, 669 return `-1` (present, rejecting zeros), 670 returns `0`, and 661/665/668 kill on zeros and need a real aiocb before anything can be concluded. See `docs/SYSCALL_ABSENT_VS_LETHAL.md` and `docs/AIO_RANGE_14_10_EVIDENCE.md`.
+- **The measured sysent ends at 676** (2026-10-20): 677 through 707 each killed the process, thirty-one consecutive numbers including the five `nosys` slots, which reads as past-the-end rather than thirty-one hostile handlers. The 13.60 capture has 735 entries and names the tail (`wait6`, `pipe2`, `ppoll`, `get_phys_page_size`, `ioreq`, `mmap2`, `virtual_query_by_pid`), so either 14.10 dropped it or the tables number differently; it cannot be settled without a 14.10 image. Names above 676 are unverified and unreachable. See `docs/SYSENT_PRESENCE_14_10.md`.
+- **No kernel pointers found** — extensive scanning has found none. AF_ROUTE retest 53b confirmed kernel sanitizes route messages (zero kernel pointers). kldstat/kldnext/kldsym raise SIGSYS, which terminates only under the default disposition; with `SIG_IGN` installed they return -1 and the process survives (353a/353b, 710a/711a), so the slots are absent rather than hostile. No KASLR defeat path identified *through a syscall*.
 - **ROP-shaped metadata role is unknown** — tested calls persisted after selected fn_addr and chain mutations; do not treat the fields as a function-call primitive
 
 ### Tested raw syscall behavior
@@ -188,10 +243,8 @@ docs/
 - **sigaltstack kernel write** — copyout() validates destinations
 - **mprotect(EXEC)** — always fails, hard W^X
 - **XOM gadget scan** — reading XO pages crashes past pcall
-- **Threading via resolve()** — fork/rfork/thr_new all -1
-- **AIO** — sys 661 instantly kills the process on 14.10 for the two tested argument shapes (probes 54c/54f, 2026-10-18). Scope correction: both captures terminate at 661, so 662-670 were never reached; the earlier range-wide verdict is unsupported. See `docs/AIO_RANGE_14_10_EVIDENCE.md`.
-- **kqueue** — fd allocates but kevent returns -1
-- **AIO** — **CONFIRMED DEAD**: sys 661 instantly kills the process on 14.10 (probes 54c/54f, 2026-10-18). Previous 43p inconclusive status resolved.
+- **Threading via resolve()** — fork/rfork/thr_new all -1. `thr_create(430)` via make_syscall starts a real thread once the gates and the `CS`/`RIP`/`RSP`/`SS` offsets are right (156c/156d); a zeroed ucontext still panics. See `docs/THREADING_ALIVE_14_10.md`.
+- **AIO (sys 661)** — instantly kills the process on 14.10 for the two tested argument shapes (probes 54c/54f, 2026-10-18). Scope correction: both captures terminate at 661, so 662-670 were never reached; the earlier range-wide verdict is unsupported. Use `tools/syscall_isolation_sweep.py` for one-connection-per-number measurement. See `docs/AIO_RANGE_14_10_EVIDENCE.md`.
 - **kqueue** — fd allocates; kevent works with zero timeout (split and combined calls, probes 20/21), only the 100ms-timeout call returns -1 (probe 30c). See `docs/KEVENT_TIMEOUT_VARIABLE.md`.
 - **ioctl via resolve()** — all blocked (untested via make_syscall)
 - **sysctl kernel pointer leaks** — all scanned pointers are sentinels (0xFFFFFFFF_*)
@@ -210,8 +263,7 @@ docs/
 - **W^X bypass via mtypeprotect + fn_addr** — earlier code-execution claim is unsupported; mtypeprotect returns did not prove code-page execution, and 45c undermines the proposed dependency for tested calls
 - **Shellcode execution via fn_addr** — proposed writes did not land and results do not establish shellcode execution; the evidence does not prove every path is incapable of executing code
 - **AF_ROUTE KASLR (Relapse technique)** — **CONFIRMED DEAD**: retest 53b delivered RTM_GET (hdr=152, write ret=168), received valid 136-byte response (version=5, type=4, pid=112), but all payload is zeroed sockaddr structures — zero kernel pointers. Kernel sanitizes route messages on 14.10. (probes 43o, 53b retest 2026-10-18)
-- **Sys 661 via make_syscall** — "instant kill" IS established for the two tested argument shapes (probes 54c/54f, 2026-10-18). But 662-670 were never reached in either capture (190 B ending at `[BEFORE] sys 661`; 15,257 B ending at the section-G header), so range-wide lethality is not established.
-- **kldstat/kldsym via make_syscall** — inconclusive: 43a/43b logs are header-only (145 B / 116 B), no output and no kill record (retest 53c pending; 2026-10-17 audit).
+- **The whole `kld*` family plus `sysctlbyname`** — 307 (`kldnext`), 308 (`kldstat`), 337 (`kldsym`) and 570 (`sysctlbyname`) all kill the process on 14.10 (56k4/56k5, 171a, 172a). These are host-only syscalls in a console kernel. The death is the **nosys** path delivering SIGSYS: install `SIG_IGN` with a `struct sigaction` (`make_syscall(416)`, `act[0]=1`) and every one returns -1 with the process alive (353a/353b, 710a/711a). `docs/SYSCALL_ABSENT_VS_LETHAL.md`.
 - **kinfo_proc kernel pointers** — full 1096B dump: only sentinels, no real kernel pointers.
 - **kern.proc.filedesc/vmmap** — blocked (ret=-1)
 - **sysctl operations (43f)** — the write labeled `kern.securelevel` returned -1. Reads labeled `kern.coredump`, `security.bsd.unprivileged_proc_debug` and `kern.maxproc` returned -1, so their conditional writes were not reached. `kern.somaxconn` read returned 0/value 1024; no write was attempted. See `results/43f_sysctl_write_20261016_180756.txt`; these labels follow the probe's assumed MIB mappings.
@@ -228,17 +280,14 @@ docs/
 - **CClosure C function pointer redirect (pre-55g)** — retest 53d confirmed ALL 7 offsets (+0x00 through +0x30) are writable with successful restore. 55g records a boundary after the +0x20 write; 54r records target bytes. These do not identify the crash instruction or a successful 54q redirect. Later 56c/56f returned target-like results for selected existing Lua C targets; broader execution support remains unverified.
 - **SCTP chunk fuzzing** — 39 variants via loopback raw socket, zero crashes (probe 48b)
 - **IPv6 extension header fuzzing** — 83 variants, zero crashes (probe 48c)
-- **TCP state machine injection** — 182 crafted segments; the saved run reached COMPLETE. RST injection left the observed state ESTABLISHED, which does not by itself confirm RFC 5961 challenge ACK behavior. (probe 49a)
-- **IPv6 fragment reassembly** — 280 fragments; the saved run reached COMPLETE. This does not establish RFC 5722 compliance. (probe 49b)
-- **Exotic protocols (IGMP/GRE/ESP/AH/PIM/OSPF/VRRP)** — 86 packets, zero crashes (probe 50a)
-- **Sony syscall info leak** — 11 accessible syscalls deep-tested with output buffers, no kernel pointers in any output (probes 51a, 51b)
 - **TCP state machine injection** — 182 crafted segments into ESTABLISHED loopback connection (RST, SACK, PAWS, option parser len=0/255, URG, zero-window, ACK storm, SYN flood). The saved run reached COMPLETE. TCP_INFO values at +108/+112 tracked sequence numbers in that run; this does not establish TCP hardening or RFC compliance. (probe 49a)
 - **IPv6 fragment reassembly attacks** — 280 fragments targeting ip6_reass() (overlapping/teardrop, queue exhaustion 50+101-bomb, huge totals 65535+, atomic frags, interleaving, ext hdr combos, nested frag-in-frag). The saved run reached COMPLETE; fragment-drop behavior and RFC 5722 compliance were not independently established. (probe 49b)
+- **Exotic protocols (IGMP/GRE/ESP/AH/PIM/OSPF/VRRP)** — 86 packets, zero crashes (probe 50a)
+- **Sony syscall info leak** — 11 accessible syscalls deep-tested with output buffers, no kernel pointers in any output (probes 51a, 51b)
 - **Port binding ≥40000** — bind() returns -1 for ports ≥40000. Use 1024-32767 range.
 - **sys 572 VM info query** — returns -1 for (addr, outbuf, size) layout; returns 0 but empty buffers for (outbuf, cmd, size) layout across cmds 0-5. No useful VM metadata extracted. (probes 54i, 2026-10-18)
 - **sys 626 RDMSR precise (cmd=1 + cmd=4)** — cmd=1 returns -1 for all 16 PMC indices (MSR 0xC0010231+); cmds 1-6 all return -1 for idx=0; narg sensitivity 0-8 all -1. cmd=4 returns 0 but output is all zeros (counters not running). WRMSR (cmd=2) returns -1. No MSR data accessible. (probe 54a2, 2026-10-18)
 - **sys 629 jail bypass** — all arg patterns (direct values, pointer-to-value for arg1/arg2) return -1. No fast path. Process crashed on kld* retests. (probe 54b, 2026-10-18)
-- **Sys 661 via make_syscall (two argument shapes)** — instantly kills process on 14.10 (probes 54c, 54f section G, 2026-10-18). Scope correction 2026-10-19: this kills at the first number of each sweep, so 662-670 were never executed; use `tools/syscall_isolation_sweep.py` for one-connection-per-number measurement.
 - **sys 626 RDMSR** — returns -1 for all 11 MSR indices (TSC, APIC_BASE, SYSENTER_EIP, EFER, STAR, LSTAR, CSTAR, SFMASK, FS_BASE, GS_BASE, KERNEL_GS_BASE) across 3 arg layouts. Blocked on 14.10. (probes 54k, 2026-10-18)
 - **sys 567 RDMSR read** — returns -1 for all MSR indices with both flat and struct arg layouts. (probe 54k, 2026-10-18)
 - **sys 612** — returns -1 for all tested member values 0-8. (probe 54k, 2026-10-18)
@@ -247,11 +296,11 @@ docs/
 - **net.route.iflistl kernel pointer scan** — returned 6536 bytes but all values are sockaddr/MAC/interface structures, no kernel pointers. (probe 54f section D, 2026-10-18)
 - **sys 593 deep struct scan (+0x148/+0x150)** — values across all 39 modules are NID hashes/fingerprints (random high bits but not in kernel VA range 0xFFFF8xxx), not kernel pointers. (probe 54f section F, 2026-10-18)
 - **sys 643 chicken switches** — all 32 bits accepted (ret=0 for each), 0xFFFFFFFF OR'd into process+0xa34. No observable effect: mprotect(RWX) still fails, fork still blocked, kldstat still blocked. Field does not control W^X, sandbox, or syscall filtering. (probe 55a, 2026-10-18)
-- **sys 548 batch VM ops** — all operation codes (0, 2, 3) and arg layouts return ret=-1, processed=0. Dead on 14.10. (probe 55b, 2026-10-18)
-- **sys 622 device control** — every command (0x100-0x520, 400+ commands) returns ret=0 with buf[0]=0x800E0001 (Sony error "no device context"). No crashes, no variation, no kernel pointers. Process lacks initialized GPU device context. (probe 55c, 2026-10-18)
 - **sys 548 batch VM ops** — all operation codes (0=new mapping, 2=protection update, 3=anonymous mapping) return ret=-1, processed=0. Different code path from mprotect but equally blocked. W^X not bypassable via this route. (probe 55b, 2026-10-18)
 - **sys 622 device control multiplexer** — all 400+ commands across ranges 0x100-0x520 return ret=0 with buf[0]=0x800E0001 (Sony error: no device context). Every arg1 value tested gives same result. Process lacks GPU/display context so all commands early-exit. No data, no crashes, no kernel pointers. (probes 55b/55c, 2026-10-18)
-- **sys 601 process control multiplexer** — most commands return -1 (no init state). cmd 0x00 ret=0 buf=0x100, cmds 0x07/0x09/0x0d/0x13/0x14/0x19 ret=0 with empty buffers. "Backdoor" cmd 0x0c returns -1 for all auth patterns. "Write" cmd 0x12 returns -1. Kernel page copyout cmd 0x10 returns -1. Process lacks initialization. Game crashed during full scan. (probe 55d, 2026-10-18)
+- **sys 601 process control multiplexer (`mdbg_service`)** — most commands return -1 (no init state). cmd 0x00 ret=0 buf=0x100, cmds 0x07/0x09/0x0d/0x13/0x14/0x19 ret=0 with empty buffers. "Backdoor" cmd 0x0c returns -1 for all auth patterns. "Write" cmd 0x12 returns -1. Process lacks initialization. Game crashed during full scan. (probe 55d, 2026-10-18)
+  - **Two labels from that probe were the probe's own, not the handler's, and are refuted** (handler audit, 2026-11-04): the handler contains **no 0x1000-byte kernel→user copy** — the only 0x1000 operation is `copyinstr(arg2, kbuf, 0x1000)` at RVA `0xca0d6c`, followed by a digest and a free, so "kernel page copyout cmd 0x10" has no referent; and the "0xCD,0x41 backdoor" compares two bytes **the kernel itself writes** into a stack descriptor via `0xa36e80` (a device/platform query), not caller bytes, and a match returns error `0x23`. Largest user copy in the handler is 0x480 bytes and it is a round trip of caller-supplied data.
+  - Dispatch is a 40-entry relative jump table at RVA `0x1a51160` guarded by `cmp rax,0x27`, default `0x4e` (ENOSYS). **The handler contains no capability-bit test at all**; the gates are state flags — `[td+0x529]&1`, `[proc+0x563]&4`, `[proc+0x464]&1`, the boot-state helper `0xb078d0`, and residual kernel-object state. The jump table is outside every retained dump, so no command number can be bound to a body from this corpus.
 - **sys 674 VM map kernel pointer search** — 317 regions enumerated with full 72-byte records. All addresses are userland VA (max 0xF_E0400000). Zero kernel pointers found at any offset. Record layout decoded: +0x00 start addr, +0x08 end addr, +0x18 protection, +0x20 name string. GPU/device regions at 0x8-0xF range are userland device-mapped memory. (probes 55e/55f, 2026-10-18)
 - **sys 672 dynlinker library list** — ret=-1 (predicate gate failed). Dead. (probe 55e, 2026-10-18)
 - **sys 676 CPU mode update** — ret=-1 (process+0xc81 gate). Dead. (probe 55e, 2026-10-18)
@@ -261,6 +310,10 @@ docs/
 - **sys 671 resource class query** — sel=-1 mode=1: A=6144, B=3948. mode=2: A=2560, B=2014. Explicit selectors 0-10 all failed (needs credential bit 62). Memory budget values only. (probe 55e, 2026-10-18)
 - **sys 631** — instantly kills process. Lethal on 14.10. (probe 52a, 2026-10-18)
 - **sys 627-630** — all return PCALL-FAIL (exception/crash caught by pcall). (probe 52a, 2026-10-18)
+- **sys 677** — instantly kills process AND crashes the game (loader stops accepting connections). LETHAL + GAME CRASH. (syscall_isolation_sweep, 2026-10-20)
+- **sys 678** — instantly kills process AND crashes the game. Same behavior as 677. LETHAL + GAME CRASH. (syscall_isolation_sweep, 2026-10-20)
+- **UMTX_OP_SHM (op 25 on syscall 454)** — **CONFIRMED STUB**: all sub-ops (create=1, destroy=4, alive=8) return 0 for any valid mapped address, -1 for unmapped addresses. Invalid sub-ops (0, 16) also return 0. Zero VM ops (sys 624 delta=0). alive() returns 0 even for never-created keys. No fd allocation, no vm_object creation, no slab allocation. Sony stubbed out the SHM subsystem. **CVE-2024-43102 is NOT exploitable** on 14.10 — the vulnerable umtx_shm_create_reg/unref_reg race path is unreachable. (probes 151a–152k, 2026-10-20)
+- **fstat(189) is a live handler, not lethal** — corrected 2026-11-03: `open("/app0/eboot.bin")` = 23, `189(fd, buf)` = 0 with `struct stat` filled, under the default disposition (probe 1021a). The earlier "kills process immediately" line came from probe 152j, which left no saved capture. A full-byte scan of the structure for every descriptor holds no supervisor-range value (probe 1024a).
 
 ## Sending Probes
 
@@ -298,11 +351,11 @@ Results are saved to `results/<phase>/<name>_<timestamp>.txt`.
 - **11 accessible Sony syscalls** — 596, 585, 572, 624, 563-566, 606, 643, 640
 
 **NEXT STEPS:**
-1. **56c/56f selected CClosure redirects** — returned target-like values and restoration are recorded; 56c C/D lack return-type checks
+1. **UMTX_OP mutex/rwlock/PI races (op 5/6/22 on 454)** — UMTX_OP_WAIT/WAKE/MUTEX are functional (56i2, 152k). The PI-mutex ops allocate `umtx_pi` objects and have had historical UAF/race bugs. Exercise the full op matrix (0-26) beyond 5/21.
 2. **56d ROP via CClosure** — redirect +0x20 to eboot gadgets (ret, pop rdi;ret, etc.) to build a gadget chain. Redirect rawequal/rawget to gadget addresses, call them, observe register/stack effects.
-3. **General gadget calling remains a hypothesis** — a userland executable target does not grant permission to call kernel functions; kernel entry and authorization remain separate.
-4. **Loader internals** — find the C-level syscall dispatch, check for writable function pointers
-5. **Evidence-audit retests (53c)** — kldstat/kldsym retest still pending
+3. **Loader internals** — find the C-level syscall dispatch, check for writable function pointers
+4. **Threaded UMTX races** — Thrd_create works; use threads to race UMTX_OP_MUTEX_LOCK/UNLOCK for refcount or state corruption
+5. **Sysent 679-734 survey** — unexplored Sony syscall range beyond the lethal 677/678
 
 ## When Analyzing Results
 
@@ -314,6 +367,7 @@ Results are saved to `results/<phase>/<name>_<timestamp>.txt`.
 
 ## Git Conventions
 
-- **Author:** ZigZagBoi1 <marwantech2004@gmail.com>
+- **Author:** commit as the contributor doing the work (Rithik Janarthanan
+  <janarthananrithik@gmail.com>), never as the repository owner
 - **No AI attribution** in commits, PRs, or code.
 - Commit messages should be short and descriptive of what changed.
