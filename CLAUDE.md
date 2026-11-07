@@ -4,6 +4,57 @@
 
 Systematic kernel exploit research on PlayStation 5 firmware 14.10. The goal is: **userland code exec → kernel R/W → hypervisor bypass**. We have userland code execution via a Lua 5.1 loader on TCP 9026. We need kernel memory access.
 
+## Session Protocol — read this first
+
+Context compacts; memory does not survive it, files do. Two files carry a session:
+`results/STATE.md` (mutable, one block, rewritten in place) and `results/INDEX.md`
+(append-only, one line per console run). Everything below keeps facts in those
+files instead of in a conversation.
+
+**Start, in this order:**
+
+1. `python tools/state.py check --ip <console>` — prints the state block, the last ten
+   ledger rows, and whether 9026 answers. Unreachable means the game process is dead:
+   ask the user to relaunch; do not send probes.
+2. Re-measure the kernel base with `.local/1331a.lua`. It re-randomises on every console
+   reboot, and `STATE.md` only holds the last measurement, never the current truth.
+3. `grep -rn "<syscall number or topic>" results/INDEX.md docs/ probes/` before writing
+   a probe. Paste the hits into the probe header as `-- prior art:`. No prior-art line,
+   no send.
+   Grep a **clean clone** as well as this working tree — a scratch tree drifts, and the
+   docs that close a question are the ones upstream has merged. Pull the clone first,
+   then `python tools/state.py seed` so its new captures join the ledger.
+
+**After every run:** `python tools/state.py row <probe> --claim "..." --result "..." --grade M|V|S|D`
+then `python tools/state.py set last_probe=... next_action=...`
+
+**Using the two files:**
+
+- `STATE.md` is **not a diary**. Overwrite each line; if it grows past ~12 lines,
+  something belongs in a doc instead. Every value is the *last measurement*, so a
+  reader must be able to date it — put the time inside the value when it matters.
+- `INDEX.md` takes **one row per run, written right after that run**, while the
+  capture is still the newest file for that probe (that is how `row` finds it).
+  `--claim` is one sentence saying what the run shows; `--result` is the number or
+  the return code; point at the capture and let it carry the rest.
+- Run `seed` after pulling upstream, so newly merged captures get indexed. It is
+  idempotent: a second run adds nothing, and it never rewrites history.
+- Never edit or delete an indexed row. A wrong row is corrected by appending a
+  newer row that says so, exactly as `results/INDEX.md` does for 55c.
+
+**Grades.** `M` measured on the console this session · `S` read from a source file or dump ·
+`I` inference · `V` **void** — the probe died, or never reached the handler, so the row
+proves nothing · `D` dead end, with the reason in `--result`. A negative without a capture
+path does not exist; a `V` row is not a dead end and must never be cited as one.
+
+**Known void captures:** `results/phase14_final_push/55c_sys622_careful_20261018_095816.txt`
+— every call passed `arg4=0x100`, rejected at the 622 entry check, so no command ever
+dispatched. The "all 400+ commands return 0x800E0001" reading came from that capture; the
+sys 622 entry below already corrects it, and any pre-2026-11-06 622 number elsewhere in this
+file should be treated as suspect. Also void: 54o/54p/55g (no post-call marker) and 1334a's
+budget rows (died at 568). Re-running a void probe is a correction, not a discovery, and
+correcting one is a publishable contribution.
+
 ## Critical Context
 
 ## Current Evidence Correction — 2026-10-18
