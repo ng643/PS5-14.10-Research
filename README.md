@@ -327,7 +327,7 @@ probes/                              # 2901 probe scripts (2798 Lua + 57 JS + 46
   phase13_webkit/                   # 102 probes (46 HTML + 56 JS): FontFace UAF, Canvas forge, engine fingerprint, crash corpus
   phase14_cclosure_redirect/         # CClosure +0x20 redirect experiments
   phase14_final_push/               # 54a-56l: deep syscall survey, CClosure, KASLR exhaustive
-  phase15_native_sysent/            # 57a+: native sysent survey, msync CVE probe
+  phase15_native_sysent/            # 57a-57b: native sysent 677-734 (withdrawn: outside the 14.10 table)
   phase16_thr_create_crash/          # thr_create(430) crash analysis and CS=0x43 fix
   phase17_new_vectors/              # 1470 probes: massive vector exploration
   phase17_seg_hypothesis/           # Segment register hypothesis testing
