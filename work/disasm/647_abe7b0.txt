@@ -1,0 +1,36 @@
+00abe7b0 55                     push    rbp
+00abe7b1 4889e5                 mov     rbp, rsp
+00abe7b4 4157                   push    r15
+00abe7b6 4156                   push    r14
+00abe7b8 53                     push    rbx
+00abe7b9 4883ec18               sub     rsp, 0x18
+00abe7bd 4c8d3d4cdbe502         lea     r15, [rip + 0x2e5db4c]
+00abe7c4 4889fb                 mov     rbx, rdi
+00abe7c7 4989f6                 mov     r14, rsi
+00abe7ca 498b07                 mov     rax, qword ptr [r15]
+00abe7cd 488945e0               mov     qword ptr [rbp - 0x20], rax
+00abe7d1 488bbf40010000         mov     rdi, qword ptr [rdi + 0x140]
+00abe7d8 e8b3a7b4ff             call    0xffffffff8afc8f90   ; -> 608f90 cap_0x608f90
+00abe7dd 85c0                   test    eax, eax
+00abe7df 7428                   je      0xffffffff8b47e809
+00abe7e1 c745dc00000000         mov     dword ptr [rbp - 0x24], 0
+00abe7e8 488d4ddc               lea     rcx, [rbp - 0x24]
+00abe7ec 4889df                 mov     rdi, rbx
+00abe7ef ba04000000             mov     edx, 4
+00abe7f4 498b36                 mov     rsi, qword ptr [r14]
+00abe7f7 e864faffff             call    0xffffffff8b47e260   ; -> abe260 
+00abe7fc 48634ddc               movsxd  rcx, dword ptr [rbp - 0x24]
+00abe800 48898b08040000         mov     qword ptr [rbx + 0x408], rcx
+00abe807 eb05                   jmp     0xffffffff8b47e80e
+00abe809 b801000000             mov     eax, 1
+00abe80e 498b0f                 mov     rcx, qword ptr [r15]
+00abe811 483b4de0               cmp     rcx, qword ptr [rbp - 0x20]
+00abe815 750b                   jne     0xffffffff8b47e822
+00abe817 4883c418               add     rsp, 0x18
+00abe81b 5b                     pop     rbx
+00abe81c 415e                   pop     r14
+00abe81e 415f                   pop     r15
+00abe820 5d                     pop     rbp
+00abe821 c3                     ret     
+00abe822 e889eec3ff             call    0xffffffff8b0bd6b0   ; -> 6fd6b0 
+00abe827 0f0b                   ud2     

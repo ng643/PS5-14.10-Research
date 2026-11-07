@@ -1,0 +1,214 @@
+<!doctype html><meta charset="utf-8"><title>temporal-japanese-ce-bce-era-validation.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+}
+
+function shouldThrow(func, errorType) {
+    let threw = false;
+    try { func(); } catch (e) {
+        threw = true;
+        if (!(e instanceof errorType))
+            throw new Error(`Expected ${errorType.name} but got ${e.constructor.name}: ${e.message}`);
+    }
+    if (!threw)
+        throw new Error(`Expected ${errorType.name} but no exception was thrown`);
+}
+
+// Japanese "ce"/"bce" era fast path: out-of-range month must be constrained
+// (not read out of bounds and produce dates like "2000-255-00").
+{
+    const r = Temporal.PlainDate.from({ calendar: "japanese", era: "ce", eraYear: 2000, month: 255, day: 1 });
+    shouldBe(r.toString(), "2000-12-01[u-ca=japanese]");
+    shouldBe(r.month, 12);
+    shouldBe(r.day, 1);
+}
+{
+    const r = Temporal.PlainDate.from({ calendar: "japanese", era: "ce", eraYear: 2000, month: 13, day: 1 });
+    shouldBe(r.toString(), "2000-12-01[u-ca=japanese]");
+}
+{
+    // ISO year 0 (bce 1); assert via toString since the year getter goes
+    // through ICU and is subject to Julian/Gregorian switch quirks near year 0.
+    const r = Temporal.PlainDate.from({ calendar: "japanese", era: "bce", eraYear: 1, month: 255, day: 40 });
+    shouldBe(r.toString(), "0000-12-31[u-ca=japanese]");
+    shouldBe(r.month, 12);
+    shouldBe(r.day, 31);
+}
+shouldThrow(() => {
+    Temporal.PlainDate.from({ calendar: "japanese", era: "ce", eraYear: 2000, month: 255, day: 1 }, { overflow: "reject" });
+}, RangeError);
+shouldThrow(() => {
+    Temporal.PlainDate.from({ calendar: "japanese", era: "ce", eraYear: 2000, month: 13, day: 1 }, { overflow: "reject" });
+}, RangeError);
+
+// PlainYearMonth.from through the same fast path.
+{
+    const r = Temporal.PlainYearMonth.from({ calendar: "japanese", era: "ce", eraYear: 2000, month: 255 });
+    shouldBe(r.year, 2000);
+    shouldBe(r.month, 12);
+}
+shouldThrow(() => {
+    Temporal.PlainYearMonth.from({ calendar: "japanese", era: "ce", eraYear: 2000, month: 255 }, { overflow: "reject" });
+}, RangeError);
+
+// ZonedDateTime.with / PlainDateTime.with reach the fast path without the
+// fields-layer rough year range check, so the fast path itself must validate.
+{
+    const z = Temporal.ZonedDateTime.from("2000-01-01T00:00[UTC][u-ca=japanese]");
+    shouldBe(z.with({ era: "ce", eraYear: 2000, month: 255 }).toString(), "2000-12-01T00:00:00+00:00[UTC][u-ca=japanese]");
+    // eraYear INT32_MAX silently truncated the 21-bit ISO year field (year became -1).
+    shouldThrow(() => { z.with({ era: "ce", eraYear: 2147483647 }); }, RangeError);
+    // 1 - INT32_MIN overflows int32.
+    shouldThrow(() => { z.with({ era: "bce", eraYear: -2147483648 }); }, RangeError);
+    shouldThrow(() => { z.with({ era: "ce", eraYear: 300000 }); }, RangeError);
+    shouldThrow(() => { z.with({ era: "bce", eraYear: 300000 }); }, RangeError);
+}
+{
+    const pdt = Temporal.PlainDateTime.from("2000-01-01T00:00[u-ca=japanese]");
+    shouldBe(pdt.with({ era: "ce", eraYear: 2000, month: 255 }).toString(), "2000-12-01T00:00:00[u-ca=japanese]");
+    shouldThrow(() => { pdt.with({ era: "ce", eraYear: 2147483647 }); }, RangeError);
+    shouldThrow(() => { pdt.with({ era: "bce", eraYear: -2147483648 }); }, RangeError);
+}
+
+// eraYear out of ISO year limits must throw RangeError (Debug builds asserted
+// in the ISO8601::PlainDate constructor before the fix).
+shouldThrow(() => {
+    Temporal.PlainDate.from({ calendar: "japanese", era: "ce", eraYear: 300000, month: 1, day: 1 });
+}, RangeError);
+shouldThrow(() => {
+    Temporal.PlainDate.from({ calendar: "japanese", era: "bce", eraYear: 300000, month: 1, day: 1 });
+}, RangeError);
+shouldThrow(() => {
+    Temporal.PlainDate.from({ calendar: "japanese", era: "ce", eraYear: 275761, month: 1, day: 1 });
+}, RangeError);
+shouldThrow(() => {
+    Temporal.PlainDate.from({ calendar: "japanese", era: "bce", eraYear: 271823, month: 1, day: 1 });
+}, RangeError);
+
+// Boundary years remain accepted.
+{
+    const r = Temporal.PlainDate.from({ calendar: "japanese", era: "ce", eraYear: 275760, month: 9, day: 13 });
+    shouldBe(r.year, 275760);
+    shouldBe(r.month, 9);
+    shouldBe(r.day, 13);
+}
+{
+    const r = Temporal.PlainDate.from({ calendar: "japanese", era: "bce", eraYear: 271822, month: 4, day: 19 });
+    shouldBe(r.toString(), "-271821-04-19[u-ca=japanese]");
+    shouldBe(r.month, 4);
+    shouldBe(r.day, 19);
+}
+
+// Normal ce/bce dates still resolve correctly.
+{
+    const r = Temporal.PlainDate.from({ calendar: "japanese", era: "ce", eraYear: 2000, month: 2, day: 29 });
+    shouldBe(r.toString(), "2000-02-29[u-ca=japanese]");
+    // The era getters report the canonical era for the date, not the input.
+    shouldBe(r.era, "heisei");
+    shouldBe(r.eraYear, 12);
+}
+{
+    // bce 1 = ISO year 0, which is a leap year.
+    const r = Temporal.PlainDate.from({ calendar: "japanese", era: "bce", eraYear: 1, month: 2, day: 29 });
+    shouldBe(r.year, 0);
+    shouldBe(r.month, 2);
+    shouldBe(r.day, 29);
+}
+
+// year-consistency check with era+eraYear still applies.
+shouldThrow(() => {
+    Temporal.PlainDate.from({ calendar: "japanese", era: "ce", eraYear: 2000, year: 1999, month: 1, day: 1 });
+}, RangeError);
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1685-temporal-japanese-ce-bce-era-validation.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

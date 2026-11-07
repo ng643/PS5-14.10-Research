@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>webp1</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function mk(w,h,r,g,bl){ var c=document.createElement('canvas'); c.width=w; c.height=h; var x=c.getContext('2d'); x.fillStyle='rgba('+r+','+g+','+bl+',1)'; x.fillRect(0,0,w,h); return c; }
+function px(c,x,y){ return c.getContext('2d').getImageData(x,y,1,1).data; }
+function scan(c,r,g,bl){ var d=c.getContext('2d').getImageData(0,0,c.width,c.height).data; var bad=[]; for(var i=0;i<c.width*c.height;i++){ if(d[i*4]!==r||d[i*4+1]!==g||d[i*4+2]!==bl||d[i*4+3]!==255){ if(bad.length<8) bad.push(i+':'+d[i*4]+','+d[i*4+1]+','+d[i*4+2]+','+d[i*4+3]); } } return bad; }
+function hexp(p){ return [p[0],p[1],p[2],p[3]].join(','); }
+var canaries=[];
+function boot(){
+  b('W1-BOOT');
+  for(var i=0;i<8;i++){ var c=mk(32,32,10+i*10,200,50); document.body.appendChild(c); canaries.push(c); }
+  var A=mk(32,32,0,0,0); document.body.appendChild(A);
+  var im=new Image();
+  im.onload=function(){
+    b('W1-LOADED-'+im.naturalWidth+'x'+im.naturalHeight);
+    var g=A.getContext('2d');
+    try { g.drawImage(im,0,0); b('W1-DRAWN'); } catch(e){ b('W1-DRAW-ERR-'+e.message); }
+    try { b('W1-A00-'+hexp(px(A,0,0))+' A01-'+hexp(px(A,0,1))+' A31-'+hexp(px(A,31,31))); } catch(e){ b('W1-READ-ERR'); }
+    try { var d=g.getImageData(0,0,32,32).data; var s=''; for(var i=0;i<8;i++) s+=d[i]+','; b('W1-AROW-'+s); } catch(e){ b('W1-GID-ERR'); }
+    for(var i=0;i<canaries.length;i++){ var bad=scan(canaries[i],10+i*10,200,50); b('W1-C'+i+'-'+bad.length+(bad.length?'-'+bad.join('/'):'')); }
+    b('W1-DONE');
+  };
+  im.onerror=function(){ b('W1-IMG-ERR'); };
+  im.src='/corpus/awebp-frame-exceeds-canvas.webp?n='+Date.now();
+}
+window.addEventListener('load',boot);
+</script></head><body><p>webp1</p></body></html>

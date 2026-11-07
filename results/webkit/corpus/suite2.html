@@ -1,0 +1,34 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>suite2</title><script>
+var TESTS=[];
+function T(n,f){TESTS.push([n,f]);}
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function nz(a,from,to){var n=0,f=-1;for(var i=from;i<(to===undefined?a.length:to);i++){if(a[i]){n++;if(f<0)f=i;}}return 'nz'+n+'_f'+f;}
+function churn(n){var k=window.__k||(window.__k=[]);for(var i=0;i<n;i++)k.push(new Array(176).join('Q'));if(k.length>20000)k.length=0;}
+T('BYOB_AVAIL', function(){ return (typeof ReadableStream!=='undefined')?'rs':'no'; });
+T('BYOB_PNG', function(){
+  return fetch('/corpus/red.png?t='+Date.now()).then(function(r){ return r.body.getReader({mode:'byob'}); })
+    .then(function(rd){ churn(2000); var v=new Uint8Array(4096); return rd.read(v).then(function(res){ var done=res.done, val=res.value;
+        var len = val ? val.byteLength : -1;
+        return 'len'+len+'_'+nz(v,0,v.length); }); })
+    .catch(function(e){ return 'E_'+e.name; });
+});
+T('BYOB_TWICE', function(){
+  return fetch('/corpus/big.bmp?t='+Date.now()).then(function(r){ return r.body.getReader({mode:'byob'}); })
+    .then(function(rd){ churn(4000); var a=new Uint8Array(1024), c=new Uint8Array(1024);
+        return rd.read(a).then(function(){ return rd.read(c).then(function(res){ var v=res.value||c;
+          return 'len'+(v?v.byteLength:-1)+'_'+nz(c,0,c.length); }); }); })
+    .catch(function(e){ return 'E_'+e.name; });
+});
+T('INTL_DT', function(){ churn(500); var s=new Intl.DateTimeFormat('en',{timeZone:'UTC'}).format(0); return 'len'+s.length; });
+T('NORMALIZE', function(){ churn(500); var s='\u0041\u030a'.normalize('NFD'); return 'len'+s.length+'_c'+s.charCodeAt(0); });
+function run(i){
+  if(i>=TESTS.length){ b('S2-DONE'); return; }
+  var name=TESTS[i][0], r;
+  try{ r=TESTS[i][1](); }catch(e){ r='E_'+e.name; }
+  Promise.resolve(r).then(function(v){
+    b('S2-'+name+'-'+String(v).replace(/[^A-Za-z0-9_.:-]/g,''));
+    setTimeout(function(){ run(i+1); }, 80);
+  });
+}
+b('S2-START'); run(0);
+</script></head><body><p>suite2</p></body></html>

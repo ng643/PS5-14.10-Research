@@ -1,0 +1,671 @@
+<!doctype html><meta charset="utf-8"><title>uint8array-fromBase64.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`FAIL: expected '${expected}' actual '${actual}'`);
+}
+
+function shouldBeArray(actual, expected) {
+    shouldBe(actual.length, expected.length);
+    for (let i = 0; i < expected.length; ++i)
+        shouldBe(actual[i], expected[i]);
+}
+
+function shouldThrow(callback, errorConstructor) {
+    try {
+        callback();
+    } catch (e) {
+        shouldBe(e instanceof errorConstructor, true);
+        return
+    }
+    throw new Error('FAIL: should have thrown');
+}
+
+shouldBeArray(Uint8Array.fromBase64(""), []);
+shouldBeArray(Uint8Array.fromBase64("AA"), [0]);
+shouldBeArray(Uint8Array.fromBase64("AQ"), [1]);
+shouldBeArray(Uint8Array.fromBase64("gA"), [128]);
+shouldBeArray(Uint8Array.fromBase64("/g"), [254]);
+shouldBeArray(Uint8Array.fromBase64("/w"), [255]);
+shouldBeArray(Uint8Array.fromBase64("AAE"), [0, 1]);
+shouldBeArray(Uint8Array.fromBase64("/v8"), [254, 255]);
+shouldBeArray(Uint8Array.fromBase64("AAGA/v8"), [0, 1, 128, 254, 255]);
+shouldBeArray(Uint8Array.fromBase64("AA=="), [0]);
+shouldBeArray(Uint8Array.fromBase64("AQ=="), [1]);
+shouldBeArray(Uint8Array.fromBase64("gA=="), [128]);
+shouldBeArray(Uint8Array.fromBase64("/g=="), [254]);
+shouldBeArray(Uint8Array.fromBase64("/w=="), [255]);
+shouldBeArray(Uint8Array.fromBase64("AAE="), [0, 1]);
+shouldBeArray(Uint8Array.fromBase64("/v8="), [254, 255]);
+shouldBeArray(Uint8Array.fromBase64("AAGA/v8="), [0, 1, 128, 254, 255]);
+shouldBeArray(Uint8Array.fromBase64("  "), []);
+shouldBeArray(Uint8Array.fromBase64("  A  A  "), [0]);
+shouldBeArray(Uint8Array.fromBase64("  A  Q  "), [1]);
+shouldBeArray(Uint8Array.fromBase64("  g  A  "), [128]);
+shouldBeArray(Uint8Array.fromBase64("  /  g  "), [254]);
+shouldBeArray(Uint8Array.fromBase64("  /  w  "), [255]);
+shouldBeArray(Uint8Array.fromBase64("  A  A  E  "), [0, 1]);
+shouldBeArray(Uint8Array.fromBase64("  /  v  8  "), [254, 255]);
+shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  "), [0, 1, 128, 254, 255]);
+shouldBeArray(Uint8Array.fromBase64("  A  A  =  =  "), [0]);
+shouldBeArray(Uint8Array.fromBase64("  A  Q  =  =  "), [1]);
+shouldBeArray(Uint8Array.fromBase64("  g  A  =  =  "), [128]);
+shouldBeArray(Uint8Array.fromBase64("  /  g  =  =  "), [254]);
+shouldBeArray(Uint8Array.fromBase64("  /  w  =  =  "), [255]);
+shouldBeArray(Uint8Array.fromBase64("  A  A  E  =  "), [0, 1]);
+shouldBeArray(Uint8Array.fromBase64("  /  v  8  =  "), [254, 255]);
+shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  =  "), [0, 1, 128, 254, 255]);
+
+shouldBeArray(Uint8Array.fromBase64("", {}), []);
+shouldBeArray(Uint8Array.fromBase64("AA", {}), [0]);
+shouldBeArray(Uint8Array.fromBase64("AQ", {}), [1]);
+shouldBeArray(Uint8Array.fromBase64("gA", {}), [128]);
+shouldBeArray(Uint8Array.fromBase64("/g", {}), [254]);
+shouldBeArray(Uint8Array.fromBase64("/w", {}), [255]);
+shouldBeArray(Uint8Array.fromBase64("AAE", {}), [0, 1]);
+shouldBeArray(Uint8Array.fromBase64("/v8", {}), [254, 255]);
+shouldBeArray(Uint8Array.fromBase64("AAGA/v8", {}), [0, 1, 128, 254, 255]);
+shouldBeArray(Uint8Array.fromBase64("AA==", {}), [0]);
+shouldBeArray(Uint8Array.fromBase64("AQ==", {}), [1]);
+shouldBeArray(Uint8Array.fromBase64("gA==", {}), [128]);
+shouldBeArray(Uint8Array.fromBase64("/g==", {}), [254]);
+shouldBeArray(Uint8Array.fromBase64("/w==", {}), [255]);
+shouldBeArray(Uint8Array.fromBase64("AAE=", {}), [0, 1]);
+shouldBeArray(Uint8Array.fromBase64("/v8=", {}), [254, 255]);
+shouldBeArray(Uint8Array.fromBase64("AAGA/v8=", {}), [0, 1, 128, 254, 255]);
+shouldBeArray(Uint8Array.fromBase64("  ", {}), []);
+shouldBeArray(Uint8Array.fromBase64("  A  A  ", {}), [0]);
+shouldBeArray(Uint8Array.fromBase64("  A  Q  ", {}), [1]);
+shouldBeArray(Uint8Array.fromBase64("  g  A  ", {}), [128]);
+shouldBeArray(Uint8Array.fromBase64("  /  g  ", {}), [254]);
+shouldBeArray(Uint8Array.fromBase64("  /  w  ", {}), [255]);
+shouldBeArray(Uint8Array.fromBase64("  A  A  E  ", {}), [0, 1]);
+shouldBeArray(Uint8Array.fromBase64("  /  v  8  ", {}), [254, 255]);
+shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  ", {}), [0, 1, 128, 254, 255]);
+shouldBeArray(Uint8Array.fromBase64("  A  A  =  =  ", {}), [0]);
+shouldBeArray(Uint8Array.fromBase64("  A  Q  =  =  ", {}), [1]);
+shouldBeArray(Uint8Array.fromBase64("  g  A  =  =  ", {}), [128]);
+shouldBeArray(Uint8Array.fromBase64("  /  g  =  =  ", {}), [254]);
+shouldBeArray(Uint8Array.fromBase64("  /  w  =  =  ", {}), [255]);
+shouldBeArray(Uint8Array.fromBase64("  A  A  E  =  ", {}), [0, 1]);
+shouldBeArray(Uint8Array.fromBase64("  /  v  8  =  ", {}), [254, 255]);
+shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  =  ", {}), [0, 1, 128, 254, 255]);
+
+for (let alphabet of [undefined, "base64"]) {
+    [
+        {alphabet},
+        {get alphabet() { return alphabet; }},
+    ].forEach((options) => {
+        shouldBeArray(Uint8Array.fromBase64("", options), []);
+        shouldBeArray(Uint8Array.fromBase64("AA", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("AQ", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("gA", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("/g", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("/w", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("AAE", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("/v8", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("AAGA/v8", options), [0, 1, 128, 254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("AA==", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("AQ==", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("gA==", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("/g==", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("/w==", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("AAE=", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("/v8=", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("AAGA/v8=", options), [0, 1, 128, 254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  ", options), []);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  ", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("  A  Q  ", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("  g  A  ", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("  /  g  ", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("  /  w  ", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  E  ", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("  /  v  8  ", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  ", options), [0, 1, 128, 254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  =  =  ", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("  A  Q  =  =  ", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("  g  A  =  =  ", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("  /  g  =  =  ", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("  /  w  =  =  ", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  E  =  ", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("  /  v  8  =  ", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  =  ", options), [0, 1, 128, 254, 255]);
+    });
+
+    for (let lastChunkHandling of [undefined, "loose", "strict", "stop-before-partial"]) {
+        [
+            {alphabet, lastChunkHandling},
+            {get alphabet() { return alphabet; }, get lastChunkHandling() { return lastChunkHandling; }},
+        ].forEach((options) => {
+            shouldBeArray(Uint8Array.fromBase64("", options), []);
+            shouldBeArray(Uint8Array.fromBase64("AA==", options), [0]);
+            shouldBeArray(Uint8Array.fromBase64("AQ==", options), [1]);
+            shouldBeArray(Uint8Array.fromBase64("gA==", options), [128]);
+            shouldBeArray(Uint8Array.fromBase64("/g==", options), [254]);
+            shouldBeArray(Uint8Array.fromBase64("/w==", options), [255]);
+            shouldBeArray(Uint8Array.fromBase64("AAE=", options), [0, 1]);
+            shouldBeArray(Uint8Array.fromBase64("/v8=", options), [254, 255]);
+            shouldBeArray(Uint8Array.fromBase64("AAGA/v8=", options), [0, 1, 128, 254, 255]);
+            shouldBeArray(Uint8Array.fromBase64("  ", options), []);
+            shouldBeArray(Uint8Array.fromBase64("  A  A  =  =  ", options), [0]);
+            shouldBeArray(Uint8Array.fromBase64("  A  Q  =  =  ", options), [1]);
+            shouldBeArray(Uint8Array.fromBase64("  g  A  =  =  ", options), [128]);
+            shouldBeArray(Uint8Array.fromBase64("  /  g  =  =  ", options), [254]);
+            shouldBeArray(Uint8Array.fromBase64("  /  w  =  =  ", options), [255]);
+            shouldBeArray(Uint8Array.fromBase64("  A  A  E  =  ", options), [0, 1]);
+            shouldBeArray(Uint8Array.fromBase64("  /  v  8  =  ", options), [254, 255]);
+            shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  =  ", options), [0, 1, 128, 254, 255]);
+        });
+
+        [
+            "AA===", "  A  A  =  =  =  ",
+            "AQ===", "  A  Q  =  =  =  ",
+            "gA===", "  g  A  =  =  =  ",
+            "/g===", "  /  g  =  =  =  ",
+            "/w===", "  /  w  =  =  =  ",
+            "AAE==", "  A  A  E  =  =  ",
+            "/v8==", "  /  v  8  =  =  ",
+            "AAGA/v8==", "  A  A  G  A  /  v  8  =  =  ",
+        ].forEach((string) => {
+            [
+                {alphabet, lastChunkHandling},
+                {get alphabet() { return alphabet; }, get lastChunkHandling() { return lastChunkHandling; }},
+            ].forEach((options) => {
+                shouldThrow(() => {
+                    Uint8Array.fromBase64(string, options);
+                }, SyntaxError);
+            });
+        });
+    }
+
+    for (let lastChunkHandling of [undefined, "loose"]) {
+        [
+            {alphabet, lastChunkHandling},
+            {get alphabet() { return alphabet; }, get lastChunkHandling() { return lastChunkHandling; }},
+        ].forEach((options) => {
+            shouldBeArray(Uint8Array.fromBase64("AA", options), [0]);
+            shouldBeArray(Uint8Array.fromBase64("AQ", options), [1]);
+            shouldBeArray(Uint8Array.fromBase64("gA", options), [128]);
+            shouldBeArray(Uint8Array.fromBase64("/g", options), [254]);
+            shouldBeArray(Uint8Array.fromBase64("/w", options), [255]);
+            shouldBeArray(Uint8Array.fromBase64("AAE", options), [0, 1]);
+            shouldBeArray(Uint8Array.fromBase64("/v8", options), [254, 255]);
+            shouldBeArray(Uint8Array.fromBase64("AAGA/v8", options), [0, 1, 128, 254, 255]);
+            shouldBeArray(Uint8Array.fromBase64("  ", options), []);
+            shouldBeArray(Uint8Array.fromBase64("  A  A  ", options), [0]);
+            shouldBeArray(Uint8Array.fromBase64("  A  Q  ", options), [1]);
+            shouldBeArray(Uint8Array.fromBase64("  g  A  ", options), [128]);
+            shouldBeArray(Uint8Array.fromBase64("  /  g  ", options), [254]);
+            shouldBeArray(Uint8Array.fromBase64("  /  w  ", options), [255]);
+            shouldBeArray(Uint8Array.fromBase64("  A  A  E  ", options), [0, 1]);
+            shouldBeArray(Uint8Array.fromBase64("  /  v  8  ", options), [254, 255]);
+            shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  ", options), [0, 1, 128, 254, 255]);
+        });
+    }
+
+    [
+        "AA", "  A  A  ",
+        "AQ", "  A  Q  ",
+        "gA", "  g  A  ",
+        "/g", "  /  g  ",
+        "/w", "  /  w  ",
+        "AAE", "  A  A  E  ",
+        "/v8", "  /  v  8  ",
+    ].forEach((string) => {
+        [
+            {alphabet, lastChunkHandling: "stop-before-partial"},
+            {get alphabet() { return alphabet; }, get lastChunkHandling() { return "stop-before-partial"; }},
+        ].forEach((options) => {
+            shouldBeArray(Uint8Array.fromBase64(string, options), []);
+        });
+
+        [
+            {alphabet, lastChunkHandling: "strict"},
+            {get alphabet() { return alphabet; }, get lastChunkHandling() { return "strict"; }},
+        ].forEach((options) => {
+            shouldThrow(() => {
+                Uint8Array.fromBase64(string, options);
+            }, SyntaxError);
+        });
+    });
+
+    [
+        {alphabet, lastChunkHandling: "stop-before-partial"},
+        {get alphabet() { return alphabet; }, get lastChunkHandling() { return "stop-before-partial"; }},
+    ].forEach((options) => {
+        shouldBeArray(Uint8Array.fromBase64("AAGA/v8", options), [0, 1, 128]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  ", options), [0, 1, 128]);
+    });
+
+    [
+        {alphabet, lastChunkHandling: "strict"},
+        {get alphabet() { return alphabet; }, get lastChunkHandling() { return "strict"; }},
+    ].forEach((options) => {
+        shouldThrow(() => {
+            Uint8Array.fromBase64("AAGA/v8", options);
+        }, SyntaxError);
+        shouldThrow(() => {
+            Uint8Array.fromBase64("  A  A  G  A  /  v  8  ", options);
+        }, SyntaxError);
+    });
+}
+
+[
+    {alphabet: "base64url"},
+    {get alphabet() { return "base64url"; }},
+].forEach((options) => {
+    shouldBeArray(Uint8Array.fromBase64("", options), []);
+    shouldBeArray(Uint8Array.fromBase64("AA", options), [0]);
+    shouldBeArray(Uint8Array.fromBase64("AQ", options), [1]);
+    shouldBeArray(Uint8Array.fromBase64("gA", options), [128]);
+    shouldBeArray(Uint8Array.fromBase64("_g", options), [254]);
+    shouldBeArray(Uint8Array.fromBase64("_w", options), [255]);
+    shouldBeArray(Uint8Array.fromBase64("AAE", options), [0, 1]);
+    shouldBeArray(Uint8Array.fromBase64("_v8", options), [254, 255]);
+    shouldBeArray(Uint8Array.fromBase64("AAGA_v8", options), [0, 1, 128, 254, 255]);
+    shouldBeArray(Uint8Array.fromBase64("AA==", options), [0]);
+    shouldBeArray(Uint8Array.fromBase64("AQ==", options), [1]);
+    shouldBeArray(Uint8Array.fromBase64("gA==", options), [128]);
+    shouldBeArray(Uint8Array.fromBase64("_g==", options), [254]);
+    shouldBeArray(Uint8Array.fromBase64("_w==", options), [255]);
+    shouldBeArray(Uint8Array.fromBase64("AAE=", options), [0, 1]);
+    shouldBeArray(Uint8Array.fromBase64("_v8=", options), [254, 255]);
+    shouldBeArray(Uint8Array.fromBase64("AAGA_v8=", options), [0, 1, 128, 254, 255]);
+    shouldBeArray(Uint8Array.fromBase64("  ", options), []);
+    shouldBeArray(Uint8Array.fromBase64("  A  A  ", options), [0]);
+    shouldBeArray(Uint8Array.fromBase64("  A  Q  ", options), [1]);
+    shouldBeArray(Uint8Array.fromBase64("  g  A  ", options), [128]);
+    shouldBeArray(Uint8Array.fromBase64("  _  g  ", options), [254]);
+    shouldBeArray(Uint8Array.fromBase64("  _  w  ", options), [255]);
+    shouldBeArray(Uint8Array.fromBase64("  A  A  E  ", options), [0, 1]);
+    shouldBeArray(Uint8Array.fromBase64("  _  v  8  ", options), [254, 255]);
+    shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  _  v  8  ", options), [0, 1, 128, 254, 255]);
+    shouldBeArray(Uint8Array.fromBase64("  A  A  =  =  ", options), [0]);
+    shouldBeArray(Uint8Array.fromBase64("  A  Q  =  =  ", options), [1]);
+    shouldBeArray(Uint8Array.fromBase64("  g  A  =  =  ", options), [128]);
+    shouldBeArray(Uint8Array.fromBase64("  _  g  =  =  ", options), [254]);
+    shouldBeArray(Uint8Array.fromBase64("  _  w  =  =  ", options), [255]);
+    shouldBeArray(Uint8Array.fromBase64("  A  A  E  =  ", options), [0, 1]);
+    shouldBeArray(Uint8Array.fromBase64("  _  v  8  =  ", options), [254, 255]);
+    shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  _  v  8  =  ", options), [0, 1, 128, 254, 255]);
+});
+
+for (let lastChunkHandling of [undefined, "loose", "strict", "stop-before-partial"]) {
+    [
+        {alphabet: "base64url", lastChunkHandling},
+        {get alphabet() { return "base64url"; }, get lastChunkHandling() { return lastChunkHandling; }},
+    ].forEach((options) => {
+        shouldBeArray(Uint8Array.fromBase64("", options), []);
+        shouldBeArray(Uint8Array.fromBase64("AA==", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("AQ==", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("gA==", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("_g==", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("_w==", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("AAE=", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("_v8=", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("AAGA_v8=", options), [0, 1, 128, 254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  ", options), []);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  =  =  ", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("  A  Q  =  =  ", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("  g  A  =  =  ", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("  _  g  =  =  ", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("  _  w  =  =  ", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  E  =  ", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("  _  v  8  =  ", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  _  v  8  =  ", options), [0, 1, 128, 254, 255]);
+    });
+
+    [
+        "AA===", "  A  A  =  =  =  ",
+        "AQ===", "  A  Q  =  =  =  ",
+        "gA===", "  g  A  =  =  =  ",
+        "_g===", "  _  g  =  =  =  ",
+        "_w===", "  _  w  =  =  =  ",
+        "AAE==", "  A  A  E  =  =  ",
+        "_v8==", "  _  v  8  =  =  ",
+        "AAGA_v8==", "  A  A  G  A  _  v8==",
+    ].forEach((string) => {
+        [
+            {alphabet: "base64url", lastChunkHandling},
+            {get alphabet() { return "base64url"; }, get lastChunkHandling() { return lastChunkHandling; }},
+        ].forEach((options) => {
+            shouldThrow(() => {
+                Uint8Array.fromBase64(string, options);
+            }, SyntaxError);
+        });
+    });
+}
+
+for (let lastChunkHandling of [undefined, "loose"]) {
+    [
+        {alphabet: "base64url", lastChunkHandling},
+        {get alphabet() { return "base64url"; }, get lastChunkHandling() { return lastChunkHandling; }},
+    ].forEach((options) => {
+        shouldBeArray(Uint8Array.fromBase64("AA", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("AQ", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("gA", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("_g", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("_w", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("AAE", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("_v8", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("AAGA_v8", options), [0, 1, 128, 254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  ", options), []);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  ", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("  A  Q  ", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("  g  A  ", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("  _  g  ", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("  _  w  ", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  E  ", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("  _  v  8  ", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  _  v  8  ", options), [0, 1, 128, 254, 255]);
+    });
+}
+
+[
+    "AA", "  A  A  ",
+    "AQ", "  A  Q  ",
+    "gA", "  g  A  ",
+    "_g", "  _  g  ",
+    "_w", "  _  w  ",
+    "AAE", "  A  A  E  ",
+    "_v8", "  _  v  8  ",
+].forEach((string) => {
+    [
+        {alphabet: "base64url", lastChunkHandling: "stop-before-partial"},
+        {get alphabet() { return "base64url"; }, get lastChunkHandling() { return "stop-before-partial"; }},
+    ].forEach((options) => {
+        shouldBeArray(Uint8Array.fromBase64(string, options), []);
+    });
+
+    [
+        {alphabet: "base64url", lastChunkHandling: "strict"},
+        {get alphabet() { return "base64url"; }, get lastChunkHandling() { return "strict"; }},
+    ].forEach((options) => {
+        shouldThrow(() => {
+            Uint8Array.fromBase64(string, options);
+        }, SyntaxError);
+    });
+});
+
+[
+    {alphabet: "base64url", lastChunkHandling: "stop-before-partial"},
+    {get alphabet() { return "base64url"; }, get lastChunkHandling() { return "stop-before-partial"; }},
+].forEach((options) => {
+    shouldBeArray(Uint8Array.fromBase64("AAGA_v8", options), [0, 1, 128]);
+    shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  _  v  8  ", options), [0, 1, 128]);
+});
+
+[
+    {alphabet: "base64url", lastChunkHandling: "strict"},
+    {get alphabet() { return "base64url"; }, get lastChunkHandling() { return "strict"; }},
+].forEach((options) => {
+    shouldThrow(() => {
+        Uint8Array.fromBase64("AAGA_v8", options);
+    }, SyntaxError);
+    shouldThrow(() => {
+        Uint8Array.fromBase64("  A  A  G  A  _  v  8  ", options);
+    }, SyntaxError);
+});
+
+for (let lastChunkHandling of [undefined, "loose", "strict", "stop-before-partial"]) {
+    [
+        {lastChunkHandling},
+        {get lastChunkHandling() { return lastChunkHandling; }},
+    ].forEach((options) => {
+        shouldBeArray(Uint8Array.fromBase64("", options), []);
+        shouldBeArray(Uint8Array.fromBase64("AA==", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("AQ==", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("gA==", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("/g==", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("/w==", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("AAE=", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("/v8=", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("AAGA/v8=", options), [0, 1, 128, 254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  =  =  ", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("  A  Q  =  =  ", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("  g  A  =  =  ", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("  /  g  =  =  ", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("  /  w  =  =  ", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  E  =  ", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("  /  v  8  =  ", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  =  ", options), [0, 1, 128, 254, 255]);
+    });
+
+    [
+        "AA===", "  A  A  =  =  =  ",
+        "AQ===", "  A  Q  =  =  =  ",
+        "gA===", "  g  A  =  =  =  ",
+        "/g===", "  /  g  =  =  =  ",
+        "/w===", "  /  w  =  =  =  ",
+        "AAE==", "  A  A  E  =  =  ",
+        "/v8==", "  /  v  8  =  =  ",
+        "AAGA/v8==", "  A  A  G  A  /  v  8  =  =  ",
+    ].forEach((string) => {
+        [
+            {lastChunkHandling},
+            {get lastChunkHandling() { return lastChunkHandling; }},
+        ].forEach((options) => {
+            shouldThrow(() => {
+                Uint8Array.fromBase64(string, options);
+            }, SyntaxError);
+        });
+    });
+}
+
+for (let lastChunkHandling of [undefined, "loose"]) {
+    [
+        {lastChunkHandling},
+        {get lastChunkHandling() { return lastChunkHandling; }},
+    ].forEach((options) => {
+        shouldBeArray(Uint8Array.fromBase64("AA", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("AQ", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("gA", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("/g", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("/w", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("AAE", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("/v8", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("AAGA/v8", options), [0, 1, 128, 254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  ", options), []);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  ", options), [0]);
+        shouldBeArray(Uint8Array.fromBase64("  A  Q  ", options), [1]);
+        shouldBeArray(Uint8Array.fromBase64("  g  A  ", options), [128]);
+        shouldBeArray(Uint8Array.fromBase64("  /  g  ", options), [254]);
+        shouldBeArray(Uint8Array.fromBase64("  /  w  ", options), [255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  E  ", options), [0, 1]);
+        shouldBeArray(Uint8Array.fromBase64("  /  v  8  ", options), [254, 255]);
+        shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  ", options), [0, 1, 128, 254, 255]);
+    });
+}
+
+[
+    "AA", "  A  A  ",
+    "AQ", "  A  Q  ",
+    "gA", "  g  A  ",
+    "/g", "  /  g  ",
+    "/w", "  /  w  ",
+    "AAE", "  A  A  E  ",
+    "/v8", "  /  v  8  ",
+].forEach((string) => {
+    [
+        {lastChunkHandling: "stop-before-partial"},
+        {get lastChunkHandling() { return "stop-before-partial"; }},
+    ].forEach((options) => {
+        shouldBeArray(Uint8Array.fromBase64(string, options), []);
+    });
+
+    [
+        {lastChunkHandling: "strict"},
+        {get lastChunkHandling() { return "strict"; }},
+    ].forEach((options) => {
+        shouldThrow(() => {
+            Uint8Array.fromBase64(string, options);
+        }, SyntaxError);
+    });
+});
+
+[
+    {lastChunkHandling: "stop-before-partial"},
+    {get lastChunkHandling() { return "stop-before-partial"; }},
+].forEach((options) => {
+    shouldBeArray(Uint8Array.fromBase64("AAGA/v8", options), [0, 1, 128]);
+    shouldBeArray(Uint8Array.fromBase64("  A  A  G  A  /  v  8  ", options), [0, 1, 128]);
+});
+
+[
+    {lastChunkHandling: "strict"},
+    {get lastChunkHandling() { return "strict"; }},
+].forEach((options) => {
+    shouldThrow(() => {
+        Uint8Array.fromBase64("AAGA/v8", options);
+    }, SyntaxError);
+    shouldThrow(() => {
+        Uint8Array.fromBase64("  A  A  G  A  /  v  8  ", options);
+    }, SyntaxError);
+});
+
+for (let invalid of [undefined, null, false, true, 42, {}, []]) {
+    shouldThrow(() => {
+        Uint8Array.fromBase64(invalid);
+    }, TypeError);
+}
+
+for (let options of [null, false, true, 42, "test"]) {
+    shouldThrow(() => {
+        Uint8Array.fromBase64("", options);
+    }, TypeError);
+}
+
+for (let alphabet of [null, false, true, 42, "invalid", {}, []]) {
+    shouldThrow(() => {
+        Uint8Array.fromBase64("", {alphabet});
+    }, TypeError);
+
+    shouldThrow(() => {
+        Uint8Array.fromBase64("", {
+            get alphabet() { return alphabet; },
+        });
+    }, TypeError);
+
+    shouldThrow(() => {
+        Uint8Array.fromBase64("", {
+            alphabet: {
+                toString() {
+                    return alphabet;
+                },
+            },
+        });
+    }, TypeError);
+}
+
+for (let lastChunkHandling of [null, false, true, 42, "invalid", {}, []]) {
+    shouldThrow(() => {
+        Uint8Array.fromBase64("", {lastChunkHandling});
+    }, TypeError);
+
+    shouldThrow(() => {
+        Uint8Array.fromBase64("", {
+            get lastChunkHandling() { return lastChunkHandling; },
+        });
+    }, TypeError);
+
+    shouldThrow(() => {
+        Uint8Array.fromBase64("", {
+            lastChunkHandling: {
+                toString() {
+                    return lastChunkHandling;
+                },
+            },
+        });
+    }, TypeError);
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1833-uint8array-frombase64.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

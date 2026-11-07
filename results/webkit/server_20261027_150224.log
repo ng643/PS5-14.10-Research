@@ -1,0 +1,9 @@
+2026-10-27T15:02:24.684+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-27T15:02:24.713+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-27T15:02:25.114+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-27T15:02:25.928+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-27T15:02:31.039+00:00 ACCESS GET /corpus/bmp-oob.html 200
+2026-10-27T15:02:31.047+00:00 ACCESS GET /corpus/oob-wide.bmp 200
+2026-10-27T15:02:31.055+00:00 ACCESS GET /x/y/z 302
+2026-10-27T15:02:31.062+00:00 ACCESS GET /corpus/bmp-oob.html 200
+2026-10-27T15:02:38.510+00:00 DNS BLOCK smetrics.aem.playstation.com 1

@@ -1,0 +1,19 @@
+2026-10-22T10:38:23.531+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:38:24.413+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-22T10:38:43.991+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:39:04.649+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:39:09.414+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-22T10:39:24.399+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:39:41.764+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-22T10:39:41.807+00:00 ACCESS GET /probe/p447-fontface-faithful.js?cb=1792665483 200
+2026-10-22T10:39:41.968+00:00 ACCESS GET /raw/p447-fontface-faithful.js?cb=1792665483&cb=1792665483 200
+2026-10-22T10:39:41.999+00:00 GET V172-3ehrym-BEFORE-fontface2 t=1792665583729 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:39:42.001+00:00 ACCESS GET /beacon/V172-3ehrym-BEFORE-fontface2?t=1792665583729 204
+2026-10-22T10:39:42.031+00:00 GET V172-3ehrym-A-FACE-found t=1792665583762 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:39:42.033+00:00 ACCESS GET /beacon/V172-3ehrym-A-FACE-found?t=1792665583762 204
+2026-10-22T10:39:42.468+00:00 DNS Q cfss.crs.playstation.net 1
+2026-10-22T10:39:42.615+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-22T10:39:44.975+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:40:04.952+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:40:09.440+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-22T10:40:24.911+00:00 DNS Q telemetry-console.api.playstation.com 1

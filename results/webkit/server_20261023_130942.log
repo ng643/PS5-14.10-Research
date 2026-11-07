@@ -1,0 +1,44 @@
+2026-10-23T12:09:42.910+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:10:01.961+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:10:05.010+00:00 DNS Q feature-discovery-assets-amd.dl.playstation.net 1
+2026-10-23T12:10:05.430+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T12:10:05.494+00:00 ACCESS GET /probe/p_retest.js?cb=1792757371 200
+2026-10-23T12:10:05.647+00:00 ACCESS GET /raw/p_retest.js?cb=1792757371&cb=1792757371 200
+2026-10-23T12:10:05.855+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?start=0&count=1000&list=retest.json 200
+2026-10-23T12:10:05.998+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&start=0&count=1000&list=retest.json 200
+2026-10-23T12:10:06.072+00:00 ACCESS GET /corpus/retest.json?t=1792757408194 200
+2026-10-23T12:10:06.213+00:00 ACCESS GET /corpus/skip.json?t=1792757408370 200
+2026-10-23T12:10:06.354+00:00 POST V172-qmmiu3-BOOT-5-from-0-to-5 t=1792757408513&n=1 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:10:06.355+00:00 ACCESS POST /beacon/V172-qmmiu3-BOOT-5-from-0-to-5?t=1792757408513&n=1 204
+2026-10-23T12:10:06.374+00:00 ACCESS GET /corpus/rt-000-027-container-query-listbox-expected-html.html?i=0&next=1&e=5&c=1000&v=qmmiu3&g=1 200
+2026-10-23T12:10:06.453+00:00 POST V172-qmmiu3-BEFORE-0 t=1792757408589&n=2 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:10:06.454+00:00 ACCESS POST /beacon/V172-qmmiu3-BEFORE-0?t=1792757408589&n=2 204
+2026-10-23T12:10:06.504+00:00 POST V172-qmmiu3-GAP-0 t=1792757408590&n=4 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:10:06.505+00:00 ACCESS POST /beacon/V172-qmmiu3-GAP-0?t=1792757408590&n=4 204
+2026-10-23T12:10:06.519+00:00 POST V172-qmmiu3-OK-0-lay-027-container-query-listbox-expected-html.html t=1792757408590&n=3 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:10:06.520+00:00 ACCESS POST /beacon/V172-qmmiu3-OK-0-lay-027-container-query-listbox-expected-html.html?t=1792757408590&n=3 204
+2026-10-23T12:10:06.548+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=retest.json&start=1&count=1000&v=qmmiu3&g=1 200
+2026-10-23T12:10:06.702+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=retest.json&start=1&count=1000&v=qmmiu3&g=1 200
+2026-10-23T12:10:06.766+00:00 ACCESS GET /corpus/retest.json?t=1792757408909 200
+2026-10-23T12:10:06.931+00:00 ACCESS GET /corpus/skip.json?t=1792757409061 200
+2026-10-23T12:10:07.071+00:00 POST V172-qmmiu3-BOOT-5-from-1-to-5 t=1792757409223&n=5 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:10:07.072+00:00 ACCESS POST /beacon/V172-qmmiu3-BOOT-5-from-1-to-5?t=1792757409223&n=5 204
+2026-10-23T12:10:07.115+00:00 ACCESS GET /corpus/rt-001-047-map-element-move-to-new-document-crash-html.html?i=1&next=2&e=5&c=1000&v=qmmiu3&g=1 200
+2026-10-23T12:10:07.195+00:00 POST V172-qmmiu3-BEFORE-1 t=1792757409323&n=6 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:10:07.197+00:00 ACCESS POST /beacon/V172-qmmiu3-BEFORE-1?t=1792757409323&n=6 204
+2026-10-23T12:10:07.233+00:00 POST V172-qmmiu3-OK-1-lay-047-map-element-move-to-new-document-crash-html.html t=1792757409323&n=7 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:10:07.235+00:00 ACCESS POST /beacon/V172-qmmiu3-OK-1-lay-047-map-element-move-to-new-document-crash-html.html?t=1792757409323&n=7 204
+2026-10-23T12:10:07.265+00:00 POST V172-qmmiu3-GAP-1 t=1792757409324&n=8 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:10:07.266+00:00 ACCESS POST /beacon/V172-qmmiu3-GAP-1?t=1792757409324&n=8 204
+2026-10-23T12:10:07.278+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=retest.json&start=2&count=1000&v=qmmiu3&g=1 200
+2026-10-23T12:10:07.429+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=retest.json&start=2&count=1000&v=qmmiu3&g=1 200
+2026-10-23T12:10:07.490+00:00 ACCESS GET /corpus/retest.json?t=1792757409618 200
+2026-10-23T12:10:07.623+00:00 ACCESS GET /corpus/skip.json?t=1792757409784 200
+2026-10-23T12:10:07.772+00:00 POST V172-qmmiu3-BOOT-5-from-2-to-5 t=1792757409923&n=9 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:10:07.773+00:00 ACCESS POST /beacon/V172-qmmiu3-BOOT-5-from-2-to-5?t=1792757409923&n=9 204
+2026-10-23T12:10:07.792+00:00 ACCESS GET /corpus/rt-002-068-hit-test-into-iframe-under-transformed-ancestor-html.html?i=2&next=3&e=5&c=1000&v=qmmiu3&g=1 200
+2026-10-23T12:10:07.830+00:00 POST V172-qmmiu3-BEFORE-2 t=1792757409990&n=10 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:10:07.832+00:00 ACCESS POST /beacon/V172-qmmiu3-BEFORE-2?t=1792757409990&n=10 204
+2026-10-23T12:10:28.012+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:10:42.167+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T12:10:49.220+00:00 DNS Q telemetry-console.api.playstation.com 1

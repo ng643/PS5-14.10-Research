@@ -1,0 +1,74 @@
+006444d0 55                     push    rbp
+006444d1 4889e5                 mov     rbp, rsp
+006444d4 4157                   push    r15
+006444d6 4156                   push    r14
+006444d8 4154                   push    r12
+006444da 53                     push    rbx
+006444db 4883ec30               sub     rsp, 0x30
+006444df 4c8d3d2a7e2d03         lea     r15, [rip + 0x32d7e2a]
+006444e6 bb16000000             mov     ebx, 0x16
+006444eb 498b07                 mov     rax, qword ptr [r15]
+006444ee 488945d8               mov     qword ptr [rbp - 0x28], rax
+006444f2 8b06                   mov     eax, dword ptr [rsi]
+006444f4 ffc8                   dec     eax
+006444f6 83f804                 cmp     eax, 4
+006444f9 0f87fa020000           ja      0xffffffff8b0047f9
+006444ff 488d0d3e030e01         lea     rcx, [rip + 0x10e033e]
+00644506 4c8b7608               mov     r14, qword ptr [rsi + 8]
+0064450a 4c8b6610               mov     r12, qword ptr [rsi + 0x10]
+0064450e 48630481               movsxd  rax, dword ptr [rcx + rax*4]
+00644512 4801c8                 add     rax, rcx
+00644515 ffe0                   jmp     rax
+00644517 e8f4884800             call    0xffffffff8b48ce10   ; -> acce10 
+0064451c 85c0                   test    eax, eax
+0064451e 750d                   jne     0xffffffff8b00452d
+00644520 e82b894800             call    0xffffffff8b48ce50   ; -> acce50 
+00644525 85c0                   test    eax, eax
+00644527 0f84e8020000           je      0xffffffff8b004815
+0064452d 4983fc08               cmp     r12, 8
+00644531 0f8506020000           jne     0xffffffff8b00473d
+00644537 65488b3c2500000000     mov     rdi, qword ptr gs:[0]
+00644540 488d35f639d500         lea     rsi, [rip + 0xd539f6]
+00644547 31d2                   xor     edx, edx
+00644549 e8925e5d00             call    0xffffffff8b5da3e0   ; -> c1a3e0 
+0064454e 488d75b8               lea     rsi, [rbp - 0x48]
+00644552 ba08000000             mov     edx, 8
+00644557 4c89f7                 mov     rdi, r14
+0064455a e8214dc1ff             call    0xffffffff8ac19280   ; -> 259280 copyin
+0064455f 85c0                   test    eax, eax
+00644561 0f85f3000000           jne     0xffffffff8b00465a
+00644567 488b5db8               mov     rbx, qword ptr [rbp - 0x48]
+0064456b 65488b3c2500000000     mov     rdi, qword ptr gs:[0]
+00644574 488d351cadd000         lea     rsi, [rip + 0xd0ad1c]
+0064457b 31d2                   xor     edx, edx
+0064457d e85e5e5d00             call    0xffffffff8b5da3e0   ; -> c1a3e0 
+00644582 488d3d0f171a03         lea     rdi, [rip + 0x31a170f]
+00644589 ba04000000             mov     edx, 4
+0064458e 4889de                 mov     rsi, rbx
+00644591 e83a4cc1ff             call    0xffffffff8ac191d0   ; -> 2591d0 copyout
+00644596 89c3                   mov     ebx, eax
+00644598 e95c020000             jmp     0xffffffff8b0047f9
+0064465a 89c3                   mov     ebx, eax
+0064465c e998010000             jmp     0xffffffff8b0047f9
+0064473d 488d3ddbe6d000         lea     rdi, [rip + 0xd0e6db]
+00644744 488d359526d400         lea     rsi, [rip + 0xd42695]
+0064474b 488d15e37cd300         lea     rdx, [rip + 0xd37ce3]
+00644752 b99f070000             mov     ecx, 0x79f
+00644757 e996000000             jmp     0xffffffff8b0047f2
+006447f2 31c0                   xor     eax, eax
+006447f4 e8178cc1ff             call    0xffffffff8ac1d410   ; -> 25d410 
+006447f9 498b07                 mov     rax, qword ptr [r15]
+006447fc 483b45d8               cmp     rax, qword ptr [rbp - 0x28]
+00644800 0f85fc000000           jne     0xffffffff8b004902
+00644806 89d8                   mov     eax, ebx
+00644808 4883c430               add     rsp, 0x30
+0064480c 5b                     pop     rbx
+0064480d 415c                   pop     r12
+0064480f 415e                   pop     r14
+00644811 415f                   pop     r15
+00644813 5d                     pop     rbp
+00644814 c3                     ret     
+00644815 bb2d000000             mov     ebx, 0x2d
+0064481a ebdd                   jmp     0xffffffff8b0047f9
+00644902 e8a98d0b00             call    0xffffffff8b0bd6b0   ; -> 6fd6b0 
+00644907 0f0b                   ud2     

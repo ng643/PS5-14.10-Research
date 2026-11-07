@@ -1,0 +1,153 @@
+<!doctype html><meta charset="utf-8"><title>intl-datetimeformat-cache-observability.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// The impl cache must never elide a spec-mandated user-visible side effect on a
+// repeated construction: any shape that is not a plain string/undefined locale
+// with undefined options is non-cacheable and must re-run its observable steps
+// (Proxy traps, getters, indexed reads) on every call.
+
+function twiceMustObserve(label, makeArgs)
+{
+    let calls = 0;
+    const bump = () => { ++calls; };
+    new Intl.DateTimeFormat(...makeArgs(bump));
+    const afterFirst = calls;
+    if (!afterFirst)
+        throw new Error(`${label}: no observable side effect on first construction`);
+    new Intl.DateTimeFormat(...makeArgs(bump));
+    if (calls === afterFirst)
+        throw new Error(`${label}: cache hit elided the side effect on second construction`);
+}
+
+// Proxy on the locales argument (a Proxy is not a plain string, so non-cacheable).
+twiceMustObserve("proxy locales", (bump) =>
+    [new Proxy(["en-US"], { get(t, p, r) { bump(); return Reflect.get(t, p, r); } })]);try {
+
+// Proxy on the options argument.
+twiceMustObserve("proxy options", (bump) =>
+    ["en-US", new Proxy({}, { get(t, p, r) { bump(); return Reflect.get(t, p, r); } })]);} catch (e) {}
+
+// Getter on a plain options object.
+twiceMustObserve("getter options", (bump) => {
+    const opts = {};
+    Object.defineProperty(opts, "hour", { enumerable: true, get() { bump(); return "numeric"; } });
+    return ["en-US", opts];
+});
+
+// Array locales with an indexed getter.
+twiceMustObserve("array indexed getter", (bump) => {
+    const arr = [];
+    Object.defineProperty(arr, "0", { get() { bump(); return "en-US"; }, configurable: true });
+    Object.defineProperty(arr, "length", { value: 1 });
+    return [arr];
+});
+
+// Array locales with an indexed getter.
+twiceMustObserve("array indexed getter", (bump) => {
+    const arr = [];
+    Object.defineProperty(arr, "0", { get() { bump(); return "en-US"; }, configurable: true });
+    Object.defineProperty(arr, "length", { value: 1 });
+    return [arr];
+});
+
+// null locales must throw on every call, never short-circuit to a cached success.
+for (let i = 0; i < 2; ++i) {
+    let threw = false;
+    try { new Intl.DateTimeFormat(null); } catch { threw = true; }
+    if (!threw)
+        throw new Error(`null locales: expected throw on call ${i}`);
+}
+
+// Empty options resolves identically to absent options (a swallowed `options` would break this).
+if (new Intl.DateTimeFormat("en-US", {}).resolvedOptions().locale
+    !== new Intl.DateTimeFormat("en-US").resolvedOptions().locale)
+    throw new Error("empty options did not resolve like absent options");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1414-intl-datetimeformat-cache-observability.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

@@ -1,0 +1,186 @@
+<!doctype html><meta charset="utf-8"><title>reflect-construct-array-literal-element-expressions.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected)
+{
+    if (actual !== expected)
+        throw new Error(`bad value: ${String(actual)}, expected: ${String(expected)}`);
+}
+
+function Pair(first, second)
+{
+    this.first = first;
+    this.second = second;
+}
+
+const rareStride = Math.max(1, Math.floor(testLoopCount / 100));
+
+function callsInElements(a)
+{
+    return Reflect.construct(Pair, [Math.max(a, 0), Reflect.construct(Pair, [new Pair(a, a + 1), Math.min.apply(null, [a, a + 2])])], Pair);
+}
+noInline(callsInElements);
+
+function conditionalElements(a, flag)
+{
+    return Reflect.construct(Pair, [flag ? Reflect.construct(Pair, [a, 1]) : a, flag || Reflect.construct(Pair, [2, a])]);
+}
+noInline(conditionalElements);
+
+function tryInElements(a)
+{
+    let results = [];
+    for (let target of [Pair, undefined]) {
+        try {
+            results.push(Reflect.construct(target, [a, results.length]));
+        } catch (error) {
+            results.push(error);
+        } finally {
+            results.push("finally");
+        }
+    }
+    return results;
+}
+noInline(tryInElements);
+
+function closesOverElements(a)
+{
+    let captured = a;
+    let object = Reflect.construct(Pair, [() => captured, captured = a + 1]);
+    return [object.first(), object.second];
+}
+noInline(closesOverElements);
+
+async function awaitsInElements(a)
+{
+    return Reflect.construct(Pair, [await a, await Promise.resolve(a + 1)], await Pair);
+}gc();
+
+let awaited = 0;
+let expectedAwaited = 0;
+for (let i = 0; i < testLoopCount; ++i) {
+    let object = callsInElements(i);
+    shouldBe(object.first, i);
+    shouldBe(object.second.first.first, i);
+    shouldBe(object.second.first.second, i + 1);
+    shouldBe(object.second.second, i);
+
+    object = conditionalElements(i, true);
+    shouldBe(object.first.first, i);
+    shouldBe(object.second, true);
+    object = conditionalElements(i, false);
+    shouldBe(object.first, i);
+    shouldBe(object.second.second, i);
+
+    let results = tryInElements(i);
+    shouldBe(results.length, 4);
+    shouldBe(results[0].first, i);
+    shouldBe(results[0].second, 0);
+    shouldBe(results[1], "finally");
+    shouldBe(results[2] instanceof TypeError, true);
+    shouldBe(results[3], "finally");
+
+    let [first, second] = closesOverElements(i);
+    shouldBe(first, i + 1);
+    shouldBe(second, i + 1);
+
+    if (i % rareStride)
+        continue;
+    ++expectedAwaited;
+    awaitsInElements(i).then((object) => {
+        shouldBe(object.first, i);
+        shouldBe(object.second, i + 1);
+        ++awaited;
+    });
+}
+drainMicrotasks();
+shouldBe(awaited, expectedAwaited);
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1460-reflect-construct-array-literal-element-.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

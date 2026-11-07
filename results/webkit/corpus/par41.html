@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>par41</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var TRIAL = 0, styleEl = null, fired = false;
+function setup(){
+  var name = 'f' + TRIAL;
+  var A = new FontFace(name, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: s" + TRIAL + "; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('S' + TRIAL + '-SETUP');
+  if (TRIAL === 1) {
+    window.__one = new Array(256).join('\u0000');
+    b('S1-ONESPRY-' + window.__one.length);
+  }
+  fired = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (!fired && this === A) {
+        fired = true;
+        b('S' + TRIAL + '-GETTER');
+        if (styleEl) styleEl.remove();
+        try { document.fonts.delete(this); } catch (e) {}
+        b('S' + TRIAL + '-DELETED');
+        document.body.offsetHeight;
+        b('S' + TRIAL + '-LAYOUT');
+      }
+      return undefined;
+    }
+  });
+  document.fonts.load('1em ' + name + ', s' + TRIAL, 'AB').then(function(v){
+    b('S' + TRIAL + '-RESOLVED-n' + (v ? v.length : -1));
+    next();
+  }, function(){ b('S' + TRIAL + '-REJECTED'); next(); });
+  b('S' + TRIAL + '-LOAD-CALLED');
+}
+function next(){ TRIAL++; if (TRIAL < 2) setTimeout(setup, 150); else b('S-DONE'); }
+setup();
+</script></head><body><p>par41</p></body></html>

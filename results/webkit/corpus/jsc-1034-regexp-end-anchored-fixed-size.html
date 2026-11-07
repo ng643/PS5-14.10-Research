@@ -1,0 +1,151 @@
+<!doctype html><meta charset="utf-8"><title>regexp-end-anchored-fixed-size.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected, msg) {
+    if (JSON.stringify(actual) !== JSON.stringify(expected))
+        throw new Error(`FAIL: ${msg}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+}
+
+for (let i = 0; i < testLoopCount; i++) {
+    shouldBe(/\.js$/.exec("path/app.js"), [".js"], "literal suffix");
+    shouldBe(/\.js$/.exec("path/app.jsx"), null, "literal suffix mismatch");
+    shouldBe(/abcdef$/.exec("def"), null, "pattern longer than subject");
+    shouldBe(/(?:\.png|\.gif)$/.exec("x.gif"), [".gif"], "equal-size alternatives");
+    shouldBe(/(?:d|cd)$/.exec("abcd"), ["cd"], "different-size alternatives");
+    shouldBe(/(?:x|abcd)$/.exec("ax"), ["x"], "different-size alternatives, shorter one matches");
+    shouldBe(/(\w)(\d)$/.exec("ab3zx9"), ["x9", "x", "9"], "captures");
+    shouldBe("abc".search(/$/), 3, "bare end assertion");
+    shouldBe(/(?:)$/.exec("ab").index, 2, "empty group then end");
+    shouldBe([/^abc$/.exec("abc"), /^abc$/.exec("xabc"), /^abc$/.exec("abcabc")], [["abc"], null, null], "BOL and EOL");
+    shouldBe(["a\nbc\nd".search(/bc$/m), /bc$/m.exec("a\nbc\nd")], [2, ["bc"]], "multiline is untouched");
+    shouldBe(/(a)\1$/.exec("xaa"), ["aa", "a"], "backreference (variable size) is untouched");
+    shouldBe(/[0-9a-f]{4}$/.exec("zzz9f0a"), ["9f0a"], "counted class");
+    shouldBe(/[0-9a-f]{4}$/.exec("zzz9f0az"), null, "counted class mismatch");
+    shouldBe([/\u{1F600}$/u.exec("hi\u{1F600}"), /.$/u.exec("a\u{1F600}")], [["\u{1F600}"], ["\u{1F600}"]], "unicode fixed size counts code units");
+    shouldBe([/(?<=x)ab$/.exec("xab"), /(?<=x)ab$/.exec("yab")], [["ab"], null], "lookbehind before the end");
+    shouldBe([/a(?=b$)b$/.exec("zab"), /(?!x)y$/.exec("xy")], [["ab"], ["y"]], "lookahead");
+    shouldBe([/\bfoo$/.exec("a foo"), /\Bfoo$/.exec("afoo"), /\bfoo$/.exec("afoo")], [["foo"], ["foo"], null], "word boundary before literal");
+    shouldBe([/\.JS$/i.exec("a.js"), /ÅB$/iu.exec("xåb")], [[".js"], ["åb"]], "ignoreCase");
+    shouldBe("a.b.c".replace(/\.c$/, "!"), "a.b!", "replace");
+    shouldBe(("x".repeat(300) + ".ts").search(/\.ts$/), 300, "search");
+    shouldBe([..."foo.ts".matchAll(/ts$/g)].map(m => m.index), [4], "matchAll");
+    shouldBe(/(t)s$/d.exec("a.ts").indices, [[2, 4], [2, 3]], "hasIndices");
+    shouldBe([/$/.exec("")[0], /a$/.exec("")], ["", null], "empty subject");
+    shouldBe([/\uDE00$/u.exec("\u{1F600}"), /\uDE00$/.exec("\u{1F600}")], [null, ["\uDE00"]], "lone surrogate at the end");
+    shouldBe("x".repeat(1000).replace(/xxx$/, "!"), "x".repeat(997) + "!", "long subject replace");
+
+    let re = /js$/g;
+    let s = "a.js";
+    let all = [];
+    let m;
+    while ((m = re.exec(s))) {
+        all.push([m.index, re.lastIndex]);
+        if (all.length > 3)
+            break;
+    }
+    shouldBe(all, [[2, 4]], "global iteration");
+
+    re = /js$/g;
+    re.lastIndex = 100;
+    shouldBe([re.exec("a.js"), re.lastIndex], [null, 0], "lastIndex beyond the subject");
+
+    re = /js$/g;
+    re.lastIndex = 3;
+    shouldBe(re.exec("a.js"), null, "lastIndex past the only possible start");
+
+    re = /js$/y;
+    re.lastIndex = 0;
+    shouldBe(re.exec("index.js"), null, "sticky does not search");
+    re.lastIndex = 6;
+    m = re.exec("index.js");
+    shouldBe(m && m.index, 6, "sticky matches only at lastIndex");
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1034-regexp-end-anchored-fixed-size.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

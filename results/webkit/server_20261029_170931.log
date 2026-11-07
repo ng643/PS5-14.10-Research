@@ -1,0 +1,525 @@
+2026-10-29T17:09:32.759+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:09:35.414+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:09:37.937+00:00 ACCESS GET /trunc?want=4096&give=64 200
+2026-10-29T17:09:42.447+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:09:52.500+00:00 ACCESS GET /corpus/leak5.html 200
+2026-10-29T17:09:55.717+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:10:16.868+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:10:17.310+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T17:10:17.367+00:00 ACCESS GET /corpus/leak5.html 200
+2026-10-29T17:10:17.501+00:00 GET L5-START t=1793293827605 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:10:17.502+00:00 ACCESS GET /beacon/L5-START?t=1793293827605 204
+2026-10-29T17:10:17.529+00:00 ACCESS GET /trunc?want=4096&give=64 200
+2026-10-29T17:10:17.575+00:00 GET L5-PROG-64of4096 t=1793293827661 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:10:17.575+00:00 ACCESS GET /beacon/L5-PROG-64of4096?t=1793293827661 204
+2026-10-29T17:10:17.600+00:00 GET L5-ERR-status0 t=1793293827703 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:10:17.600+00:00 ACCESS GET /beacon/L5-ERR-status0?t=1793293827703 204
+2026-10-29T17:10:17.625+00:00 GET L5-DONE t=1793293827729 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:10:17.626+00:00 ACCESS GET /beacon/L5-DONE?t=1793293827729 204
+2026-10-29T17:10:21.529+00:00 GET L5-TIMEOUT-st0rs4 t=1793293831631 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:10:21.530+00:00 ACCESS GET /beacon/L5-TIMEOUT-st0rs4?t=1793293831631 204
+2026-10-29T17:10:38.027+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:10:57.283+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:10:58.933+00:00 ACCESS GET /corpus/trunc.bmp 200
+2026-10-29T17:11:17.334+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:11:37.885+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:11:45.010+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:11:52.448+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:11:56.531+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T17:12:07.870+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:12:27.516+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:12:35.543+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:12:57.006+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:13:17.154+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:13:40.407+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:13:44.748+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-29T17:14:03.060+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:14:08.372+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T17:14:08.726+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:14:14.565+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T17:14:14.608+00:00 ACCESS GET /corpus/leak6.html 200
+2026-10-29T17:14:14.742+00:00 GET L6-START t=1793294064842 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:14:14.743+00:00 ACCESS GET /beacon/L6-START?t=1793294064842 204
+2026-10-29T17:14:14.774+00:00 ACCESS GET /corpus/trunc.bmp?t=1793294064867 200
+2026-10-29T17:14:14.921+00:00 GET L6-T50-LOAD-w1024h768 t=1793294065016 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:14:14.921+00:00 ACCESS GET /beacon/L6-T50-LOAD-w1024h768?t=1793294065016 204
+2026-10-29T17:14:15.111+00:00 GET L6-T50-DRAW-nz0_r-1--1 t=1793294065208 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:14:15.112+00:00 ACCESS GET /beacon/L6-T50-DRAW-nz0_r-1--1?t=1793294065208 204
+2026-10-29T17:14:15.348+00:00 ACCESS GET /corpus/trunc9.bmp?t=1793294065435 200
+2026-10-29T17:14:15.555+00:00 GET L6-T90-LOAD-w1024h768 t=1793294065652 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:14:15.556+00:00 ACCESS GET /beacon/L6-T90-LOAD-w1024h768?t=1793294065652 204
+2026-10-29T17:14:15.748+00:00 GET L6-T90-DRAW-nz0_r-1--1 t=1793294065842 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:14:15.748+00:00 ACCESS GET /beacon/L6-T90-DRAW-nz0_r-1--1?t=1793294065842 204
+2026-10-29T17:14:15.982+00:00 ACCESS GET /corpus/big.bmp?t=1793294066071 200
+2026-10-29T17:14:16.198+00:00 GET L6-FULL-LOAD-w1024h768 t=1793294066294 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:14:16.198+00:00 ACCESS GET /beacon/L6-FULL-LOAD-w1024h768?t=1793294066294 204
+2026-10-29T17:14:16.382+00:00 GET L6-FULL-DRAW-nz0_r-1--1 t=1793294066478 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:14:16.382+00:00 ACCESS GET /beacon/L6-FULL-DRAW-nz0_r-1--1?t=1793294066478 204
+2026-10-29T17:14:16.613+00:00 GET L6-DONE t=1793294066706 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:14:16.614+00:00 ACCESS GET /beacon/L6-DONE?t=1793294066706 204
+2026-10-29T17:14:23.516+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:14:29.772+00:00 GET L6-TIMEOUT t=1793294079868 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:14:29.774+00:00 ACCESS GET /beacon/L6-TIMEOUT?t=1793294079868 204
+2026-10-29T17:14:43.770+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:15:05.839+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:15:07.386+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T17:15:07.429+00:00 ACCESS GET /corpus/leak7.html 200
+2026-10-29T17:15:07.568+00:00 GET L7-FILL-IN t=1793294117662 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:15:07.568+00:00 ACCESS GET /beacon/L7-FILL-IN?t=1793294117662 204
+2026-10-29T17:15:07.598+00:00 GET L7-FILL-O-nz512_p0_255_0_0_255 t=1793294117694 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:15:07.600+00:00 ACCESS GET /beacon/L7-FILL-O-nz512_p0_255_0_0_255?t=1793294117694 204
+2026-10-29T17:15:07.624+00:00 GET L7-DATAURL-IN t=1793294117721 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:15:07.625+00:00 ACCESS GET /beacon/L7-DATAURL-IN?t=1793294117721 204
+2026-10-29T17:15:07.651+00:00 GET L7-DATAURL-O-len150_headdataimagepngbase64 t=1793294117749 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:15:07.651+00:00 ACCESS GET /beacon/L7-DATAURL-O-len150_headdataimagepngbase64?t=1793294117749 204
+2026-10-29T17:15:07.678+00:00 GET L7-DONE t=1793294117773 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:15:07.678+00:00 ACCESS GET /beacon/L7-DONE?t=1793294117773 204
+2026-10-29T17:15:16.944+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:15:34.900+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:15:53.962+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:15:54.844+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:15:54.844+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:15:55.263+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:15:55.264+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:16:02.963+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T17:16:03.023+00:00 ACCESS GET /corpus/leak8.html 200
+2026-10-29T17:16:03.177+00:00 GET L8-START t=1793294173267 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:16:03.178+00:00 ACCESS GET /beacon/L8-START?t=1793294173267 204
+2026-10-29T17:16:03.206+00:00 ACCESS GET /corpus/red.png?t=1793294173299 200
+2026-10-29T17:16:03.337+00:00 GET L8-PNG-LOAD t=1793294173431 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:16:03.338+00:00 ACCESS GET /beacon/L8-PNG-LOAD?t=1793294173431 204
+2026-10-29T17:16:03.368+00:00 GET L8-PNG-nz1024_255.0.0|255.0.0| t=1793294173459 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:16:03.369+00:00 ACCESS GET /beacon/L8-PNG-nz1024_255.0.0|255.0.0|?t=1793294173459 204
+2026-10-29T17:16:03.544+00:00 ACCESS GET /corpus/green.svg?t=1793294173639 200
+2026-10-29T17:16:03.688+00:00 GET L8-SVG-LOAD t=1793294173780 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:16:03.688+00:00 ACCESS GET /beacon/L8-SVG-LOAD?t=1793294173780 204
+2026-10-29T17:16:03.718+00:00 GET L8-SVG-nz1024_0.255.0|0.255.0| t=1793294173810 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:16:03.719+00:00 ACCESS GET /beacon/L8-SVG-nz1024_0.255.0|0.255.0|?t=1793294173810 204
+2026-10-29T17:16:03.895+00:00 GET L8-DONE t=1793294173989 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:16:03.896+00:00 ACCESS GET /beacon/L8-DONE?t=1793294173989 204
+2026-10-29T17:16:16.224+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:16:17.974+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:16:40.281+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:16:42.483+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:16:56.556+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T17:17:05.343+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:17:30.994+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:17:53.149+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:18:15.704+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:18:29.019+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:18:38.253+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:18:57.497+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:19:08.408+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T17:19:21.446+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:19:41.105+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:19:46.912+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:20:04.359+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:20:25.409+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:20:45.552+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:20:46.373+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-29T17:20:54.476+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T17:20:54.536+00:00 ACCESS GET /corpus/leak9.html 200
+2026-10-29T17:20:54.687+00:00 GET L9-START t=1793294464775 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:20:54.688+00:00 ACCESS GET /beacon/L9-START?t=1793294464775 204
+2026-10-29T17:20:54.718+00:00 ACCESS GET /corpus/filtA.svg?t=1793294464803 200
+2026-10-29T17:20:54.859+00:00 GET L9-A-nz0_ t=1793294464945 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:20:54.859+00:00 ACCESS GET /beacon/L9-A-nz0_?t=1793294464945 204
+2026-10-29T17:20:55.034+00:00 ACCESS GET /corpus/filtB.svg?t=1793294465123 200
+2026-10-29T17:20:55.167+00:00 GET L9-B-nz0_ t=1793294465255 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:20:55.167+00:00 ACCESS GET /beacon/L9-B-nz0_?t=1793294465255 204
+2026-10-29T17:20:55.343+00:00 GET L9-DONE t=1793294465431 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:20:55.344+00:00 ACCESS GET /beacon/L9-DONE?t=1793294465431 204
+2026-10-29T17:21:05.114+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:21:16.915+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:21:26.169+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:21:46.317+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:21:56.578+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T17:22:08.673+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:22:20.990+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:22:28.822+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:22:50.979+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:22:54.871+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:22:54.871+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:22:55.293+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:22:55.293+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:23:00.222+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T17:23:00.282+00:00 ACCESS GET /corpus/suite1.html 200
+2026-10-29T17:23:00.319+00:00 ACCESS GET /corpus/red.png?t=1793294590401 200
+2026-10-29T17:23:00.452+00:00 GET S-BOOT-pngok t=1793294590533 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:00.453+00:00 ACCESS GET /beacon/S-BOOT-pngok?t=1793294590533 204
+2026-10-29T17:23:00.482+00:00 GET S-U8-nz0_f-1_ t=1793294590566 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:00.483+00:00 ACCESS GET /beacon/S-U8-nz0_f-1_?t=1793294590566 204
+2026-10-29T17:23:00.572+00:00 GET S-F64-nz0_f-1_ t=1793294590657 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:00.573+00:00 ACCESS GET /beacon/S-F64-nz0_f-1_?t=1793294590657 204
+2026-10-29T17:23:00.661+00:00 GET S-IMGDATA_NEW-nz0_f-1_ t=1793294590746 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:00.662+00:00 ACCESS GET /beacon/S-IMGDATA_NEW-nz0_f-1_?t=1793294590746 204
+2026-10-29T17:23:00.751+00:00 GET S-IMGDATA_CREATE-nz0_f-1_ t=1793294590835 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:00.752+00:00 ACCESS GET /beacon/S-IMGDATA_CREATE-nz0_f-1_?t=1793294590835 204
+2026-10-29T17:23:00.841+00:00 GET S-CLEAR_READ-nz0_f-1_ t=1793294590924 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:00.841+00:00 ACCESS GET /beacon/S-CLEAR_READ-nz0_f-1_?t=1793294590924 204
+2026-10-29T17:23:00.932+00:00 GET S-BLUR_FILTER-nz0_f-1_ t=1793294591017 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:00.933+00:00 ACCESS GET /beacon/S-BLUR_FILTER-nz0_f-1_?t=1793294591017 204
+2026-10-29T17:23:01.071+00:00 GET S-UPSCALE_PNG-nz262144_f0_ff.ff.ff.ff. t=1793294591152 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:01.072+00:00 ACCESS GET /beacon/S-UPSCALE_PNG-nz262144_f0_ff.ff.ff.ff.?t=1793294591152 204
+2026-10-29T17:23:01.163+00:00 GET S-SHADOW-nz0_f-1_ t=1793294591246 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:01.163+00:00 ACCESS GET /beacon/S-SHADOW-nz0_f-1_?t=1793294591246 204
+2026-10-29T17:23:01.256+00:00 GET S-COMPOSITE_COPY-nz0_f-1_ t=1793294591338 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:01.257+00:00 ACCESS GET /beacon/S-COMPOSITE_COPY-nz0_f-1_?t=1793294591338 204
+2026-10-29T17:23:01.345+00:00 GET S-PATTERN-nz4096_f0_ff.ff.ff.ff. t=1793294591430 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:01.346+00:00 ACCESS GET /beacon/S-PATTERN-nz4096_f0_ff.ff.ff.ff.?t=1793294591430 204
+2026-10-29T17:23:01.439+00:00 GET S-DATAFONT-nz1593_f9740_ff.ff.ff.ff. t=1793294591522 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:01.439+00:00 ACCESS GET /beacon/S-DATAFONT-nz1593_f9740_ff.ff.ff.ff.?t=1793294591522 204
+2026-10-29T17:23:01.526+00:00 GET S-OFFSCR-none t=1793294591611 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:01.527+00:00 ACCESS GET /beacon/S-OFFSCR-none?t=1793294591611 204
+2026-10-29T17:23:01.613+00:00 GET S-BITMAP-na t=1793294591698 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:01.614+00:00 ACCESS GET /beacon/S-BITMAP-na?t=1793294591698 204
+2026-10-29T17:23:01.707+00:00 GET S-DONE t=1793294591785 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:01.707+00:00 ACCESS GET /beacon/S-DONE?t=1793294591785 204
+2026-10-29T17:23:30.654+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:23:42.515+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:23:44.783+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-29T17:23:52.202+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:23:57.360+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T17:23:57.406+00:00 ACCESS GET /corpus/suite2.html 200
+2026-10-29T17:23:57.449+00:00 GET S2-START t=1793294647524 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:57.449+00:00 ACCESS GET /beacon/S2-START?t=1793294647524 204
+2026-10-29T17:23:57.478+00:00 GET S2-BYOB_AVAIL-rs t=1793294647563 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:57.480+00:00 ACCESS GET /beacon/S2-BYOB_AVAIL-rs?t=1793294647563 204
+2026-10-29T17:23:57.588+00:00 ACCESS GET /corpus/red.png?t=1793294647670 200
+2026-10-29T17:23:57.719+00:00 GET S2-BYOB_PNG-E_TypeError t=1793294647805 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:57.720+00:00 ACCESS GET /beacon/S2-BYOB_PNG-E_TypeError?t=1793294647805 204
+2026-10-29T17:23:57.831+00:00 ACCESS GET /corpus/big.bmp?t=1793294647912 200
+2026-10-29T17:23:57.878+00:00 GET S2-BYOB_TWICE-E_TypeError t=1793294647942 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:57.878+00:00 ACCESS GET /beacon/S2-BYOB_TWICE-E_TypeError?t=1793294647942 204
+2026-10-29T17:23:58.066+00:00 GET S2-INTL_DT-len8 t=1793294648149 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:58.067+00:00 ACCESS GET /beacon/S2-INTL_DT-len8?t=1793294648149 204
+2026-10-29T17:23:58.179+00:00 GET S2-NORMALIZE-len2_c65 t=1793294648258 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:58.179+00:00 ACCESS GET /beacon/S2-NORMALIZE-len2_c65?t=1793294648258 204
+2026-10-29T17:23:58.286+00:00 GET S2-DONE t=1793294648369 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:23:58.287+00:00 ACCESS GET /beacon/S2-DONE?t=1793294648369 204
+2026-10-29T17:24:00.104+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:24:08.435+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T17:24:13.762+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:24:34.916+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:24:54.056+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:25:14.298+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:25:17.266+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:25:36.839+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:25:56.986+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:26:17.933+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:26:39.779+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:26:52.466+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:26:56.601+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T17:26:57.330+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-29T17:26:58.338+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:26:58.424+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:27:25.005+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:27:40.142+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:27:50.270+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:28:00.020+00:00 DNS Q cfss.crs.playstation.net 1
+2026-10-29T17:28:01.764+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:28:02.228+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-29T17:28:04.100+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:28:04.667+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-29T17:28:05.727+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:28:10.158+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:28:32.715+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:28:39.586+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-29T17:28:42.787+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-29T17:28:43.852+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:28:51.906+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:29:01.048+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:29:08.462+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T17:29:13.701+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:29:23.761+00:00 DNS Q cfss.crs.playstation.net 1
+2026-10-29T17:29:25.929+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-29T17:29:28.149+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:29:28.719+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-29T17:29:29.766+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:29:33.066+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:29:45.906+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-29T17:29:49.758+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-29T17:29:50.814+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:29:52.660+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:29:54.894+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:29:54.894+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:29:55.326+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:29:55.326+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:30:01.404+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:30:13.618+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:30:21.742+00:00 DNS Q cfss.crs.playstation.net 1
+2026-10-29T17:30:23.965+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-29T17:30:29.038+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:30:29.639+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-29T17:30:30.717+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:30:33.203+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:30:42.549+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:30:52.870+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:31:04.377+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:31:04.884+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-29T17:31:05.956+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:31:15.485+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:31:21.891+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-29T17:31:24.991+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:31:25.110+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:31:36.305+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:31:56.308+00:00 DNS Q cfss.crs.playstation.net 1
+2026-10-29T17:31:57.181+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T17:31:57.254+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:31:58.451+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-29T17:32:00.134+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:32:00.700+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-29T17:32:01.736+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:32:12.329+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:32:19.660+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:32:31.311+00:00 DNS Q cfss.crs.playstation.net 1
+2026-10-29T17:32:33.506+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-29T17:32:35.652+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-29T17:32:36.706+00:00 DNS Q appinfo.dl.playstation.net 1
+2026-10-29T17:32:39.097+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:32:59.398+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:33:19.758+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:33:41.403+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:33:44.815+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-29T17:34:05.058+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:34:08.490+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T17:34:26.019+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:34:31.331+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:34:46.168+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:34:57.000+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:35:17.053+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:35:37.301+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:35:58.352+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:36:16.048+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:36:18.301+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:36:39.251+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:36:54.917+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:36:54.918+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:36:55.355+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:36:55.356+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:36:57.363+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T17:36:59.506+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:37:20.159+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:37:41.111+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:37:42.584+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:37:58.961+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:38:01.167+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:38:22.018+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:38:42.168+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:38:59.030+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:39:01.817+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:39:07.742+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:39:08.514+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T17:39:22.778+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:39:27.900+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:39:37.930+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:39:58.880+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:40:17.758+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:40:18.829+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:40:39.076+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:41:00.028+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:41:20.077+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:41:23.295+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:41:31.010+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-29T17:41:42.437+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:41:57.403+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T17:42:02.885+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:42:23.734+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:42:26.066+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:42:28.959+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:42:50.010+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:43:10.162+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:43:29.649+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T17:43:31.013+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:43:33.240+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:43:35.939+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:43:44.849+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-29T17:43:50.074+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:43:54.942+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:43:54.943+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:43:55.387+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:44:08.539+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T17:44:10.425+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:44:31.177+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:44:42.616+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:44:51.324+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:44:56.635+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:45:12.278+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:45:32.440+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:45:52.286+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:46:13.537+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:46:33.589+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:46:34.844+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:46:54.446+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:46:57.427+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T17:47:14.710+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:47:34.962+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:47:38.514+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:47:55.812+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:48:15.863+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:48:36.816+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:48:44.813+00:00 DNS Q feature-discovery-assets-amd.dl.playstation.net 1
+2026-10-29T17:48:46.448+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:48:47.496+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:48:54.131+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T17:48:54.184+00:00 ACCESS GET /corpus/suite3.html 200
+2026-10-29T17:48:54.222+00:00 GET S3-START t=1793296144270 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:54.224+00:00 ACCESS GET /beacon/S3-START?t=1793296144270 204
+2026-10-29T17:48:54.252+00:00 GET S3-CHURN t=1793296144303 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:54.253+00:00 ACCESS GET /beacon/S3-CHURN?t=1793296144303 204
+2026-10-29T17:48:54.279+00:00 GET S3-CIB-present t=1793296144329 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:54.280+00:00 ACCESS GET /beacon/S3-CIB-present?t=1793296144329 204
+2026-10-29T17:48:54.310+00:00 ACCESS GET /corpus/red.png?t=1793296144357 200
+2026-10-29T17:48:54.329+00:00 GET S3-TD-1-1 t=1793296144357 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:54.329+00:00 ACCESS GET /beacon/S3-TD-1-1?t=1793296144357 204
+2026-10-29T17:48:54.358+00:00 GET S3-SC-64-true t=1793296144410 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:54.358+00:00 ACCESS GET /beacon/S3-SC-64-true?t=1793296144410 204
+2026-10-29T17:48:54.385+00:00 GET S3-XML-17 t=1793296144436 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:54.385+00:00 ACCESS GET /beacon/S3-XML-17?t=1793296144436 204
+2026-10-29T17:48:54.421+00:00 ACCESS GET /trunc?want=4096&give=64 200
+2026-10-29T17:48:54.426+00:00 GET S3-CRYPTO-32-nz32 t=1793296144468 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:54.426+00:00 ACCESS GET /beacon/S3-CRYPTO-32-nz32?t=1793296144468 204
+2026-10-29T17:48:54.455+00:00 GET S3-BLOB-err-TypeError t=1793296144503 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:54.455+00:00 ACCESS GET /beacon/S3-BLOB-err-TypeError?t=1793296144503 204
+2026-10-29T17:48:54.483+00:00 GET S3-CIB-ok-32x32 t=1793296144533 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:54.484+00:00 ACCESS GET /beacon/S3-CIB-ok-32x32?t=1793296144533 204
+2026-10-29T17:48:54.543+00:00 GET S3-CIB-px-nz2048 t=1793296144561 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:54.544+00:00 ACCESS GET /beacon/S3-CIB-px-nz2048?t=1793296144561 204
+2026-10-29T17:48:56.916+00:00 GET S3-END t=1793296146964 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T17:48:56.917+00:00 ACCESS GET /beacon/S3-END?t=1793296146964 204
+2026-10-29T17:48:57.282+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:49:08.567+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T17:49:17.336+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:49:23.361+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:49:43.516+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:50:03.768+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:50:09.885+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:50:24.839+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:50:44.890+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:50:54.967+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:50:54.967+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:50:55.418+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:50:55.419+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:51:06.042+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:51:26.090+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:51:33.881+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:51:42.648+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:51:46.240+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:51:57.470+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T17:52:07.591+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:52:27.870+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:52:41.961+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:52:48.674+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:53:08.923+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:53:28.878+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:53:44.888+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-29T17:53:49.527+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:54:08.593+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T17:54:09.805+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:54:30.856+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:54:51.106+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:54:51.210+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:55:11.164+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:55:32.212+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:55:52.271+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:56:14.427+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:56:34.643+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:56:52.351+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:56:54.633+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:56:57.496+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T17:57:15.969+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:57:36.117+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:57:54.992+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:57:54.993+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T17:57:55.447+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:57:55.448+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:57:57.301+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:58:17.352+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:58:37.427+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:58:42.683+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T17:58:48.185+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T17:58:58.684+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:59:08.618+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T17:59:18.744+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:59:21.618+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T17:59:21.673+00:00 ACCESS GET /corpus/grid1.html 200
+2026-10-29T17:59:40.015+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T17:59:50.674+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T18:00:00.249+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:00:14.634+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-29T18:00:14.745+00:00 ACCESS GET /corpus/grid1.html 200
+2026-10-29T18:00:14.925+00:00 GET G-START t=1793296824950 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T18:00:14.927+00:00 ACCESS GET /beacon/G-START?t=1793296824950 204
+2026-10-29T18:00:14.965+00:00 GET G-SUBGRID-yes t=1793296824986 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T18:00:14.966+00:00 ACCESS GET /beacon/G-SUBGRID-yes?t=1793296824986 204
+2026-10-29T18:00:14.993+00:00 GET G-LAYOUT1 t=1793296825029 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T18:00:14.994+00:00 ACCESS GET /beacon/G-LAYOUT1?t=1793296825029 204
+2026-10-29T18:00:15.039+00:00 GET G-REMOVED t=1793296825055 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T18:00:15.040+00:00 ACCESS GET /beacon/G-REMOVED?t=1793296825055 204
+2026-10-29T18:00:15.096+00:00 GET G-STYLED t=1793296825132 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-29T18:00:15.097+00:00 ACCESS GET /beacon/G-STYLED?t=1793296825132 204
+2026-10-29T18:00:15.557+00:00 DNS Q cfss.crs.playstation.net 1
+2026-10-29T18:00:15.697+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-29T18:00:19.683+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:00:40.751+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:01:01.002+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:01:05.668+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T18:01:22.053+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:01:42.205+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:01:57.514+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T18:02:02.678+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:02:23.556+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:02:43.805+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:03:05.057+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:03:15.715+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T18:03:25.108+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:03:44.924+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-29T18:03:45.356+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:04:05.842+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:04:08.649+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T18:04:25.892+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:04:47.145+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:04:55.019+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T18:04:55.019+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T18:04:55.482+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T18:04:55.494+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T18:05:07.396+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:05:10.547+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T18:05:27.448+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:05:42.728+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T18:05:48.598+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:06:08.753+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:06:29.808+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:06:49.859+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:06:52.519+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T18:06:57.537+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T18:07:10.216+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:07:31.399+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:07:51.547+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:08:12.700+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:08:32.749+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:08:52.796+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:08:57.107+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T18:09:08.678+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-29T18:09:13.945+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:09:34.098+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:09:56.155+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:10:11.993+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T18:10:16.179+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:10:36.530+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:10:57.580+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:11:14.863+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T18:11:17.728+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:11:36.778+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:11:37.297+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:11:55.043+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T18:11:55.044+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-29T18:11:55.513+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T18:11:55.525+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T18:11:57.560+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-29T18:12:00.151+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:12:20.200+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:12:35.554+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-29T18:12:41.453+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-29T18:12:42.763+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-29T18:13:01.504+00:00 DNS Q telemetry-console.api.playstation.com 1

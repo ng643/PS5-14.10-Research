@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>F155b</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+window.onerror=function(m){b('F155B-ONERR-'+m);return true;};
+b('F155B-START');
+function churn(fill){var a=[],i,s=fill.repeat(240);for(i=0;i<3000;i++){a.push(s+i);}return a;}
+var keep=churn('\u0000');
+
+function addFace(family, src){
+  var st=document.createElement('style');
+  st.textContent='@font-face{font-family:'+family+';src:'+src+'}';
+  document.head.appendChild(st);
+  return st;
+}
+
+/* phase 1: load succeeds at once, stylesheet removed in the then getter */
+var st1=addFace('F155NUL2','local("Arial")');
+b('FFB-NUL-ADD');
+var p1=document.fonts.load('1em F155NUL2');
+p1.then(function(faces){
+  b('FFB-NUL-THEN-'+faces.length);
+  try{ st1.parentNode.removeChild(st1); }catch(e){ b('FFB-NUL-RMTHREW'); }
+  keep=churn('\u0000');
+  b('FFB-NUL-CHECK-'+(document.fonts.check('1em F155NUL2')?'T':'F'));
+},function(e){ b('FFB-NUL-REJ-'+e.name); });
+
+/* phase 2: the load is still pending when the stylesheet goes away */
+setTimeout(function(){
+  var st2=addFace('F155SLOW','url("/slowfont/?ms=3000")');
+  b('FFB-SLOW-ADD');
+  var p2=document.fonts.load('1em F155SLOW');
+  window.__p2=p2;                       /* keep the promise alive */
+  b('FFB-SLOW-LOADOK');
+  p2.then(function(faces){ b('FFB-SLOW-THEN-'+faces.length); },
+          function(e){ b('FFB-SLOW-REJ-'+e.name); });
+  /* remove the stylesheet while the face is still Pending/Loading */
+  setTimeout(function(){
+    try{ st2.parentNode.removeChild(st2); }catch(e){ b('FFB-SLOW-RMTHREW'); }
+    b('FFB-SLOW-RM');
+    keep=churn('A');
+    b('FFB-SLOW-CHURN');
+    setTimeout(function(){
+      var c=false;
+      try{ c=document.fonts.check('1em F155SLOW'); }catch(e){ b('FFB-SLOW-CHECKTHREW'); }
+      b('FFB-SLOW-CHECK-'+(c?'T':'F'));
+      b('F155B-END');
+    }, 4500);
+  }, 50);
+}, 1200);
+</script>
+<p>f155b</p>

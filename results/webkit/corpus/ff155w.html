@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><title>w</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+b('F155W-PARSE');
+window.onerror=function(m,s,l){b('F155W-ERROR-'+l);return false;};
+</script></head><body>
+<div id="t" style="font-family: x; font-size: 20px;">AB</div>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  function mkstyle(id){
+    var st=document.createElement('style'); st.id=id;
+    st.textContent='@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }';
+    document.head.appendChild(st);
+  }
+  b('F155W-START');
+  /* phase 1: style absent -> check must be false */
+  b('F155W-P1-NOSTYLE-' + document.fonts.check('1em x'));
+  /* phase 2: style present -> check must be true */
+  mkstyle('s2'); document.body.offsetHeight;
+  b('F155W-P2-STYLE-' + document.fonts.check('1em x'));
+  /* phase 3: remove it synchronously -> check must be false again */
+  document.getElementById('s2').remove(); document.body.offsetHeight;
+  b('F155W-P3-REMOVED-' + document.fonts.check('1em x'));
+  /* phase 4: same removal, but this time inside a load() getter */
+  mkstyle('s4'); document.body.offsetHeight;
+  var fired=false;
+  Object.defineProperty(FontFace.prototype,'then',{configurable:true,get:function(){
+     if(fired) return undefined; fired=true;
+     var v=document.getElementById('s4'); if(v) v.remove();
+     document.body.offsetHeight;
+     b('F155W-P4-IN-GETTER-' + document.fonts.check('1em x'));
+     return undefined;
+  }});
+  b('F155W-P4-CALL');
+  document.fonts.load('1em a, x', 'AB').then(function(){b('F155W-P4-RESOLVED');},
+                                              function(){b('F155W-P4-REJECTED');});
+  b('F155W-END');
+});
+</script></body></html>

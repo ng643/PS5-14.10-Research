@@ -1,0 +1,154 @@
+<!doctype html><meta charset="utf-8"><title>array-sort-inline-full-cab7a45a.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Full insertion sort inlining: lengths 0..16, fresh closure comparator.
+
+function sortAsc(a, cmp) { return a.sort(cmp); }
+
+// Exercise lengths 0..16 with a fresh arrow comparator on each call.
+function runSize(n) {
+    let a = [];
+    for (let i = n - 1; i >= 0; i--) a.push(i);
+    let r = sortAsc(a, (x, y) => x - y);
+    if (r.length !== n) throw new Error("len " + n + " wrong length");
+    for (let i = 0; i < n; i++) {
+        if (r[i] !== i)
+            throw new Error("len " + n + " wrong at " + i + ": " + r[i]);
+    }
+}
+
+// Warm up the DFG compile of sortAsc with a mix of sizes, then exercise the
+// compiled path for a while.
+for (let w = 0; w < testLoopCount; w++)
+    for (let n = 0; n <= 16; n++)
+        runSize(n);
+
+// length > 16 must fall back to the generic sort via the slow-path call.
+function bigTest() {
+    let a = [];
+    for (let i = 49; i >= 0; i--) a.push(i);
+    let r = sortAsc(a, (x, y) => x - y);
+    for (let i = 0; i < 50; i++)
+        if (r[i] !== i) throw new Error("big wrong at " + i);
+}
+for (let i = 0; i < testLoopCount; i++) bigTest();
+
+// Stability check via a pair-of-keys sort.
+function stableTest() {
+    let items = [];
+    for (let i = 0; i < 12; i++)
+        items.push({ k: i % 3, seq: i });
+    let r = sortAsc(items, (x, y) => x.k - y.k);
+    // Within each key group, seq must be preserved in original order.
+    for (let i = 1; i < r.length; i++) {
+        if (r[i].k < r[i - 1].k)
+            throw new Error("unstable: out of key order at " + i);
+        if (r[i].k === r[i - 1].k && r[i].seq < r[i - 1].seq)
+            throw new Error("unstable: seq reversed at " + i);
+    }
+}try {
+for (let i = 0; i < testLoopCount; i++) stableTest();} catch (e) {}
+
+// Undefined comparator should still behave correctly. This falls out of the fast path
+// because we speculate CellUse on the comparator.
+let r0 = [3, 1, 2].sort();
+if (r0[0] !== 1 || r0[1] !== 2 || r0[2] !== 3)
+    throw new Error("default sort wrong: " + r0);gc();
+
+// Non-callable comparator must throw TypeError -- matches spec.
+let threw = false;
+try {
+    sortAsc([1, 2, 3], {});
+} catch (e) {
+    threw = e instanceof TypeError;
+}
+if (!threw) throw new Error("non-callable comparator did not throw TypeError");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-0742-array-sort-inline-full-cab7a45a.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

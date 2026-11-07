@@ -1,0 +1,38 @@
+{
+  "probe": "p171-popup-paths.js",
+  "tag": "V171",
+  "steps": [
+    {
+      "variant": "SANDBOX",
+      "query": "only=SANDBOX"
+    },
+    {
+      "variant": "LINK",
+      "query": "only=LINK"
+    },
+    {
+      "variant": "STATIC",
+      "query": "only=STATIC"
+    },
+    {
+      "variant": "BLANK",
+      "query": "only=BLANK"
+    },
+    {
+      "variant": "NOOPENER",
+      "query": "only=NOOPENER"
+    },
+    {
+      "variant": "EMPTY",
+      "query": "only=EMPTY"
+    },
+    {
+      "variant": "FRAME",
+      "query": "only=FRAME"
+    },
+    {
+      "variant": "NAMED",
+      "query": "only=NAMED"
+    }
+  ]
+}

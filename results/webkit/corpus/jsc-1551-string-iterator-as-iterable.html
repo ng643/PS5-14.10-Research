@@ -1,0 +1,175 @@
+<!doctype html><meta charset="utf-8"><title>string-iterator-as-iterable.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Regression test: iterating a JSStringIterator directly (i.e. the object returned by
+// str[Symbol.iterator](), not a primitive string) must not be type-confused with a primitive JSString.
+//
+// getIterationMode() classifies a primitive string as IterationMode::FastString, and the synchronous
+// op_iterator_open fast path builds a JSStringIterator from asString(iterable) on that assumption. If
+// getIterationMode also returned FastString for an already-existing JSStringIterator cell, the sync path
+// would asString() the iterator itself (an unchecked JSString downcast) and crash. A JSStringIterator is
+// therefore left as Generic here (its fast-drive path is intentionally deferred to a separate change);
+// this test only pins the invariant that iterating it directly yields the string's code points and never
+// crashes, across sync for-of / spread / Array.from and the async-from-sync wrapper, warmed across tiers.
+
+function assert(cond, message) {
+    if (!cond)
+        throw new Error("Assertion failed: " + message);
+}
+
+// Plain sync for-of over a string iterator object (this is the shape that crashed).
+function forOfStringIterator(str) {
+    const out = [];
+    for (const c of str[Symbol.iterator]())
+        out.push(c);
+    return out.join(",");
+}
+
+// Spread of a string iterator (op_iterator_open + op_iterator_next fast path).
+function spreadStringIterator(str) {
+    return [...str[Symbol.iterator]()].join(",");
+}
+
+// Array.from over a string iterator.
+function arrayFromStringIterator(str) {
+    return Array.from(str[Symbol.iterator]()).join(",");
+}
+
+// A partially consumed string iterator: the fast open must REUSE the iterator (not rebuild it from
+// scratch), so iteration continues from the current position rather than restarting.
+function partiallyConsumed(str) {
+    const it = str[Symbol.iterator]();
+    it.next(); // drop the first code point
+    const out = [];
+    for (const c of it)
+        out.push(c);
+    return out.join(",");
+}
+
+let done = false;
+let error = null;
+
+// The async-from-sync wrapper drives the same JSStringIterator through the FastStringIterator mode.
+async function asyncDriver() {
+    for (let i = 0; i < testLoopCount; i++) {
+        let out = [];
+        for await (const c of "abc"[Symbol.iterator]())
+            out.push(c);
+        assert(out.join(",") === "a,b,c", "for-await over string iterator: " + out.join(","));
+
+        // A primitive string still classifies as FastString and builds a fresh iterator.
+        out = [];
+        for await (const c of "xyz")
+            out.push(c);
+        assert(out.join(",") === "x,y,z", "for-await over primitive string: " + out.join(","));
+    }
+    done = true;
+}
+
+// Warm the sync paths across tiers.
+for (let i = 0; i < testLoopCount; i++) {
+    assert(forOfStringIterator("abc") === "a,b,c", "for-of string iterator");
+    assert(spreadStringIterator("xyz") === "x,y,z", "spread string iterator");
+    assert(arrayFromStringIterator("hello") === "h,e,l,l,o", "Array.from string iterator");
+    assert(partiallyConsumed("abcd") === "b,c,d", "partially consumed string iterator");
+    assert(forOfStringIterator("") === "", "empty string iterator");
+    // Astral characters must iterate by code point (2 UTF-16 units), proving genuine string-iterator semantics.
+    assert(forOfStringIterator("a\u{1F600}b") === "a,\u{1F600},b", "astral code points");
+}
+
+asyncDriver().then(() => {}, (e) => { error = e; });
+
+drainMicrotasks();
+
+if (error)
+    throw error;
+assert(done, "async driver did not complete");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1551-string-iterator-as-iterable.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

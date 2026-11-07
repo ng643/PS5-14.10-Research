@@ -122,11 +122,14 @@ arguments.
 The sweep stopped at 622. 1255a passed `622(0, 0, ...)`; 1256a retested with a valid zeroed
 0x4000 buffer in arg2 and `622(0, buf, ...)`, and **both killed the process under SIG_IGN**.
 So 622 is a genuine handler whose first argument is dereferenced in a way that a zero value
-makes fatal — it is not a `nosys` slot, and its earlier 55b/55c results (400+ commands in
-0x100-0x520 each returning 0 with `0x800E0001` in the buffer) never exercised arg1 = 0.
+makes fatal — it is not a `nosys` slot. Its earlier 55b/55c results (400+ commands in
+0x100-0x520 each returning 0 with `0x800E0001` in the buffer) never exercised arg1 = 0, and 55c
+is **void** besides: every call passed `0x100` in the size field and was stopped at the entry
+check, so only 55b (which used `0x40`) reached the dispatch path.
 
 Practical consequence: 622 must always be called with a non-zero first argument. It stays
-classified present from 55b/55c; the map simply cannot include it in a zero-argument sweep.
+classified present from 55b and `1335a` (55c is void - entry-check reject, no dispatch); the map
+simply cannot include it in a zero-argument sweep.
 
 ## Caveats
 

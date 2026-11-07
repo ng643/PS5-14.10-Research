@@ -1,0 +1,47 @@
+00abcc00 55                     push    rbp
+00abcc01 4889e5                 mov     rbp, rsp
+00abcc04 4157                   push    r15
+00abcc06 4156                   push    r14
+00abcc08 53                     push    rbx
+00abcc09 4881ecb8000000         sub     rsp, 0xb8
+00abcc10 4c8d3df9f6e502         lea     r15, [rip + 0x2e5f6f9]
+00abcc17 4889f3                 mov     rbx, rsi
+00abcc1a 488d9530ffffff         lea     rdx, [rbp - 0xd0]
+00abcc21 498b07                 mov     rax, qword ptr [r15]
+00abcc24 488945e0               mov     qword ptr [rbp - 0x20], rax
+00abcc28 8b36                   mov     esi, dword ptr [rsi]
+00abcc2a e891000000             call    0xffffffff8b47ccc0   ; -> abccc0 
+00abcc2f 85c0                   test    eax, eax
+00abcc31 7565                   jne     0xffffffff8b47cc98
+00abcc33 4c8b7308               mov     r14, qword ptr [rbx + 8]
+00abcc37 65488b3c2500000000     mov     rdi, qword ptr gs:[0]
+00abcc40 488d3550268900         lea     rsi, [rip + 0x892650]
+00abcc47 31d2                   xor     edx, edx
+00abcc49 e892d71500             call    0xffffffff8b5da3e0   ; -> c1a3e0 
+00abcc4e 488dbd30ffffff         lea     rdi, [rbp - 0xd0]
+00abcc55 ba08000000             mov     edx, 8
+00abcc5a 4c89f6                 mov     rsi, r14
+00abcc5d e86ec579ff             call    0xffffffff8ac191d0   ; -> 2591d0 copyout
+00abcc62 85c0                   test    eax, eax
+00abcc64 7532                   jne     0xffffffff8b47cc98
+00abcc66 488b5b10               mov     rbx, qword ptr [rbx + 0x10]
+00abcc6a 65488b3c2500000000     mov     rdi, qword ptr gs:[0]
+00abcc73 488d351d268900         lea     rsi, [rip + 0x89261d]
+00abcc7a 31d2                   xor     edx, edx
+00abcc7c 4c8db538ffffff         lea     r14, [rbp - 0xc8]
+00abcc83 e858d71500             call    0xffffffff8b5da3e0   ; -> c1a3e0 
+00abcc88 ba08000000             mov     edx, 8
+00abcc8d 4c89f7                 mov     rdi, r14
+00abcc90 4889de                 mov     rsi, rbx
+00abcc93 e838c579ff             call    0xffffffff8ac191d0   ; -> 2591d0 copyout
+00abcc98 498b0f                 mov     rcx, qword ptr [r15]
+00abcc9b 483b4de0               cmp     rcx, qword ptr [rbp - 0x20]
+00abcc9f 750e                   jne     0xffffffff8b47ccaf
+00abcca1 4881c4b8000000         add     rsp, 0xb8
+00abcca8 5b                     pop     rbx
+00abcca9 415e                   pop     r14
+00abccab 415f                   pop     r15
+00abccad 5d                     pop     rbp
+00abccae c3                     ret     
+00abccaf e8fc09c4ff             call    0xffffffff8b0bd6b0   ; -> 6fd6b0 
+00abccb4 0f0b                   ud2     

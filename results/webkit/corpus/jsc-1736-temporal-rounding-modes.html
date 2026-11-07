@@ -1,0 +1,195 @@
+<!doctype html><meta charset="utf-8"><title>temporal-rounding-modes.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+function shouldBe(a, b, msg) {
+    if (a !== b) throw new Error(`${msg}: expected ${b}, got ${a}`);
+}
+
+const modes = ["ceil", "floor", "expand", "trunc", "halfCeil", "halfFloor", "halfExpand", "halfTrunc", "halfEven"];
+
+// --- PlainTime.round with each mode ---
+{
+    const time = Temporal.PlainTime.from("12:34:56");
+    const expected = {
+        ceil: 13, floor: 12, expand: 13, trunc: 12,
+        halfCeil: 13, halfFloor: 13, halfExpand: 13, halfTrunc: 13, halfEven: 13,
+    };
+    for (const mode of modes) {
+        const result = time.round({ smallestUnit: "hour", roundingMode: mode });
+        shouldBe(result.hour, expected[mode], `12:34:56 round hour ${mode}`);
+    }
+}
+
+{
+    const time = Temporal.PlainTime.from("12:30:00");
+    const expected = {
+        ceil: 13, floor: 12, expand: 13, trunc: 12,
+        halfCeil: 13, halfFloor: 12, halfExpand: 13, halfTrunc: 12, halfEven: 12,
+    };
+    for (const mode of modes) {
+        const result = time.round({ smallestUnit: "hour", roundingMode: mode });
+        shouldBe(result.hour, expected[mode], `12:30 exact half round hour ${mode}`);
+    }
+}
+
+{
+    const time = Temporal.PlainTime.from("12:29:59");
+    const expected = {
+        ceil: 13, floor: 12, expand: 13, trunc: 12,
+        halfCeil: 12, halfFloor: 12, halfExpand: 12, halfTrunc: 12, halfEven: 12,
+    };
+    for (const mode of modes) {
+        const result = time.round({ smallestUnit: "hour", roundingMode: mode });
+        shouldBe(result.hour, expected[mode], `12:29:59 below half round hour ${mode}`);
+    }
+}
+
+{
+    const dur = Temporal.Duration.from({ hours: 5, minutes: 30 });
+    const expected = {
+        ceil: 6, floor: 5, expand: 6, trunc: 5,
+        halfCeil: 6, halfFloor: 5, halfExpand: 6, halfTrunc: 5, halfEven: 6,
+    };
+    for (const mode of modes) {
+        const result = dur.round({
+            largestUnit: "hours",
+            smallestUnit: "hours",
+            roundingMode: mode,
+        });
+        shouldBe(result.hours, expected[mode], `5h30m round hour ${mode}`);
+    }
+}
+
+// Negative duration — sign-aware rounding
+{
+    const dur = Temporal.Duration.from({ hours: -5, minutes: -30 });
+    const expected = {
+        ceil: -5, floor: -6, expand: -6, trunc: -5,
+        halfCeil: -5, halfFloor: -6, halfExpand: -6, halfTrunc: -5, halfEven: -6,
+    };
+    for (const mode of modes) {
+        const result = dur.round({
+            largestUnit: "hours",
+            smallestUnit: "hours",
+            roundingMode: mode,
+        });
+        shouldBe(result.hours, expected[mode], `-5h30m round hour ${mode}`);
+    }
+}
+
+// --- Instant.round with each mode ---
+{
+    // 2024-01-01T12:30:00Z → round to hour
+    const inst = Temporal.Instant.from("2024-01-01T12:30:00Z");
+    for (const mode of modes) {
+        const result = inst.round({ smallestUnit: "hour", roundingMode: mode });
+        // Result must be on a whole-hour boundary (epochNs divisible by 3_600_000_000_000).
+        shouldBe(result.epochNanoseconds % 3600000000000n === 0n, true, `Instant round hour ${mode} on boundary`);
+    }
+}
+
+{
+    const pdt = Temporal.PlainDateTime.from("2024-01-15T12:30:00");
+    for (const mode of modes) {
+        const result = pdt.round({ smallestUnit: "hour", roundingMode: mode });
+        shouldBe(result.hour === 12 || result.hour === 13, true, `PDT round hour ${mode} valid`);
+    }
+}
+
+{
+    const dur = Temporal.Duration.from({ seconds: 1, milliseconds: 500 });
+    shouldBe(dur.toString({ fractionalSecondDigits: 0 }), "PT1S", "fsd 0 truncates sub-second");
+    shouldBe(dur.toString({ fractionalSecondDigits: 1 }), "PT1.5S", "fsd 1");
+    shouldBe(dur.toString({ fractionalSecondDigits: 3 }), "PT1.500S", "fsd 3");
+    shouldBe(dur.toString({ fractionalSecondDigits: 9 }), "PT1.500000000S", "fsd 9");
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1736-temporal-rounding-modes.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

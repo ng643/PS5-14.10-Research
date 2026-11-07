@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>grid1</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+</script></head><body>
+G-SETUP
+<div id="parent" style="display: grid; min-width: max-content;">
+  <div style="display: grid; grid-template-columns: subgrid [a] [b] [c]">
+    <div></div>
+  </div>
+  <div></div>
+  <div id="subgrid" style="display: grid;">
+    <div id="remove"></div>
+  </div>
+</div>
+<script>
+b('G-START');
+b('G-SUBGRID-' + (CSS.supports('grid-template-columns', 'subgrid') ? 'yes' : 'no'));
+document.body.offsetHeight;
+b('G-LAYOUT1');
+var sg = document.getElementById('subgrid');
+var rm = document.getElementById('remove');
+sg.removeChild(rm);
+b('G-REMOVED');
+sg.style['grid-template-columns'] = 'subgrid [a] [b] [c]';
+sg.style['grid-template-areas'] = '"a"';
+b('G-STYLED');
+document.body.offsetHeight;
+b('G-LAYOUT2');
+b('G-END');
+</script>
+</body></html>

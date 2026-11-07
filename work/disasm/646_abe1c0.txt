@@ -1,0 +1,40 @@
+00abe1c0 55                     push    rbp
+00abe1c1 4889e5                 mov     rbp, rsp
+00abe1c4 4157                   push    r15
+00abe1c6 4156                   push    r14
+00abe1c8 53                     push    rbx
+00abe1c9 4881ec08040000         sub     rsp, 0x408
+00abe1d0 4c8d3d39e1e502         lea     r15, [rip + 0x2e5e139]
+00abe1d7 4889f3                 mov     rbx, rsi
+00abe1da 498b07                 mov     rax, qword ptr [r15]
+00abe1dd 488945e0               mov     qword ptr [rbp - 0x20], rax
+00abe1e1 488bbf40010000         mov     rdi, qword ptr [rdi + 0x140]
+00abe1e8 e8a3adb4ff             call    0xffffffff8afc8f90   ; -> 608f90 cap_0x608f90
+00abe1ed 85c0                   test    eax, eax
+00abe1ef 7440                   je      0xffffffff8b47e231
+00abe1f1 4c8db5e8fbffff         lea     r14, [rbp - 0x418]
+00abe1f8 bef8030000             mov     esi, 0x3f8
+00abe1fd 4c89f7                 mov     rdi, r14
+00abe200 e8ebad79ff             call    0xffffffff8ac18ff0   ; -> 258ff0 bzero
+00abe205 488b1b                 mov     rbx, qword ptr [rbx]
+00abe208 65488b3c2500000000     mov     rdi, qword ptr gs:[0]
+00abe211 488d357f108900         lea     rsi, [rip + 0x89107f]
+00abe218 31d2                   xor     edx, edx
+00abe21a e8c1c11500             call    0xffffffff8b5da3e0   ; -> c1a3e0 
+00abe21f baf8030000             mov     edx, 0x3f8
+00abe224 4c89f7                 mov     rdi, r14
+00abe227 4889de                 mov     rsi, rbx
+00abe22a e8a1af79ff             call    0xffffffff8ac191d0   ; -> 2591d0 copyout
+00abe22f eb05                   jmp     0xffffffff8b47e236
+00abe231 b801000000             mov     eax, 1
+00abe236 498b0f                 mov     rcx, qword ptr [r15]
+00abe239 483b4de0               cmp     rcx, qword ptr [rbp - 0x20]
+00abe23d 750e                   jne     0xffffffff8b47e24d
+00abe23f 4881c408040000         add     rsp, 0x408
+00abe246 5b                     pop     rbx
+00abe247 415e                   pop     r14
+00abe249 415f                   pop     r15
+00abe24b 5d                     pop     rbp
+00abe24c c3                     ret     
+00abe24d e85ef4c3ff             call    0xffffffff8b0bd6b0   ; -> 6fd6b0 
+00abe252 0f0b                   ud2     

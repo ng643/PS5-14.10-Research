@@ -1,0 +1,196 @@
+<!doctype html><meta charset="utf-8"><title>intl-datetimeformat-temporal-non-default-calendar.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Temporal formatter pattern generation must request the calendar from ICU in BCP47
+// form via the -u-ca- extension (e.g. "ar-SA-u-ca-gregory"). Passing a BCP47 calendar
+// value through ICU's legacy @calendar= keyword (e.g. "ar-SA@calendar=gregory") is
+// ignored by ICU when the BCP47 name differs from the legacy name ("gregory" vs
+// "gregorian", "ethioaa" vs "ethiopic-amete-alem"), so pattern selection silently
+// falls back to the locale's default calendar. For ar-SA (default: islamic-umalqura)
+// that injects a spurious era field and long month names into gregorian output.
+
+function shouldBe(actual, expected, msg) {
+    if (actual !== expected)
+        throw new Error(`${msg}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+}
+
+function partTypes(parts) {
+    return parts.map((part) => part.type).join(",");
+}
+
+function hasEra(parts) {
+    return parts.some((part) => part.type === "era");
+}
+
+const plainDate = new Temporal.PlainDate(2024, 1, 15);
+const plainDateTime = new Temporal.PlainDateTime(2024, 1, 15, 10, 30, 45);
+const instant = new Temporal.Instant(BigInt(Date.UTC(2024, 0, 15, 10, 30, 45)) * 1_000_000n);
+const date = new Date(Date.UTC(2024, 0, 15));
+const dateTime = new Date(Date.UTC(2024, 0, 15, 10, 30, 45));
+
+// 1. GetDateTimeFormat path with default fields.
+//    ar-SA's default calendar is islamic-umalqura. With ca=gregory, Temporal values
+//    must be formatted with the gregorian pattern — identical to Date formatting.
+{
+    const fmt = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", { timeZone: "UTC" });
+    shouldBe(fmt.resolvedOptions().calendar, "gregory", "resolved calendar");
+
+    shouldBe(hasEra(fmt.formatToParts(plainDate)), false,
+        "ar-SA-u-ca-gregory default fields: PlainDate must not include era");
+    shouldBe(partTypes(fmt.formatToParts(plainDate)), partTypes(fmt.formatToParts(date)),
+        "ar-SA-u-ca-gregory default fields: PlainDate parts vs Date parts");
+    shouldBe(fmt.format(plainDate), fmt.format(date),
+        "ar-SA-u-ca-gregory default fields: PlainDate vs Date");
+}
+
+// 2. GetDateTimeFormat path with explicit fields.
+{
+    const options = { year: "numeric", month: "numeric", day: "numeric", timeZone: "UTC" };
+    const fmt = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", options);
+
+    shouldBe(hasEra(fmt.formatToParts(plainDate)), false,
+        "ar-SA-u-ca-gregory explicit fields: PlainDate must not include era");
+    shouldBe(partTypes(fmt.formatToParts(plainDate)), partTypes(fmt.formatToParts(date)),
+        "ar-SA-u-ca-gregory explicit fields: PlainDate parts vs Date parts");
+    shouldBe(fmt.format(plainDate), fmt.format(date),
+        "ar-SA-u-ca-gregory explicit fields: PlainDate vs Date");
+}
+
+// 3. GetDateTimeFormat path for other Temporal kinds.
+{
+    const fmt = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
+        year: "numeric", month: "numeric", day: "numeric",
+        hour: "numeric", minute: "2-digit", second: "2-digit",
+        timeZone: "UTC",
+    });
+
+    shouldBe(hasEra(fmt.formatToParts(plainDateTime)), false,
+        "ar-SA-u-ca-gregory: PlainDateTime must not include era");
+    shouldBe(fmt.format(plainDateTime), fmt.format(dateTime),
+        "ar-SA-u-ca-gregory: PlainDateTime vs Date");
+
+    shouldBe(hasEra(fmt.formatToParts(instant)), false,
+        "ar-SA-u-ca-gregory: Instant must not include era");
+    shouldBe(fmt.format(instant), fmt.format(dateTime),
+        "ar-SA-u-ca-gregory: Instant vs Date");
+}
+
+// 4. AdjustDateTimeStyleFormat path: dateStyle+timeStyle formatting a PlainDate has
+//    conflicting (time) fields, forcing a date-only pattern to be regenerated.
+{
+    for (const dateStyle of ["full", "long", "medium", "short"]) {
+        const fmt = new Intl.DateTimeFormat("ar-SA-u-ca-gregory",
+            { dateStyle, timeStyle: "short", timeZone: "UTC" });
+        shouldBe(hasEra(fmt.formatToParts(plainDate)), false,
+            `ar-SA-u-ca-gregory dateStyle=${dateStyle}+timeStyle: PlainDate must not include era`);
+    }
+}
+
+// 5. ethioaa is the other calendar whose BCP47 name differs from the ICU legacy name
+//    ("ethiopic-amete-alem"). Temporal and Date formatting must agree.
+{
+    const fmt = new Intl.DateTimeFormat("en-u-ca-ethioaa", { timeZone: "UTC" });
+    shouldBe(fmt.resolvedOptions().calendar, "ethioaa", "resolved calendar");
+    shouldBe(partTypes(fmt.formatToParts(plainDate)), partTypes(fmt.formatToParts(date)),
+        "en-u-ca-ethioaa: PlainDate parts vs Date parts");
+    shouldBe(fmt.format(plainDate), fmt.format(date),
+        "en-u-ca-ethioaa: PlainDate vs Date");
+}
+
+// 6. Calendars whose BCP47 and ICU legacy names coincide must keep working.
+{
+    const fmt = new Intl.DateTimeFormat("en-u-ca-islamic-umalqura", { timeZone: "UTC" });
+    shouldBe(fmt.format(plainDate), fmt.format(date),
+        "en-u-ca-islamic-umalqura: PlainDate vs Date");
+    shouldBe(hasEra(fmt.formatToParts(plainDate)), true,
+        "en-u-ca-islamic-umalqura: PlainDate must include era");
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-677-intl-datetimeformat-temporal-non-default-calendar.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

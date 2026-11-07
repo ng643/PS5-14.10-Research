@@ -1,0 +1,349 @@
+<!doctype html><meta charset="utf-8"><title>uint8array-toBase64.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`FAIL: expected '${expected}' actual '${actual}'`);
+}
+
+shouldBe((new Uint8Array([])).toBase64(), "");
+shouldBe((new Uint8Array([0])).toBase64(), "AA==");
+shouldBe((new Uint8Array([1])).toBase64(), "AQ==");
+shouldBe((new Uint8Array([128])).toBase64(), "gA==");
+shouldBe((new Uint8Array([254])).toBase64(), "/g==");
+shouldBe((new Uint8Array([255])).toBase64(), "/w==");
+shouldBe((new Uint8Array([0, 1])).toBase64(), "AAE=");
+shouldBe((new Uint8Array([254, 255])).toBase64(), "/v8=");
+shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64(), "AAGA/v8=");
+
+shouldBe((new Uint8Array([])).toBase64({}), "");
+shouldBe((new Uint8Array([0])).toBase64({}), "AA==");
+shouldBe((new Uint8Array([1])).toBase64({}), "AQ==");
+shouldBe((new Uint8Array([128])).toBase64({}), "gA==");
+shouldBe((new Uint8Array([254])).toBase64({}), "/g==");
+shouldBe((new Uint8Array([255])).toBase64({}), "/w==");
+shouldBe((new Uint8Array([0, 1])).toBase64({}), "AAE=");
+shouldBe((new Uint8Array([254, 255])).toBase64({}), "/v8=");
+shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({}), "AAGA/v8=");
+
+for (let omitPadding of [undefined, null, false, 0, ""]) {
+    shouldBe((new Uint8Array([])).toBase64({omitPadding}), "");
+    shouldBe((new Uint8Array([0])).toBase64({omitPadding}), "AA==");
+    shouldBe((new Uint8Array([1])).toBase64({omitPadding}), "AQ==");
+    shouldBe((new Uint8Array([128])).toBase64({omitPadding}), "gA==");
+    shouldBe((new Uint8Array([254])).toBase64({omitPadding}), "/g==");
+    shouldBe((new Uint8Array([255])).toBase64({omitPadding}), "/w==");
+    shouldBe((new Uint8Array([0, 1])).toBase64({omitPadding}), "AAE=");
+    shouldBe((new Uint8Array([254, 255])).toBase64({omitPadding}), "/v8=");
+    shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({omitPadding}), "AAGA/v8=");
+
+    shouldBe((new Uint8Array([])).toBase64({get omitPadding() { return omitPadding; }}), "");
+    shouldBe((new Uint8Array([0])).toBase64({get omitPadding() { return omitPadding; }}), "AA==");
+    shouldBe((new Uint8Array([1])).toBase64({get omitPadding() { return omitPadding; }}), "AQ==");
+    shouldBe((new Uint8Array([128])).toBase64({get omitPadding() { return omitPadding; }}), "gA==");
+    shouldBe((new Uint8Array([254])).toBase64({get omitPadding() { return omitPadding; }}), "/g==");
+    shouldBe((new Uint8Array([255])).toBase64({get omitPadding() { return omitPadding; }}), "/w==");
+    shouldBe((new Uint8Array([0, 1])).toBase64({get omitPadding() { return omitPadding; }}), "AAE=");
+    shouldBe((new Uint8Array([254, 255])).toBase64({get omitPadding() { return omitPadding; }}), "/v8=");
+    shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({get omitPadding() { return omitPadding; }}), "AAGA/v8=");
+}
+
+for (let omitPadding of [true, 42, "test", [], {}]) {
+    shouldBe((new Uint8Array([])).toBase64({omitPadding}), "");
+    shouldBe((new Uint8Array([0])).toBase64({omitPadding}), "AA");
+    shouldBe((new Uint8Array([1])).toBase64({omitPadding}), "AQ");
+    shouldBe((new Uint8Array([128])).toBase64({omitPadding}), "gA");
+    shouldBe((new Uint8Array([254])).toBase64({omitPadding}), "/g");
+    shouldBe((new Uint8Array([255])).toBase64({omitPadding}), "/w");
+    shouldBe((new Uint8Array([0, 1])).toBase64({omitPadding}), "AAE");
+    shouldBe((new Uint8Array([254, 255])).toBase64({omitPadding}), "/v8");
+    shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({omitPadding}), "AAGA/v8");
+
+    shouldBe((new Uint8Array([])).toBase64({get omitPadding() { return omitPadding; }}), "");
+    shouldBe((new Uint8Array([0])).toBase64({get omitPadding() { return omitPadding; }}), "AA");
+    shouldBe((new Uint8Array([1])).toBase64({get omitPadding() { return omitPadding; }}), "AQ");
+    shouldBe((new Uint8Array([128])).toBase64({get omitPadding() { return omitPadding; }}), "gA");
+    shouldBe((new Uint8Array([254])).toBase64({get omitPadding() { return omitPadding; }}), "/g");
+    shouldBe((new Uint8Array([255])).toBase64({get omitPadding() { return omitPadding; }}), "/w");
+    shouldBe((new Uint8Array([0, 1])).toBase64({get omitPadding() { return omitPadding; }}), "AAE");
+    shouldBe((new Uint8Array([254, 255])).toBase64({get omitPadding() { return omitPadding; }}), "/v8");
+    shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({get omitPadding() { return omitPadding; }}), "AAGA/v8");
+}
+
+for (let alphabet of [undefined, "base64"]) {
+    shouldBe((new Uint8Array([])).toBase64({alphabet}), "");
+    shouldBe((new Uint8Array([0])).toBase64({alphabet}), "AA==");
+    shouldBe((new Uint8Array([1])).toBase64({alphabet}), "AQ==");
+    shouldBe((new Uint8Array([128])).toBase64({alphabet}), "gA==");
+    shouldBe((new Uint8Array([254])).toBase64({alphabet}), "/g==");
+    shouldBe((new Uint8Array([255])).toBase64({alphabet}), "/w==");
+    shouldBe((new Uint8Array([0, 1])).toBase64({alphabet}), "AAE=");
+    shouldBe((new Uint8Array([254, 255])).toBase64({alphabet}), "/v8=");
+    shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({alphabet}), "AAGA/v8=");
+
+    shouldBe((new Uint8Array([])).toBase64({get alphabet() { return alphabet; }}), "");
+    shouldBe((new Uint8Array([0])).toBase64({get alphabet() { return alphabet; }}), "AA==");
+    shouldBe((new Uint8Array([1])).toBase64({get alphabet() { return alphabet; }}), "AQ==");
+    shouldBe((new Uint8Array([128])).toBase64({get alphabet() { return alphabet; }}), "gA==");
+    shouldBe((new Uint8Array([254])).toBase64({get alphabet() { return alphabet; }}), "/g==");
+    shouldBe((new Uint8Array([255])).toBase64({get alphabet() { return alphabet; }}), "/w==");
+    shouldBe((new Uint8Array([0, 1])).toBase64({get alphabet() { return alphabet; }}), "AAE=");
+    shouldBe((new Uint8Array([254, 255])).toBase64({get alphabet() { return alphabet; }}), "/v8=");
+    shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({get alphabet() { return alphabet; }}), "AAGA/v8=");
+
+    for (let omitPadding of [undefined, null, false, 0, ""]) {
+        shouldBe((new Uint8Array([])).toBase64({alphabet, omitPadding}), "");
+        shouldBe((new Uint8Array([0])).toBase64({alphabet, omitPadding}), "AA==");
+        shouldBe((new Uint8Array([1])).toBase64({alphabet, omitPadding}), "AQ==");
+        shouldBe((new Uint8Array([128])).toBase64({alphabet, omitPadding}), "gA==");
+        shouldBe((new Uint8Array([254])).toBase64({alphabet, omitPadding}), "/g==");
+        shouldBe((new Uint8Array([255])).toBase64({alphabet, omitPadding}), "/w==");
+        shouldBe((new Uint8Array([0, 1])).toBase64({alphabet, omitPadding}), "AAE=");
+        shouldBe((new Uint8Array([254, 255])).toBase64({alphabet, omitPadding}), "/v8=");
+        shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({alphabet, omitPadding}), "AAGA/v8=");
+
+        shouldBe((new Uint8Array([])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "");
+        shouldBe((new Uint8Array([0])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "AA==");
+        shouldBe((new Uint8Array([1])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "AQ==");
+        shouldBe((new Uint8Array([128])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "gA==");
+        shouldBe((new Uint8Array([254])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "/g==");
+        shouldBe((new Uint8Array([255])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "/w==");
+        shouldBe((new Uint8Array([0, 1])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "AAE=");
+        shouldBe((new Uint8Array([254, 255])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "/v8=");
+        shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "AAGA/v8=");
+    }
+
+    for (let omitPadding of [true, 42, "test", [], {}]) {
+        shouldBe((new Uint8Array([])).toBase64({alphabet, omitPadding}), "");
+        shouldBe((new Uint8Array([0])).toBase64({alphabet, omitPadding}), "AA");
+        shouldBe((new Uint8Array([1])).toBase64({alphabet, omitPadding}), "AQ");
+        shouldBe((new Uint8Array([128])).toBase64({alphabet, omitPadding}), "gA");
+        shouldBe((new Uint8Array([254])).toBase64({alphabet, omitPadding}), "/g");
+        shouldBe((new Uint8Array([255])).toBase64({alphabet, omitPadding}), "/w");
+        shouldBe((new Uint8Array([0, 1])).toBase64({alphabet, omitPadding}), "AAE");
+        shouldBe((new Uint8Array([254, 255])).toBase64({alphabet, omitPadding}), "/v8");
+        shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({alphabet, omitPadding}), "AAGA/v8");
+
+        shouldBe((new Uint8Array([])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "");
+        shouldBe((new Uint8Array([0])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "AA");
+        shouldBe((new Uint8Array([1])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "AQ");
+        shouldBe((new Uint8Array([128])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "gA");
+        shouldBe((new Uint8Array([254])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "/g");
+        shouldBe((new Uint8Array([255])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "/w");
+        shouldBe((new Uint8Array([0, 1])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "AAE");
+        shouldBe((new Uint8Array([254, 255])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "/v8");
+        shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({get alphabet() { return alphabet; }, get omitPadding() { return omitPadding; }}), "AAGA/v8");
+    }
+}
+
+shouldBe((new Uint8Array([])).toBase64({alphabet: "base64url"}), "");
+shouldBe((new Uint8Array([0])).toBase64({alphabet: "base64url"}), "AA==");
+shouldBe((new Uint8Array([1])).toBase64({alphabet: "base64url"}), "AQ==");
+shouldBe((new Uint8Array([128])).toBase64({alphabet: "base64url"}), "gA==");
+shouldBe((new Uint8Array([254])).toBase64({alphabet: "base64url"}), "_g==");
+shouldBe((new Uint8Array([255])).toBase64({alphabet: "base64url"}), "_w==");
+shouldBe((new Uint8Array([0, 1])).toBase64({alphabet: "base64url"}), "AAE=");
+shouldBe((new Uint8Array([254, 255])).toBase64({alphabet: "base64url"}), "_v8=");
+shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({alphabet: "base64url"}), "AAGA_v8=");
+
+shouldBe((new Uint8Array([])).toBase64({get alphabet() { return "base64url"; }}), "");
+shouldBe((new Uint8Array([0])).toBase64({get alphabet() { return "base64url"; }}), "AA==");
+shouldBe((new Uint8Array([1])).toBase64({get alphabet() { return "base64url"; }}), "AQ==");
+shouldBe((new Uint8Array([128])).toBase64({get alphabet() { return "base64url"; }}), "gA==");
+shouldBe((new Uint8Array([254])).toBase64({get alphabet() { return "base64url"; }}), "_g==");
+shouldBe((new Uint8Array([255])).toBase64({get alphabet() { return "base64url"; }}), "_w==");
+shouldBe((new Uint8Array([0, 1])).toBase64({get alphabet() { return "base64url"; }}), "AAE=");
+shouldBe((new Uint8Array([254, 255])).toBase64({get alphabet() { return "base64url"; }}), "_v8=");
+shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({get alphabet() { return "base64url"; }}), "AAGA_v8=");
+
+for (let omitPadding of [undefined, null, false, 0, ""]) {
+    shouldBe((new Uint8Array([])).toBase64({alphabet: "base64url", omitPadding}), "");
+    shouldBe((new Uint8Array([0])).toBase64({alphabet: "base64url", omitPadding}), "AA==");
+    shouldBe((new Uint8Array([1])).toBase64({alphabet: "base64url", omitPadding}), "AQ==");
+    shouldBe((new Uint8Array([128])).toBase64({alphabet: "base64url", omitPadding}), "gA==");
+    shouldBe((new Uint8Array([254])).toBase64({alphabet: "base64url", omitPadding}), "_g==");
+    shouldBe((new Uint8Array([255])).toBase64({alphabet: "base64url", omitPadding}), "_w==");
+    shouldBe((new Uint8Array([0, 1])).toBase64({alphabet: "base64url", omitPadding}), "AAE=");
+    shouldBe((new Uint8Array([254, 255])).toBase64({alphabet: "base64url", omitPadding}), "_v8=");
+    shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({alphabet: "base64url", omitPadding}), "AAGA_v8=");
+
+    shouldBe((new Uint8Array([])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "");
+    shouldBe((new Uint8Array([0])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "AA==");
+    shouldBe((new Uint8Array([1])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "AQ==");
+    shouldBe((new Uint8Array([128])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "gA==");
+    shouldBe((new Uint8Array([254])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "_g==");
+    shouldBe((new Uint8Array([255])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "_w==");
+    shouldBe((new Uint8Array([0, 1])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "AAE=");
+    shouldBe((new Uint8Array([254, 255])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "_v8=");
+    shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "AAGA_v8=");
+}
+
+for (let omitPadding of [true, 42, "test", [], {}]) {
+    shouldBe((new Uint8Array([])).toBase64({alphabet: "base64url", omitPadding}), "");
+    shouldBe((new Uint8Array([0])).toBase64({alphabet: "base64url", omitPadding}), "AA");
+    shouldBe((new Uint8Array([1])).toBase64({alphabet: "base64url", omitPadding}), "AQ");
+    shouldBe((new Uint8Array([128])).toBase64({alphabet: "base64url", omitPadding}), "gA");
+    shouldBe((new Uint8Array([254])).toBase64({alphabet: "base64url", omitPadding}), "_g");
+    shouldBe((new Uint8Array([255])).toBase64({alphabet: "base64url", omitPadding}), "_w");
+    shouldBe((new Uint8Array([0, 1])).toBase64({alphabet: "base64url", omitPadding}), "AAE");
+    shouldBe((new Uint8Array([254, 255])).toBase64({alphabet: "base64url", omitPadding}), "_v8");
+    shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({alphabet: "base64url", omitPadding}), "AAGA_v8");
+
+    shouldBe((new Uint8Array([])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "");
+    shouldBe((new Uint8Array([0])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "AA");
+    shouldBe((new Uint8Array([1])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "AQ");
+    shouldBe((new Uint8Array([128])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "gA");
+    shouldBe((new Uint8Array([254])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "_g");
+    shouldBe((new Uint8Array([255])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "_w");
+    shouldBe((new Uint8Array([0, 1])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "AAE");
+    shouldBe((new Uint8Array([254, 255])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "_v8");
+    shouldBe((new Uint8Array([0, 1, 128, 254, 255])).toBase64({get alphabet() { return "base64url"; }, get omitPadding() { return omitPadding; }}), "AAGA_v8");
+}
+
+try {
+    let uint8array = new Uint8Array;
+    $.detachArrayBuffer(uint8array.buffer);
+    uint8array.toBase64();
+} catch (e) {
+    shouldBe(e instanceof TypeError, true);
+}
+
+for (let alphabet of [undefined, "base64", "base64url"]) {
+    try {
+        let uint8array = new Uint8Array;
+        uint8array.toBase64({
+            get alphabet() {
+                $.detachArrayBuffer(uint8array.buffer);
+                return alphabet;
+            },
+        });
+    } catch (e) {
+        shouldBe(e instanceof TypeError, true);
+    }
+
+    try {
+        (new Uint8Array).toBase64({
+            alphabet: {
+                toString() {
+                    return alphabet;
+                },
+            },
+        });
+    } catch (e) {
+        shouldBe(e instanceof TypeError, true);
+    }
+}
+
+for (let options of [undefined, null, false, true, 42, "test", []]) {
+    try {
+        (new Uint8Array).toBase64(options);
+    } catch (e) {
+        shouldBe(e instanceof TypeError, true);
+    }
+}
+
+for (let alphabet of [null, false, true, 42, "invalid", {}, []]) {
+    try {
+        (new Uint8Array).toBase64({alphabet});
+    } catch (e) {
+        shouldBe(e instanceof TypeError, true);
+    }
+
+    try {
+        (new Uint8Array).toBase64({
+            get alphabet() { return alphabet; },
+        });
+    } catch (e) {
+        shouldBe(e instanceof TypeError, true);
+    }
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1839-uint8array-tobase64.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

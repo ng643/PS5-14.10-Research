@@ -1,0 +1,655 @@
+2026-10-23T11:46:12.392+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:46:33.688+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:46:35.859+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-23T11:46:35.884+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-23T11:46:35.937+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T11:46:53.076+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:46:59.180+00:00 DNS Q feature-discovery-assets-amd.dl.playstation.net 1
+2026-10-23T11:46:59.641+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T11:46:59.698+00:00 ACCESS GET /probe/p_relapse_test.js?cb=1792754139 200
+2026-10-23T11:46:59.849+00:00 ACCESS GET /raw/p_relapse_test.js?cb=1792754139&cb=1792754139 200
+2026-10-23T11:47:00.022+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?start=0&count=1000&list=layout.json 200
+2026-10-23T11:47:00.214+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&start=0&count=1000&list=layout.json 200
+2026-10-23T11:47:00.271+00:00 ACCESS GET /corpus/layout.json?t=1792756022431 200
+2026-10-23T11:47:00.321+00:00 ACCESS GET /corpus/skip.json?t=1792756022498 200
+2026-10-23T11:47:00.474+00:00 POST V172-1jontd-CURSOR-0-to-101 t=1792756022651&n=1 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:00.476+00:00 ACCESS POST /beacon/V172-1jontd-CURSOR-0-to-101?t=1792756022651&n=1 204
+2026-10-23T11:47:00.496+00:00 POST V172-1jontd-BOOT-232-from-101-to-232 t=1792756022652&n=3 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:00.498+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-101-to-232?t=1792756022652&n=3 204
+2026-10-23T11:47:00.540+00:00 ACCESS GET /corpus/lay-102-fullscreen-cancel-after-request-crash-html.html?i=101&next=102&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:00.570+00:00 POST V172-1jontd-SKIP-0-to-101 t=1792756022652&n=2 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:00.570+00:00 ACCESS POST /beacon/V172-1jontd-SKIP-0-to-101?t=1792756022652&n=2 204
+2026-10-23T11:47:00.619+00:00 POST V172-1jontd-BEFORE-101 t=1792756022788&n=4 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:00.622+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-101?t=1792756022788&n=4 204
+2026-10-23T11:47:00.630+00:00 POST V172-1jontd-OK-101-lay-102-fullscreen-cancel-after-request-crash-html.html t=1792756022792&n=5 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:00.632+00:00 ACCESS POST /beacon/V172-1jontd-OK-101-lay-102-fullscreen-cancel-after-request-crash-html.html?t=1792756022792&n=5 204
+2026-10-23T11:47:00.674+00:00 POST V172-1jontd-GAP-101 t=1792756022792&n=6 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:00.676+00:00 ACCESS POST /beacon/V172-1jontd-GAP-101?t=1792756022792&n=6 204
+2026-10-23T11:47:00.710+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=102&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:00.879+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=102&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:00.931+00:00 ACCESS GET /corpus/layout.json?t=1792756023095 200
+2026-10-23T11:47:00.973+00:00 ACCESS GET /corpus/skip.json?t=1792756023160 200
+2026-10-23T11:47:01.124+00:00 POST V172-1jontd-BOOT-232-from-102-to-232 t=1792756023297&n=7 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:01.125+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-102-to-232?t=1792756023297&n=7 204
+2026-10-23T11:47:01.170+00:00 ACCESS GET /corpus/lay-103-fullscreen-grid-item-container-type-crash-html.html?i=102&next=103&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:01.233+00:00 POST V172-1jontd-BEFORE-102 t=1792756023405&n=8 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:01.237+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-102?t=1792756023405&n=8 204
+2026-10-23T11:47:01.249+00:00 POST V172-1jontd-OK-102-lay-103-fullscreen-grid-item-container-type-crash-html.html t=1792756023407&n=9 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:01.251+00:00 ACCESS POST /beacon/V172-1jontd-OK-102-lay-103-fullscreen-grid-item-container-type-crash-html.html?t=1792756023407&n=9 204
+2026-10-23T11:47:01.254+00:00 POST V172-1jontd-GAP-102 t=1792756023407&n=10 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:01.255+00:00 ACCESS POST /beacon/V172-1jontd-GAP-102?t=1792756023407&n=10 204
+2026-10-23T11:47:01.315+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=103&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:01.485+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=103&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:01.514+00:00 ACCESS GET /corpus/layout.json?t=1792756023703 200
+2026-10-23T11:47:01.590+00:00 ACCESS GET /corpus/skip.json?t=1792756023755 200
+2026-10-23T11:47:01.728+00:00 POST V172-1jontd-BOOT-232-from-103-to-232 t=1792756023913&n=11 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:01.729+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-103-to-232?t=1792756023913&n=11 204
+2026-10-23T11:47:01.746+00:00 ACCESS GET /corpus/lay-104-beacon-cross-origin-upgrademixedcontent-https-html.html?i=103&next=104&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:01.814+00:00 POST V172-1jontd-BEFORE-103 t=1792756023972&n=12 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:01.816+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-103?t=1792756023972&n=12 204
+2026-10-23T11:47:01.868+00:00 POST V172-1jontd-OK-103-lay-104-beacon-cross-origin-upgrademixedcontent-https-html.html t=1792756023973&n=13 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:01.870+00:00 ACCESS POST /beacon/V172-1jontd-OK-103-lay-104-beacon-cross-origin-upgrademixedcontent-https-html.html?t=1792756023973&n=13 204
+2026-10-23T11:47:01.884+00:00 POST V172-1jontd-GAP-103 t=1792756023973&n=14 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:01.884+00:00 ACCESS POST /beacon/V172-1jontd-GAP-103?t=1792756023973&n=14 204
+2026-10-23T11:47:01.896+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=104&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:02.049+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=104&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:02.083+00:00 ACCESS GET /corpus/layout.json?t=1792756024267 200
+2026-10-23T11:47:02.301+00:00 ACCESS GET /corpus/skip.json?t=1792756024386 200
+2026-10-23T11:47:02.443+00:00 POST V172-1jontd-BOOT-232-from-104-to-232 t=1792756024625&n=15 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:02.444+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-104-to-232?t=1792756024625&n=15 204
+2026-10-23T11:47:02.495+00:00 ACCESS GET /corpus/lay-105-memory-cache-partition-drift-html.html?i=104&next=105&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:02.567+00:00 POST V172-1jontd-BEFORE-104 t=1792756024723&n=16 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:02.569+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-104?t=1792756024723&n=16 204
+2026-10-23T11:47:02.571+00:00 POST V172-1jontd-OK-104-lay-105-memory-cache-partition-drift-html.html t=1792756024724&n=17 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:02.573+00:00 ACCESS POST /beacon/V172-1jontd-OK-104-lay-105-memory-cache-partition-drift-html.html?t=1792756024724&n=17 204
+2026-10-23T11:47:02.595+00:00 ACCESS GET /corpus/resources/memory-cache-partition-drift-frame.html 404
+layStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:02.596+00:00 ACCESS POST /beacon/V172-1jontd-GAP-104?t=1792756024724&n=18 204
+2026-10-23T11:47:02.661+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=105&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:02.818+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=105&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:02.886+00:00 ACCESS GET /corpus/layout.json?t=1792756025035 200
+2026-10-23T11:47:02.944+00:00 ACCESS GET /corpus/skip.json?t=1792756025109 200
+2026-10-23T11:47:03.077+00:00 POST V172-1jontd-BOOT-232-from-105-to-232 t=1792756025265&n=19 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:03.078+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-105-to-232?t=1792756025265&n=19 204
+2026-10-23T11:47:03.125+00:00 ACCESS GET /corpus/lay-106-memory-cache-partition-drift-frame-html.html?i=105&next=106&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:03.208+00:00 POST V172-1jontd-BEFORE-105 t=1792756025357&n=20 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:03.211+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-105?t=1792756025357&n=20 204
+2026-10-23T11:47:03.236+00:00 POST V172-1jontd-OK-105-lay-106-memory-cache-partition-drift-frame-html.html t=1792756025358&n=21 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:03.238+00:00 ACCESS POST /beacon/V172-1jontd-OK-105-lay-106-memory-cache-partition-drift-frame-html.html?t=1792756025358&n=21 204
+2026-10-23T11:47:03.260+00:00 POST V172-1jontd-GAP-105 t=1792756025358&n=22 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:03.261+00:00 ACCESS POST /beacon/V172-1jontd-GAP-105?t=1792756025358&n=22 204
+2026-10-23T11:47:03.268+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=106&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:03.430+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=106&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:03.474+00:00 ACCESS GET /corpus/layout.json?t=1792756025646 200
+2026-10-23T11:47:03.557+00:00 ACCESS GET /corpus/skip.json?t=1792756025714 200
+2026-10-23T11:47:03.695+00:00 POST V172-1jontd-BOOT-232-from-106-to-232 t=1792756025878&n=23 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:03.696+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-106-to-232?t=1792756025878&n=23 204
+2026-10-23T11:47:03.716+00:00 ACCESS GET /corpus/lay-107-web-authenticator-get-assertion-spoofed-origin-crash-html.html?i=106&next=107&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:03.771+00:00 POST V172-1jontd-BEFORE-106 t=1792756025941&n=24 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:03.773+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-106?t=1792756025941&n=24 204
+2026-10-23T11:47:03.783+00:00 POST V172-1jontd-OK-106-lay-107-web-authenticator-get-assertion-spoofed-origin-crash-html.html t=1792756025942&n=25 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:03.785+00:00 ACCESS POST /beacon/V172-1jontd-OK-106-lay-107-web-authenticator-get-assertion-spoofed-origin-crash-html.html?t=1792756025942&n=25 204
+2026-10-23T11:47:03.812+00:00 POST V172-1jontd-GAP-106 t=1792756025942&n=26 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:03.813+00:00 ACCESS POST /beacon/V172-1jontd-GAP-106?t=1792756025942&n=26 204
+2026-10-23T11:47:03.857+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=107&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:04.003+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=107&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:04.056+00:00 ACCESS GET /corpus/layout.json?t=1792756026230 200
+2026-10-23T11:47:04.107+00:00 ACCESS GET /corpus/skip.json?t=1792756026297 200
+2026-10-23T11:47:04.278+00:00 POST V172-1jontd-BOOT-232-from-107-to-232 t=1792756026429&n=27 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:04.279+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-107-to-232?t=1792756026429&n=27 204
+2026-10-23T11:47:04.319+00:00 ACCESS GET /corpus/lay-108-web-authenticator-make-credential-spoofed-origin-crash-html.html?i=107&next=108&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:04.405+00:00 POST V172-1jontd-BEFORE-107 t=1792756026542&n=28 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:04.407+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-107?t=1792756026542&n=28 204
+2026-10-23T11:47:04.412+00:00 POST V172-1jontd-OK-107-lay-108-web-authenticator-make-credential-spoofed-origin-crash-html.html t=1792756026542&n=29 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:04.414+00:00 ACCESS POST /beacon/V172-1jontd-OK-107-lay-108-web-authenticator-make-credential-spoofed-origin-crash-html.html?t=1792756026542&n=29 204
+2026-10-23T11:47:04.426+00:00 POST V172-1jontd-GAP-107 t=1792756026542&n=30 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:04.427+00:00 ACCESS POST /beacon/V172-1jontd-GAP-107?t=1792756026542&n=30 204
+2026-10-23T11:47:04.440+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=108&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:04.607+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=108&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:04.685+00:00 ACCESS GET /corpus/layout.json?t=1792756026824 200
+2026-10-23T11:47:04.761+00:00 ACCESS GET /corpus/skip.json?t=1792756026940 200
+2026-10-23T11:47:04.898+00:00 POST V172-1jontd-BOOT-232-from-108-to-232 t=1792756027082&n=31 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:04.900+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-108-to-232?t=1792756027082&n=31 204
+2026-10-23T11:47:04.915+00:00 ACCESS GET /corpus/lay-109-fps-video-frame-html.html?i=108&next=109&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:04.986+00:00 POST V172-1jontd-BEFORE-108 t=1792756027142&n=32 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:04.988+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-108?t=1792756027142&n=32 204
+2026-10-23T11:47:05.010+00:00 ACCESS GET /media-resources/video-test.js 404
+2026-10-23T11:47:05.091+00:00 ACCESS GET /corpus/eme2016.js 404
+2026-10-23T11:47:05.099+00:00 ACCESS GET /corpus/support.js 404
+2026-10-23T11:47:05.174+00:00 POST V172-1jontd-OK-108-lay-109-fps-video-frame-html.html t=1792756027353&n=33 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:05.176+00:00 ACCESS POST /beacon/V172-1jontd-OK-108-lay-109-fps-video-frame-html.html?t=1792756027353&n=33 204
+2026-10-23T11:47:05.193+00:00 POST V172-1jontd-GAP-108 t=1792756027353&n=34 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:05.194+00:00 ACCESS POST /beacon/V172-1jontd-GAP-108?t=1792756027353&n=34 204
+2026-10-23T11:47:05.250+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=109&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:05.389+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=109&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:05.419+00:00 ACCESS GET /corpus/layout.json?t=1792756027606 200
+2026-10-23T11:47:05.449+00:00 ACCESS GET /corpus/skip.json?t=1792756027641 200
+2026-10-23T11:47:05.584+00:00 POST V172-1jontd-BOOT-232-from-109-to-232 t=1792756027768&n=35 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:05.585+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-109-to-232?t=1792756027768&n=35 204
+2026-10-23T11:47:05.601+00:00 ACCESS GET /corpus/lay-110-anchor-cross-origin-from-https-upgrademixedcontent-html.html?i=109&next=110&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:05.679+00:00 POST V172-1jontd-BEFORE-109 t=1792756027828&n=36 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:05.680+00:00 ACCESS GET /resources/delete-ping.py 302
+2026-10-23T11:47:05.681+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-109?t=1792756027828&n=36 204
+2026-10-23T11:47:05.708+00:00 POST V172-1jontd-OK-109-lay-110-anchor-cross-origin-from-https-upgrademixedcontent-html.html t=1792756027829&n=37 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:05.711+00:00 ACCESS POST /beacon/V172-1jontd-OK-109-lay-110-anchor-cross-origin-from-https-upgrademixedcontent-html.html?t=1792756027829&n=37 204
+2026-10-23T11:47:05.730+00:00 POST V172-1jontd-GAP-109 t=1792756027829&n=38 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:05.730+00:00 ACCESS POST /beacon/V172-1jontd-GAP-109?t=1792756027829&n=38 204
+2026-10-23T11:47:05.748+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=110&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:05.890+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=110&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:05.921+00:00 ACCESS GET /corpus/layout.json?t=1792756028113 200
+2026-10-23T11:47:05.976+00:00 ACCESS GET /corpus/skip.json?t=1792756028167 200
+2026-10-23T11:47:06.111+00:00 POST V172-1jontd-BOOT-232-from-110-to-232 t=1792756028299&n=39 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:06.112+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-110-to-232?t=1792756028299&n=39 204
+2026-10-23T11:47:06.176+00:00 ACCESS GET /corpus/lay-111-area-cross-origin-from-https-upgrademixedcontent-html.html?i=110&next=111&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:06.224+00:00 POST V172-1jontd-BEFORE-110 t=1792756028410&n=40 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:06.226+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-110?t=1792756028410&n=40 204
+2026-10-23T11:47:06.254+00:00 ACCESS GET /corpus/non-existent-image.jpg 404
+2026-10-23T11:47:06.281+00:00 POST V172-1jontd-OK-110-lay-111-area-cross-origin-from-https-upgrademixedcontent-html.html t=1792756028411&n=41 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:06.283+00:00 ACCESS POST /beacon/V172-1jontd-OK-110-lay-111-area-cross-origin-from-https-upgrademixedcontent-html.html?t=1792756028411&n=41 204
+2026-10-23T11:47:06.302+00:00 POST V172-1jontd-GAP-110 t=1792756028411&n=42 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:06.304+00:00 ACCESS POST /beacon/V172-1jontd-GAP-110?t=1792756028411&n=42 204
+2026-10-23T11:47:06.310+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=111&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:06.454+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=111&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:06.501+00:00 ACCESS GET /corpus/layout.json?t=1792756028673 200
+2026-10-23T11:47:06.552+00:00 ACCESS GET /corpus/skip.json?t=1792756028745 200
+2026-10-23T11:47:06.697+00:00 POST V172-1jontd-BOOT-232-from-111-to-232 t=1792756028876&n=43 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:06.698+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-111-to-232?t=1792756028876&n=43 204
+2026-10-23T11:47:06.715+00:00 ACCESS GET /corpus/lay-112-secure-anchor-cross-origin-upgrademixedcontent-html.html?i=111&next=112&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:06.768+00:00 POST V172-1jontd-BEFORE-111 t=1792756028944&n=44 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:06.771+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-111?t=1792756028944&n=44 204
+2026-10-23T11:47:06.808+00:00 POST V172-1jontd-GAP-111 t=1792756028945&n=46 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:06.807+00:00 POST V172-1jontd-OK-111-lay-112-secure-anchor-cross-origin-upgrademixedcontent-html.html t=1792756028945&n=45 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:06.809+00:00 ACCESS POST /beacon/V172-1jontd-GAP-111?t=1792756028945&n=46 204
+2026-10-23T11:47:06.810+00:00 ACCESS POST /beacon/V172-1jontd-OK-111-lay-112-secure-anchor-cross-origin-upgrademixedcontent-html.html?t=1792756028945&n=45 204
+2026-10-23T11:47:06.863+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=112&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:07.022+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=112&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:07.053+00:00 ACCESS GET /corpus/layout.json?t=1792756029240 200
+2026-10-23T11:47:07.100+00:00 ACCESS GET /corpus/skip.json?t=1792756029289 200
+2026-10-23T11:47:07.249+00:00 POST V172-1jontd-BOOT-232-from-112-to-232 t=1792756029424&n=47 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:07.250+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-112-to-232?t=1792756029424&n=47 204
+2026-10-23T11:47:07.324+00:00 ACCESS GET /corpus/lay-113-cross-origin-http-upgrademixedcontent-https-html.html?i=112&next=113&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:07.415+00:00 POST V172-1jontd-BEFORE-112 t=1792756029563&n=48 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:07.416+00:00 POST V172-1jontd-OK-112-lay-113-cross-origin-http-upgrademixedcontent-https-html.html t=1792756029565&n=49 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:07.418+00:00 ACCESS POST /beacon/V172-1jontd-OK-112-lay-113-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756029565&n=49 204
+2026-10-23T11:47:07.419+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-112?t=1792756029563&n=48 204
+2026-10-23T11:47:07.449+00:00 POST V172-1jontd-GAP-112 t=1792756029565&n=50 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:07.451+00:00 ACCESS POST /beacon/V172-1jontd-GAP-112?t=1792756029565&n=50 204
+2026-10-23T11:47:07.472+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=113&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:07.626+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=113&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:07.669+00:00 ACCESS GET /corpus/layout.json?t=1792756029857 200
+2026-10-23T11:47:07.716+00:00 ACCESS GET /corpus/skip.json?t=1792756029904 200
+2026-10-23T11:47:07.849+00:00 POST V172-1jontd-BOOT-232-from-113-to-232 t=1792756030038&n=51 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:07.851+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-113-to-232?t=1792756030038&n=51 204
+2026-10-23T11:47:07.871+00:00 ACCESS GET /corpus/lay-114-cross-origin-http-upgrademixedcontent-https-html.html?i=113&next=114&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:07.930+00:00 POST V172-1jontd-BEFORE-113 t=1792756030097&n=52 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:07.932+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-113?t=1792756030097&n=52 204
+2026-10-23T11:47:07.937+00:00 POST V172-1jontd-OK-113-lay-114-cross-origin-http-upgrademixedcontent-https-html.html t=1792756030099&n=53 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:07.939+00:00 ACCESS POST /beacon/V172-1jontd-OK-113-lay-114-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756030099&n=53 204
+2026-10-23T11:47:07.944+00:00 POST V172-1jontd-GAP-113 t=1792756030099&n=54 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:07.944+00:00 ACCESS POST /beacon/V172-1jontd-GAP-113?t=1792756030099&n=54 204
+2026-10-23T11:47:08.002+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=114&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:08.226+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=114&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:08.255+00:00 ACCESS GET /corpus/layout.json?t=1792756030443 200
+2026-10-23T11:47:08.333+00:00 ACCESS GET /corpus/skip.json?t=1792756030496 200
+2026-10-23T11:47:08.468+00:00 POST V172-1jontd-BOOT-232-from-114-to-232 t=1792756030655&n=55 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:08.469+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-114-to-232?t=1792756030655&n=55 204
+2026-10-23T11:47:08.512+00:00 ACCESS GET /corpus/lay-115-cross-origin-http-upgrademixedcontent-https-html.html?i=114&next=115&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:08.612+00:00 POST V172-1jontd-BEFORE-114 t=1792756030747&n=56 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:08.612+00:00 POST V172-1jontd-OK-114-lay-115-cross-origin-http-upgrademixedcontent-https-html.html t=1792756030749&n=57 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:08.614+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-114?t=1792756030747&n=56 204
+2026-10-23T11:47:08.615+00:00 ACCESS POST /beacon/V172-1jontd-OK-114-lay-115-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756030749&n=57 204
+2026-10-23T11:47:08.644+00:00 POST V172-1jontd-GAP-114 t=1792756030750&n=58 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:08.645+00:00 ACCESS POST /beacon/V172-1jontd-GAP-114?t=1792756030750&n=58 204
+2026-10-23T11:47:08.666+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=115&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:08.810+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=115&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:08.876+00:00 ACCESS GET /corpus/layout.json?t=1792756031029 200
+2026-10-23T11:47:08.947+00:00 ACCESS GET /corpus/skip.json?t=1792756031114 200
+2026-10-23T11:47:09.083+00:00 POST V172-1jontd-BOOT-232-from-115-to-232 t=1792756031268&n=59 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:09.084+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-115-to-232?t=1792756031268&n=59 204
+2026-10-23T11:47:09.121+00:00 ACCESS GET /corpus/lay-116-cross-origin-http-upgrademixedcontent-https-html.html?i=115&next=116&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:09.195+00:00 POST V172-1jontd-BEFORE-115 t=1792756031365&n=60 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:09.197+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-115?t=1792756031365&n=60 204
+2026-10-23T11:47:09.225+00:00 POST V172-1jontd-OK-115-lay-116-cross-origin-http-upgrademixedcontent-https-html.html t=1792756031367&n=61 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:09.228+00:00 ACCESS POST /beacon/V172-1jontd-OK-115-lay-116-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756031367&n=61 204
+2026-10-23T11:47:09.259+00:00 POST V172-1jontd-GAP-115 t=1792756031367&n=62 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:09.260+00:00 ACCESS POST /beacon/V172-1jontd-GAP-115?t=1792756031367&n=62 204
+2026-10-23T11:47:09.298+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=116&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:09.444+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=116&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:09.490+00:00 ACCESS GET /corpus/layout.json?t=1792756031671 200
+2026-10-23T11:47:09.525+00:00 ACCESS GET /corpus/skip.json?t=1792756031714 200
+2026-10-23T11:47:09.668+00:00 POST V172-1jontd-BOOT-232-from-116-to-232 t=1792756031851&n=63 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:09.669+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-116-to-232?t=1792756031851&n=63 204
+2026-10-23T11:47:09.689+00:00 ACCESS GET /corpus/lay-117-cross-origin-http-upgrademixedcontent-https-html.html?i=116&next=117&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:09.788+00:00 POST V172-1jontd-BEFORE-116 t=1792756031933&n=64 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:09.790+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-116?t=1792756031933&n=64 204
+2026-10-23T11:47:09.817+00:00 POST V172-1jontd-OK-116-lay-117-cross-origin-http-upgrademixedcontent-https-html.html t=1792756031935&n=65 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:09.817+00:00 POST V172-1jontd-GAP-116 t=1792756031935&n=66 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:09.818+00:00 ACCESS POST /beacon/V172-1jontd-GAP-116?t=1792756031935&n=66 204
+2026-10-23T11:47:09.820+00:00 ACCESS POST /beacon/V172-1jontd-OK-116-lay-117-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756031935&n=65 204
+2026-10-23T11:47:09.882+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=117&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:10.026+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=117&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:10.071+00:00 ACCESS GET /corpus/layout.json?t=1792756032257 200
+2026-10-23T11:47:10.107+00:00 ACCESS GET /corpus/skip.json?t=1792756032296 200
+2026-10-23T11:47:10.251+00:00 POST V172-1jontd-BOOT-232-from-117-to-232 t=1792756032430&n=67 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:10.252+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-117-to-232?t=1792756032430&n=67 204
+2026-10-23T11:47:10.285+00:00 ACCESS GET /corpus/lay-118-cross-origin-http-upgrademixedcontent-https-html.html?i=117&next=118&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:10.394+00:00 POST V172-1jontd-BEFORE-117 t=1792756032533&n=68 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:10.396+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-117?t=1792756032533&n=68 204
+2026-10-23T11:47:10.421+00:00 POST V172-1jontd-OK-117-lay-118-cross-origin-http-upgrademixedcontent-https-html.html t=1792756032536&n=69 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:10.423+00:00 ACCESS POST /beacon/V172-1jontd-OK-117-lay-118-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756032536&n=69 204
+2026-10-23T11:47:10.456+00:00 POST V172-1jontd-GAP-117 t=1792756032536&n=70 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:10.457+00:00 ACCESS POST /beacon/V172-1jontd-GAP-117?t=1792756032536&n=70 204
+2026-10-23T11:47:10.491+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=118&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:10.643+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=118&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:10.692+00:00 ACCESS GET /corpus/layout.json?t=1792756032876 200
+2026-10-23T11:47:10.769+00:00 ACCESS GET /corpus/skip.json?t=1792756032922 200
+2026-10-23T11:47:10.903+00:00 POST V172-1jontd-BOOT-232-from-118-to-232 t=1792756033092&n=71 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:10.904+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-118-to-232?t=1792756033092&n=71 204
+2026-10-23T11:47:10.922+00:00 ACCESS GET /corpus/lay-119-cross-origin-http-upgrademixedcontent-https-html.html?i=118&next=119&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:10.996+00:00 POST V172-1jontd-BEFORE-118 t=1792756033150&n=72 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:10.999+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-118?t=1792756033150&n=72 204
+2026-10-23T11:47:11.043+00:00 POST V172-1jontd-GAP-118 t=1792756033153&n=74 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:11.043+00:00 POST V172-1jontd-OK-118-lay-119-cross-origin-http-upgrademixedcontent-https-html.html t=1792756033153&n=73 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:11.045+00:00 ACCESS POST /beacon/V172-1jontd-GAP-118?t=1792756033153&n=74 204
+2026-10-23T11:47:11.046+00:00 ACCESS POST /beacon/V172-1jontd-OK-118-lay-119-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756033153&n=73 204
+2026-10-23T11:47:11.098+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=119&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:11.272+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=119&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:11.306+00:00 ACCESS GET /corpus/layout.json?t=1792756033490 200
+2026-10-23T11:47:11.342+00:00 ACCESS GET /corpus/skip.json?t=1792756033527 200
+2026-10-23T11:47:11.509+00:00 POST V172-1jontd-BOOT-232-from-119-to-232 t=1792756033680&n=75 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:11.510+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-119-to-232?t=1792756033680&n=75 204
+2026-10-23T11:47:11.560+00:00 ACCESS GET /corpus/lay-120-cross-origin-http-upgrademixedcontent-https-html.html?i=119&next=120&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:11.609+00:00 POST V172-1jontd-BEFORE-119 t=1792756033784&n=76 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:11.611+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-119?t=1792756033784&n=76 204
+2026-10-23T11:47:11.620+00:00 POST V172-1jontd-OK-119-lay-120-cross-origin-http-upgrademixedcontent-https-html.html t=1792756033786&n=77 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:11.621+00:00 ACCESS POST /beacon/V172-1jontd-OK-119-lay-120-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756033786&n=77 204
+2026-10-23T11:47:11.640+00:00 POST V172-1jontd-GAP-119 t=1792756033786&n=78 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:11.641+00:00 ACCESS POST /beacon/V172-1jontd-GAP-119?t=1792756033786&n=78 204
+2026-10-23T11:47:11.694+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=120&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:11.859+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=120&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:11.903+00:00 ACCESS GET /corpus/layout.json?t=1792756034076 200
+2026-10-23T11:47:11.950+00:00 ACCESS GET /corpus/skip.json?t=1792756034141 200
+2026-10-23T11:47:12.102+00:00 POST V172-1jontd-BOOT-232-from-120-to-232 t=1792756034284&n=79 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:12.103+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-120-to-232?t=1792756034284&n=79 204
+2026-10-23T11:47:12.140+00:00 ACCESS GET /corpus/lay-121-cross-origin-http-upgrademixedcontent-https-html.html?i=120&next=121&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:12.249+00:00 POST V172-1jontd-BEFORE-120 t=1792756034368&n=80 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:12.252+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-120?t=1792756034368&n=80 204
+2026-10-23T11:47:12.278+00:00 POST V172-1jontd-OK-120-lay-121-cross-origin-http-upgrademixedcontent-https-html.html t=1792756034369&n=81 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:12.281+00:00 ACCESS POST /beacon/V172-1jontd-OK-120-lay-121-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756034369&n=81 204
+2026-10-23T11:47:12.320+00:00 POST V172-1jontd-GAP-120 t=1792756034369&n=82 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:12.322+00:00 ACCESS POST /beacon/V172-1jontd-GAP-120?t=1792756034369&n=82 204
+2026-10-23T11:47:12.370+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=121&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:12.511+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=121&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:12.542+00:00 ACCESS GET /corpus/layout.json?t=1792756034728 200
+2026-10-23T11:47:12.593+00:00 ACCESS GET /corpus/skip.json?t=1792756034773 200
+2026-10-23T11:47:12.738+00:00 POST V172-1jontd-BOOT-232-from-121-to-232 t=1792756034914&n=83 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:12.739+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-121-to-232?t=1792756034914&n=83 204
+2026-10-23T11:47:12.757+00:00 ACCESS GET /corpus/lay-122-cross-origin-http-upgrademixedcontent-https-html.html?i=121&next=122&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:12.836+00:00 POST V172-1jontd-BEFORE-121 t=1792756035002&n=84 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:12.838+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-121?t=1792756035002&n=84 204
+2026-10-23T11:47:12.842+00:00 POST V172-1jontd-OK-121-lay-122-cross-origin-http-upgrademixedcontent-https-html.html t=1792756035003&n=85 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:12.844+00:00 ACCESS POST /beacon/V172-1jontd-OK-121-lay-122-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756035003&n=85 204
+2026-10-23T11:47:12.848+00:00 POST V172-1jontd-GAP-121 t=1792756035004&n=86 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:12.849+00:00 ACCESS POST /beacon/V172-1jontd-GAP-121?t=1792756035004&n=86 204
+2026-10-23T11:47:12.909+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=122&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:13.052+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=122&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:13.083+00:00 ACCESS GET /corpus/layout.json?t=1792756035270 200
+2026-10-23T11:47:13.127+00:00 ACCESS GET /corpus/skip.json?t=1792756035303 200
+2026-10-23T11:47:13.270+00:00 POST V172-1jontd-BOOT-232-from-122-to-232 t=1792756035456&n=87 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:13.271+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-122-to-232?t=1792756035456&n=87 204
+2026-10-23T11:47:13.304+00:00 ACCESS GET /corpus/lay-123-cross-origin-http-upgrademixedcontent-https-html.html?i=122&next=123&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:13.370+00:00 POST V172-1jontd-BEFORE-122 t=1792756035536&n=88 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:13.372+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-122?t=1792756035536&n=88 204
+2026-10-23T11:47:13.376+00:00 POST V172-1jontd-OK-122-lay-123-cross-origin-http-upgrademixedcontent-https-html.html t=1792756035537&n=89 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:13.378+00:00 ACCESS POST /beacon/V172-1jontd-OK-122-lay-123-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756035537&n=89 204
+2026-10-23T11:47:13.430+00:00 POST V172-1jontd-GAP-122 t=1792756035537&n=90 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:13.431+00:00 ACCESS POST /beacon/V172-1jontd-GAP-122?t=1792756035537&n=90 204
+2026-10-23T11:47:13.452+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=123&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:13.614+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=123&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:13.671+00:00 ACCESS GET /corpus/layout.json?t=1792756035842 200
+2026-10-23T11:47:13.728+00:00 ACCESS GET /corpus/skip.json?t=1792756035902 200
+2026-10-23T11:47:13.901+00:00 DNS Q telemetry-console.api.playstation.com 1
+2756036050&n=91 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:13.902+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-123-to-232?t=1792756036050&n=91 204
+2026-10-23T11:47:13.920+00:00 ACCESS GET /corpus/lay-124-cross-origin-http-upgrademixedcontent-https-html.html?i=123&next=124&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:13.987+00:00 POST V172-1jontd-BEFORE-123 t=1792756036153&n=92 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:13.990+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-123?t=1792756036153&n=92 204
+2026-10-23T11:47:14.041+00:00 POST V172-1jontd-GAP-123 t=1792756036154&n=94 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:14.041+00:00 POST V172-1jontd-OK-123-lay-124-cross-origin-http-upgrademixedcontent-https-html.html t=1792756036154&n=93 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:14.042+00:00 ACCESS POST /beacon/V172-1jontd-GAP-123?t=1792756036154&n=94 204
+2026-10-23T11:47:14.043+00:00 ACCESS POST /beacon/V172-1jontd-OK-123-lay-124-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756036154&n=93 204
+2026-10-23T11:47:14.110+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=124&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:14.266+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=124&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:14.314+00:00 ACCESS GET /corpus/layout.json?t=1792756036482 200
+2026-10-23T11:47:14.364+00:00 ACCESS GET /corpus/skip.json?t=1792756036538 200
+2026-10-23T11:47:14.506+00:00 POST V172-1jontd-BOOT-232-from-124-to-232 t=1792756036686&n=95 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:14.507+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-124-to-232?t=1792756036686&n=95 204
+2026-10-23T11:47:14.576+00:00 ACCESS GET /corpus/lay-125-cross-origin-http-upgrademixedcontent-https-html.html?i=124&next=125&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:14.676+00:00 POST V172-1jontd-BEFORE-124 t=1792756036821&n=96 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:14.678+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-124?t=1792756036821&n=96 204
+2026-10-23T11:47:14.706+00:00 POST V172-1jontd-OK-124-lay-125-cross-origin-http-upgrademixedcontent-https-html.html t=1792756036822&n=97 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:14.708+00:00 ACCESS POST /beacon/V172-1jontd-OK-124-lay-125-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756036822&n=97 204
+2026-10-23T11:47:14.717+00:00 POST V172-1jontd-GAP-124 t=1792756036822&n=98 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:14.718+00:00 ACCESS POST /beacon/V172-1jontd-GAP-124?t=1792756036822&n=98 204
+2026-10-23T11:47:14.733+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=125&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:14.912+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=125&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:14.943+00:00 ACCESS GET /corpus/layout.json?t=1792756037130 200
+2026-10-23T11:47:14.986+00:00 ACCESS GET /corpus/skip.json?t=1792756037178 200
+2026-10-23T11:47:15.123+00:00 POST V172-1jontd-BOOT-232-from-125-to-232 t=1792756037309&n=99 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:15.124+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-125-to-232?t=1792756037309&n=99 204
+2026-10-23T11:47:15.142+00:00 ACCESS GET /corpus/lay-126-cross-origin-http-upgrademixedcontent-https-html.html?i=125&next=126&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:15.224+00:00 POST V172-1jontd-BEFORE-125 t=1792756037371&n=100 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:15.224+00:00 POST V172-1jontd-OK-125-lay-126-cross-origin-http-upgrademixedcontent-https-html.html t=1792756037372&n=101 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:15.227+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-125?t=1792756037371&n=100 204
+2026-10-23T11:47:15.228+00:00 ACCESS POST /beacon/V172-1jontd-OK-125-lay-126-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756037372&n=101 204
+2026-10-23T11:47:15.257+00:00 POST V172-1jontd-GAP-125 t=1792756037372&n=102 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:15.259+00:00 ACCESS POST /beacon/V172-1jontd-GAP-125?t=1792756037372&n=102 204
+2026-10-23T11:47:15.313+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=126&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:15.470+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=126&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:15.533+00:00 ACCESS GET /corpus/layout.json?t=1792756037688 200
+2026-10-23T11:47:15.613+00:00 ACCESS GET /corpus/skip.json?t=1792756037776 200
+2026-10-23T11:47:15.798+00:00 POST V172-1jontd-BOOT-232-from-126-to-232 t=1792756037934&n=103 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:15.799+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-126-to-232?t=1792756037934&n=103 204
+2026-10-23T11:47:15.834+00:00 ACCESS GET /corpus/lay-127-cross-origin-http-upgrademixedcontent-https-html.html?i=126&next=127&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:15.910+00:00 POST V172-1jontd-BEFORE-126 t=1792756038073&n=104 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:15.912+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-126?t=1792756038073&n=104 204
+2026-10-23T11:47:15.918+00:00 POST V172-1jontd-OK-126-lay-127-cross-origin-http-upgrademixedcontent-https-html.html t=1792756038073&n=105 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:15.920+00:00 ACCESS POST /beacon/V172-1jontd-OK-126-lay-127-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756038073&n=105 204
+2026-10-23T11:47:15.926+00:00 POST V172-1jontd-GAP-126 t=1792756038074&n=106 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:15.927+00:00 ACCESS POST /beacon/V172-1jontd-GAP-126?t=1792756038074&n=106 204
+2026-10-23T11:47:15.979+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=127&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:16.118+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=127&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:16.173+00:00 ACCESS GET /corpus/layout.json?t=1792756038335 200
+2026-10-23T11:47:16.208+00:00 ACCESS GET /corpus/skip.json?t=1792756038395 200
+2026-10-23T11:47:16.360+00:00 POST V172-1jontd-BOOT-232-from-127-to-232 t=1792756038531&n=107 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:16.361+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-127-to-232?t=1792756038531&n=107 204
+2026-10-23T11:47:16.365+00:00 ACCESS GET /corpus/lay-128-cross-origin-http-upgrademixedcontent-https-html.html?i=127&next=128&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:16.450+00:00 POST V172-1jontd-BEFORE-127 t=1792756038606&n=108 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:16.452+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-127?t=1792756038606&n=108 204
+2026-10-23T11:47:16.494+00:00 POST V172-1jontd-GAP-127 t=1792756038607&n=110 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+t/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:16.495+00:00 ACCESS POST /beacon/V172-1jontd-GAP-127?t=1792756038607&n=110 204
+2026-10-23T11:47:16.496+00:00 ACCESS POST /beacon/V172-1jontd-OK-127-lay-128-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756038606&n=109 204
+2026-10-23T11:47:16.513+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=128&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:16.667+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=128&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:16.698+00:00 ACCESS GET /corpus/layout.json?t=1792756038890 200
+2026-10-23T11:47:16.817+00:00 ACCESS GET /corpus/skip.json?t=1792756038954 200
+2026-10-23T11:47:16.989+00:00 POST V172-1jontd-BOOT-232-from-128-to-232 t=1792756039150&n=111 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:16.990+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-128-to-232?t=1792756039150&n=111 204
+2026-10-23T11:47:17.015+00:00 ACCESS GET /corpus/lay-129-cross-origin-http-upgrademixedcontent-https-html.html?i=128&next=129&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:17.068+00:00 POST V172-1jontd-BEFORE-128 t=1792756039239&n=112 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:17.070+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-128?t=1792756039239&n=112 204
+2026-10-23T11:47:17.092+00:00 POST V172-1jontd-OK-128-lay-129-cross-origin-http-upgrademixedcontent-https-html.html t=1792756039241&n=113 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:17.093+00:00 POST V172-1jontd-GAP-128 t=1792756039241&n=114 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:17.094+00:00 ACCESS POST /beacon/V172-1jontd-GAP-128?t=1792756039241&n=114 204
+2026-10-23T11:47:17.096+00:00 ACCESS POST /beacon/V172-1jontd-OK-128-lay-129-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756039241&n=113 204
+2026-10-23T11:47:17.159+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=129&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:17.302+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=129&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:17.331+00:00 ACCESS GET /corpus/layout.json?t=1792756039519 200
+2026-10-23T11:47:17.425+00:00 ACCESS GET /corpus/skip.json?t=1792756039565 200
+2026-10-23T11:47:17.584+00:00 POST V172-1jontd-BOOT-232-from-129-to-232 t=1792756039748&n=115 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:17.585+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-129-to-232?t=1792756039748&n=115 204
+2026-10-23T11:47:17.592+00:00 ACCESS GET /corpus/lay-130-cross-origin-http-upgrademixedcontent-https-html.html?i=129&next=130&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:17.649+00:00 POST V172-1jontd-BEFORE-129 t=1792756039823&n=116 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:17.651+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-129?t=1792756039823&n=116 204
+2026-10-23T11:47:17.655+00:00 POST V172-1jontd-OK-129-lay-130-cross-origin-http-upgrademixedcontent-https-html.html t=1792756039825&n=117 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:17.657+00:00 ACCESS POST /beacon/V172-1jontd-OK-129-lay-130-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756039825&n=117 204
+2026-10-23T11:47:17.686+00:00 POST V172-1jontd-GAP-129 t=1792756039825&n=118 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:17.687+00:00 ACCESS POST /beacon/V172-1jontd-GAP-129?t=1792756039825&n=118 204
+2026-10-23T11:47:17.731+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=130&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:17.887+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=130&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:17.920+00:00 ACCESS GET /corpus/layout.json?t=1792756040110 200
+2026-10-23T11:47:17.973+00:00 ACCESS GET /corpus/skip.json?t=1792756040142 200
+2026-10-23T11:47:18.124+00:00 POST V172-1jontd-BOOT-232-from-130-to-232 t=1792756040298&n=119 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:18.125+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-130-to-232?t=1792756040298&n=119 204
+2026-10-23T11:47:18.129+00:00 ACCESS GET /corpus/lay-131-cross-origin-http-upgrademixedcontent-https-html.html?i=130&next=131&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:18.241+00:00 POST V172-1jontd-BEFORE-130 t=1792756040408&n=120 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:18.244+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-130?t=1792756040408&n=120 204
+2026-10-23T11:47:18.247+00:00 POST V172-1jontd-OK-130-lay-131-cross-origin-http-upgrademixedcontent-https-html.html t=1792756040410&n=121 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:18.249+00:00 ACCESS POST /beacon/V172-1jontd-OK-130-lay-131-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756040410&n=121 204
+2026-10-23T11:47:18.273+00:00 POST V172-1jontd-GAP-130 t=1792756040411&n=122 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:18.274+00:00 ACCESS POST /beacon/V172-1jontd-GAP-130?t=1792756040411&n=122 204
+2026-10-23T11:47:18.315+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=131&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:18.474+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=131&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:18.515+00:00 ACCESS GET /corpus/layout.json?t=1792756040695 200
+2026-10-23T11:47:18.566+00:00 ACCESS GET /corpus/skip.json?t=1792756040757 200
+2026-10-23T11:47:18.710+00:00 POST V172-1jontd-BOOT-232-from-131-to-232 t=1792756040890&n=123 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:18.711+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-131-to-232?t=1792756040890&n=123 204
+2026-10-23T11:47:18.730+00:00 ACCESS GET /corpus/lay-132-cross-origin-http-upgrademixedcontent-https-html.html?i=131&next=132&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:18.822+00:00 POST V172-1jontd-BEFORE-131 t=1792756040974&n=124 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:18.825+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-131?t=1792756040974&n=124 204
+2026-10-23T11:47:18.860+00:00 POST V172-1jontd-OK-131-lay-132-cross-origin-http-upgrademixedcontent-https-html.html t=1792756040976&n=125 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:18.863+00:00 ACCESS POST /beacon/V172-1jontd-OK-131-lay-132-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756040976&n=125 204
+2026-10-23T11:47:18.867+00:00 POST V172-1jontd-GAP-131 t=1792756040976&n=126 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:18.868+00:00 ACCESS POST /beacon/V172-1jontd-GAP-131?t=1792756040976&n=126 204
+2026-10-23T11:47:18.913+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=132&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:19.052+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=132&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:19.099+00:00 ACCESS GET /corpus/layout.json?t=1792756041270 200
+2026-10-23T11:47:19.173+00:00 ACCESS GET /corpus/skip.json?t=1792756041321 200
+2026-10-23T11:47:19.335+00:00 POST V172-1jontd-BOOT-232-from-132-to-232 t=1792756041498&n=127 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:19.336+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-132-to-232?t=1792756041498&n=127 204
+2026-10-23T11:47:19.355+00:00 ACCESS GET /corpus/lay-133-cross-origin-http-upgrademixedcontent-https-html.html?i=132&next=133&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:19.457+00:00 POST V172-1jontd-BEFORE-132 t=1792756041593&n=128 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+05.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:19.459+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-132?t=1792756041593&n=128 204
+2026-10-23T11:47:19.461+00:00 ACCESS POST /beacon/V172-1jontd-OK-132-lay-133-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756041595&n=129 204
+2026-10-23T11:47:19.478+00:00 POST V172-1jontd-GAP-132 t=1792756041595&n=130 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:19.479+00:00 ACCESS POST /beacon/V172-1jontd-GAP-132?t=1792756041595&n=130 204
+2026-10-23T11:47:19.503+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=133&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:19.658+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=133&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:19.760+00:00 ACCESS GET /corpus/layout.json?t=1792756041882 200
+2026-10-23T11:47:19.830+00:00 ACCESS GET /corpus/skip.json?t=1792756041991 200
+2026-10-23T11:47:19.977+00:00 POST V172-1jontd-BOOT-232-from-133-to-232 t=1792756042157&n=131 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:19.978+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-133-to-232?t=1792756042157&n=131 204
+2026-10-23T11:47:19.999+00:00 ACCESS GET /corpus/lay-134-cross-origin-http-upgrademixedcontent-https-html.html?i=133&next=134&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:20.075+00:00 POST V172-1jontd-BEFORE-133 t=1792756042226&n=132 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:20.077+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-133?t=1792756042226&n=132 204
+2026-10-23T11:47:20.111+00:00 POST V172-1jontd-GAP-133 t=1792756042228&n=134 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+t/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:20.112+00:00 ACCESS POST /beacon/V172-1jontd-GAP-133?t=1792756042228&n=134 204
+2026-10-23T11:47:20.114+00:00 ACCESS POST /beacon/V172-1jontd-OK-133-lay-134-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756042228&n=133 204
+2026-10-23T11:47:20.190+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=134&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:20.335+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=134&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:20.406+00:00 ACCESS GET /corpus/layout.json?t=1792756042564 200
+2026-10-23T11:47:20.467+00:00 ACCESS GET /corpus/skip.json?t=1792756042628 200
+2026-10-23T11:47:20.613+00:00 POST V172-1jontd-BOOT-232-from-134-to-232 t=1792756042787&n=135 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:20.614+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-134-to-232?t=1792756042787&n=135 204
+2026-10-23T11:47:20.650+00:00 ACCESS GET /corpus/lay-135-cross-origin-http-upgrademixedcontent-https-html.html?i=134&next=135&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:20.729+00:00 POST V172-1jontd-BEFORE-134 t=1792756042876&n=136 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:20.730+00:00 POST V172-1jontd-OK-134-lay-135-cross-origin-http-upgrademixedcontent-https-html.html t=1792756042877&n=137 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:20.732+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-134?t=1792756042876&n=136 204
+2026-10-23T11:47:20.734+00:00 ACCESS POST /beacon/V172-1jontd-OK-134-lay-135-cross-origin-http-upgrademixedcontent-https-html.html?t=1792756042877&n=137 204
+2026-10-23T11:47:20.762+00:00 POST V172-1jontd-GAP-134 t=1792756042877&n=138 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:20.763+00:00 ACCESS POST /beacon/V172-1jontd-GAP-134?t=1792756042877&n=138 204
+2026-10-23T11:47:20.785+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=135&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:20.939+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=135&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:20.973+00:00 ACCESS GET /corpus/layout.json?t=1792756043157 200
+2026-10-23T11:47:21.020+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T11:47:21.048+00:00 ACCESS GET /corpus/skip.json?t=1792756043213 200
+2026-10-23T11:47:21.228+00:00 POST V172-1jontd-BOOT-232-from-135-to-232 t=1792756043372&n=139 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:21.229+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-135-to-232?t=1792756043372&n=139 204
+2026-10-23T11:47:21.246+00:00 ACCESS GET /corpus/lay-136-path-traversal-bypass-with-percent-encoding-html.html?i=135&next=136&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:21.315+00:00 POST V172-1jontd-BEFORE-135 t=1792756043478&n=140 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:21.318+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-135?t=1792756043478&n=140 204
+2026-10-23T11:47:21.356+00:00 POST V172-1jontd-OK-135-lay-136-path-traversal-bypass-with-percent-encoding-html.html t=1792756043478&n=141 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:21.359+00:00 ACCESS POST /beacon/V172-1jontd-OK-135-lay-136-path-traversal-bypass-with-percent-encoding-html.html?t=1792756043478&n=141 204
+2026-10-23T11:47:21.389+00:00 POST V172-1jontd-GAP-135 t=1792756043479&n=142 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:21.390+00:00 ACCESS POST /beacon/V172-1jontd-GAP-135?t=1792756043479&n=142 204
+2026-10-23T11:47:21.447+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=136&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:21.619+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=136&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:21.693+00:00 ACCESS GET /corpus/layout.json?t=1792756043835 200
+2026-10-23T11:47:21.751+00:00 ACCESS GET /corpus/skip.json?t=1792756043919 200
+2026-10-23T11:47:21.898+00:00 POST V172-1jontd-BOOT-232-from-136-to-232 t=1792756044072&n=143 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:21.899+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-136-to-232?t=1792756044072&n=143 204
+2026-10-23T11:47:21.940+00:00 ACCESS GET /corpus/lay-137-iframe-upgrade-upgrademixedcontent-https-html.html?i=136&next=137&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:22.022+00:00 POST V172-1jontd-BEFORE-136 t=1792756044178&n=144 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:22.025+00:00 ACCESS POST /beacon/V172-1jontd-OK-136-lay-137-iframe-upgrade-upgrademixedcontent-https-html.html?t=1792756044179&n=145 204
+2026-10-23T11:47:22.026+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-136?t=1792756044178&n=144 204
+2026-10-23T11:47:22.064+00:00 POST V172-1jontd-GAP-136 t=1792756044179&n=146 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:22.065+00:00 ACCESS POST /beacon/V172-1jontd-GAP-136?t=1792756044179&n=146 204
+2026-10-23T11:47:22.108+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=137&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:22.318+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=137&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:22.372+00:00 ACCESS GET /corpus/layout.json?t=1792756044536 200
+2026-10-23T11:47:22.462+00:00 ACCESS GET /corpus/skip.json?t=1792756044610 200
+2026-10-23T11:47:22.598+00:00 POST V172-1jontd-SKIP-137-to-138 t=1792756044781&n=147 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:22.599+00:00 ACCESS POST /beacon/V172-1jontd-SKIP-137-to-138?t=1792756044781&n=147 204
+2026-10-23T11:47:22.605+00:00 POST V172-1jontd-BOOT-232-from-138-to-232 t=1792756044782&n=148 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:22.606+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-138-to-232?t=1792756044782&n=148 204
+2026-10-23T11:47:22.618+00:00 ACCESS GET /corpus/lay-139-cross-origin-iframe-fetch-after-crash-html.html?i=138&next=139&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:22.692+00:00 POST V172-1jontd-BEFORE-138 t=1792756044845&n=149 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:22.693+00:00 POST V172-1jontd-OK-138-lay-139-cross-origin-iframe-fetch-after-crash-html.html t=1792756044847&n=150 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:22.695+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-138?t=1792756044845&n=149 204
+2026-10-23T11:47:22.696+00:00 ACCESS POST /beacon/V172-1jontd-OK-138-lay-139-cross-origin-iframe-fetch-after-crash-html.html?t=1792756044847&n=150 204
+2026-10-23T11:47:22.731+00:00 POST V172-1jontd-GAP-138 t=1792756044847&n=151 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:22.732+00:00 ACCESS POST /beacon/V172-1jontd-GAP-138?t=1792756044847&n=151 204
+2026-10-23T11:47:22.763+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=139&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:22.935+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=139&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:23.009+00:00 ACCESS GET /corpus/layout.json?t=1792756045152 200
+2026-10-23T11:47:23.051+00:00 ACCESS GET /corpus/skip.json?t=1792756045242 200
+2026-10-23T11:47:23.200+00:00 POST V172-1jontd-BOOT-232-from-139-to-232 t=1792756045373&n=152 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:23.201+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-139-to-232?t=1792756045373&n=152 204
+2026-10-23T11:47:23.225+00:00 ACCESS GET /corpus/lay-140-import-insecure-script-in-iframe-upgrademixedcontent-html.html?i=139&next=140&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:23.336+00:00 POST V172-1jontd-OK-139-lay-140-import-insecure-script-in-iframe-upgrademixedcontent-html.html t=1792756045464&n=154 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:23.339+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-139?t=1792756045462&n=153 204
+2026-10-23T11:47:23.340+00:00 ACCESS POST /beacon/V172-1jontd-OK-139-lay-140-import-insecure-script-in-iframe-upgrademixedcontent-html.html?t=1792756045464&n=154 204
+2026-10-23T11:47:23.377+00:00 POST V172-1jontd-GAP-139 t=1792756045464&n=155 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:23.379+00:00 ACCESS POST /beacon/V172-1jontd-GAP-139?t=1792756045464&n=155 204
+2026-10-23T11:47:23.404+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=140&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:23.556+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=140&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:23.615+00:00 ACCESS GET /corpus/layout.json?t=1792756045782 200
+2026-10-23T11:47:23.665+00:00 ACCESS GET /corpus/skip.json?t=1792756045851 200
+2026-10-23T11:47:23.815+00:00 POST V172-1jontd-SKIP-140-to-141 t=1792756045990&n=156 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:23.816+00:00 ACCESS POST /beacon/V172-1jontd-SKIP-140-to-141?t=1792756045990&n=156 204
+2026-10-23T11:47:23.826+00:00 POST V172-1jontd-BOOT-232-from-141-to-232 t=1792756045990&n=157 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:23.827+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-141-to-232?t=1792756045990&n=157 204
+2026-10-23T11:47:23.849+00:00 ACCESS GET /corpus/lay-142-insecure-basic-auth-image-upgrademixedcontent-https-html.html?i=141&next=142&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:23.919+00:00 POST V172-1jontd-BEFORE-141 t=1792756046097&n=158 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:23.921+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-141?t=1792756046097&n=158 204
+2026-10-23T11:47:23.936+00:00 POST V172-1jontd-OK-141-lay-142-insecure-basic-auth-image-upgrademixedcontent-https-html.html t=1792756046097&n=159 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:23.938+00:00 ACCESS POST /beacon/V172-1jontd-OK-141-lay-142-insecure-basic-auth-image-upgrademixedcontent-https-html.html?t=1792756046097&n=159 204
+2026-10-23T11:47:23.943+00:00 POST V172-1jontd-GAP-141 t=1792756046098&n=160 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:23.943+00:00 ACCESS POST /beacon/V172-1jontd-GAP-141?t=1792756046098&n=160 204
+2026-10-23T11:47:24.006+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=142&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:24.188+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=142&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:24.276+00:00 ACCESS GET /corpus/layout.json?t=1792756046404 200
+2026-10-23T11:47:24.318+00:00 ACCESS GET /corpus/skip.json?t=1792756046507 200
+2026-10-23T11:47:24.469+00:00 POST V172-1jontd-SKIP-142-to-145 t=1792756046649&n=161 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:24.470+00:00 ACCESS POST /beacon/V172-1jontd-SKIP-142-to-145?t=1792756046649&n=161 204
+2026-10-23T11:47:24.482+00:00 POST V172-1jontd-BOOT-232-from-145-to-232 t=1792756046649&n=162 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:24.483+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-145-to-232?t=1792756046649&n=162 204
+2026-10-23T11:47:24.488+00:00 ACCESS GET /corpus/lay-146-insecure-iframe-in-sandboxed-iframe-upgrademixedcontent-html.html?i=145&next=146&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:24.578+00:00 POST V172-1jontd-BEFORE-145 t=1792756046731&n=163 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:24.580+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-145?t=1792756046731&n=163 204
+2026-10-23T11:47:24.620+00:00 POST V172-1jontd-GAP-145 t=1792756046732&n=165 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:24.620+00:00 POST V172-1jontd-OK-145-lay-146-insecure-iframe-in-sandboxed-iframe-upgrademixedcontent-html.html t=1792756046732&n=164 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:24.621+00:00 ACCESS POST /beacon/V172-1jontd-GAP-145?t=1792756046732&n=165 204
+2026-10-23T11:47:24.622+00:00 ACCESS POST /beacon/V172-1jontd-OK-145-lay-146-insecure-iframe-in-sandboxed-iframe-upgrademixedcontent-html.html?t=1792756046732&n=164 204
+2026-10-23T11:47:24.661+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=146&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:24.809+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=146&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:24.875+00:00 ACCESS GET /corpus/layout.json?t=1792756047031 200
+2026-10-23T11:47:24.919+00:00 ACCESS GET /corpus/skip.json?t=1792756047108 200
+2026-10-23T11:47:25.077+00:00 POST V172-1jontd-BOOT-232-from-146-to-232 t=1792756047240&n=166 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:25.077+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-146-to-232?t=1792756047240&n=166 204
+2026-10-23T11:47:25.110+00:00 ACCESS GET /corpus/lay-147-insecure-image-in-iframe-upgrademixedcontent-html.html?i=146&next=147&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:25.210+00:00 POST V172-1jontd-OK-146-lay-147-insecure-image-in-iframe-upgrademixedcontent-html.html t=1792756047349&n=168 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:25.213+00:00 ACCESS POST /beacon/V172-1jontd-OK-146-lay-147-insecure-image-in-iframe-upgrademixedcontent-html.html?t=1792756047349&n=168 204
+2026-10-23T11:47:25.214+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-146?t=1792756047348&n=167 204
+2026-10-23T11:47:25.233+00:00 POST V172-1jontd-GAP-146 t=1792756047350&n=169 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:25.234+00:00 ACCESS POST /beacon/V172-1jontd-GAP-146?t=1792756047350&n=169 204
+2026-10-23T11:47:25.267+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=147&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:25.439+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=147&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:25.468+00:00 ACCESS GET /corpus/layout.json?t=1792756047656 200
+2026-10-23T11:47:25.501+00:00 ACCESS GET /corpus/skip.json?t=1792756047691 200
+2026-10-23T11:47:25.658+00:00 POST V172-1jontd-SKIP-147-to-152 t=1792756047827&n=170 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:25.659+00:00 ACCESS POST /beacon/V172-1jontd-SKIP-147-to-152?t=1792756047827&n=170 204
+2026-10-23T11:47:25.673+00:00 POST V172-1jontd-BOOT-232-from-152-to-232 t=1792756047827&n=171 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:25.674+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-152-to-232?t=1792756047827&n=171 204
+2026-10-23T11:47:25.700+00:00 ACCESS GET /corpus/lay-153-insecure-script-with-secure-cookies-upgrademixedcontent-html.html?i=152&next=153&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:25.757+00:00 POST V172-1jontd-BEFORE-152 t=1792756047931&n=172 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:25.759+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-152?t=1792756047931&n=172 204
+2026-10-23T11:47:25.768+00:00 POST V172-1jontd-OK-152-lay-153-insecure-script-with-secure-cookies-upgrademixedcontent-html.html t=1792756047933&n=173 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:25.770+00:00 ACCESS POST /beacon/V172-1jontd-OK-152-lay-153-insecure-script-with-secure-cookies-upgrademixedcontent-html.html?t=1792756047933&n=173 204
+2026-10-23T11:47:25.807+00:00 POST V172-1jontd-GAP-152 t=1792756047933&n=174 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:25.808+00:00 ACCESS POST /beacon/V172-1jontd-GAP-152?t=1792756047933&n=174 204
+2026-10-23T11:47:25.848+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=153&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:25.993+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=153&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:26.037+00:00 ACCESS GET /corpus/layout.json?t=1792756048224 200
+2026-10-23T11:47:26.084+00:00 ACCESS GET /corpus/skip.json?t=1792756048270 200
+2026-10-23T11:47:26.265+00:00 POST V172-1jontd-SKIP-153-to-154 t=1792756048408&n=175 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:26.266+00:00 ACCESS POST /beacon/V172-1jontd-SKIP-153-to-154?t=1792756048408&n=175 204
+2026-10-23T11:47:26.273+00:00 POST V172-1jontd-BOOT-232-from-154-to-232 t=1792756048408&n=176 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:26.274+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-154-to-232?t=1792756048408&n=176 204
+2026-10-23T11:47:26.282+00:00 ACCESS GET /corpus/lay-155-redirect-http-to-https-script-in-iframe-upgrademixedcontent-.html?i=154&next=155&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:26.362+00:00 POST V172-1jontd-BEFORE-154 t=1792756048515&n=177 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:26.364+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-154?t=1792756048515&n=177 204
+2026-10-23T11:47:26.402+00:00 POST V172-1jontd-OK-154-lay-155-redirect-http-to-https-script-in-iframe-upgrademixedcontent-.html t=1792756048517&n=178 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:26.403+00:00 ACCESS POST /beacon/V172-1jontd-GAP-154?t=1792756048517&n=179 204
+2026-10-23T11:47:26.405+00:00 ACCESS POST /beacon/V172-1jontd-OK-154-lay-155-redirect-http-to-https-script-in-iframe-upgrademixedcontent-.html?t=1792756048517&n=178 204
+2026-10-23T11:47:26.426+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=155&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:26.576+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=155&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:26.620+00:00 ACCESS GET /corpus/layout.json?t=1792756048799 200
+2026-10-23T11:47:26.682+00:00 ACCESS GET /corpus/skip.json?t=1792756048853 200
+2026-10-23T11:47:26.839+00:00 POST V172-1jontd-SKIP-155-to-157 t=1792756049004&n=180 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:26.840+00:00 ACCESS POST /beacon/V172-1jontd-SKIP-155-to-157?t=1792756049004&n=180 204
+2026-10-23T11:47:26.888+00:00 POST V172-1jontd-BOOT-232-from-157-to-232 t=1792756049005&n=181 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:26.888+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-157-to-232?t=1792756049005&n=181 204
+2026-10-23T11:47:26.889+00:00 ACCESS GET /corpus/lay-158-redirect-https-to-http-script-in-iframe-upgrademixedcontent-.html?i=157&next=158&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:26.946+00:00 POST V172-1jontd-BEFORE-157 t=1792756049116&n=182 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:26.948+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-157?t=1792756049116&n=182 204
+2026-10-23T11:47:26.958+00:00 POST V172-1jontd-OK-157-lay-158-redirect-https-to-http-script-in-iframe-upgrademixedcontent-.html t=1792756049118&n=183 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:26.960+00:00 ACCESS POST /beacon/V172-1jontd-OK-157-lay-158-redirect-https-to-http-script-in-iframe-upgrademixedcontent-.html?t=1792756049118&n=183 204
+2026-10-23T11:47:27.003+00:00 POST V172-1jontd-GAP-157 t=1792756049118&n=184 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:27.004+00:00 ACCESS POST /beacon/V172-1jontd-GAP-157?t=1792756049118&n=184 204
+2026-10-23T11:47:27.030+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=158&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:27.178+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=158&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:27.220+00:00 ACCESS GET /corpus/layout.json?t=1792756049405 200
+2026-10-23T11:47:27.284+00:00 ACCESS GET /corpus/skip.json?t=1792756049460 200
+2026-10-23T11:47:27.435+00:00 POST V172-1jontd-BOOT-232-from-158-to-232 t=1792756049615&n=185 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:27.436+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-158-to-232?t=1792756049615&n=185 204
+2026-10-23T11:47:27.479+00:00 ACCESS GET /corpus/lay-159-frame-with-insecure-cors-image-html.html?i=158&next=159&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:27.566+00:00 POST V172-1jontd-BEFORE-158 t=1792756049717&n=186 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:27.566+00:00 POST V172-1jontd-OK-158-lay-159-frame-with-insecure-cors-image-html.html t=1792756049718&n=187 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:27.570+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-158?t=1792756049717&n=186 204
+2026-10-23T11:47:27.572+00:00 ACCESS POST /beacon/V172-1jontd-OK-158-lay-159-frame-with-insecure-cors-image-html.html?t=1792756049718&n=187 204
+2026-10-23T11:47:27.604+00:00 POST V172-1jontd-GAP-158 t=1792756049718&n=188 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:27.605+00:00 ACCESS POST /beacon/V172-1jontd-GAP-158?t=1792756049718&n=188 204
+2026-10-23T11:47:27.635+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=159&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:27.779+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=159&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:27.855+00:00 ACCESS GET /corpus/layout.json?t=1792756049996 200
+2026-10-23T11:47:27.905+00:00 ACCESS GET /corpus/skip.json?t=1792756050085 200
+2026-10-23T11:47:28.054+00:00 POST V172-1jontd-BOOT-232-from-159-to-232 t=1792756050229&n=189 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:28.055+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-159-to-232?t=1792756050229&n=189 204
+2026-10-23T11:47:28.092+00:00 ACCESS GET /corpus/lay-160-secure-redirect-to-insecure-redirect-to-basic-auth-secure-im.html?i=159&next=160&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:28.196+00:00 POST V172-1jontd-BEFORE-159 t=1792756050334&n=190 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:28.199+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-159?t=1792756050334&n=190 204
+2026-10-23T11:47:28.254+00:00 POST V172-1jontd-GAP-159 t=1792756050335&n=192 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:28.255+00:00 ACCESS POST /beacon/V172-1jontd-GAP-159?t=1792756050335&n=192 204
+2026-10-23T11:47:28.256+00:00 ACCESS POST /beacon/V172-1jontd-OK-159-lay-160-secure-redirect-to-insecure-redirect-to-basic-auth-secure-im.html?t=1792756050335&n=191 204
+2026-10-23T11:47:28.283+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=160&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:28.428+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=160&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:28.459+00:00 ACCESS GET /corpus/layout.json?t=1792756050645 200
+2026-10-23T11:47:28.521+00:00 ACCESS GET /corpus/skip.json?t=1792756050701 200
+2026-10-23T11:47:28.678+00:00 POST V172-1jontd-BOOT-232-from-160-to-232 t=1792756050843&n=193 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:28.679+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-160-to-232?t=1792756050843&n=193 204
+2026-10-23T11:47:28.694+00:00 ACCESS GET /corpus/lay-161-secure-redirect-to-secure-redirect-to-basic-auth-insecure-im.html?i=160&next=161&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:28.779+00:00 POST V172-1jontd-BEFORE-160 t=1792756050951&n=194 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:28.781+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-160?t=1792756050951&n=194 204
+2026-10-23T11:47:28.815+00:00 POST V172-1jontd-OK-160-lay-161-secure-redirect-to-secure-redirect-to-basic-auth-insecure-im.html t=1792756050952&n=195 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:28.815+00:00 POST V172-1jontd-GAP-160 t=1792756050952&n=196 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:28.819+00:00 ACCESS POST /beacon/V172-1jontd-OK-160-lay-161-secure-redirect-to-secure-redirect-to-basic-auth-insecure-im.html?t=1792756050952&n=195 204
+2026-10-23T11:47:28.819+00:00 ACCESS POST /beacon/V172-1jontd-GAP-160?t=1792756050952&n=196 204
+2026-10-23T11:47:28.860+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=161&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:29.014+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=161&count=1000&v=1jontd&g=1 200
+2026-10-23T11:47:29.050+00:00 ACCESS GET /corpus/layout.json?t=1792756051240 200
+2026-10-23T11:47:29.106+00:00 ACCESS GET /corpus/skip.json?t=1792756051293 200
+2026-10-23T11:47:29.283+00:00 POST V172-1jontd-BOOT-232-from-161-to-232 t=1792756051426&n=197 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:29.285+00:00 ACCESS GET /corpus/lay-162-insecure-websocket-in-iframe-upgrademixedcontent-html.html?i=161&next=162&e=232&c=1000&v=1jontd&g=1 200
+2026-10-23T11:47:29.285+00:00 ACCESS POST /beacon/V172-1jontd-BOOT-232-from-161-to-232?t=1792756051426&n=197 204
+2026-10-23T11:47:29.365+00:00 POST V172-1jontd-BEFORE-161 t=1792756051518&n=198 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:47:29.369+00:00 ACCESS POST /beacon/V172-1jontd-BEFORE-161?t=1792756051518&n=198 204
+2026-10-23T11:47:32.966+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:47:38.302+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-23T11:47:40.915+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-23T11:47:45.342+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1

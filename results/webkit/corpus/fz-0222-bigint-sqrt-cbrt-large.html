@@ -1,0 +1,147 @@
+<!doctype html><meta charset="utf-8"><title>bigint-sqrt-cbrt-large.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+// BigInt.sqrt and BigInt.cbrt divide into a quotient buffer longer than the quotient, and their first
+// divisor is a power of two. Operands this long take the Burnikel-Ziegler division.
+
+function shouldBe(actual, expected, message) {
+    if (actual !== expected)
+        throw new Error(`${message}: expected ${expected.toString(16).slice(0, 40)}... but got ${actual.toString(16).slice(0, 40)}...`);
+}
+
+function shouldBeRoot(root, power, x, message) {
+    if (root ** power > x || (root + 1n) ** power <= x)
+        throw new Error(`${message}: got ${root.toString(16).slice(0, 40)}...`);
+}
+
+function makeOperand(width, digits, seed) {
+    const hexDigits = width / 4;
+    const shift = BigInt(64 - width);
+    const parts = new Array(digits);
+    let mix = BigInt.asUintN(64, 0x9e3779b97f4a7c15n * BigInt(seed + 1));
+    for (let i = 0; i < digits; i++) {
+        mix = BigInt.asUintN(64, mix * 6364136223846793005n + 1442695040888963407n);
+        parts[i] = (mix >> shift).toString(16).padStart(hexDigits, "0");
+    }
+    parts[0] = "8" + parts[0].slice(1);
+    return BigInt("0x" + parts.join(""));
+}
+
+function makeOperand(width, digits, seed) {
+    const hexDigits = width / 4;
+    const shift = BigInt(64 - width);
+    const parts = new Array(digits);
+    let mix = BigInt.asUintN(64, 0x9e3779b97f4a7c15n * BigInt(seed + 1));
+    for (let i = 0; i < digits; i++) {
+        mix = BigInt.asUintN(64, mix * 6364136223846793005n + 1442695040888963407n);
+        parts[i] = (mix >> shift).toString(16).padStart(hexDigits, "0");
+    }
+    parts[0] = "8" + parts[0].slice(1);
+    return BigInt("0x" + parts.join(""));
+}
+
+for (const width of [32, 64]) {
+    for (const digits of [200, 301, 1000]) {
+        const x = makeOperand(width, digits, digits);
+        shouldBeRoot(BigInt.sqrt(x), 2n, x, `${width} bit digits, sqrt of ${digits}`);
+        shouldBeRoot(BigInt.cbrt(x), 3n, x, `${width} bit digits, cbrt of ${digits}`);
+
+        const root = makeOperand(width, digits >> 2, digits + 1);
+        const square = root * root;
+        shouldBe(BigInt.sqrt(square), root, `${width} bit digits, sqrt of a ${digits >> 1} digit square`);
+        shouldBe(BigInt.sqrt(square - 1n), root - 1n, `${width} bit digits, sqrt below a ${digits >> 1} digit square`);
+        const cube = square * root;
+        shouldBe(BigInt.cbrt(cube), root, `${width} bit digits, cbrt of a cube of ${digits >> 2} digits`);
+        shouldBe(BigInt.cbrt(cube - 1n), root - 1n, `${width} bit digits, cbrt below a cube of ${digits >> 2} digits`);
+    }
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-0222-bigint-sqrt-cbrt-large.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

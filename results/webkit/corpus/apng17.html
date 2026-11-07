@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng17</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex(d,n){var s='';for(var i=0;i<n*4;i++)s+=('0'+d[i].toString(16)).slice(-2);return s;}
+function dump(tag,w,im){var c=document.createElement('canvas');c.width=w;c.height=1;var g=c.getContext('2d');
+  g.drawImage(im,0,0);b(tag+'-'+hex(g.getImageData(0,0,w,1).data,w));}
+var b64=null;
+function churnXP(n){
+  var ok=0,err='none';
+  try{
+    for(var k=0;k<n;k++){ document.evaluate('count(//div)',document,null,XPathResult.NUMBER_TYPE,null).numberValue; ok++; }
+  }catch(e){ err=String(e).slice(0,40); }
+  return 'ok='+ok+' err='+err;
+}
+function churnStr(n){
+  var ok=0;
+  for(var k=0;k<n;k++){
+    var s=''; for(var j=0;j<58;j++) s+=String.fromCharCode(65+((j+k)%26));
+    s+=(''+(k*2654435761>>>0));
+    ok+=s.length?1:0;              // s dies here: StringImpl refcount hits 0 synchronously
+  }
+  return 'ok='+ok;
+}
+function arm(tag,fn,next){
+  var t=fn?fn():'';
+  var im=new Image();
+  im.onload=function(){ b(tag+'-GROOM-'+t); dump(tag+'-W64',64,im); dump(tag+'-W256',256,im); b(tag+'-END'); next(); };
+  im.onerror=function(){ b(tag+'-ERR'); next(); };
+  var suf=''; for(var q=0;q<4+tag.length;q++) suf+='QUFB';
+  im.src='data:image/png;base64,'+b64+suf;
+}
+function boot(){
+  b('P17-BOOT');
+  b('P17-XP-'+typeof document.evaluate+'-'+typeof XPathResult);
+  var dv=document.createElement('div');
+  for(var i=0;i<32;i++){var p=document.createElement('div');p.textContent='x';dv.appendChild(p);}
+  document.body.appendChild(dv);
+  fetch('/corpus/apng-fw1.png?r='+Date.now()).then(function(r){return r.arrayBuffer();}).then(function(ab){
+    var u=new Uint8Array(ab), s=''; for(var i=0;i<u.length;i++) s+=String.fromCharCode(u[i]);
+    b64=btoa(s); b('P17-B64-'+b64.length);
+    arm('P17-A',null,function(){
+      arm('P17-B',function(){return churnXP(300);},function(){
+        arm('P17-C',function(){return churnStr(4000);},function(){
+          arm('P17-D',function(){return churnXP(300)+' '+churnStr(4000);},function(){ b('P17-DONE'); });
+        });
+      });
+    });
+  });
+}
+window.addEventListener('load',boot);
+</script></head><body><p>apng17</p></body></html>

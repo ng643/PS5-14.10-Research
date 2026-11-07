@@ -1,0 +1,54 @@
+{
+ "commits": {},
+ "tests": {
+  "b1-one-animated-popup.html": {
+   "file": "b1-one-animated-popup.html",
+   "path": "bisect/b1-one-animated-popup.html",
+   "subject": "bisect of the corpus case that killed the console browser",
+   "date": "2026-10-20T00:00:00.000-00:00",
+   "sha": "",
+   "size": 988
+  },
+  "b2-one-plain-popup.html": {
+   "file": "b2-one-plain-popup.html",
+   "path": "bisect/b2-one-plain-popup.html",
+   "subject": "bisect of the corpus case that killed the console browser",
+   "date": "2026-10-20T00:00:00.000-00:00",
+   "sha": "",
+   "size": 852
+  },
+  "b3-one-animation-no-willchange.html": {
+   "file": "b3-one-animation-no-willchange.html",
+   "path": "bisect/b3-one-animation-no-willchange.html",
+   "subject": "bisect of the corpus case that killed the console browser",
+   "date": "2026-10-20T00:00:00.000-00:00",
+   "sha": "",
+   "size": 966
+  },
+  "b4-thirty-plain-popups.html": {
+   "file": "b4-thirty-plain-popups.html",
+   "path": "bisect/b4-thirty-plain-popups.html",
+   "subject": "bisect of the corpus case that killed the console browser",
+   "date": "2026-10-20T00:00:00.000-00:00",
+   "sha": "",
+   "size": 853
+  },
+  "b5-thirty-animated-popups.html": {
+   "file": "b5-thirty-animated-popups.html",
+   "path": "bisect/b5-thirty-animated-popups.html",
+   "subject": "bisect of the corpus case that killed the console browser",
+   "date": "2026-10-20T00:00:00.000-00:00",
+   "sha": "",
+   "size": 989
+  },
+  "b6-no-popup-text-only.html": {
+   "file": "b6-no-popup-text-only.html",
+   "path": "bisect/b6-no-popup-text-only.html",
+   "subject": "bisect of the corpus case that killed the console browser",
+   "date": "2026-10-20T00:00:00.000-00:00",
+   "sha": "",
+   "size": 850
+  }
+ },
+ "skipped": {}
+}

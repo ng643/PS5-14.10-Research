@@ -1,0 +1,95 @@
+<!doctype html><meta charset="utf-8"><title>in-by-val-profile.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+runString("function opt(a1,a2,a3,a4,a5,a6){\n(10|1\u003c\u003c30)[Symbol.iterator]=function *() {; yield* a2};\ntry{\n;\nvar guardd11c_2=0;\ndo {\n    if(guardd11c_2++\u003e10)break;\n    try{\n;\nFunction.prototype.__proto__ = ((function() {\n    try{\n;\nFunction.prototype.__proto__ = a6;\na2[Symbol.hasInstance] = function(a7) {\n  try{\n;\na7(a3,(URIError),1\u003c\u003c30);\n}catch(x){};\n\n};\na4(undefined,Infinity,((9007199254740991 in (RegExp.prototype.constructor))||(1\u003c\u003c30 in (!!a6))));\n}catch(x){};\n\n})());\n(function() {try{\n;\n}catch(x){};\n})();\nvar guardd11c_9=0;\ndo {\n    if(guardd11c_9++\u003e10)break;\n    try{\n;\nObject.defineProperty((Intl.DateTimeFormat.prototype.formatRangeToParts),'name',{
+  try { Object.setPrototypeOf(this.__h || {}, null); } catch (e) {}
+value:Infinity});\n(undefined in (a2 in (new Proxy(Object, { get: () =\u003e (a7[1] = 1\u003c\u003c30, Object.prototype)}))))[Symbol.iterator]=function *() {(WebAssembly.Table.prototype.set)[100000]=9007199254740991;\n; yield* a7};\nFunction.prototype.__proto__ = 1\u003c\u003c30;\n}catch(x){};\n\n} while(10);\n}catch(x){};\n\n} while(((class a8 extends (a3[1\u003c\u003c30]) { get ['set'] ( ) { (function() {a2(1\u003c\u003c30,a8,((function(){return a7})()));\na2((Float64Array.prototype.BYTES_PER_ELEMENT),(BigInt.prototype.toString),undefined);\nfunction a9() {\n    if (Math.min(1\u003c\u003c30, -1) == -1) return 0;\n    return 1;\n};\n})();\n } })[9007199254740991]));\n}catch(x){};\ntry{\n;\nFunction.prototype.__proto__ = 10;\nFunction.prototype.__proto__ = 9007199254740991;\n}catch(x){};\n}\ntry{opt((EvalError.prototype.name),(EvalError.prototype.message),(eval),(EvalError.prototype.name),undefined,9007199254740991)}catch(y){}\ntry{opt(10,9007199254740991,1\u003c\u003c30,(EvalError.prototype.constructor),(WebAssembly.Instance.length),(ReferenceError.prototype.constructor))}catch(y){}\noptimizeNextInvocation(opt);\nflag=true;\ntry{opt((EvalError.prototype.constructor),(function () { return this; }),10,9007199254740991,Infinity,9007199254740991)}catch(y){}\noptimizeNextInvocation(opt);\nflag=false;\ntry{opt((WebAssembly.Instance.length),undefined,10,(EvalError.prototype.message),(WebAssembly.Instance.caller),(BigInt64Array.prototype.BYTES_PER_ELEMENT))}catch(y){}\noptimizeNextInvocation(opt);\nflag=false;\ntry{opt((ReferenceError.prototype.constructor),(JSON.parse('[{\"a\": 2.1, \"b\": 1, \"c\": \"hello\"}, {\"a\": null, \"b\": 2, \"c\": {\"a\": 2.1, \"b\": 1.1, \"c\": \"hello\"}}]')),undefined,1\u003c\u003c30,10,(WebAssembly.Global.caller))}catch(y){}\noptimizeNextInvocation(opt);\nflag=false;\ntry{opt(1\u003c\u003c30,(EvalError.prototype.message),undefined,9007199254740991,(EvalError.prototype.constructor),Infinity)}catch(y){}\noptimizeNextInvocation(opt);\nflag=true;\n\n;print('TCPARSE');");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1949-in-by-val-profile.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

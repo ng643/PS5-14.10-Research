@@ -1,0 +1,38 @@
+<!doctype html><meta charset="utf-8"><title>jit</title>
+<script>
+function b(t){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+encodeURIComponent(t)+'?t='+Date.now(),false);x.send();}catch(e){}}
+b('JIT-S');
+
+// 1. is the optimising JIT active at all?  A DFG-compiled loop costs a few
+//    ns per iteration; the interpreter costs ~50-100 ns.  Compare the first
+//    call with one made after fifty warm-up calls of the same function.
+var A = new Int32Array(256); for (var i=0;i<256;i++) A[i]=i;
+function hot(n){ var s=0; for (var i=0;i<n;i++) s = (s + A[i & 255]) | 0; return s; }
+function timeIt(n){ var t=Date.now(); hot(n); return Date.now()-t; }
+var N = 20000000;
+var runs = [];
+for (var k=0;k<4;k++) runs.push(timeIt(N));
+var cold = runs[0], last = runs[3];
+b('JIT-SPEED:n=' + N + ',runs=' + runs.join('/') +
+  ',ratio=' + (last>0 ? (cold/last).toFixed(2) : 'inf'));
+
+// 2. bug 282450: the DFG turns the second store into PutByValAlias and drops
+//    it, so a filled array keeps 0xFFFFFFFF where it should hold 2.
+var U = new Uint32Array(65535); for (var i=0;i<U.length;i++) U[i]=0xFFFFFFFF;
+function t450(iters){ for (var i=0;i<iters;i+=6) U[i] &= 2; return U; }
+for (var k=0;k<60;k++) t450(6000);
+t450(6000);
+b('JIT-450:u0=' + U[0] + ',u6=' + U[6] + ',u12=' + U[12]);
+
+// 3. bug 282661: a ToString in a loop condition whose result is unused.
+var R='ok';
+try {
+  var x = [, 9999999999];
+  var count = 0;
+  for (y = 10; (function(){ z = y; " " + x[y]; return 9; })(); y--) { if (count >= 99) break; count++; }
+  R = 'ok count=' + count + ' y=' + y;
+} catch (e) { R = 'throw ' + (e && e.message); }
+b('JIT-661:' + R);
+b('JIT-DONE');
+setTimeout(function(){ location.replace('about:blank'); }, 300);
+</script>

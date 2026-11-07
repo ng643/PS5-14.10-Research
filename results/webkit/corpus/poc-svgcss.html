@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>svgcss</title></head>
+<body><script>
+// SVG + CSS parser fuzzer.
+// Arm A: <img src=blob image/svg+xml>        -> the standalone SVG parser
+// Arm B: img.data = corrupted PNG/JPEG etc.  -> (covered by poc-media2)
+// Arm C: inline innerHTML with nested <g>/<use>/<text>/<filter> and deep defs
+// Arm D: <style> with deep CSS nesting, :has() chains, @media recursion
+// Arm E: DOM built via DOMParser('image/svg+xml')
+// Every arm reuses a deterministic PRNG; the base seed is beaconed.
+
+function beacon(tag) {
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', '/beacon/' + encodeURIComponent(tag) + '?t=' + Date.now(), false);
+    x.send(null);
+  } catch (e) {}
+}
+
+var baseSeed = (Date.now() & 0x7fffffff) || 1, seed = baseSeed;
+function rnd() {
+  seed ^= seed << 13; seed &= 0x7fffffff;
+  seed ^= seed >>> 17;
+  seed ^= seed << 5;  seed &= 0x7fffffff;
+  return seed >>> 0;
+}
+
+var tags = ['g', 'use', 'defs', 'symbol', 'text', 'tspan', 'filter', 'feGaussianBlur',
+            'feMerge', 'feImage', 'marker', 'pattern', 'clipPath', 'mask', 'switch',
+            'a', 'image', 'foreignObject', 'animate', 'set', 'animateTransform'];
+var attrs = ['id', 'xlink:href', 'href', 'fill', 'clip-path', 'mask', 'filter',
+             'transform', 'width', 'height', 'viewBox', 'style', 'class',
+             'preserveAspectRatio', 'begin', 'dur', 'repeatCount'];
+
+function svgDoc(depth, breadth) {
+  var out = ['<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64" height="64" viewBox="0 0 64 64">'];
+  var stack = [];
+  for (var d = 0; d < depth; d++) {
+    out.push('<g id="g' + d + '">');
+    stack.push('g');
+    for (var b = 0; b < breadth; b++) {
+      var t = tags[rnd() % tags.length];
+      var a = attrs[rnd() % attrs.length];
+      var target = d > 0 ? '#g' + (rnd() % Math.max(1, d)) : '#nope';
+      var val;
+      if (a === 'xlink:href' || a === 'href') val = target;
+      else if (a === 'id') val = 'n' + (rnd() % 1000);
+      else if (a === 'begin' || a === 'dur') val = '1s';
+      else val = String(rnd() % 100);
+      out.push('<' + t + ' ' + a + '="' + val + '"><rect width="4" height="4"/></' + t + '>');
+    }
+  }
+  for (var s = stack.length - 1; s >= 0; s--) out.push('</g>');
+  out.push('</svg>');
+  return out.join('');
+}
+
+function svgMutate(text) {
+  var k = rnd() % 5;
+  var arr = text.split('');
+  if (k === 0) {
+    var p = rnd() % arr.length;
+    arr[p] = String.fromCharCode(32 + (rnd() % 95));
+    return { text: arr.join(''), note: 'char@' + p };
+  }
+  if (k === 1) {
+    var cut = rnd() % arr.length;
+    return { text: text.slice(0, cut), note: 'trunc=' + cut };
+  }
+  if (k === 2) {
+    var at = rnd() % arr.length;
+    var len = 1 + (rnd() % 64);
+    return { text: text.slice(0, at) + text.slice(at, at + len) + text.slice(at), note: 'dup@' + at + 'n=' + len };
+  }
+  if (k === 3) {
+    var i = text.indexOf('<', rnd() % text.length);
+    if (i < 0) return { text: text, note: 'noop' };
+    var j = text.indexOf('>', i);
+    return { text: text.slice(0, i) + text.slice(j + 1), note: 'drop-tag@' + i };
+  }
+  var pos = rnd() % arr.length;
+  return { text: text.slice(0, pos) + '&#x' + (0xd800 + (rnd() % 0x400)) + ';' + text.slice(pos), note: 'surrogate@' + pos };
+}
+
+function cssText(depth, rules) {
+  var out = [];
+  for (var d = 0; d < depth; d++) out.push('.a' + d + ' { color: red; ');
+  for (var r = 0; r < rules; r++) {
+    var k = rnd() % 5;
+    if (k === 0) out.push(':has(> .a' + (rnd() % 8) + ' + :nth-last-child(' + (rnd() % 8) + ')) { color: blue; }');
+    else if (k === 1) out.push('@media (min-width: ' + (rnd() % 100) + 'px) { .m' + r + ' { color: green; } }');
+    else if (k === 2) out.push('.b' + r + ' { background: url(data:image/png;base64,AAAA) }');
+    else if (k === 3) out.push('.c' + r + ' { --v' + r + ': var(--v' + ((r + 1) % rules) + '); color: var(--v' + r + '); }');
+    else out.push('.d' + r + ' { transform: translate(' + (rnd() % 1000) + 'px) rotate(' + (rnd() % 360) + 'deg); }');
+  }
+  for (var c = depth - 1; c >= 0; c--) out.push('}');
+  return out.join('\n');
+}
+
+function loadImg(url) {
+  var img = document.createElement('img');
+  return new Promise(function(res) {
+    var done = false;
+    function fin(what) { if (!done) { done = true; res(what); } }
+    img.onload = function() { fin('ok'); };
+    img.onerror = function() { fin('err'); };
+    setTimeout(function() { fin('timeout'); }, 400);
+    img.src = url;
+  });
+}
+
+async function run() {
+  beacon('SC-START seed=' + baseSeed);
+  var host = document.createElement('div');
+  document.body.appendChild(host);
+
+  // Arm A: standalone SVG documents through <img> and DOMParser
+  for (var i = 0; i < 700; i++) {
+    var depth = 1 + (rnd() % 24), breadth = 1 + (rnd() % 6);
+    var doc = svgDoc(depth, breadth);
+    var m = svgMutate(doc);
+    var url = URL.createObjectURL(new Blob([m.text], { type: 'image/svg+xml' }));
+    var r = await loadImg(url);
+    setTimeout(function(u) { return function() { URL.revokeObjectURL(u); }; }(url), 50);
+    if (i % 10 === 0) {
+      var parsed = 'n/a';
+      try {
+        var d = new DOMParser().parseFromString(m.text, 'image/svg+xml');
+        parsed = d.documentElement ? d.documentElement.tagName : 'none';
+        if (d.documentElement) document.importNode(d.documentElement, true);
+      } catch (e) { parsed = 'exc'; }
+      beacon('SC-SVG i=' + i + ' d=' + depth + ' b=' + breadth + ' ' + m.note +
+             ' r=' + r + ' p=' + parsed);
+    }
+  }
+  beacon('SC-SVG-DONE');
+
+  // Arm C: live inline SVG, deep nesting and cross references
+  for (var j = 0; j < 400; j++) {
+    var d2 = 1 + (rnd() % 40);
+    var s = svgDoc(d2, 1 + (rnd() % 4));
+    try {
+      host.innerHTML = s;
+      var svg = host.firstElementChild;
+      if (svg) {
+        var bbox = svg.getBBox ? svg.getBBox() : null;
+        var len = svg.getTotalLength ? (svg.getTotalLength ? null : null) : null;
+      }
+      if (j % 20 === 0) beacon('SC-INLINE i=' + j + ' d=' + d2 + ' ok');
+    } catch (e) {
+      if (j % 20 === 0) beacon('SC-INLINE i=' + j + ' exc=' + (e && e.name));
+    }
+    host.innerHTML = '';
+  }
+  beacon('SC-INLINE-DONE');
+
+  // Arm D: CSS nesting, :has() chains, custom-property cycles
+  for (var k2 = 0; k2 < 400; k2++) {
+    var st = document.createElement('style');
+    var depth2 = 1 + (rnd() % 60), rules2 = 1 + (rnd() % 12);
+    st.textContent = cssText(depth2, rules2);
+    document.head.appendChild(st);
+    host.innerHTML = '<div class="a0"><span class="a1"><b class="a2">x</b></span></div>';
+    var w = host.offsetWidth, h = host.offsetHeight;
+    if (k2 % 20 === 0) beacon('SC-CSS i=' + k2 + ' d=' + depth2 + ' r=' + rules2 + ' w=' + w + ' h=' + h);
+    document.head.removeChild(st);
+    host.innerHTML = '';
+  }
+  beacon('SC-DONE');
+  setTimeout(function() { location.reload(); }, 300);
+}
+
+run().catch(function(e) { beacon('SC-FATAL ' + (e && e.name) + ' ' + (e && e.message)); });
+</script></body></html>

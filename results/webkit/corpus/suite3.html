@@ -1,0 +1,59 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>suite3</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function churn(n){var s='';for(var i=0;i<n;i++){s+=String.fromCharCode(65+(i%26));}var a=[];for(var j=0;j<600;j++){a.push(s.slice(0,175));}return a;}
+function nz(a){var c=0;for(var i=0;i<a.length;i++){if(a[i]!==0)c++;}return c;}
+function qw(v){return (v<0)?('-'+Math.abs(v)):String(v);}
+window.onload = function(){
+  b('S3-START');
+  var keep = churn(300); b('S3-CHURN');
+  // 1. createImageBitmap over a PNG then a BMP
+  if (window.createImageBitmap) {
+    b('S3-CIB-present');
+    var img = new Image();
+    img.onload = function(){
+      createImageBitmap(img).then(function(bm){
+        b('S3-CIB-ok-' + bm.width + 'x' + bm.height);
+        var c = document.createElement('canvas'); c.width = bm.width; c.height = bm.height;
+        var g = c.getContext('2d'); g.drawImage(bm, 0, 0);
+        var d = g.getImageData(0, 0, bm.width, bm.height).data;
+        b('S3-CIB-px-nz' + nz(d));
+      }).catch(function(e){ b('S3-CIB-err-' + e.name); });
+    };
+    img.onerror = function(){ b('S3-CIB-imgerr'); };
+    img.src = '/corpus/red.png?t=' + Date.now();
+  } else { b('S3-CIB-absent'); }
+  // 2. TextDecoder streaming + fatal over truncated UTF-8
+  try {
+    var td = new TextDecoder('utf-8', {fatal:false});
+    var bytes = new Uint8Array([0xE2,0x82,0xAC,0xF0,0x9F]);
+    var s1 = td.decode(bytes, {stream:true});
+    var s2 = td.decode(new Uint8Array(0));
+    b('S3-TD-' + s1.length + '-' + s2.length);
+  } catch(e){ b('S3-TD-err'); }
+  // 3. structuredClone round-trip of a typed array with holes
+  try {
+    var u = new Uint32Array(64);
+    for (var i = 0; i < 64; i++) u[i] = 0x11111111 * (i + 1);
+    var c2 = structuredClone(u);
+    b('S3-SC-' + c2.length + '-' + (c2[5] === u[5]));
+  } catch(e){ b('S3-SC-err-' + e.name); }
+  // 4. DOMParser + XMLSerializer round trip
+  try {
+    var doc = new DOMParser().parseFromString('<a x="1"><b/></a>', 'application/xml');
+    var ser = new XMLSerializer().serializeToString(doc);
+    b('S3-XML-' + ser.length);
+  } catch(e){ b('S3-XML-err'); }
+  // 5. crypto.subtle digest buffer
+  try {
+    crypto.subtle.digest('SHA-256', new Uint8Array(32)).then(function(dg){
+      var v = new Uint8Array(dg); b('S3-CRYPTO-' + v.length + '-nz' + nz(v));
+    }).catch(function(e){ b('S3-CRYPTO-err'); });
+  } catch(e){ b('S3-CRYPTO-err2'); }
+  // 6. Blob -> arrayBuffer from a fetched truncated body
+  fetch('/trunc?want=4096&give=64').then(function(r){ return r.arrayBuffer(); })
+    .then(function(ab){ b('S3-BLOB-' + ab.byteLength + '-nz' + nz(new Uint8Array(ab))); })
+    .catch(function(e){ b('S3-BLOB-err-' + (e.name||'x')); });
+  setTimeout(function(){ b('S3-END'); }, 2500);
+};
+</script></head><body><p>suite3</p></body></html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>media4</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var files = ['test.mp4','pure-color-green.mp4','test_yuv420.mp4','video-as-img.mp4','v_a.mp4'];
+var T = 0;
+function sample(v, tag){
+  try {
+    var w = v.videoWidth, h = v.videoHeight;
+    var c = document.createElement('canvas'); c.width = w; c.height = h;
+    var x = c.getContext('2d'); x.drawImage(v, 0, 0);
+    var d = x.getImageData(0, 0, w, h).data;
+    var nz = 0, green = 0, first = '';
+    for (var i = 0; i < d.length; i += 4){
+      if (d[i] || d[i+1] || d[i+2]) { nz++; if (d[i] < 16 && d[i+1] > 100 && d[i+2] < 16) green++; }
+    }
+    first = d.slice(0,16).join('.');
+    b(tag + '-DIM-' + w + 'x' + h + '-nz' + nz + '-green' + green + '-px-' + first);
+  } catch (e) { b(tag + '-SAMPLE-THROW-' + (e.name || '?')); }
+}
+function start(){
+  if (T >= files.length) { b('ALL-DONE'); return; }
+  var f = files[T], tag = 'F' + T;
+  b(tag + '-START-' + f);
+  var v = document.createElement('video');
+  v.muted = true; v.playsInline = true; v.preload = 'auto';
+  document.body.appendChild(v);
+  var done = false;
+  function fin(why){ if (done) return; done = true; b(tag + '-' + why); T++; setTimeout(start, 150); }
+  v.addEventListener('error', function(){ fin('VERR-' + (v.error ? v.error.code : '?')); });
+  v.addEventListener('loadeddata', function(){ b(tag + '-LOADED'); sample(v, tag); fin('OK'); });
+  setTimeout(function(){ fin('TIMEOUT-rs' + v.readyState + '-ns' + v.networkState); }, 6000);
+  v.src = '/corpus/' + f; v.load();
+}
+b('M4-START'); document.addEventListener('DOMContentLoaded', start); b('M4-ARMED');
+</script></head><body><p>media4</p></body></html>

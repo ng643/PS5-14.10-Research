@@ -1,0 +1,18 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>leak9</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var C=document.createElement('canvas'); C.width=64; C.height=64; var G=C.getContext('2d');
+function scan(tag){
+  var d=G.getImageData(0,0,64,64).data, nz=0, s='';
+  for(var i=0;i<d.length;i+=4){ if(d[i]||d[i+1]||d[i+2]){ nz++; if(s.length<16) s+=d[i]+'.'+d[i+1]+'.'+d[i+2]+'|'; } }
+  b('L9-'+tag+'-nz'+nz+'_'+s.replace(/[^0-9.|]/g,''));
+}
+function use(url,tag,next){
+  var img=new Image();
+  img.onload=function(){ G.clearRect(0,0,64,64); try{G.drawImage(img,0,0);}catch(e){} scan(tag); setTimeout(next,150); };
+  img.onerror=function(){ b('L9-'+tag+'-ERR'); setTimeout(next,150); };
+  img.src=url+'?t='+Date.now();
+}
+b('L9-START');
+use('/corpus/filtA.svg','A',function(){ use('/corpus/filtB.svg','B',function(){ b('L9-DONE'); }); });
+</script></head><body><p>leak9</p></body></html>

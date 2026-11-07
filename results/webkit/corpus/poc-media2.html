@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>media</title></head>
+<body><script>
+// Native media / image decoder fuzzer.
+//   <video src=blob>  -> the progressive MP4 demuxer + AVC decoder
+//   <img src=blob>    -> the PNG / JPEG / BMP / GIF decoders
+// Both consume fully attacker-controlled bytes and neither needs the testing
+// API. Each iteration mutates a real sample with a deterministic PRNG; the
+// base seed is beaconed so a crash (the WebProcess dying) can be replayed.
+
+function beacon(tag) {
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', '/beacon/' + encodeURIComponent(tag) + '?t=' + Date.now(), false);
+    x.send(null);
+  } catch (e) {}
+}
+
+var baseSeed = (Date.now() & 0x7fffffff) || 1, seed = baseSeed;
+function rnd() {
+  seed ^= seed << 13; seed &= 0x7fffffff;
+  seed ^= seed >>> 17;
+  seed ^= seed << 5;  seed &= 0x7fffffff;
+  return seed >>> 0;
+}
+function rndByte() { return rnd() & 0xff; }
+function w32(b, o, v) {
+  b[o] = (v >>> 24) & 255; b[o + 1] = (v >>> 16) & 255;
+  b[o + 2] = (v >>> 8) & 255; b[o + 3] = v & 255;
+}
+
+// mutate returns {bytes, note}
+function mutate(src, kind) {
+  var b = new Uint8Array(src.length);
+  b.set(src);
+  var arm = rnd() % 6, note = '';
+  if (kind === 'mp4') {
+    if (arm === 0) {                       // box size field
+      var o = (rnd() % ((b.length - 8) >> 2)) << 2;
+      var v = [0, 1, 8, 0xffffffff, 0x7fffffff, b.length, b.length + 8, 0xffffff00][rnd() % 8];
+      w32(b, o, v); note = 'size@' + o + '=' + v;
+    } else if (arm === 1) {                // fourcc swap
+      var p = (rnd() % ((b.length - 8) >> 2)) << 2;
+      var t = ['moov', 'trak', 'mdia', 'minf', 'stbl', 'stsd', 'avc1', 'avcC',
+               'stsz', 'stco', 'stts', 'stsc', 'mdat', 'ftyp', 'mvhd', 'tkhd'][rnd() % 16];
+      for (var i = 0; i < 4; i++) b[p + 4 + i] = t.charCodeAt(i) & 255;
+      note = 'fourcc@' + p + '=' + t;
+    } else if (arm === 2) {                // dword corruption near the moov head
+      var q = 8 + (rnd() % Math.min(4096, b.length - 12));
+      var dv = [0, 1, 2, 0xff, 0xffff, 0xffffffff, 0x7fffffff, 0x80000000][rnd() % 8];
+      w32(b, q, dv); note = 'dword@' + q + '=' + dv;
+    } else if (arm === 3) {                // truncate
+      var keep = 16 + (rnd() % (b.length - 16));
+      b = b.slice(0, keep); note = 'trunc=' + keep;
+    } else if (arm === 4) {                // byte spray
+      var n = 1 + (rnd() % 128);
+      var at = rnd() % Math.max(1, b.length - n);
+      for (var j = 0; j < n; j++) b[at + j] = rndByte();
+      note = 'spray@' + at + 'n=' + n;
+    } else {                               // duplicate a chunk
+      var from = rnd() % b.length, len = 1 + (rnd() % Math.min(4096, b.length - from));
+      var out = new Uint8Array(b.length + len);
+      out.set(b, 0); out.set(b.subarray(from, from + len), b.length);
+      b = out; note = 'dup@' + from + 'n=' + len;
+    }
+  } else {                                 // image decoders
+    if (arm <= 2) {
+      var o2 = rnd() % Math.max(1, b.length - 4);
+      var v2 = [0, 1, 0xff, 0xffff, 0xffffffff, 0x7fffffff, 0x80000000, b.length][rnd() % 8];
+      w32(b, o2, v2); note = 'w32@' + o2 + '=' + v2;
+    } else if (arm === 3) {
+      var k2 = 8 + (rnd() % Math.max(1, b.length - 8));
+      b = b.slice(0, k2); note = 'trunc=' + k2;
+    } else if (arm === 4) {
+      var n2 = 1 + (rnd() % 64);
+      var a2 = rnd() % Math.max(1, b.length - n2);
+      for (var m = 0; m < n2; m++) b[a2 + m] = rndByte();
+      note = 'spray@' + a2 + 'n=' + n2;
+    } else {
+      var from2 = rnd() % b.length, len2 = 1 + (rnd() % Math.min(1024, b.length - from2));
+      var out2 = new Uint8Array(b.length + len2);
+      out2.set(b, 0); out2.set(b.subarray(from2, from2 + len2), b.length);
+      b = out2; note = 'dup@' + from2 + 'n=' + len2;
+    }
+  }
+  return { bytes: b, note: note, arm: arm };
+}
+
+function getBuffer(url) {
+  return new Promise(function(res, rej) {
+    var x = new XMLHttpRequest();
+    x.open('GET', url, true);
+    x.responseType = 'arraybuffer';
+    x.onload = function() { res(new Uint8Array(x.response)); };
+    x.onerror = rej;
+    x.send(null);
+  });
+}
+
+function loadEl(el, arm, note) {
+  return new Promise(function(res) {
+    var done = false, url = null;
+    function finish(what) {
+      if (done) return;
+      done = true;
+      try { el.removeAttribute('src'); } catch (e) {}
+      if (url) { setTimeout(function() { URL.revokeObjectURL(url); }, 50); }
+      res(what);
+    }
+    el.onload = function() { finish('ok'); };
+    el.onerror = function() { finish('err'); };
+    el.onloadedmetadata = function() { finish('meta'); };
+    setTimeout(function() { finish('timeout'); }, 400);
+    try {
+      url = URL.createObjectURL(new Blob([arm.bytes], { type: 'application/octet-stream' }));
+      el.src = url;
+      if (el.tagName === 'VIDEO') { el.load(); el.play().catch(function() {}); }
+    } catch (e) { finish('throw'); }
+  });
+}
+
+var video = document.createElement('video');
+video.muted = true; video.preload = 'auto'; video.width = 128; video.height = 96;
+document.body.appendChild(video);
+
+var img = document.createElement('img');
+img.width = 128; img.height = 96;
+document.body.appendChild(img);
+
+async function run() {
+  beacon('MD-START seed=' + baseSeed);
+  var mp4 = await getBuffer('/corpus/sample.mp4');
+  var png = await getBuffer('/corpus/sample.png');
+  var jpg = await getBuffer('/corpus/sample.jpg');
+  var bmp = await getBuffer('/corpus/sample.bmp');
+  var gif = await getBuffer('/corpus/sample.gif');
+  beacon('MD-SAMPLES mp4=' + mp4.length + ' png=' + png.length +
+         ' jpg=' + jpg.length + ' bmp=' + bmp.length + ' gif=' + gif.length);
+
+  var phases = [
+    { name: 'mp4',  el: video, src: mp4,  n: 1500 },
+    { name: 'png',  el: img,   src: png,  n: 800 },
+    { name: 'jpg',  el: img,   src: jpg,  n: 800 },
+    { name: 'bmp',  el: img,   src: bmp,  n: 800 },
+    { name: 'gif',  el: img,   src: gif,  n: 800 }
+  ];
+  for (var p = 0; p < phases.length; p++) {
+    var ph = phases[p];
+    for (var i = 0; i < ph.n; i++) {
+      var m = mutate(ph.src, ph.name);
+      var what = await loadEl(ph.el, m, m.note);
+      if (i % 25 === 0) {
+        beacon('MD-IT ' + ph.name + ' i=' + i + ' arm=' + m.arm +
+               ' ' + m.note + ' r=' + what);
+      }
+    }
+    beacon('MD-PHASE-DONE ' + ph.name);
+  }
+  beacon('MD-DONE');
+  setTimeout(function() { location.reload(); }, 300);
+}
+
+run().catch(function(e) { beacon('MD-FATAL ' + (e && e.name) + ' ' + (e && e.message)); });
+</script></body></html>

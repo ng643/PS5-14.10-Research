@@ -1,0 +1,576 @@
+[
+ {
+  "file": "sys_532_deep.c",
+  "line": 427,
+  "fn": "?",
+  "rva": "?",
+  "size": "param_4"
+ },
+ {
+  "file": "sys_533.c",
+  "line": 678,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar6 >> 0xe"
+ },
+ {
+  "file": "sys_601_deep.c",
+  "line": 210,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar10"
+ },
+ {
+  "file": "sys_601_deep.c",
+  "line": 251,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar3 + 1"
+ },
+ {
+  "file": "sys_601_deep.c",
+  "line": 982,
+  "fn": "?",
+  "rva": "?",
+  "size": "param_3 + 1"
+ },
+ {
+  "file": "sys_648_deep.c",
+  "line": 1314,
+  "fn": "?",
+  "rva": "?",
+  "size": "0x1a6cb40 - _DAT_01a5d1f8"
+ },
+ {
+  "file": "sys_658.c",
+  "line": 221,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar8"
+ },
+ {
+  "file": "sys_658.c",
+  "line": 744,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar13"
+ },
+ {
+  "file": "sys_658.c",
+  "line": 753,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar22 * 0x38"
+ },
+ {
+  "file": "sys_658.c",
+  "line": 1407,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar13 * 0x18"
+ },
+ {
+  "file": "sys_658.c",
+  "line": 1754,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar14"
+ },
+ {
+  "file": "sys_658.c",
+  "line": 2224,
+  "fn": "?",
+  "rva": "?",
+  "size": "iVar7"
+ },
+ {
+  "file": "sys_658.c",
+  "line": 2241,
+  "fn": "?",
+  "rva": "?",
+  "size": "(int)local_d0 * 0x58"
+ },
+ {
+  "file": "sys_658.c",
+  "line": 2256,
+  "fn": "?",
+  "rva": "?",
+  "size": "local_c0 * 8"
+ },
+ {
+  "file": "sys_658.c",
+  "line": 2787,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 << 4"
+ },
+ {
+  "file": "sys_658.c",
+  "line": 2932,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 * 0x18"
+ },
+ {
+  "file": "sys_661.c",
+  "line": 619,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar8"
+ },
+ {
+  "file": "sys_661.c",
+  "line": 1142,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar13"
+ },
+ {
+  "file": "sys_661.c",
+  "line": 1151,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar22 * 0x38"
+ },
+ {
+  "file": "sys_661.c",
+  "line": 1805,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar13 * 0x18"
+ },
+ {
+  "file": "sys_661.c",
+  "line": 2152,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar14"
+ },
+ {
+  "file": "sys_661.c",
+  "line": 2622,
+  "fn": "?",
+  "rva": "?",
+  "size": "iVar7"
+ },
+ {
+  "file": "sys_661.c",
+  "line": 2639,
+  "fn": "?",
+  "rva": "?",
+  "size": "(int)local_d0 * 0x58"
+ },
+ {
+  "file": "sys_661.c",
+  "line": 2654,
+  "fn": "?",
+  "rva": "?",
+  "size": "local_c0 * 8"
+ },
+ {
+  "file": "sys_661.c",
+  "line": 3185,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 << 4"
+ },
+ {
+  "file": "sys_661.c",
+  "line": 3330,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 * 0x18"
+ },
+ {
+  "file": "sys_662.c",
+  "line": 548,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar8"
+ },
+ {
+  "file": "sys_662.c",
+  "line": 1071,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar13"
+ },
+ {
+  "file": "sys_662.c",
+  "line": 1080,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar22 * 0x38"
+ },
+ {
+  "file": "sys_662.c",
+  "line": 1734,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar13 * 0x18"
+ },
+ {
+  "file": "sys_662.c",
+  "line": 2081,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar14"
+ },
+ {
+  "file": "sys_662.c",
+  "line": 2551,
+  "fn": "?",
+  "rva": "?",
+  "size": "iVar7"
+ },
+ {
+  "file": "sys_662.c",
+  "line": 2568,
+  "fn": "?",
+  "rva": "?",
+  "size": "(int)local_d0 * 0x58"
+ },
+ {
+  "file": "sys_662.c",
+  "line": 2583,
+  "fn": "?",
+  "rva": "?",
+  "size": "local_c0 * 8"
+ },
+ {
+  "file": "sys_662.c",
+  "line": 3114,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 << 4"
+ },
+ {
+  "file": "sys_662.c",
+  "line": 3259,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 * 0x18"
+ },
+ {
+  "file": "sys_663.c",
+  "line": 549,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar8"
+ },
+ {
+  "file": "sys_663.c",
+  "line": 1072,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar13"
+ },
+ {
+  "file": "sys_663.c",
+  "line": 1081,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar22 * 0x38"
+ },
+ {
+  "file": "sys_663.c",
+  "line": 1735,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar13 * 0x18"
+ },
+ {
+  "file": "sys_663.c",
+  "line": 2082,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar14"
+ },
+ {
+  "file": "sys_663.c",
+  "line": 2552,
+  "fn": "?",
+  "rva": "?",
+  "size": "iVar7"
+ },
+ {
+  "file": "sys_663.c",
+  "line": 2569,
+  "fn": "?",
+  "rva": "?",
+  "size": "(int)local_d0 * 0x58"
+ },
+ {
+  "file": "sys_663.c",
+  "line": 2584,
+  "fn": "?",
+  "rva": "?",
+  "size": "local_c0 * 8"
+ },
+ {
+  "file": "sys_663.c",
+  "line": 3115,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 << 4"
+ },
+ {
+  "file": "sys_663.c",
+  "line": 3260,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 * 0x18"
+ },
+ {
+  "file": "sys_664.c",
+  "line": 550,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar8"
+ },
+ {
+  "file": "sys_664.c",
+  "line": 1073,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar13"
+ },
+ {
+  "file": "sys_664.c",
+  "line": 1082,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar22 * 0x38"
+ },
+ {
+  "file": "sys_664.c",
+  "line": 1736,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar13 * 0x18"
+ },
+ {
+  "file": "sys_664.c",
+  "line": 2083,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar14"
+ },
+ {
+  "file": "sys_664.c",
+  "line": 2553,
+  "fn": "?",
+  "rva": "?",
+  "size": "iVar7"
+ },
+ {
+  "file": "sys_664.c",
+  "line": 2570,
+  "fn": "?",
+  "rva": "?",
+  "size": "(int)local_d0 * 0x58"
+ },
+ {
+  "file": "sys_664.c",
+  "line": 2585,
+  "fn": "?",
+  "rva": "?",
+  "size": "local_c0 * 8"
+ },
+ {
+  "file": "sys_664.c",
+  "line": 3116,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 << 4"
+ },
+ {
+  "file": "sys_664.c",
+  "line": 3261,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 * 0x18"
+ },
+ {
+  "file": "sys_665.c",
+  "line": 619,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar8"
+ },
+ {
+  "file": "sys_665.c",
+  "line": 1142,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar13"
+ },
+ {
+  "file": "sys_665.c",
+  "line": 1151,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar22 * 0x38"
+ },
+ {
+  "file": "sys_665.c",
+  "line": 1805,
+  "fn": "?",
+  "rva": "?",
+  "size": "uVar13 * 0x18"
+ },
+ {
+  "file": "sys_665.c",
+  "line": 2152,
+  "fn": "?",
+  "rva": "?",
+  "size": "lVar14"
+ },
+ {
+  "file": "sys_665.c",
+  "line": 2622,
+  "fn": "?",
+  "rva": "?",
+  "size": "iVar7"
+ },
+ {
+  "file": "sys_665.c",
+  "line": 2639,
+  "fn": "?",
+  "rva": "?",
+  "size": "(int)local_d0 * 0x58"
+ },
+ {
+  "file": "sys_665.c",
+  "line": 2654,
+  "fn": "?",
+  "rva": "?",
+  "size": "local_c0 * 8"
+ },
+ {
+  "file": "sys_665.c",
+  "line": 3185,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 << 4"
+ },
+ {
+  "file": "sys_665.c",
+  "line": 3330,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 * 0x18"
+ },
+ {
+  "file": "sys_666.c",
+  "line": 187,
+  "fn": "sub_3b16a0",
+  "rva": "0x3b16a0",
+  "size": "lVar14"
+ },
+ {
+  "file": "sys_666.c",
+  "line": 650,
+  "fn": "sub_3b2080",
+  "rva": "0x3b2080",
+  "size": "iVar7"
+ },
+ {
+  "file": "sys_666.c",
+  "line": 667,
+  "fn": "sub_3b2080",
+  "rva": "0x3b2080",
+  "size": "(int)local_d0 * 0x58"
+ },
+ {
+  "file": "sys_666.c",
+  "line": 682,
+  "fn": "sub_3b2080",
+  "rva": "0x3b2080",
+  "size": "local_c0 * 8"
+ },
+ {
+  "file": "sys_666.c",
+  "line": 1212,
+  "fn": "sub_3b2d50",
+  "rva": "0x3b2d50",
+  "size": "(ulong)uVar3 << 4"
+ },
+ {
+  "file": "sys_666.c",
+  "line": 1357,
+  "fn": "sub_3b3090",
+  "rva": "0x3b3090",
+  "size": "(ulong)uVar3 * 0x18"
+ },
+ {
+  "file": "sys_667.c",
+  "line": 123,
+  "fn": "handler_667_body",
+  "rva": "0x4a31a0",
+  "size": "(long)(int)lVar2 * 0x28"
+ },
+ {
+  "file": "sys_669_deep.c",
+  "line": 125,
+  "fn": "?",
+  "rva": "?",
+  "size": "iVar7"
+ },
+ {
+  "file": "sys_669_deep.c",
+  "line": 142,
+  "fn": "?",
+  "rva": "?",
+  "size": "(int)local_d0 * 0x58"
+ },
+ {
+  "file": "sys_669_deep.c",
+  "line": 157,
+  "fn": "?",
+  "rva": "?",
+  "size": "local_c0 * 8"
+ },
+ {
+  "file": "sys_669_deep.c",
+  "line": 685,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 << 4"
+ },
+ {
+  "file": "sys_669_deep.c",
+  "line": 829,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 * 0x18"
+ },
+ {
+  "file": "sys_670_deep.c",
+  "line": 277,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 << 4"
+ },
+ {
+  "file": "sys_670_deep.c",
+  "line": 421,
+  "fn": "?",
+  "rva": "?",
+  "size": "(ulong)uVar3 * 0x18"
+ },
+ {
+  "file": "sys_674.c",
+  "line": 1007,
+  "fn": "sys_618",
+  "rva": "0xabd0f0",
+  "size": "(long)iVar4 * 0x128"
+ },
+ {
+  "file": "sys_675.c",
+  "line": 314,
+  "fn": "sub_2d3920",
+  "rva": "0x2d3920",
+  "size": "(ulong)uVar13 << 5"
+ }
+]

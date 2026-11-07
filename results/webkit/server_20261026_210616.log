@@ -1,0 +1,1114 @@
+2026-10-26T21:06:17.882+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-26T21:06:51.077+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-26T21:06:51.134+00:00 ACCESS GET /probe/p_msbuf.js?cb=1793048767 200
+2026-10-26T21:06:51.280+00:00 ACCESS GET /raw/p_msbuf.js?cb=1793048767&cb=1793048767 200
+2026-10-26T21:06:51.457+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:06:51.502+00:00 GET MS-START t=1793048817610 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.503+00:00 ACCESS GET /beacon/MS-START?t=1793048817610 204
+2026-10-26T21:06:51.559+00:00 GET MS-OPEN readyState=open t=1793048817665 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.559+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048817665 204
+2026-10-26T21:06:51.592+00:00 GET MS-BEFORE A-buffered-empty t=1793048817699 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.593+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048817699 204
+2026-10-26T21:06:51.620+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048817732 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.620+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048817732 204
+2026-10-26T21:06:51.650+00:00 GET MS-BEFORE A-seekable-empty t=1793048817759 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.651+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048817759 204
+2026-10-26T21:06:51.677+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048817788 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.677+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048817788 204
+2026-10-26T21:06:51.717+00:00 GET MS-SB added t=1793048817819 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.717+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048817819 204
+2026-10-26T21:06:51.766+00:00 GET MS-BEFORE B-buffered-noappend t=1793048817875 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.767+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048817875 204
+2026-10-26T21:06:51.799+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048817906 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.799+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048817906 204
+2026-10-26T21:06:51.827+00:00 GET MS-BEFORE B-seekable-noappend t=1793048817937 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.828+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048817937 204
+2026-10-26T21:06:51.857+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048817964 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:51.857+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048817964 204
+2026-10-26T21:06:52.089+00:00 GET MS-BEFORE C-buffered-playing t=1793048818198 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.090+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048818198 204
+2026-10-26T21:06:52.116+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048818227 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.117+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048818227 204
+2026-10-26T21:06:52.147+00:00 GET MS-BEFORE C-currentTime t=1793048818255 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.147+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048818255 204
+2026-10-26T21:06:52.173+00:00 GET MS-AFTER C-currentTime r=0 t=1793048818285 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.175+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048818285 204
+2026-10-26T21:06:52.202+00:00 GET MS-APPEND issued t=1793048818311 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.202+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048818311 204
+2026-10-26T21:06:52.632+00:00 GET MS-BEFORE D-buffered-after-append t=1793048818739 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.633+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048818739 204
+2026-10-26T21:06:52.667+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048818771 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.667+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048818771 204
+2026-10-26T21:06:52.695+00:00 GET MS-EOS issued t=1793048818804 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.696+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048818804 204
+2026-10-26T21:06:52.925+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048819034 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.926+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048819034 204
+2026-10-26T21:06:52.955+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048819063 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.956+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048819063 204
+2026-10-26T21:06:52.984+00:00 GET MS-RM issued t=1793048819093 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:52.984+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048819093 204
+2026-10-26T21:06:53.213+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048819322 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:53.214+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048819322 204
+2026-10-26T21:06:53.238+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048819351 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:53.239+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048819351 204
+2026-10-26T21:06:53.267+00:00 GET MS-BEFORE G-load t=1793048819377 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:53.268+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048819377 204
+2026-10-26T21:06:53.295+00:00 GET MS-AFTER G-load r=1 t=1793048819406 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:53.295+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048819406 204
+2026-10-26T21:06:53.523+00:00 GET MS-BEFORE G-buffered-after-load t=1793048819633 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:53.524+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048819633 204
+2026-10-26T21:06:53.549+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048819661 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:53.550+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048819661 204
+2026-10-26T21:06:53.574+00:00 GET MS-DONE t=1793048819687 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:53.575+00:00 ACCESS GET /beacon/MS-DONE?t=1793048819687 204
+2026-10-26T21:06:54.431+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:06:54.469+00:00 GET MS-START t=1793048820579 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.469+00:00 ACCESS GET /beacon/MS-START?t=1793048820579 204
+2026-10-26T21:06:54.497+00:00 GET MS-OPEN readyState=open t=1793048820610 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.497+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048820610 204
+2026-10-26T21:06:54.525+00:00 GET MS-BEFORE A-buffered-empty t=1793048820636 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.526+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048820636 204
+2026-10-26T21:06:54.549+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048820663 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.550+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048820663 204
+2026-10-26T21:06:54.576+00:00 GET MS-BEFORE A-seekable-empty t=1793048820687 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.576+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048820687 204
+2026-10-26T21:06:54.600+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048820714 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.602+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048820714 204
+2026-10-26T21:06:54.635+00:00 GET MS-SB added t=1793048820742 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.636+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048820742 204
+2026-10-26T21:06:54.663+00:00 GET MS-BEFORE B-buffered-noappend t=1793048820773 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.663+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048820773 204
+2026-10-26T21:06:54.689+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048820801 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.689+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048820801 204
+2026-10-26T21:06:54.711+00:00 GET MS-BEFORE B-seekable-noappend t=1793048820826 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.712+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048820826 204
+2026-10-26T21:06:54.735+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048820849 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.735+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048820849 204
+2026-10-26T21:06:54.963+00:00 GET MS-BEFORE C-buffered-playing t=1793048821074 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.964+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048821074 204
+2026-10-26T21:06:54.991+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048821101 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:54.992+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048821101 204
+2026-10-26T21:06:55.019+00:00 GET MS-BEFORE C-currentTime t=1793048821129 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:55.019+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048821129 204
+2026-10-26T21:06:55.046+00:00 GET MS-AFTER C-currentTime r=0 t=1793048821157 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:55.047+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048821157 204
+2026-10-26T21:06:55.074+00:00 GET MS-APPEND issued t=1793048821185 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:55.075+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048821185 204
+2026-10-26T21:06:55.504+00:00 GET MS-BEFORE D-buffered-after-append t=1793048821613 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:55.504+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048821613 204
+2026-10-26T21:06:55.530+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048821642 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:55.531+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048821642 204
+2026-10-26T21:06:55.562+00:00 GET MS-EOS issued t=1793048821668 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:55.562+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048821668 204
+2026-10-26T21:06:55.798+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048821900 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:55.799+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048821900 204
+2026-10-26T21:06:55.829+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048821937 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:55.829+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048821937 204
+2026-10-26T21:06:55.909+00:00 GET MS-RM issued t=1793048821966 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:55.910+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048821966 204
+2026-10-26T21:06:56.145+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048822250 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:56.146+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048822250 204
+2026-10-26T21:06:56.179+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048822285 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:56.179+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048822285 204
+2026-10-26T21:06:56.212+00:00 GET MS-BEFORE G-load t=1793048822319 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:56.213+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048822319 204
+2026-10-26T21:06:56.245+00:00 GET MS-AFTER G-load r=1 t=1793048822351 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:56.246+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048822351 204
+2026-10-26T21:06:56.481+00:00 GET MS-BEFORE G-buffered-after-load t=1793048822583 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:56.482+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048822583 204
+2026-10-26T21:06:56.512+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048822622 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:56.513+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048822622 204
+2026-10-26T21:06:56.542+00:00 GET MS-DONE t=1793048822650 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:56.542+00:00 ACCESS GET /beacon/MS-DONE?t=1793048822650 204
+2026-10-26T21:06:56.933+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-26T21:06:57.404+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:06:57.443+00:00 GET MS-START t=1793048823551 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.444+00:00 ACCESS GET /beacon/MS-START?t=1793048823551 204
+2026-10-26T21:06:57.475+00:00 GET MS-OPEN readyState=open t=1793048823584 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.476+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048823584 204
+2026-10-26T21:06:57.502+00:00 GET MS-BEFORE A-buffered-empty t=1793048823614 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.502+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048823614 204
+2026-10-26T21:06:57.530+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048823640 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.531+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048823640 204
+2026-10-26T21:06:57.561+00:00 GET MS-BEFORE A-seekable-empty t=1793048823668 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.561+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048823668 204
+2026-10-26T21:06:57.593+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048823700 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.594+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048823700 204
+2026-10-26T21:06:57.625+00:00 GET MS-SB added t=1793048823734 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.626+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048823734 204
+2026-10-26T21:06:57.660+00:00 GET MS-BEFORE B-buffered-noappend t=1793048823764 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.661+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048823764 204
+2026-10-26T21:06:57.696+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048823799 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.697+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048823799 204
+2026-10-26T21:06:57.725+00:00 GET MS-BEFORE B-seekable-noappend t=1793048823836 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.726+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048823836 204
+2026-10-26T21:06:57.768+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048823863 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:57.768+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048823863 204
+2026-10-26T21:06:58.029+00:00 GET MS-BEFORE C-buffered-playing t=1793048824108 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.029+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048824108 204
+2026-10-26T21:06:58.061+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048824167 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.062+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048824167 204
+2026-10-26T21:06:58.088+00:00 GET MS-BEFORE C-currentTime t=1793048824200 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.089+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048824200 204
+2026-10-26T21:06:58.117+00:00 GET MS-AFTER C-currentTime r=0 t=1793048824226 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.117+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048824226 204
+2026-10-26T21:06:58.150+00:00 GET MS-APPEND issued t=1793048824258 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.150+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048824258 204
+2026-10-26T21:06:58.581+00:00 GET MS-BEFORE D-buffered-after-append t=1793048824688 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.582+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048824688 204
+2026-10-26T21:06:58.609+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048824719 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.609+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048824719 204
+2026-10-26T21:06:58.635+00:00 GET MS-EOS issued t=1793048824746 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.635+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048824746 204
+2026-10-26T21:06:58.865+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048824972 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.866+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048824972 204
+2026-10-26T21:06:58.893+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048825003 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.894+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048825003 204
+2026-10-26T21:06:58.922+00:00 GET MS-RM issued t=1793048825031 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:58.923+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048825031 204
+2026-10-26T21:06:59.152+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048825260 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:59.153+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048825260 204
+2026-10-26T21:06:59.185+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048825290 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:59.187+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048825290 204
+2026-10-26T21:06:59.218+00:00 GET MS-BEFORE G-load t=1793048825324 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:59.218+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048825324 204
+2026-10-26T21:06:59.249+00:00 GET MS-AFTER G-load r=1 t=1793048825357 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:59.249+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048825357 204
+2026-10-26T21:06:59.479+00:00 GET MS-BEFORE G-buffered-after-load t=1793048825586 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:59.479+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048825586 204
+2026-10-26T21:06:59.509+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048825617 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:59.510+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048825617 204
+2026-10-26T21:06:59.537+00:00 GET MS-DONE t=1793048825648 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:06:59.537+00:00 ACCESS GET /beacon/MS-DONE?t=1793048825648 204
+2026-10-26T21:07:00.391+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:00.430+00:00 GET MS-START t=1793048826537 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.431+00:00 ACCESS GET /beacon/MS-START?t=1793048826537 204
+2026-10-26T21:07:00.459+00:00 GET MS-OPEN readyState=open t=1793048826570 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.460+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048826570 204
+2026-10-26T21:07:00.487+00:00 GET MS-BEFORE A-buffered-empty t=1793048826597 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.487+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048826597 204
+2026-10-26T21:07:00.515+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048826626 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.516+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048826626 204
+2026-10-26T21:07:00.544+00:00 GET MS-BEFORE A-seekable-empty t=1793048826654 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.544+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048826654 204
+2026-10-26T21:07:00.572+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048826682 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.574+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048826682 204
+2026-10-26T21:07:00.609+00:00 GET MS-SB added t=1793048826715 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.610+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048826715 204
+2026-10-26T21:07:00.634+00:00 GET MS-BEFORE B-buffered-noappend t=1793048826746 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.635+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048826746 204
+2026-10-26T21:07:00.660+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048826773 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.661+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048826773 204
+2026-10-26T21:07:00.684+00:00 GET MS-BEFORE B-seekable-noappend t=1793048826798 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.685+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048826798 204
+2026-10-26T21:07:00.713+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048826823 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.714+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048826823 204
+2026-10-26T21:07:00.944+00:00 GET MS-BEFORE C-buffered-playing t=1793048827052 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.944+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048827052 204
+2026-10-26T21:07:00.972+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048827081 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.973+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048827081 204
+2026-10-26T21:07:00.997+00:00 GET MS-BEFORE C-currentTime t=1793048827110 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:00.997+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048827110 204
+2026-10-26T21:07:01.027+00:00 GET MS-AFTER C-currentTime r=0 t=1793048827138 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:01.029+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048827138 204
+2026-10-26T21:07:01.057+00:00 GET MS-APPEND issued t=1793048827167 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:01.057+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048827167 204
+2026-10-26T21:07:01.486+00:00 GET MS-BEFORE D-buffered-after-append t=1793048827595 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:01.487+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048827595 204
+2026-10-26T21:07:01.514+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048827624 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:01.515+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048827624 204
+2026-10-26T21:07:01.545+00:00 GET MS-EOS issued t=1793048827653 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:01.545+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048827653 204
+2026-10-26T21:07:01.775+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048827882 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:01.775+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048827882 204
+2026-10-26T21:07:01.808+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048827914 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:01.809+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048827914 204
+2026-10-26T21:07:01.841+00:00 GET MS-RM issued t=1793048827946 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:01.841+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048827946 204
+2026-10-26T21:07:02.100+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048828213 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:02.101+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048828213 204
+2026-10-26T21:07:02.124+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048828238 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:02.125+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048828238 204
+2026-10-26T21:07:02.149+00:00 GET MS-BEFORE G-load t=1793048828262 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:02.149+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048828262 204
+2026-10-26T21:07:02.182+00:00 GET MS-AFTER G-load r=1 t=1793048828287 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:02.182+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048828287 204
+2026-10-26T21:07:02.409+00:00 GET MS-BEFORE G-buffered-after-load t=1793048828520 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:02.410+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048828520 204
+2026-10-26T21:07:02.434+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048828547 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:02.435+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048828547 204
+2026-10-26T21:07:02.461+00:00 GET MS-DONE t=1793048828572 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:02.462+00:00 ACCESS GET /beacon/MS-DONE?t=1793048828572 204
+2026-10-26T21:07:03.312+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:03.352+00:00 GET MS-START t=1793048829457 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.353+00:00 ACCESS GET /beacon/MS-START?t=1793048829457 204
+2026-10-26T21:07:03.385+00:00 GET MS-OPEN readyState=open t=1793048829493 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.386+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048829493 204
+2026-10-26T21:07:03.416+00:00 GET MS-BEFORE A-buffered-empty t=1793048829523 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.417+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048829523 204
+2026-10-26T21:07:03.447+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048829554 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.448+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048829554 204
+2026-10-26T21:07:03.475+00:00 GET MS-BEFORE A-seekable-empty t=1793048829585 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.475+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048829585 204
+2026-10-26T21:07:03.508+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048829613 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.509+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048829613 204
+2026-10-26T21:07:03.539+00:00 GET MS-SB added t=1793048829649 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.540+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048829649 204
+2026-10-26T21:07:03.569+00:00 GET MS-BEFORE B-buffered-noappend t=1793048829677 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.569+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048829677 204
+2026-10-26T21:07:03.599+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048829708 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.599+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048829708 204
+2026-10-26T21:07:03.628+00:00 GET MS-BEFORE B-seekable-noappend t=1793048829738 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.629+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048829738 204
+2026-10-26T21:07:03.656+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048829766 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.657+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048829766 204
+2026-10-26T21:07:03.887+00:00 GET MS-BEFORE C-buffered-playing t=1793048829994 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.887+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048829994 204
+2026-10-26T21:07:03.918+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048830025 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.920+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048830025 204
+2026-10-26T21:07:03.948+00:00 GET MS-BEFORE C-currentTime t=1793048830057 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.949+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048830057 204
+2026-10-26T21:07:03.978+00:00 GET MS-AFTER C-currentTime r=0 t=1793048830087 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:03.979+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048830087 204
+2026-10-26T21:07:04.013+00:00 GET MS-APPEND issued t=1793048830118 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:04.014+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048830118 204
+2026-10-26T21:07:04.445+00:00 GET MS-BEFORE D-buffered-after-append t=1793048830551 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:04.446+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048830551 204
+2026-10-26T21:07:04.471+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048830582 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:04.472+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048830582 204
+2026-10-26T21:07:04.500+00:00 GET MS-EOS issued t=1793048830609 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:04.501+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048830609 204
+2026-10-26T21:07:04.732+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048830839 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:04.732+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048830839 204
+2026-10-26T21:07:04.758+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048830870 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:04.758+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048830870 204
+2026-10-26T21:07:04.784+00:00 GET MS-RM issued t=1793048830895 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:04.785+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048830895 204
+2026-10-26T21:07:05.011+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048831121 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:05.011+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048831121 204
+2026-10-26T21:07:05.039+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048831148 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:05.040+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048831148 204
+2026-10-26T21:07:05.065+00:00 GET MS-BEFORE G-load t=1793048831177 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:05.066+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048831177 204
+2026-10-26T21:07:05.094+00:00 GET MS-AFTER G-load r=1 t=1793048831204 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:05.095+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048831204 204
+2026-10-26T21:07:05.323+00:00 GET MS-BEFORE G-buffered-after-load t=1793048831432 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:05.323+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048831432 204
+2026-10-26T21:07:05.348+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048831460 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:05.348+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048831460 204
+2026-10-26T21:07:05.373+00:00 GET MS-DONE t=1793048831486 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:05.374+00:00 ACCESS GET /beacon/MS-DONE?t=1793048831486 204
+2026-10-26T21:07:06.231+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:06.267+00:00 GET MS-START t=1793048832377 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.267+00:00 ACCESS GET /beacon/MS-START?t=1793048832377 204
+2026-10-26T21:07:06.298+00:00 GET MS-OPEN readyState=open t=1793048832409 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.299+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048832409 204
+2026-10-26T21:07:06.327+00:00 GET MS-BEFORE A-buffered-empty t=1793048832437 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.327+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048832437 204
+2026-10-26T21:07:06.354+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048832466 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.354+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048832466 204
+2026-10-26T21:07:06.379+00:00 GET MS-BEFORE A-seekable-empty t=1793048832492 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.379+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048832492 204
+2026-10-26T21:07:06.411+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048832518 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.411+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048832518 204
+2026-10-26T21:07:06.446+00:00 GET MS-SB added t=1793048832553 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.447+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048832553 204
+2026-10-26T21:07:06.475+00:00 GET MS-BEFORE B-buffered-noappend t=1793048832584 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.477+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048832584 204
+2026-10-26T21:07:06.503+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048832614 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.504+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048832614 204
+2026-10-26T21:07:06.535+00:00 GET MS-BEFORE B-seekable-noappend t=1793048832642 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.536+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048832642 204
+2026-10-26T21:07:06.569+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048832673 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.569+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048832673 204
+2026-10-26T21:07:06.797+00:00 GET MS-BEFORE C-buffered-playing t=1793048832908 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.797+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048832908 204
+2026-10-26T21:07:06.826+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048832935 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.826+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048832935 204
+2026-10-26T21:07:06.852+00:00 GET MS-BEFORE C-currentTime t=1793048832963 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.853+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048832963 204
+2026-10-26T21:07:06.880+00:00 GET MS-AFTER C-currentTime r=0 t=1793048832991 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.882+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048832991 204
+2026-10-26T21:07:06.907+00:00 GET MS-APPEND issued t=1793048833019 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:06.908+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048833019 204
+2026-10-26T21:07:07.364+00:00 GET MS-BEFORE D-buffered-after-append t=1793048833444 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:07.364+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048833444 204
+2026-10-26T21:07:07.393+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048833502 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:07.394+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048833502 204
+2026-10-26T21:07:07.424+00:00 GET MS-EOS issued t=1793048833531 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:07.424+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048833531 204
+2026-10-26T21:07:07.656+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048833762 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:07.657+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048833762 204
+2026-10-26T21:07:07.689+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048833793 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:07.690+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048833793 204
+2026-10-26T21:07:07.716+00:00 GET MS-RM issued t=1793048833827 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:07.716+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048833827 204
+2026-10-26T21:07:07.954+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048834054 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:07.955+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048834054 204
+2026-10-26T21:07:07.988+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048834093 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:07.989+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048834093 204
+2026-10-26T21:07:08.019+00:00 GET MS-BEFORE G-load t=1793048834127 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:08.020+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048834127 204
+2026-10-26T21:07:08.049+00:00 GET MS-AFTER G-load r=1 t=1793048834158 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:08.050+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048834158 204
+2026-10-26T21:07:08.281+00:00 GET MS-BEFORE G-buffered-after-load t=1793048834387 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:08.282+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048834387 204
+2026-10-26T21:07:08.310+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048834420 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:08.311+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048834420 204
+2026-10-26T21:07:08.343+00:00 GET MS-DONE t=1793048834448 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:08.344+00:00 ACCESS GET /beacon/MS-DONE?t=1793048834448 204
+2026-10-26T21:07:09.203+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:09.253+00:00 GET MS-START t=1793048835362 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.254+00:00 ACCESS GET /beacon/MS-START?t=1793048835362 204
+2026-10-26T21:07:09.284+00:00 GET MS-OPEN readyState=open t=1793048835393 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.284+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048835393 204
+2026-10-26T21:07:09.314+00:00 GET MS-BEFORE A-buffered-empty t=1793048835421 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.314+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048835421 204
+2026-10-26T21:07:09.343+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048835451 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.344+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048835451 204
+2026-10-26T21:07:09.370+00:00 GET MS-BEFORE A-seekable-empty t=1793048835480 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.371+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048835480 204
+2026-10-26T21:07:09.399+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048835508 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.400+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048835508 204
+2026-10-26T21:07:09.434+00:00 GET MS-SB added t=1793048835540 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.434+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048835540 204
+2026-10-26T21:07:09.462+00:00 GET MS-BEFORE B-buffered-noappend t=1793048835571 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.462+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048835571 204
+2026-10-26T21:07:09.489+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048835599 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.490+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048835599 204
+2026-10-26T21:07:09.518+00:00 GET MS-BEFORE B-seekable-noappend t=1793048835626 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.518+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048835626 204
+2026-10-26T21:07:09.544+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048835655 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.545+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048835655 204
+2026-10-26T21:07:09.779+00:00 GET MS-BEFORE C-buffered-playing t=1793048835883 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.780+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048835883 204
+2026-10-26T21:07:09.807+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048835916 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.808+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048835916 204
+2026-10-26T21:07:09.837+00:00 GET MS-BEFORE C-currentTime t=1793048835945 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.837+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048835945 204
+2026-10-26T21:07:09.899+00:00 GET MS-AFTER C-currentTime r=0 t=1793048835974 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.900+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048835974 204
+2026-10-26T21:07:09.931+00:00 GET MS-APPEND issued t=1793048836041 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:09.931+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048836041 204
+2026-10-26T21:07:10.358+00:00 GET MS-BEFORE D-buffered-after-append t=1793048836468 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:10.359+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048836468 204
+2026-10-26T21:07:10.385+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048836496 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:10.385+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048836496 204
+2026-10-26T21:07:10.411+00:00 GET MS-EOS issued t=1793048836522 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:10.411+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048836522 204
+2026-10-26T21:07:10.643+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048836748 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:10.644+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048836748 204
+2026-10-26T21:07:10.669+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048836781 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:10.670+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048836781 204
+2026-10-26T21:07:10.696+00:00 GET MS-RM issued t=1793048836806 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:10.697+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048836806 204
+2026-10-26T21:07:10.926+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048837034 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:10.927+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048837034 204
+2026-10-26T21:07:10.953+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048837064 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:10.953+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048837064 204
+2026-10-26T21:07:10.975+00:00 GET MS-BEFORE G-load t=1793048837090 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:10.975+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048837090 204
+2026-10-26T21:07:11.005+00:00 GET MS-AFTER G-load r=1 t=1793048837115 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:11.006+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048837115 204
+2026-10-26T21:07:11.232+00:00 GET MS-BEFORE G-buffered-after-load t=1793048837343 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:11.233+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048837343 204
+2026-10-26T21:07:11.259+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048837369 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:11.260+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048837369 204
+2026-10-26T21:07:11.287+00:00 GET MS-DONE t=1793048837397 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:11.288+00:00 ACCESS GET /beacon/MS-DONE?t=1793048837397 204
+2026-10-26T21:07:12.136+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:12.177+00:00 GET MS-START t=1793048838283 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.178+00:00 ACCESS GET /beacon/MS-START?t=1793048838283 204
+2026-10-26T21:07:12.207+00:00 GET MS-OPEN readyState=open t=1793048838317 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.207+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048838317 204
+2026-10-26T21:07:12.236+00:00 GET MS-BEFORE A-buffered-empty t=1793048838345 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.237+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048838345 204
+2026-10-26T21:07:12.272+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048838374 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.272+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048838374 204
+2026-10-26T21:07:12.299+00:00 GET MS-BEFORE A-seekable-empty t=1793048838410 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.299+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048838410 204
+2026-10-26T21:07:12.329+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048838437 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.330+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048838437 204
+2026-10-26T21:07:12.363+00:00 GET MS-SB added t=1793048838470 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.365+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048838470 204
+2026-10-26T21:07:12.394+00:00 GET MS-BEFORE B-buffered-noappend t=1793048838502 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.394+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048838502 204
+2026-10-26T21:07:12.425+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048838531 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.426+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048838531 204
+2026-10-26T21:07:12.456+00:00 GET MS-BEFORE B-seekable-noappend t=1793048838565 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.457+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048838565 204
+2026-10-26T21:07:12.485+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048838594 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.486+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048838594 204
+2026-10-26T21:07:12.713+00:00 GET MS-BEFORE C-buffered-playing t=1793048838823 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.715+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048838823 204
+2026-10-26T21:07:12.744+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048838852 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.745+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048838852 204
+2026-10-26T21:07:12.773+00:00 GET MS-BEFORE C-currentTime t=1793048838882 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.774+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048838882 204
+2026-10-26T21:07:12.806+00:00 GET MS-AFTER C-currentTime r=0 t=1793048838911 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.806+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048838911 204
+2026-10-26T21:07:12.833+00:00 GET MS-APPEND issued t=1793048838942 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:12.835+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048838942 204
+2026-10-26T21:07:13.263+00:00 GET MS-BEFORE D-buffered-after-append t=1793048839371 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:13.263+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048839371 204
+2026-10-26T21:07:13.297+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048839401 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:13.297+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048839401 204
+2026-10-26T21:07:13.322+00:00 GET MS-EOS issued t=1793048839434 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:13.322+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048839434 204
+2026-10-26T21:07:13.555+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048839660 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:13.555+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048839660 204
+2026-10-26T21:07:13.582+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048839693 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:13.583+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048839693 204
+2026-10-26T21:07:13.618+00:00 GET MS-RM issued t=1793048839720 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:13.619+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048839720 204
+2026-10-26T21:07:13.850+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048839956 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:13.851+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048839956 204
+2026-10-26T21:07:13.887+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048839994 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:13.887+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048839994 204
+2026-10-26T21:07:13.944+00:00 GET MS-BEFORE G-load t=1793048840033 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:13.944+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048840033 204
+2026-10-26T21:07:14.059+00:00 GET MS-AFTER G-load r=1 t=1793048840083 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:14.060+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048840083 204
+2026-10-26T21:07:14.289+00:00 GET MS-BEFORE G-buffered-after-load t=1793048840398 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:14.290+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048840398 204
+2026-10-26T21:07:14.315+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048840427 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:14.316+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048840427 204
+2026-10-26T21:07:14.347+00:00 GET MS-DONE t=1793048840455 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:14.347+00:00 ACCESS GET /beacon/MS-DONE?t=1793048840455 204
+2026-10-26T21:07:15.210+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:15.263+00:00 GET MS-START t=1793048841369 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.264+00:00 ACCESS GET /beacon/MS-START?t=1793048841369 204
+2026-10-26T21:07:15.290+00:00 GET MS-OPEN readyState=open t=1793048841402 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.291+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048841402 204
+2026-10-26T21:07:15.319+00:00 GET MS-BEFORE A-buffered-empty t=1793048841429 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.319+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048841429 204
+2026-10-26T21:07:15.347+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048841457 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.349+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048841457 204
+2026-10-26T21:07:15.378+00:00 GET MS-BEFORE A-seekable-empty t=1793048841486 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.379+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048841486 204
+2026-10-26T21:07:15.406+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048841516 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.406+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048841516 204
+2026-10-26T21:07:15.435+00:00 GET MS-SB added t=1793048841547 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.437+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048841547 204
+2026-10-26T21:07:15.468+00:00 GET MS-BEFORE B-buffered-noappend t=1793048841574 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.469+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048841574 204
+2026-10-26T21:07:15.496+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048841606 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.496+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048841606 204
+2026-10-26T21:07:15.523+00:00 GET MS-BEFORE B-seekable-noappend t=1793048841633 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.524+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048841633 204
+2026-10-26T21:07:15.552+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048841660 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.552+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048841660 204
+2026-10-26T21:07:15.805+00:00 GET MS-BEFORE C-buffered-playing t=1793048841891 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.805+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048841891 204
+2026-10-26T21:07:15.830+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048841941 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.831+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048841941 204
+2026-10-26T21:07:15.885+00:00 GET MS-BEFORE C-currentTime t=1793048841968 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.885+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048841968 204
+2026-10-26T21:07:15.944+00:00 GET MS-AFTER C-currentTime r=0 t=1793048842026 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.944+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048842026 204
+2026-10-26T21:07:15.969+00:00 GET MS-APPEND issued t=1793048842081 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:15.970+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048842081 204
+2026-10-26T21:07:16.398+00:00 GET MS-BEFORE D-buffered-after-append t=1793048842507 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:16.398+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048842507 204
+2026-10-26T21:07:16.422+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048842535 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:16.422+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048842535 204
+2026-10-26T21:07:16.448+00:00 GET MS-EOS issued t=1793048842559 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:16.448+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048842559 204
+2026-10-26T21:07:16.678+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048842787 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:16.678+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048842787 204
+2026-10-26T21:07:16.710+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048842817 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:16.711+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048842817 204
+2026-10-26T21:07:16.737+00:00 GET MS-RM issued t=1793048842848 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:16.739+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048842848 204
+2026-10-26T21:07:16.973+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048843075 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:16.974+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048843075 204
+2026-10-26T21:07:17.001+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048843111 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:17.002+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048843111 204
+2026-10-26T21:07:17.031+00:00 GET MS-BEFORE G-load t=1793048843138 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:17.032+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048843138 204
+2026-10-26T21:07:17.060+00:00 GET MS-AFTER G-load r=1 t=1793048843168 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:17.061+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048843168 204
+2026-10-26T21:07:17.295+00:00 GET MS-BEFORE G-buffered-after-load t=1793048843398 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:17.296+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048843398 204
+2026-10-26T21:07:17.324+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048843432 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:17.325+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048843432 204
+2026-10-26T21:07:17.354+00:00 GET MS-DONE t=1793048843463 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:17.354+00:00 ACCESS GET /beacon/MS-DONE?t=1793048843463 204
+2026-10-26T21:07:18.210+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:18.246+00:00 GET MS-START t=1793048844355 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.247+00:00 ACCESS GET /beacon/MS-START?t=1793048844355 204
+2026-10-26T21:07:18.276+00:00 GET MS-OPEN readyState=open t=1793048844386 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.278+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048844386 204
+2026-10-26T21:07:18.310+00:00 GET MS-BEFORE A-buffered-empty t=1793048844414 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.311+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048844414 204
+2026-10-26T21:07:18.337+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048844447 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.338+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048844447 204
+2026-10-26T21:07:18.366+00:00 GET MS-BEFORE A-seekable-empty t=1793048844474 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.367+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048844474 204
+2026-10-26T21:07:18.394+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048844504 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.394+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048844504 204
+2026-10-26T21:07:18.424+00:00 GET MS-SB added t=1793048844534 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.424+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048844534 204
+2026-10-26T21:07:18.452+00:00 GET MS-BEFORE B-buffered-noappend t=1793048844561 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.453+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048844561 204
+2026-10-26T21:07:18.483+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048844590 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.484+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048844590 204
+2026-10-26T21:07:18.512+00:00 GET MS-BEFORE B-seekable-noappend t=1793048844620 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.512+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048844620 204
+2026-10-26T21:07:18.540+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048844650 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.541+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048844650 204
+2026-10-26T21:07:18.773+00:00 GET MS-BEFORE C-buffered-playing t=1793048844878 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.774+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048844878 204
+2026-10-26T21:07:18.803+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048844911 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.805+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048844911 204
+2026-10-26T21:07:18.835+00:00 GET MS-BEFORE C-currentTime t=1793048844942 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.836+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048844942 204
+2026-10-26T21:07:18.872+00:00 GET MS-AFTER C-currentTime r=0 t=1793048844974 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.872+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048844974 204
+2026-10-26T21:07:18.896+00:00 GET MS-APPEND issued t=1793048845009 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:18.897+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048845009 204
+2026-10-26T21:07:19.327+00:00 GET MS-BEFORE D-buffered-after-append t=1793048845435 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:19.327+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048845435 204
+2026-10-26T21:07:19.356+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048845464 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:19.356+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048845464 204
+2026-10-26T21:07:19.383+00:00 GET MS-EOS issued t=1793048845494 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:19.384+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048845494 204
+2026-10-26T21:07:19.617+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048845723 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:19.618+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048845723 204
+2026-10-26T21:07:19.647+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048845755 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:19.648+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048845755 204
+2026-10-26T21:07:19.676+00:00 GET MS-RM issued t=1793048845785 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:19.677+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048845785 204
+2026-10-26T21:07:19.906+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048846014 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:19.906+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048846014 204
+2026-10-26T21:07:19.938+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048846048 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:19.939+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048846048 204
+2026-10-26T21:07:19.968+00:00 GET MS-BEFORE G-load t=1793048846077 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:19.969+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048846077 204
+2026-10-26T21:07:19.997+00:00 GET MS-AFTER G-load r=1 t=1793048846106 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:19.998+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048846106 204
+2026-10-26T21:07:20.228+00:00 GET MS-BEFORE G-buffered-after-load t=1793048846335 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:20.228+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048846335 204
+2026-10-26T21:07:20.255+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048846365 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:20.256+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048846365 204
+2026-10-26T21:07:20.286+00:00 GET MS-DONE t=1793048846393 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:20.286+00:00 ACCESS GET /beacon/MS-DONE?t=1793048846393 204
+2026-10-26T21:07:21.148+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:21.196+00:00 GET MS-START t=1793048847308 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.198+00:00 ACCESS GET /beacon/MS-START?t=1793048847308 204
+2026-10-26T21:07:21.226+00:00 GET MS-OPEN readyState=open t=1793048847337 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.227+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048847337 204
+2026-10-26T21:07:21.250+00:00 GET MS-BEFORE A-buffered-empty t=1793048847364 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.251+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048847364 204
+2026-10-26T21:07:21.273+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048847388 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.274+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048847388 204
+2026-10-26T21:07:21.301+00:00 GET MS-BEFORE A-seekable-empty t=1793048847412 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.301+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048847412 204
+2026-10-26T21:07:21.325+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048847438 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.326+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048847438 204
+2026-10-26T21:07:21.359+00:00 GET MS-SB added t=1793048847467 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.359+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048847467 204
+2026-10-26T21:07:21.387+00:00 GET MS-BEFORE B-buffered-noappend t=1793048847496 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.387+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048847496 204
+2026-10-26T21:07:21.421+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048847525 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.422+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048847525 204
+2026-10-26T21:07:21.452+00:00 GET MS-BEFORE B-seekable-noappend t=1793048847560 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.453+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048847560 204
+2026-10-26T21:07:21.481+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048847589 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.482+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048847589 204
+2026-10-26T21:07:21.713+00:00 GET MS-BEFORE C-buffered-playing t=1793048847818 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.714+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048847818 204
+2026-10-26T21:07:21.743+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048847851 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.744+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048847851 204
+2026-10-26T21:07:21.796+00:00 GET MS-BEFORE C-currentTime t=1793048847881 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.796+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048847881 204
+2026-10-26T21:07:21.824+00:00 GET MS-AFTER C-currentTime r=0 t=1793048847932 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.825+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048847932 204
+2026-10-26T21:07:21.850+00:00 GET MS-APPEND issued t=1793048847961 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:21.851+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048847961 204
+2026-10-26T21:07:22.285+00:00 GET MS-BEFORE D-buffered-after-append t=1793048848394 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:22.285+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048848394 204
+2026-10-26T21:07:22.314+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048848423 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:22.315+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048848423 204
+2026-10-26T21:07:22.341+00:00 GET MS-EOS issued t=1793048848451 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:22.342+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048848451 204
+2026-10-26T21:07:22.572+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048848679 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:22.573+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048848679 204
+2026-10-26T21:07:22.600+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048848710 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:22.600+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048848710 204
+2026-10-26T21:07:22.632+00:00 GET MS-RM issued t=1793048848740 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:22.632+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048848740 204
+2026-10-26T21:07:22.864+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048848972 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:22.864+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048848972 204
+2026-10-26T21:07:22.897+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048849001 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:22.898+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048849001 204
+2026-10-26T21:07:22.927+00:00 GET MS-BEFORE G-load t=1793048849034 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:22.928+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048849034 204
+2026-10-26T21:07:22.957+00:00 GET MS-AFTER G-load r=1 t=1793048849065 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:22.957+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048849065 204
+2026-10-26T21:07:23.192+00:00 GET MS-BEFORE G-buffered-after-load t=1793048849295 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:23.192+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048849295 204
+2026-10-26T21:07:23.219+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048849329 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:23.219+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048849329 204
+2026-10-26T21:07:23.246+00:00 GET MS-DONE t=1793048849356 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:23.247+00:00 ACCESS GET /beacon/MS-DONE?t=1793048849356 204
+2026-10-26T21:07:24.104+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:24.154+00:00 GET MS-START t=1793048850261 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.155+00:00 ACCESS GET /beacon/MS-START?t=1793048850261 204
+2026-10-26T21:07:24.185+00:00 GET MS-OPEN readyState=open t=1793048850294 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.186+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048850294 204
+2026-10-26T21:07:24.215+00:00 GET MS-BEFORE A-buffered-empty t=1793048850324 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.216+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048850324 204
+2026-10-26T21:07:24.244+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048850352 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.245+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048850352 204
+2026-10-26T21:07:24.273+00:00 GET MS-BEFORE A-seekable-empty t=1793048850381 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.274+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048850381 204
+2026-10-26T21:07:24.303+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048850411 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.303+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048850411 204
+2026-10-26T21:07:24.336+00:00 GET MS-SB added t=1793048850444 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.337+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048850444 204
+2026-10-26T21:07:24.368+00:00 GET MS-BEFORE B-buffered-noappend t=1793048850473 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.369+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048850473 204
+2026-10-26T21:07:24.396+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048850506 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.397+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048850506 204
+2026-10-26T21:07:24.451+00:00 GET MS-BEFORE B-seekable-noappend t=1793048850534 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.451+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048850534 204
+2026-10-26T21:07:24.479+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048850587 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.480+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048850587 204
+2026-10-26T21:07:24.709+00:00 GET MS-BEFORE C-buffered-playing t=1793048850817 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.711+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048850817 204
+2026-10-26T21:07:24.738+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048850847 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.738+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048850847 204
+2026-10-26T21:07:24.763+00:00 GET MS-BEFORE C-currentTime t=1793048850875 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.764+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048850875 204
+2026-10-26T21:07:24.790+00:00 GET MS-AFTER C-currentTime r=0 t=1793048850900 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.791+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048850900 204
+2026-10-26T21:07:24.820+00:00 GET MS-APPEND issued t=1793048850928 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:24.821+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048850928 204
+2026-10-26T21:07:25.251+00:00 GET MS-BEFORE D-buffered-after-append t=1793048851358 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:25.252+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048851358 204
+2026-10-26T21:07:25.282+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048851389 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:25.282+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048851389 204
+2026-10-26T21:07:25.313+00:00 GET MS-EOS issued t=1793048851419 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:25.314+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048851419 204
+2026-10-26T21:07:25.543+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048851651 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:25.544+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048851651 204
+2026-10-26T21:07:25.572+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048851681 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:25.572+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048851681 204
+2026-10-26T21:07:25.601+00:00 GET MS-RM issued t=1793048851710 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:25.602+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048851710 204
+2026-10-26T21:07:25.834+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048851939 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:25.834+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048851939 204
+2026-10-26T21:07:25.872+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048851971 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:25.873+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048851971 204
+2026-10-26T21:07:25.942+00:00 GET MS-BEFORE G-load t=1793048852013 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:25.943+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048852013 204
+2026-10-26T21:07:25.970+00:00 GET MS-AFTER G-load r=1 t=1793048852079 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:25.971+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048852079 204
+2026-10-26T21:07:26.200+00:00 GET MS-BEFORE G-buffered-after-load t=1793048852308 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:26.201+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048852308 204
+2026-10-26T21:07:26.228+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048852337 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:26.228+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048852337 204
+2026-10-26T21:07:26.263+00:00 GET MS-DONE t=1793048852365 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:26.263+00:00 ACCESS GET /beacon/MS-DONE?t=1793048852365 204
+2026-10-26T21:07:27.120+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:27.155+00:00 GET MS-START t=1793048853264 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.155+00:00 ACCESS GET /beacon/MS-START?t=1793048853264 204
+2026-10-26T21:07:27.188+00:00 GET MS-OPEN readyState=open t=1793048853295 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.188+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048853295 204
+2026-10-26T21:07:27.220+00:00 GET MS-BEFORE A-buffered-empty t=1793048853325 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.221+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048853325 204
+2026-10-26T21:07:27.247+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048853358 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.247+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048853358 204
+2026-10-26T21:07:27.275+00:00 GET MS-BEFORE A-seekable-empty t=1793048853384 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.276+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048853384 204
+2026-10-26T21:07:27.301+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048853412 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.303+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048853412 204
+2026-10-26T21:07:27.337+00:00 GET MS-SB added t=1793048853444 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.337+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048853444 204
+2026-10-26T21:07:27.363+00:00 GET MS-BEFORE B-buffered-noappend t=1793048853473 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.365+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048853473 204
+2026-10-26T21:07:27.389+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048853501 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.390+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048853501 204
+2026-10-26T21:07:27.416+00:00 GET MS-BEFORE B-seekable-noappend t=1793048853527 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.417+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048853527 204
+2026-10-26T21:07:27.446+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048853555 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.446+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048853555 204
+2026-10-26T21:07:27.677+00:00 GET MS-BEFORE C-buffered-playing t=1793048853783 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.677+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048853783 204
+2026-10-26T21:07:27.703+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048853814 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.703+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048853814 204
+2026-10-26T21:07:27.732+00:00 GET MS-BEFORE C-currentTime t=1793048853842 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.732+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048853842 204
+2026-10-26T21:07:27.772+00:00 GET MS-AFTER C-currentTime r=0 t=1793048853879 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.773+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048853879 204
+2026-10-26T21:07:27.798+00:00 GET MS-APPEND issued t=1793048853910 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:27.799+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048853910 204
+2026-10-26T21:07:28.228+00:00 GET MS-BEFORE D-buffered-after-append t=1793048854335 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:28.228+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048854335 204
+2026-10-26T21:07:28.276+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048854366 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:28.277+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048854366 204
+2026-10-26T21:07:28.305+00:00 GET MS-EOS issued t=1793048854414 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:28.306+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048854414 204
+2026-10-26T21:07:28.535+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048854644 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:28.535+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048854644 204
+2026-10-26T21:07:28.564+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048854672 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:28.564+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048854672 204
+2026-10-26T21:07:28.592+00:00 GET MS-RM issued t=1793048854702 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:28.593+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048854702 204
+2026-10-26T21:07:28.824+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048854929 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:28.824+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048854929 204
+2026-10-26T21:07:28.853+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048854961 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:28.853+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048854961 204
+2026-10-26T21:07:28.881+00:00 GET MS-BEFORE G-load t=1793048854991 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:28.882+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048854991 204
+2026-10-26T21:07:28.914+00:00 GET MS-AFTER G-load r=1 t=1793048855020 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:28.914+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048855020 204
+2026-10-26T21:07:29.144+00:00 GET MS-BEFORE G-buffered-after-load t=1793048855250 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:29.145+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048855250 204
+2026-10-26T21:07:29.169+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048855281 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:29.169+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048855281 204
+2026-10-26T21:07:29.199+00:00 GET MS-DONE t=1793048855307 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:29.200+00:00 ACCESS GET /beacon/MS-DONE?t=1793048855307 204
+2026-10-26T21:07:30.060+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:30.113+00:00 GET MS-START t=1793048856217 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.114+00:00 ACCESS GET /beacon/MS-START?t=1793048856217 204
+2026-10-26T21:07:30.149+00:00 GET MS-OPEN readyState=open t=1793048856252 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.150+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048856252 204
+2026-10-26T21:07:30.176+00:00 GET MS-BEFORE A-buffered-empty t=1793048856287 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.176+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048856287 204
+2026-10-26T21:07:30.207+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048856313 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.209+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048856313 204
+2026-10-26T21:07:30.234+00:00 GET MS-BEFORE A-seekable-empty t=1793048856345 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.235+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048856345 204
+2026-10-26T21:07:30.265+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048856373 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.266+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048856373 204
+2026-10-26T21:07:30.299+00:00 GET MS-SB added t=1793048856406 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.300+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048856406 204
+2026-10-26T21:07:30.328+00:00 GET MS-BEFORE B-buffered-noappend t=1793048856437 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.328+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048856437 204
+2026-10-26T21:07:30.358+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048856465 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.359+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048856465 204
+2026-10-26T21:07:30.388+00:00 GET MS-BEFORE B-seekable-noappend t=1793048856497 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.389+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048856497 204
+2026-10-26T21:07:30.416+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048856525 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.416+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048856525 204
+2026-10-26T21:07:30.648+00:00 GET MS-BEFORE C-buffered-playing t=1793048856753 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.648+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048856753 204
+2026-10-26T21:07:30.678+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048856784 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.678+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048856784 204
+2026-10-26T21:07:30.705+00:00 GET MS-BEFORE C-currentTime t=1793048856815 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.706+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048856815 204
+2026-10-26T21:07:30.730+00:00 GET MS-AFTER C-currentTime r=0 t=1793048856842 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.731+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048856842 204
+2026-10-26T21:07:30.760+00:00 GET MS-APPEND issued t=1793048856867 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:30.761+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048856867 204
+2026-10-26T21:07:31.192+00:00 GET MS-BEFORE D-buffered-after-append t=1793048857299 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:31.193+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048857299 204
+2026-10-26T21:07:31.221+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048857329 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:31.222+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048857329 204
+2026-10-26T21:07:31.251+00:00 GET MS-EOS issued t=1793048857360 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:31.252+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048857360 204
+2026-10-26T21:07:31.484+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048857589 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:31.485+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048857589 204
+2026-10-26T21:07:31.512+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048857622 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:31.513+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048857622 204
+2026-10-26T21:07:31.546+00:00 GET MS-RM issued t=1793048857651 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:31.547+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048857651 204
+2026-10-26T21:07:31.780+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048857883 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:31.780+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048857883 204
+2026-10-26T21:07:31.810+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048857917 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:31.810+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048857917 204
+2026-10-26T21:07:31.841+00:00 GET MS-BEFORE G-load t=1793048857946 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:31.842+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048857946 204
+2026-10-26T21:07:31.940+00:00 GET MS-AFTER G-load r=1 t=1793048857978 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:31.941+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048857978 204
+2026-10-26T21:07:32.168+00:00 GET MS-BEFORE G-buffered-after-load t=1793048858277 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:32.168+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048858277 204
+2026-10-26T21:07:32.197+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048858305 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:32.198+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048858305 204
+2026-10-26T21:07:32.228+00:00 GET MS-DONE t=1793048858335 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:32.228+00:00 ACCESS GET /beacon/MS-DONE?t=1793048858335 204
+2026-10-26T21:07:33.089+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:33.128+00:00 GET MS-START t=1793048859236 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.129+00:00 ACCESS GET /beacon/MS-START?t=1793048859236 204
+2026-10-26T21:07:33.157+00:00 GET MS-OPEN readyState=open t=1793048859267 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.157+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048859267 204
+2026-10-26T21:07:33.184+00:00 GET MS-BEFORE A-buffered-empty t=1793048859294 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.185+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048859294 204
+2026-10-26T21:07:33.212+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048859322 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.213+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048859322 204
+2026-10-26T21:07:33.239+00:00 GET MS-BEFORE A-seekable-empty t=1793048859349 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.240+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048859349 204
+2026-10-26T21:07:33.268+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048859376 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.270+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048859376 204
+2026-10-26T21:07:33.300+00:00 GET MS-SB added t=1793048859409 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.301+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048859409 204
+2026-10-26T21:07:33.326+00:00 GET MS-BEFORE B-buffered-noappend t=1793048859438 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.327+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048859438 204
+2026-10-26T21:07:33.354+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048859464 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.355+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048859464 204
+2026-10-26T21:07:33.382+00:00 GET MS-BEFORE B-seekable-noappend t=1793048859492 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.383+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048859492 204
+2026-10-26T21:07:33.409+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048859519 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.410+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048859519 204
+2026-10-26T21:07:33.636+00:00 GET MS-BEFORE C-buffered-playing t=1793048859748 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.637+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048859748 204
+2026-10-26T21:07:33.662+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048859774 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.663+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048859774 204
+2026-10-26T21:07:33.690+00:00 GET MS-BEFORE C-currentTime t=1793048859800 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.691+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048859800 204
+2026-10-26T21:07:33.717+00:00 GET MS-AFTER C-currentTime r=0 t=1793048859828 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.717+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048859828 204
+2026-10-26T21:07:33.742+00:00 GET MS-APPEND issued t=1793048859854 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:33.743+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048859854 204
+2026-10-26T21:07:34.182+00:00 GET MS-BEFORE D-buffered-after-append t=1793048860289 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:34.183+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048860289 204
+2026-10-26T21:07:34.213+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048860321 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:34.214+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048860321 204
+2026-10-26T21:07:34.242+00:00 GET MS-EOS issued t=1793048860351 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:34.243+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048860351 204
+2026-10-26T21:07:34.474+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048860579 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:34.475+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048860579 204
+2026-10-26T21:07:34.505+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048860612 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:34.506+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048860612 204
+2026-10-26T21:07:34.532+00:00 GET MS-RM issued t=1793048860642 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:34.532+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048860642 204
+2026-10-26T21:07:34.761+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048860869 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:34.761+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048860869 204
+2026-10-26T21:07:34.790+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048860899 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:34.791+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048860899 204
+2026-10-26T21:07:34.822+00:00 GET MS-BEFORE G-load t=1793048860928 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:34.822+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048860928 204
+2026-10-26T21:07:34.850+00:00 GET MS-AFTER G-load r=1 t=1793048860960 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:34.851+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048860960 204
+2026-10-26T21:07:35.085+00:00 GET MS-BEFORE G-buffered-after-load t=1793048861189 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:35.086+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048861189 204
+2026-10-26T21:07:35.113+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048861224 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:35.113+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048861224 204
+2026-10-26T21:07:35.144+00:00 GET MS-DONE t=1793048861250 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:35.145+00:00 ACCESS GET /beacon/MS-DONE?t=1793048861250 204
+2026-10-26T21:07:35.995+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:36.031+00:00 GET MS-START t=1793048862139 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.032+00:00 ACCESS GET /beacon/MS-START?t=1793048862139 204
+2026-10-26T21:07:36.061+00:00 GET MS-OPEN readyState=open t=1793048862170 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.061+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048862170 204
+2026-10-26T21:07:36.092+00:00 GET MS-BEFORE A-buffered-empty t=1793048862198 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.093+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048862198 204
+2026-10-26T21:07:36.121+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048862230 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.122+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048862230 204
+2026-10-26T21:07:36.157+00:00 GET MS-BEFORE A-seekable-empty t=1793048862259 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.158+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048862259 204
+2026-10-26T21:07:36.193+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048862295 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.194+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048862295 204
+2026-10-26T21:07:36.227+00:00 GET MS-SB added t=1793048862333 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.228+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048862333 204
+2026-10-26T21:07:36.257+00:00 GET MS-BEFORE B-buffered-noappend t=1793048862365 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.258+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048862365 204
+2026-10-26T21:07:36.290+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048862395 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.291+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048862395 204
+2026-10-26T21:07:36.321+00:00 GET MS-BEFORE B-seekable-noappend t=1793048862427 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.322+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048862427 204
+2026-10-26T21:07:36.347+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048862458 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.348+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048862458 204
+2026-10-26T21:07:36.578+00:00 GET MS-BEFORE C-buffered-playing t=1793048862684 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.578+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048862684 204
+2026-10-26T21:07:36.606+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048862714 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.607+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048862714 204
+2026-10-26T21:07:36.634+00:00 GET MS-BEFORE C-currentTime t=1793048862743 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.635+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048862743 204
+2026-10-26T21:07:36.664+00:00 GET MS-AFTER C-currentTime r=0 t=1793048862772 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.665+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048862772 204
+2026-10-26T21:07:36.694+00:00 GET MS-APPEND issued t=1793048862801 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:36.695+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048862801 204
+2026-10-26T21:07:37.157+00:00 GET MS-BEFORE D-buffered-after-append t=1793048863231 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:37.159+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048863231 204
+2026-10-26T21:07:37.190+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048863295 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:37.190+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048863295 204
+2026-10-26T21:07:37.218+00:00 GET MS-EOS issued t=1793048863327 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:37.219+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048863327 204
+2026-10-26T21:07:37.447+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048863556 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:37.448+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048863556 204
+2026-10-26T21:07:37.485+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048863584 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:37.486+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048863584 204
+2026-10-26T21:07:37.512+00:00 GET MS-RM issued t=1793048863622 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:37.513+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048863622 204
+2026-10-26T21:07:37.744+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048863849 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:37.744+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048863849 204
+2026-10-26T21:07:37.797+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048863889 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:37.798+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048863889 204
+2026-10-26T21:07:37.825+00:00 GET MS-BEFORE G-load t=1793048863934 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:37.826+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048863934 204
+2026-10-26T21:07:37.855+00:00 GET MS-AFTER G-load r=1 t=1793048863962 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:37.856+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048863962 204
+2026-10-26T21:07:38.085+00:00 GET MS-BEFORE G-buffered-after-load t=1793048864193 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:38.085+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048864193 204
+2026-10-26T21:07:38.117+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048864223 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:38.118+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048864223 204
+2026-10-26T21:07:38.144+00:00 GET MS-DONE t=1793048864254 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:38.145+00:00 ACCESS GET /beacon/MS-DONE?t=1793048864254 204
+2026-10-26T21:07:38.999+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:39.034+00:00 GET MS-START t=1793048865142 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.035+00:00 ACCESS GET /beacon/MS-START?t=1793048865142 204
+2026-10-26T21:07:39.065+00:00 GET MS-OPEN readyState=open t=1793048865174 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.066+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048865174 204
+2026-10-26T21:07:39.094+00:00 GET MS-BEFORE A-buffered-empty t=1793048865202 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.095+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048865202 204
+2026-10-26T21:07:39.125+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048865231 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.126+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048865231 204
+2026-10-26T21:07:39.152+00:00 GET MS-BEFORE A-seekable-empty t=1793048865262 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.153+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048865262 204
+2026-10-26T21:07:39.178+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048865289 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.178+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048865289 204
+2026-10-26T21:07:39.210+00:00 GET MS-SB added t=1793048865318 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.211+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048865318 204
+2026-10-26T21:07:39.238+00:00 GET MS-BEFORE B-buffered-noappend t=1793048865347 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.238+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048865347 204
+2026-10-26T21:07:39.261+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048865375 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.262+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048865375 204
+2026-10-26T21:07:39.294+00:00 GET MS-BEFORE B-seekable-noappend t=1793048865398 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.294+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048865398 204
+2026-10-26T21:07:39.321+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048865430 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.323+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048865430 204
+2026-10-26T21:07:39.550+00:00 GET MS-BEFORE C-buffered-playing t=1793048865659 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.551+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048865659 204
+2026-10-26T21:07:39.579+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048865687 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.579+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048865687 204
+2026-10-26T21:07:39.609+00:00 GET MS-BEFORE C-currentTime t=1793048865715 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.609+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048865715 204
+2026-10-26T21:07:39.636+00:00 GET MS-AFTER C-currentTime r=0 t=1793048865745 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.636+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048865745 204
+2026-10-26T21:07:39.665+00:00 GET MS-APPEND issued t=1793048865772 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:39.665+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048865772 204
+2026-10-26T21:07:40.096+00:00 GET MS-BEFORE D-buffered-after-append t=1793048866201 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:40.097+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048866201 204
+2026-10-26T21:07:40.126+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048866233 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:40.127+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048866233 204
+2026-10-26T21:07:40.156+00:00 GET MS-EOS issued t=1793048866263 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:40.157+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048866263 204
+2026-10-26T21:07:40.387+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048866493 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:40.388+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048866493 204
+2026-10-26T21:07:40.413+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048866524 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:40.414+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048866524 204
+2026-10-26T21:07:40.440+00:00 GET MS-RM issued t=1793048866550 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:40.440+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048866550 204
+2026-10-26T21:07:40.725+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048866777 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:40.725+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048866777 204
+2026-10-26T21:07:40.764+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048866864 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:40.766+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048866864 204
+2026-10-26T21:07:40.805+00:00 GET MS-BEFORE G-load t=1793048866905 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:40.806+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048866905 204
+2026-10-26T21:07:40.850+00:00 GET MS-AFTER G-load r=1 t=1793048866943 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:40.851+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048866943 204
+2026-10-26T21:07:41.101+00:00 GET MS-BEFORE G-buffered-after-load t=1793048867187 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:41.102+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048867187 204
+2026-10-26T21:07:41.130+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048867238 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:41.130+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048867238 204
+2026-10-26T21:07:41.157+00:00 GET MS-DONE t=1793048867266 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:41.157+00:00 ACCESS GET /beacon/MS-DONE?t=1793048867266 204
+2026-10-26T21:07:42.019+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:42.055+00:00 GET MS-START t=1793048868162 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.056+00:00 ACCESS GET /beacon/MS-START?t=1793048868162 204
+2026-10-26T21:07:42.086+00:00 GET MS-OPEN readyState=open t=1793048868194 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.087+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048868194 204
+2026-10-26T21:07:42.120+00:00 GET MS-BEFORE A-buffered-empty t=1793048868223 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.121+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048868223 204
+2026-10-26T21:07:42.148+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048868257 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.148+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048868257 204
+2026-10-26T21:07:42.179+00:00 GET MS-BEFORE A-seekable-empty t=1793048868286 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.180+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048868286 204
+2026-10-26T21:07:42.207+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048868317 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.208+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048868317 204
+2026-10-26T21:07:42.240+00:00 GET MS-SB added t=1793048868348 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.241+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048868348 204
+2026-10-26T21:07:42.268+00:00 GET MS-BEFORE B-buffered-noappend t=1793048868377 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.269+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048868377 204
+2026-10-26T21:07:42.316+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048868404 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.316+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048868404 204
+2026-10-26T21:07:42.431+00:00 GET MS-BEFORE B-seekable-noappend t=1793048868467 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.432+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048868467 204
+2026-10-26T21:07:42.461+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048868570 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.462+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048868570 204
+2026-10-26T21:07:42.689+00:00 GET MS-BEFORE C-buffered-playing t=1793048868798 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.690+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048868798 204
+2026-10-26T21:07:42.718+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048868826 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.718+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048868826 204
+2026-10-26T21:07:42.747+00:00 GET MS-BEFORE C-currentTime t=1793048868856 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.747+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048868856 204
+2026-10-26T21:07:42.779+00:00 GET MS-AFTER C-currentTime r=0 t=1793048868885 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.779+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048868885 204
+2026-10-26T21:07:42.806+00:00 GET MS-APPEND issued t=1793048868916 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:42.807+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048868916 204
+2026-10-26T21:07:43.236+00:00 GET MS-BEFORE D-buffered-after-append t=1793048869344 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:43.236+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048869344 204
+2026-10-26T21:07:43.265+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048869374 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:43.266+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048869374 204
+2026-10-26T21:07:43.293+00:00 GET MS-EOS issued t=1793048869401 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:43.294+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048869401 204
+2026-10-26T21:07:43.541+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048869631 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:43.542+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048869631 204
+2026-10-26T21:07:43.566+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048869679 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:43.567+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048869679 204
+2026-10-26T21:07:43.594+00:00 GET MS-RM issued t=1793048869703 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:43.594+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048869703 204
+2026-10-26T21:07:43.824+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048869930 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:43.825+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048869930 204
+2026-10-26T21:07:43.851+00:00 GET MS-AFTER F-buffered-after-remove r=0 t=1793048869961 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:43.852+00:00 ACCESS GET /beacon/MS-AFTER%20F-buffered-after-remove%20r%3D0?t=1793048869961 204
+2026-10-26T21:07:43.880+00:00 GET MS-BEFORE G-load t=1793048869989 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:43.880+00:00 ACCESS GET /beacon/MS-BEFORE%20G-load?t=1793048869989 204
+2026-10-26T21:07:43.912+00:00 GET MS-AFTER G-load r=1 t=1793048870017 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:43.913+00:00 ACCESS GET /beacon/MS-AFTER%20G-load%20r%3D1?t=1793048870017 204
+2026-10-26T21:07:44.148+00:00 GET MS-BEFORE G-buffered-after-load t=1793048870250 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:44.148+00:00 ACCESS GET /beacon/MS-BEFORE%20G-buffered-after-load?t=1793048870250 204
+2026-10-26T21:07:44.178+00:00 GET MS-AFTER G-buffered-after-load r=0 t=1793048870286 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:44.180+00:00 ACCESS GET /beacon/MS-AFTER%20G-buffered-after-load%20r%3D0?t=1793048870286 204
+2026-10-26T21:07:44.207+00:00 GET MS-DONE t=1793048870317 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:44.208+00:00 ACCESS GET /beacon/MS-DONE?t=1793048870317 204
+2026-10-26T21:07:45.069+00:00 ACCESS GET /corpus/poc-msbuf.html?t=1793048817524 200
+2026-10-26T21:07:45.107+00:00 GET MS-START t=1793048871215 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.107+00:00 ACCESS GET /beacon/MS-START?t=1793048871215 204
+2026-10-26T21:07:45.144+00:00 GET MS-OPEN readyState=open t=1793048871247 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.144+00:00 ACCESS GET /beacon/MS-OPEN%20readyState%3Dopen?t=1793048871247 204
+2026-10-26T21:07:45.173+00:00 GET MS-BEFORE A-buffered-empty t=1793048871281 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.175+00:00 ACCESS GET /beacon/MS-BEFORE%20A-buffered-empty?t=1793048871281 204
+2026-10-26T21:07:45.203+00:00 GET MS-AFTER A-buffered-empty r=0 t=1793048871310 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.204+00:00 ACCESS GET /beacon/MS-AFTER%20A-buffered-empty%20r%3D0?t=1793048871310 204
+2026-10-26T21:07:45.231+00:00 GET MS-BEFORE A-seekable-empty t=1793048871339 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.231+00:00 ACCESS GET /beacon/MS-BEFORE%20A-seekable-empty?t=1793048871339 204
+2026-10-26T21:07:45.285+00:00 GET MS-AFTER A-seekable-empty r=0 t=1793048871367 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.285+00:00 ACCESS GET /beacon/MS-AFTER%20A-seekable-empty%20r%3D0?t=1793048871367 204
+2026-10-26T21:07:45.326+00:00 GET MS-SB added t=1793048871426 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.327+00:00 ACCESS GET /beacon/MS-SB%20added?t=1793048871426 204
+2026-10-26T21:07:45.356+00:00 GET MS-BEFORE B-buffered-noappend t=1793048871464 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.357+00:00 ACCESS GET /beacon/MS-BEFORE%20B-buffered-noappend?t=1793048871464 204
+2026-10-26T21:07:45.439+00:00 GET MS-AFTER B-buffered-noappend r=0 t=1793048871494 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.440+00:00 ACCESS GET /beacon/MS-AFTER%20B-buffered-noappend%20r%3D0?t=1793048871494 204
+2026-10-26T21:07:45.491+00:00 GET MS-BEFORE B-seekable-noappend t=1793048871597 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.492+00:00 ACCESS GET /beacon/MS-BEFORE%20B-seekable-noappend?t=1793048871597 204
+2026-10-26T21:07:45.518+00:00 GET MS-AFTER B-seekable-noappend r=0 t=1793048871628 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.518+00:00 ACCESS GET /beacon/MS-AFTER%20B-seekable-noappend%20r%3D0?t=1793048871628 204
+2026-10-26T21:07:45.772+00:00 GET MS-BEFORE C-buffered-playing t=1793048871855 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.773+00:00 ACCESS GET /beacon/MS-BEFORE%20C-buffered-playing?t=1793048871855 204
+2026-10-26T21:07:45.801+00:00 GET MS-AFTER C-buffered-playing r=0 t=1793048871909 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.802+00:00 ACCESS GET /beacon/MS-AFTER%20C-buffered-playing%20r%3D0?t=1793048871909 204
+2026-10-26T21:07:45.828+00:00 GET MS-BEFORE C-currentTime t=1793048871939 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.829+00:00 ACCESS GET /beacon/MS-BEFORE%20C-currentTime?t=1793048871939 204
+2026-10-26T21:07:45.856+00:00 GET MS-AFTER C-currentTime r=0 t=1793048871966 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.857+00:00 ACCESS GET /beacon/MS-AFTER%20C-currentTime%20r%3D0?t=1793048871966 204
+2026-10-26T21:07:45.967+00:00 GET MS-APPEND issued t=1793048871994 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:45.968+00:00 ACCESS GET /beacon/MS-APPEND%20issued?t=1793048871994 204
+2026-10-26T21:07:46.435+00:00 GET MS-BEFORE D-buffered-after-append t=1793048872505 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:46.436+00:00 ACCESS GET /beacon/MS-BEFORE%20D-buffered-after-append?t=1793048872505 204
+2026-10-26T21:07:46.481+00:00 GET MS-AFTER D-buffered-after-append r=0 t=1793048872588 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:46.482+00:00 ACCESS GET /beacon/MS-AFTER%20D-buffered-after-append%20r%3D0?t=1793048872588 204
+2026-10-26T21:07:46.511+00:00 GET MS-EOS issued t=1793048872619 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:46.512+00:00 ACCESS GET /beacon/MS-EOS%20issued?t=1793048872619 204
+2026-10-26T21:07:46.741+00:00 GET MS-BEFORE E-buffered-after-eos t=1793048872848 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:46.741+00:00 ACCESS GET /beacon/MS-BEFORE%20E-buffered-after-eos?t=1793048872848 204
+2026-10-26T21:07:46.772+00:00 GET MS-AFTER E-buffered-after-eos r=0 t=1793048872878 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:46.772+00:00 ACCESS GET /beacon/MS-AFTER%20E-buffered-after-eos%20r%3D0?t=1793048872878 204
+2026-10-26T21:07:46.800+00:00 GET MS-RM issued t=1793048872908 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:46.801+00:00 ACCESS GET /beacon/MS-RM%20issued?t=1793048872908 204
+2026-10-26T21:07:47.030+00:00 GET MS-BEFORE F-buffered-after-remove t=1793048873137 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-26T21:07:47.030+00:00 ACCESS GET /beacon/MS-BEFORE%20F-buffered-after-remove?t=1793048873137 204

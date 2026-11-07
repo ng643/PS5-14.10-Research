@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><title>jit2</title>
+<script>
+function b(t){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+encodeURIComponent(t)+'?t='+Date.now(),false);x.send();}catch(e){}}
+b('J2-S');
+var A = new Int32Array(256); for (var i=0;i<256;i++) A[i]=i;
+function hot(n){ var s=0; for (var i=0;i<n;i++) s = (s + A[i & 255]) | 0; return s; }
+function timeIt(n){ var t=Date.now(); var v=hot(n); return (Date.now()-t) + ':' + (v|0); }
+var N = 20000000, runs = [];
+for (var k=0;k<4;k++) runs.push(timeIt(N));
+b('J2-SPEED:n=' + N + ',runs=' + runs.join('/'));
+var F = new Float64Array(256); for (var i=0;i<256;i++) F[i]=i*0.5;
+function hotf(n){ var s=0; for (var i=0;i<n;i++) s += F[i & 255]; return s; }
+function timeF(n){ var t=Date.now(); hotf(n); return Date.now()-t; }
+var fr=[]; for (var k=0;k<4;k++) fr.push(timeF(N));
+b('J2-FLOAT:runs=' + fr.join('/'));
+b('J2-DONE');
+setTimeout(function(){ location.replace('about:blank'); }, 300);
+</script>

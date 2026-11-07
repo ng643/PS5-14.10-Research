@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>bmp rle24 oracle</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function px(img,x0,n){try{var c=document.createElement('canvas');c.width=img.naturalWidth;c.height=1;
+var g=c.getContext('2d');g.drawImage(img,0,0);var d=g.getImageData(x0,0,n,1).data,o=[];
+for(var i=0;i<d.length;i+=4)o.push(('0'+d[i].toString(16)).slice(-2)+('0'+d[i+1].toString(16)).slice(-2)+('0'+d[i+2].toString(16)).slice(-2));
+return o.join('.');}catch(e){return 'EX:'+e.name;}}
+b('V2-BEFORE');
+</script>
+<img id="a" src="/corpus/bmp-a-w1000-x900.bmp" onload="b('V2-A-OK-'+px(this,900,3))" onerror="b('V2-A-ERR')">
+<img id="c" src="/corpus/bmp-c-w4000-x3900.bmp" onload="b('V2-C-OK-'+px(this,3825,3))" onerror="b('V2-C-ERR')">
+<img id="b" src="/corpus/bmp-b-w60000-x0.bmp" onload="b('V2-BWIDTH-OK-'+this.naturalWidth)" onerror="b('V2-BWIDTH-ERR')">
+<script>b('V2-DONE');</script>

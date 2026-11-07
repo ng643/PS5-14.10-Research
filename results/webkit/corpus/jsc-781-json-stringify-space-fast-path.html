@@ -1,0 +1,201 @@
+<!doctype html><meta charset="utf-8"><title>json-stringify-space-fast-path.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Differential test: fast path JSON.stringify(v, null, space) must match the
+// general Stringifier, which we force via an identity callable replacer.
+let failures = 0;
+
+const values = [
+    {},
+    [],
+    { a: 1 },
+    [1, 2, 3],
+    [[]],
+    [{}],
+    { a: {} },
+    { a: [] },
+    { a: { b: { c: [1, [2, [3, {}]]] } } },
+    { id: 1, name: 'user1', tags: ['alpha', 'beta'], nested: { active: true, score: 1.5, items: [1, 2, 3] } },
+    { s: 'esc"ape\\\n\t', t: 'plain' },
+    { u: undefined, v: 1 },
+    { u: undefined },
+    [undefined, null, true, false],
+    [function () {}, Symbol('x'), undefined],
+    { f: function () {}, sym: Symbol('x'), ok: 1 },
+    'top-level string',
+    42,
+    1.25,
+    -0,
+    NaN,
+    Infinity,
+    true,
+    null,
+    [1e21, 1e-7, 0.1, -2147483648, 2147483647],
+    { 'k"ey': 1 },
+    { '': 2 },
+    { 'ユニコード': 'マルチバイト文字列' },
+    ['16bit→string', { a: '€' }],
+    [[[[[[[[[[1]]]]]]]]]],
+    new Date(0),
+    { d: new Date(0) },
+    [0.5, [0.25, { x: 0.125 }]],
+];
+
+const spaces = [
+    undefined, null, 2, 0, -1, 1, 10, 11, 100, 2.7, 0.5, -2.5, NaN, Infinity, -Infinity,
+    '\t', '  ', 'ab', '', '0123456789ABC', '', '€', 'あ',
+    true, false, {}, [], new Number(3), new String('xy'), Symbol('s'), 10n, 3n,
+];
+
+function show(x) {
+    if (typeof x === 'symbol') return 'Symbol';
+    if (typeof x === 'bigint') return x + 'n';
+    try { return JSON.stringify(x) ?? String(x); } catch { return String(x); }
+}
+
+for (const space of spaces) {
+    for (const value of values) {
+        let fast, slow;
+        let fastErr, slowErr;
+        try { fast = JSON.stringify(value, null, space); } catch (e) { fastErr = String(e); }
+        try { slow = JSON.stringify(value, (k, x) => x, space); } catch (e) { slowErr = String(e); }
+        if (fast !== slow || fastErr !== slowErr) {
+            failures++;
+            print('MISMATCH space=' + show(space) + ' value=' + show(value));
+            print('  fast: ' + (fastErr ?? JSON.stringify(fast)));
+            print('  slow: ' + (slowErr ?? JSON.stringify(slow)));
+        }
+    }
+}
+
+// Large outputs: force StaticBuffer overflow into DynamicBuffer with gap.
+{
+    const big = [];
+    for (let i = 0; i < 2000; i++)
+        big.push({ idx: i, name: 'n' + i, vals: [i, i + 1, i + 2], deep: { x: i * 0.5 } });
+    for (const space of [2, '\t', 10]) {
+        const fast = JSON.stringify(big, null, space);
+        const slow = JSON.stringify(big, (k, x) => x, space);
+        if (fast !== slow) {
+            failures++;
+            print('MISMATCH big space=' + show(space) + ' lens ' + fast.length + ' vs ' + slow.length);
+        }
+    }
+}
+
+// 16-bit content with gap (char16_t fast path).
+{
+    const v = { 'キー': ['値', { nested: '🎉 emoji', n: 1 }] };
+    for (const space of [2, '\t', 4]) {
+        const fast = JSON.stringify(v, null, space);
+        const slow = JSON.stringify(v, (k, x) => x, space);
+        if (fast !== slow) {
+            failures++;
+            print('MISMATCH 16bit space=' + show(space));
+            print('  fast: ' + fast);
+            print('  slow: ' + slow);
+        }
+    }
+}
+
+// Deep nesting with gap.
+{
+    let v = 1;
+    for (let i = 0; i < 200; i++) v = [v];
+    const fast = JSON.stringify(v, null, 2);
+    const slow = JSON.stringify(v, (k, x) => x, 2);
+    if (fast !== slow) { failures++; print('MISMATCH deep nesting'); }
+}
+
+if (failures)
+    throw new Error('FAILED: ' + failures + ' mismatches');
+print('all ok');
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-781-json-stringify-space-fast-path.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

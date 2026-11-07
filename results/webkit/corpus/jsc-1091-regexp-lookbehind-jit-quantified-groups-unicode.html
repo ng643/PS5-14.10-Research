@@ -1,0 +1,283 @@
+<!doctype html><meta charset="utf-8"><title>regexp-lookbehind-jit-quantified-groups-unicode.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error("bad value: " + actual + ", expected " + expected);
+}
+
+function stringify(match) {
+    if (match === null)
+        return "null";
+    return "[" + Array.from(match, (x) => x === undefined ? "undefined" : JSON.stringify(x)).join(",") + "]";
+}
+
+function stringifyIndices(match) {
+    if (match === null)
+        return "null";
+    return JSON.stringify(Array.from(match.indices, (x) => x === undefined ? null : x));
+}
+
+shouldBe(stringify(/(?<=(?:\u{1F600}b)+)c/u.exec("\ud83d\ude00b\ud83d\ude00bc")), "[\"c\"]");
+shouldBe(stringify(/(?<=(?:\u{1F600}b)+)c/u.exec("bc")), "null");
+shouldBe(stringify(/(?<=(?:\u{1F600}b)+)c/v.exec("\ud83d\ude00b\ud83d\ude00bc")), "[\"c\"]");
+shouldBe(stringify(/(?<=(\u{1F600}b)+)c/u.exec("\ud83d\ude00b\ud83d\ude00bc")), "[\"c\",\"\ud83d\ude00b\"]");
+shouldBe(stringify(/(?<=(\u{1F600})+)b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=(\u{1F600})*)b/u.exec("b")), "[\"b\",undefined]");
+shouldBe(stringify(/(?<=^(\u{1F600})+)b/u.exec("\ud83d\ude00\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(\u{1F600})+)b/u.exec("a\ud83d\ude00\ud83d\ude00b")), "null");
+shouldBe(stringify(/(?<=^(\u{1F600})+?)b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(?:\u{1F600})+?)b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "[\"b\"]");
+shouldBe(stringify(/(?<=^(?:\u{1F600})*?)b/u.exec("\ud83d\ude00b")), "[\"b\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F601})+)b/u.exec("\ud83d\ude00\ud83d\ude01\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F601})+?)b/u.exec("\ud83d\ude00\ud83d\ude01\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F601}\u{1F601})+)b/u.exec("\ud83d\ude00\ud83d\ude01\ud83d\ude01b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F601}\u{1F601})+)b/u.exec("\ud83d\ude00\ud83d\ude01b")), "null");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F600}\u{1F601})+)b/u.exec("\ud83d\ude00\ud83d\ude01\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\ud83d\ude01\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}\u{1F601}|\u{1F600})+)b/u.exec("\ud83d\ude00\ud83d\ude01\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\ud83d\ude01\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F600}\u{1F601})+)b/v.exec("\ud83d\ude00\ud83d\ude01\ud83d\ude00\ud83d\ude00\ud83d\ude01b")), "[\"b\",\"\ud83d\ude00\ud83d\ude01\"]");
+shouldBe(stringify(/(?<=(?:\u{1F600}b){2})c/u.exec("\ud83d\ude00b\ud83d\ude00bc")), "[\"c\"]");
+shouldBe(stringify(/(?<=(?:\u{1F600}b){2})c/u.exec("\ud83d\ude00bc")), "null");
+shouldBe(stringify(/(?<=(\u{1F600}){3})b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=(\u{1F600}){3})b/u.exec("\ud83d\ude00\ud83d\ude00b")), "null");
+shouldBe(stringify(/(?<=^(\u{1F600}){3})b/u.exec("a\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "null");
+shouldBe(stringify(/(?<=(\u{1F600}|\u{1F601}){2})b/u.exec("\ud83d\ude00\ud83d\ude01b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=(\u{1F600}|\u{1F601}){2})b/u.exec("\ud83d\ude01\ud83d\ude00b")), "[\"b\",\"\ud83d\ude01\"]");
+shouldBe(stringify(/(?<=(\u{1F600}|\u{1F601}){2})b/u.exec("\ud83d\ude00b")), "null");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F600}\u{1F601}){2})b/u.exec("\ud83d\ude00\ud83d\ude01\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\ud83d\ude01\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F600}\u{1F601}){2})b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}\u{1F601}|\u{1F600}){2})b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F600}\u{1F601}){2,3})b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F600}\u{1F601}){2,3}?)b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F600}\u{1F601}){1,2})b/u.exec("\ud83d\ude00\ud83d\ude01\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\ud83d\ude01\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}|\u{1F600}\u{1F601}){1,2})b/u.exec("\ud83d\ude00\ud83d\ude01\ud83d\ude00\ud83d\ude00b")), "null");
+shouldBe(stringify(/(?<=^(?:\u{1F600}+){2})b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "[\"b\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}+?){2})b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "[\"b\",\"\ud83d\ude00\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(\u{1F600}*){2})b/u.exec("\ud83d\ude00\ud83d\ude00b")), "[\"b\",\"\"]");
+shouldBe(stringify(/(?<=(?:[\u{1F600}-\u{1F64F}]b)+)c/u.exec("\ud83d\ude00b\ud83d\ude01bc")), "[\"c\"]");
+shouldBe(stringify(/(?<=(?:[\u{1F600}-\u{1F64F}]b){2})c/u.exec("\ud83d\ude00b\ud83d\ude01bc")), "[\"c\"]");
+shouldBe(stringify(/(?<=(?:[\u{1F600}-\u{1F64F}]b){2})c/u.exec("\ud83d\ude00bc")), "null");
+shouldBe(stringify(/(?<=^(?:\p{Lu}){2,3})b/u.exec("\ud801\udc00A\ud801\udc00b")), "[\"b\"]");
+shouldBe(stringify(/(?<=^(?:\p{Lu}){2,3})b/u.exec("A\ud801\udc00\ud801\udc28b")), "null");
+shouldBe(stringify(/(?<=^(\p{Lu}|\u{10428}){2,3})b/u.exec("A\ud801\udc00\ud801\udc28b")), "[\"b\",\"A\"]");
+shouldBe(stringify(/(?<=^(\p{Lu}|\u{10428}){2,3}?)b/u.exec("A\ud801\udc00\ud801\udc28b")), "[\"b\",\"A\"]");
+shouldBe(stringify(/(?<=^(?:[^a]){2})b/u.exec("\ud83d\ude00\ud83d\ude00b")), "[\"b\"]");
+shouldBe(stringify(/(?<=^(?:[^a]){2})b/u.exec("\ud83d\ude00ab")), "null");
+shouldBe(stringify(/(?<=^(?:.){2})b/u.exec("\ud83d\ude00\ud83d\ude00b")), "[\"b\"]");
+shouldBe(stringify(/(?<=^(?:.){2})b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "null");
+shouldBe(stringify(/(?<=^(?:.){2,3})b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "[\"b\"]");
+shouldBe(stringify(/(?<=^(?:.){2,3}?)b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "[\"b\"]");
+shouldBe(stringify(/(?<=(?:\P{L}){2})b/v.exec("\ud83d\ude00\ud83d\ude01b")), "[\"b\"]");
+shouldBe(stringify(/(?<=[\p{L}--[a-z]](?:\u{1F601}){0,2})b/v.exec("A\ud83d\ude01\ud83d\ude01b")), "[\"b\"]");
+shouldBe(stringify(/(?<=[\p{L}--[a-z]](?:\u{1F601}){0,2})b/v.exec("a\ud83d\ude01\ud83d\ude01b")), "null");
+shouldBe(stringify(/(?<=(?:\u{10400}b)+)c/iu.exec("\ud801\udc28B\ud801\udc00bc")), "[\"c\"]");
+shouldBe(stringify(/(?<=(?:\u{10400}b){2})c/iu.exec("\ud801\udc28B\ud801\udc00bc")), "[\"c\"]");
+shouldBe(stringify(/(?<=(?:\u{10400}b){2})c/iu.exec("\ud801\udc28Bc")), "null");
+shouldBe(stringify(/(?<=^(\u{10400}|k)+)c/iu.exec("\ud801\udc28K\u212a\ud801\udc00c")), "[\"c\",\"\ud801\udc28\"]");
+shouldBe(stringify(/(?<=\b(?:\u{1F600}b)+)c/u.exec("x \ud83d\ude00b\ud83d\ude00bc")), "[\"c\"]");
+shouldBe(stringify(/(?<=(?:^|,)(\u{1F600}|\u{1F601}){2})c/u.exec("x,\ud83d\ude00\ud83d\ude01c")), "[\"c\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=(?:^|,)(\u{1F600}|\u{1F601}){2})c/u.exec("x\ud83d\ude00\ud83d\ude01c")), "null");
+shouldBe(stringify(/(?<=^(\u{1F600})\1+)b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude00b")), "null");
+shouldBe(stringify(/(?<=^(?:(\u{1F600}|\u{1F601})\1)+)b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01\ud83d\ude01b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(?:(\u{1F600}|\u{1F601})\1)+)b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01b")), "[\"b\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=^(?:(\u{1F600}|\u{1F601})\1){2})b/u.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01\ud83d\ude01b")), "null");
+shouldBe(stringify(/(?<=(\u{1F600}|\u{1F601})+)b\1/u.exec("\ud83d\ude00\ud83d\ude01b\ud83d\ude01")), "null");
+shouldBe(stringify(/(?<=(\u{1F600}|\u{1F601})+)b\1/u.exec("\ud83d\ude00\ud83d\ude01b\ud83d\ude00")), "[\"b\ud83d\ude00\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=y(y\u{1F600}|\u{1F600}){1,2}?c)d/u.exec("xy\ud83d\ude00cd")), "[\"d\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=y(y\u{1F600}|\u{1F600}){1,2}c)d/u.exec("xy\ud83d\ude00cd")), "[\"d\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<=\u{1F601}(\u{1F601}\u{1F600}|\u{1F600}){1,2}?c)d/u.exec("x\ud83d\ude01\ud83d\ude00cd")), "[\"d\",\"\ud83d\ude00\"]");
+shouldBe(stringify(/(?<!(?:\u{1F600}b)+)c/u.exec("\ud83d\ude00b\ud83d\ude00bc")), "null");
+shouldBe(stringify(/(?<!(?:\u{1F600}b)+)c/u.exec("xc")), "[\"c\"]");
+shouldBe(stringify(/(?<!(\u{1F600}|\u{1F601}){2})c/u.exec("\ud83d\ude00\ud83d\ude01c")), "null");
+shouldBe(stringify(/(?<!(\u{1F600}|\u{1F601}){2})c/u.exec("a\ud83d\ude01c")), "[\"c\",undefined]");
+
+{
+    let re = /(?<=(?:\u{1F600}b)+)c/gu;
+    re.lastIndex = 0;
+    let match = re.exec("\ud83d\ude00b\ud83d\ude00bc\ud83d\ude00bcc");
+    shouldBe(match === null ? "null" : match.index, 6);
+    shouldBe(re.lastIndex, 7);
+}
+{
+    let re = /(?<=(?:\u{1F600}b)+)c/gu;
+    re.lastIndex = 1;
+    let match = re.exec("\ud83d\ude00b\ud83d\ude00bc\ud83d\ude00bcc");
+    shouldBe(match === null ? "null" : match.index, 6);
+    shouldBe(re.lastIndex, 7);
+}
+{
+    let re = /(?<=(?:\u{1F600}b)+)c/gu;
+    re.lastIndex = 3;
+    let match = re.exec("\ud83d\ude00b\ud83d\ude00bc\ud83d\ude00bcc");
+    shouldBe(match === null ? "null" : match.index, 6);
+    shouldBe(re.lastIndex, 7);
+}
+{
+    let re = /(?<=(?:\u{1F600}b)+)c/gu;
+    re.lastIndex = 6;
+    let match = re.exec("\ud83d\ude00b\ud83d\ude00bc\ud83d\ude00bcc");
+    shouldBe(match === null ? "null" : match.index, 6);
+    shouldBe(re.lastIndex, 7);
+}
+{
+    let re = /(?<=(?:\u{1F600}b)+)c/yu;
+    re.lastIndex = 0;
+    let match = re.exec("\ud83d\ude00b\ud83d\ude00bc\ud83d\ude00bcc");
+    shouldBe(match === null ? "null" : match.index, "null");
+    shouldBe(re.lastIndex, 0);
+}
+{
+    let re = /(?<=(?:\u{1F600}b)+)c/yu;
+    re.lastIndex = 6;
+    let match = re.exec("\ud83d\ude00b\ud83d\ude00bc\ud83d\ude00bcc");
+    shouldBe(match === null ? "null" : match.index, 6);
+    shouldBe(re.lastIndex, 7);
+}
+{
+    let re = /(?<=(?:\u{1F600}b)+)c/yu;
+    re.lastIndex = 7;
+    let match = re.exec("\ud83d\ude00b\ud83d\ude00bc\ud83d\ude00bcc");
+    shouldBe(match === null ? "null" : match.index, "null");
+    shouldBe(re.lastIndex, 0);
+}
+{
+    let re = /(?<=(?:\u{1F600}b)+)c/yu;
+    re.lastIndex = 10;
+    let match = re.exec("\ud83d\ude00b\ud83d\ude00bc\ud83d\ude00bcc");
+    shouldBe(match === null ? "null" : match.index, 10);
+    shouldBe(re.lastIndex, 11);
+}
+{
+    let re = /(?<=(\u{1F600}|\u{1F600}\u{1F601}){2})c/gu;
+    re.lastIndex = 0;
+    let match = re.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01c\ud83d\ude00\ud83d\ude00c");
+    shouldBe(match === null ? "null" : match.index, 6);
+    shouldBe(re.lastIndex, 7);
+}
+{
+    let re = /(?<=(\u{1F600}|\u{1F600}\u{1F601}){2})c/gu;
+    re.lastIndex = 1;
+    let match = re.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01c\ud83d\ude00\ud83d\ude00c");
+    shouldBe(match === null ? "null" : match.index, 6);
+    shouldBe(re.lastIndex, 7);
+}
+{
+    let re = /(?<=(\u{1F600}|\u{1F600}\u{1F601}){2})c/gu;
+    re.lastIndex = 8;
+    let match = re.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01c\ud83d\ude00\ud83d\ude00c");
+    shouldBe(match === null ? "null" : match.index, 11);
+    shouldBe(re.lastIndex, 12);
+}
+{
+    let re = /(?<=(\u{1F600}|\u{1F600}\u{1F601}){1,2}?)c/gu;
+    re.lastIndex = 0;
+    let match = re.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01c\ud83d\ude00\ud83d\ude00c");
+    shouldBe(match === null ? "null" : match.index, 6);
+    shouldBe(re.lastIndex, 7);
+}
+{
+    let re = /(?<=(\u{1F600}|\u{1F600}\u{1F601}){1,2}?)c/gu;
+    re.lastIndex = 7;
+    let match = re.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01c\ud83d\ude00\ud83d\ude00c");
+    shouldBe(match === null ? "null" : match.index, 11);
+    shouldBe(re.lastIndex, 12);
+}
+
+shouldBe("\ud83d\ude00b\ud83d\ude00bc\ud83d\ude00bcc".replace(/(?<=(?:\u{1F600}b)+)c/gu, "-"), "\ud83d\ude00b\ud83d\ude00b-\ud83d\ude00b-c");
+shouldBe("\ud83d\ude00\ud83d\ude01c\ud83d\ude01c".replace(/(?<=(\u{1F600}|\u{1F601})+)c/gu, "[$1]"), "\ud83d\ude00\ud83d\ude01[\ud83d\ude00]\ud83d\ude01[\ud83d\ude01]");
+shouldBe("\ud83d\ude00\ud83d\ude00\ud83d\ude01c\ud83d\ude00\ud83d\ude00c".replace(/(?<=(\u{1F600}|\u{1F600}\u{1F601}){2})c/gu, "[$1]"), "\ud83d\ude00\ud83d\ude00\ud83d\ude01[\ud83d\ude00]\ud83d\ude00\ud83d\ude00[\ud83d\ude00]");
+
+shouldBe(stringifyIndices(/(?<=(\u{1F600}b)+)c/du.exec("\ud83d\ude00b\ud83d\ude00bc")), "[[6,7],[0,3]]");
+shouldBe(stringifyIndices(/(?<=(\u{1F600}|\u{1F601})+)b/du.exec("\ud83d\ude00\ud83d\ude01\ud83d\ude00b")), "[[6,7],[0,2]]");
+shouldBe(stringifyIndices(/(?<=(\u{1F600}|\u{1F600}\u{1F601}){2})b/du.exec("\ud83d\ude00\ud83d\ude00\ud83d\ude01b")), "[[6,7],[0,2]]");
+shouldBe(stringifyIndices(/(?<=y(y\u{1F600}|\u{1F600}){1,2}?c)d/du.exec("xy\ud83d\ude00cd")), "[[5,6],[2,4]]");
+shouldBe(stringifyIndices(/(?<=^(\u{1F600}*){2})b/du.exec("\ud83d\ude00\ud83d\ude00b")), "[[4,5],[0,0]]");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1091-regexp-lookbehind-jit-quantified-groups-unicode.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

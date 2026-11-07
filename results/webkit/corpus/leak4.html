@@ -1,0 +1,12 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>leak4</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function nz(a){var n=0,f=-1;for(var i=0;i<a.length;i++){if(a[i]){n++;if(f<0)f=i;}}return n+'i'+f;}
+function step(t,f){ b('L4-'+t+'-IN'); var r; try{ r=f(); }catch(e){ r='E_'+e.name; } b('L4-'+t+'-O-'+String(r).replace(/[^A-Za-z0-9_.:-]/g,'')); }
+step('FREE64', function(){ var c=document.createElement('canvas'); c.width=64; c.height=64; var g=c.getContext('2d'); if(!g) return 'null'; return nz(g.getImageData(0,0,64,64).data); });
+step('ATT64', function(){ var c=document.createElement('canvas'); c.width=64; c.height=64; document.body.appendChild(c); var g=c.getContext('2d'); if(!g) return 'null'; return nz(g.getImageData(0,0,64,64).data); });
+step('ATTR', function(){ var c=document.createElement('canvas'); c.width=64; c.height=64; document.body.appendChild(c); var g=c.getContext('2d',{willReadFrequently:true,alpha:false}); if(!g) return 'null'; return nz(g.getImageData(0,0,64,64).data); });
+step('MEAS', function(){ var c=document.createElement('canvas'); var g=c.getContext('2d'); if(!g) return 'null'; g.font='20px sans-serif'; var m=g.measureText('ABC'); return 'w'+Math.round(m.width); });
+step('PMEM', function(){ try{ var m=performance.memory; if(!m) return 'none'; return 'used'+m.usedJSHeapSize; }catch(e){ return 'E'; } });
+b('L4-DONE');
+</script></head><body><p>leak4</p></body></html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html><!-- bisect of fast/scrolling/mac/event-dispatcher-timer-close-crash.html -->
+<html>
+<body>
+<script>
+let cycle = 0;
+const maxCycles = 0;
+
+function finish() {
+    document.body.textContent = "PASS if no crash in the UI process during page close.";
+}
+
+function runCycle() {
+    if (cycle++ >= maxCycles)
+        return finish();
+
+    let popup = window.open("about:blank", "", "width=200,height=200");
+    if (!popup) {
+        document.body.textContent = "POPUP-BLOCKED";
+        return finish();
+    }
+
+    popup.document.body.innerHTML = "<div style=\"width:50px;height:50px;background:green\"></div>";
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            popup.close();
+            setTimeout(runCycle, 0);
+        });
+    });
+}
+
+finish();
+</script>
+</body>
+</html>

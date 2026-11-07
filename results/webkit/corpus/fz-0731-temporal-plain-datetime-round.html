@@ -1,0 +1,174 @@
+<!doctype html><meta charset="utf-8"><title>temporal-plain-datetime-round.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+function shouldBe(actual, expected, msg) {
+    if (actual !== expected)
+        throw new Error(`${msg}: expected "${expected}" but got "${actual}"`);
+}
+function shouldThrow(fn, errorType, msg) {
+    let caught;
+    try { fn(); } catch (e) { caught = e; }
+    if (!caught) throw new Error(`${msg}: expected ${errorType.name}`);
+    if (!(caught instanceof errorType)) throw new Error(`${msg}: expected ${errorType.name} but got ${caught.constructor.name}`);
+}
+
+// Base instant used throughout: 2024-06-15 13:24:36.123_456_789 (UTC-only ISO calendar).
+const base = new Temporal.PlainDateTime(2024, 6, 15, 13, 24, 36, 123, 456, 789);
+
+// --- Default mode is halfExpand. Validate every smallestUnit against the spec semantics. ---
+shouldBe(base.round("day").toString(), "2024-06-16T00:00:00", "round day default");
+shouldBe(base.round("hour").toString(), "2024-06-15T13:00:00", "round hour default");
+shouldBe(base.round("minute").toString(), "2024-06-15T13:25:00", "round minute default");
+shouldBe(base.round("second").toString(), "2024-06-15T13:24:36", "round second default");
+shouldBe(base.round("millisecond").toString(), "2024-06-15T13:24:36.123", "round ms default (.456789 < .5)");
+shouldBe(base.round("microsecond").toString(), "2024-06-15T13:24:36.123457", "round us default (.789 > .5)");
+shouldBe(base.round("nanosecond").toString(), "2024-06-15T13:24:36.123456789", "round ns identity");for (let __i = 0; __i < 200; __i++) {
+
+// --- All rounding modes against the same input for one unit (millisecond).
+//     Input fractional remainder below the ms boundary is 0.456789 ms, which is < 0.5,
+//     so every half-* mode rounds toward the floor (.123); only ceil/expand bump to .124. ---
+const ms = (mode) => base.round({ smallestUnit: "millisecond", roundingMode: mode }).toString();}
+shouldBe(ms("halfExpand"), "2024-06-15T13:24:36.123", "ms halfExpand");
+shouldBe(ms("ceil"), "2024-06-15T13:24:36.124", "ms ceil");
+shouldBe(ms("floor"), "2024-06-15T13:24:36.123", "ms floor");
+shouldBe(ms("trunc"), "2024-06-15T13:24:36.123", "ms trunc");
+shouldBe(ms("halfCeil"), "2024-06-15T13:24:36.123", "ms halfCeil");
+shouldBe(ms("halfTrunc"), "2024-06-15T13:24:36.123", "ms halfTrunc");
+shouldBe(ms("halfFloor"), "2024-06-15T13:24:36.123", "ms halfFloor");
+shouldBe(ms("halfEven"), "2024-06-15T13:24:36.123", "ms halfEven");
+shouldBe(ms("expand"), "2024-06-15T13:24:36.124", "ms expand");
+
+// --- Rounding increments > 1 (must divide the maximum). ---
+shouldBe(base.round({ smallestUnit: "minute", roundingIncrement: 30 }).toString(),
+    "2024-06-15T13:30:00", "minute increment 30");
+shouldBe(base.round({ smallestUnit: "second", roundingIncrement: 15 }).toString(),
+    "2024-06-15T13:24:30", "second increment 15 (36 < 37.5)");
+shouldBe(base.round({ smallestUnit: "hour", roundingIncrement: 6 }).toString(),
+    "2024-06-15T12:00:00", "hour increment 6 (13 < 15)");
+
+// --- Boundary: rounding up across midnight bumps the date (day rollover). ---
+const lateNight = new Temporal.PlainDateTime(2024, 6, 15, 23, 59, 59, 999, 999, 999);
+shouldBe(lateNight.round("minute").toString(), "2024-06-16T00:00:00",
+    "halfExpand minute crosses midnight → next day");
+shouldBe(lateNight.round({ smallestUnit: "second", roundingMode: "ceil" }).toString(),
+    "2024-06-16T00:00:00", "ceil second crosses month boundary");
+
+// --- Day-rollover crossing month/year boundary. ---
+const lastDayOfYear = new Temporal.PlainDateTime(2024, 12, 31, 23, 59, 59, 999, 999, 999);
+shouldBe(lastDayOfYear.round("hour").toString(), "2025-01-01T00:00:00",
+    "year-end rollover via hour rounding");
+
+// --- Calendar preservation across round. ---
+const heb = new Temporal.PlainDateTime(2024, 1, 1, 13, 30, 0, 0, 0, 0, "hebrew");
+const roundedHeb = heb.round("hour");
+shouldBe(roundedHeb.calendarId, "hebrew", "round preserves hebrew calendar id");
+shouldBe(roundedHeb.toString(), "2024-01-01T14:00:00[u-ca=hebrew]", "round preserves hebrew toString");
+
+// --- String shorthand path: `pdt.round("hour")` ≡ `pdt.round({ smallestUnit: "hour" })`. ---
+shouldBe(base.round("hour").toString(), base.round({ smallestUnit: "hour" }).toString(), "string vs obj — hour");
+shouldBe(base.round("nanosecond").toString(), base.round({ smallestUnit: "nanosecond" }).toString(), "string vs obj — nanosecond");
+
+// --- Error paths. ---
+shouldThrow(() => base.round(), TypeError, "no arg → TypeError (Step 3)");
+shouldThrow(() => base.round(undefined), TypeError, "explicit undefined → TypeError");
+shouldThrow(() => base.round({}), RangeError, "missing smallestUnit (Required) → RangeError");
+shouldThrow(() => base.round({ smallestUnit: "year" }), RangeError, "year disallowed → RangeError");
+shouldThrow(() => base.round({ smallestUnit: "month" }), RangeError, "month disallowed → RangeError");
+shouldThrow(() => base.round({ smallestUnit: "week" }), RangeError, "week disallowed → RangeError");
+shouldThrow(() => base.round({ smallestUnit: "junk" }), RangeError, "unknown unit → RangeError");
+shouldThrow(() => base.round("year"), RangeError, "string year disallowed");
+shouldThrow(() => base.round("junk"), RangeError, "string junk disallowed");
+// Day is inclusive-bounded at 1; 2 is rejected.
+shouldThrow(() => base.round({ smallestUnit: "day", roundingIncrement: 2 }), RangeError, "day increment > 1 → RangeError");
+// Minute max is 60 exclusive; an indivisor like 7 fails.
+shouldThrow(() => base.round({ smallestUnit: "minute", roundingIncrement: 7 }), RangeError, "minute increment 7 (non-divisor of 60) → RangeError");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-0731-temporal-plain-datetime-round.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

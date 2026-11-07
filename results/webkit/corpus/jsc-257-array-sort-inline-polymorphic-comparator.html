@@ -1,0 +1,160 @@
+<!doctype html><meta charset="utf-8"><title>array-sort-inline-polymorphic-comparator.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// The DFG ArraySortIntrinsic's comparator shape detection (tryInlineComparator)
+// checks for a JSFunction constant or a same-graph NewFunction allocation. A
+// sort call site that sees multiple distinct comparator functions fails both
+// checks and falls through to a plain Call node at the comparator call site.
+//
+// This test rotates several comparator functions at a single sort call site:
+//   * The DFG cannot statically resolve the comparator -> uses the plain-Call
+//     path (addCallWithoutSettingResult) instead of handleCall inlining.
+//   * The IsCallable runtime guard must fire correctly whether or not the
+//     comparator is the same as the most recent one.
+//   * Sort results must remain correct across all comparator shapes.
+
+function cmpAsc(a, b) { return a - b; }
+function cmpDesc(a, b) { return b - a; }
+function cmpMod3Asc(a, b) { return (a % 3) - (b % 3); }
+function cmpByAbs(a, b) { return Math.abs(a) - Math.abs(b); }
+
+const comparators = [cmpAsc, cmpDesc, cmpMod3Asc, cmpByAbs];
+
+function doSort(a, c) { return a.sort(c); }
+
+function expectedFor(input, cmp) { return [...input].sort(cmp); }
+
+// Warm up with a rotating comparator so the call site is polymorphic from the
+// start -- DFG/FTL never see a single callee at this site.
+const seed = [5, -3, 1, -4, 2, 8, -7, 0, 6, -1];
+for (let w = 0; w < testLoopCount; ++w) {
+    const cmp = comparators[w % comparators.length];
+    const got = doSort(seed.slice(), cmp);
+    const want = expectedFor(seed, cmp);
+    if (got.length !== want.length)
+        throw new Error("warmup " + w + ": length mismatch");
+    for (let i = 0; i < want.length; ++i) {
+        if (got[i] !== want[i])
+            throw new Error("warmup " + w + " cmp=" + cmp.name
+                + " index " + i + ": got " + got[i] + " want " + want[i]);
+    }
+}
+
+// Non-callable comparators must still throw TypeError from this polymorphic
+// call site (IsCallable guard must not be skipped for non-provably-callable
+// comparators).
+for (let w = 0; w < 100; ++w) {
+    let threw = false;
+    try { doSort(seed.slice(), {}); } catch (e) { threw = e instanceof TypeError; }
+    if (!threw) throw new Error("polymorphic site: {} must throw TypeError");
+}
+
+// A comparator that throws from the body must propagate correctly even when
+// the call site is polymorphic (plain-Call path, no inlining).
+function cmpThrow(a, b) { throw new Error("boom"); }
+let threw = false;
+try { doSort([3, 1], cmpThrow); }
+catch (e) { threw = e.message === "boom"; }
+if (!threw) throw new Error("polymorphic site: throwing comparator lost the exception");
+
+// Large array + polymorphic comparator (slow-path dispatcher + plain Call).
+const bigSeed = [];
+for (let i = 0; i < 32; ++i) bigSeed.push(((i * 17) % 32) - 16);
+for (let w = 0; w < testLoopCount; ++w) {
+    const cmp = comparators[w % comparators.length];
+    const got = doSort(bigSeed.slice(), cmp);
+    const want = expectedFor(bigSeed, cmp);
+    for (let i = 0; i < want.length; ++i) {
+        if (got[i] !== want[i])
+            throw new Error("large poly w=" + w + " cmp=" + cmp.name + " @" + i);
+    }
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-257-array-sort-inline-polymorphic-comparator.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

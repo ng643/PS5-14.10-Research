@@ -1,0 +1,199 @@
+<!doctype html><meta charset="utf-8"><title>async-iterator-open-fast-path-tiers.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Coverage for op_async_iterator_open's FAST path (genuine async generator -> driver sentinel) across
+// tier-ups, and its getNext-checkpoint deopt/fallthrough. A single for-await site is warmed fastEligible
+// with primordial async generators, then fed shapes that stress the fast path's getNext GetById + the
+// CompareEqPtr reclassify:
+//   - polymorphic instance structures (many distinct async generator functions),
+//   - perturbed yielded value types (Int32 -> double -> object), to force speculation OSR exits whose
+//     exit origins sit around the symbolCall/getNext checkpoints,
+//   - instances whose .next is non-primordial (own data property / accessor): the fast path fetches .next,
+//     CompareEqPtr fails, and it falls through (keepBlock) to the generic real-call next path,
+//   - instances whose @@asyncIterator is overridden: the DFG eligibility CompareEqPtr fails, taking the
+//     generic symbolCall path.
+// After warmup, %AsyncGeneratorPrototype%.next is wrapped globally so the fast site's runtime CompareEqPtr
+// flips true->false, exercising the deopt-to-real-next at an already-FTL site. Every consume() must return
+// the exact sum the generic path would, proving the fast-path fetch/reclassify/deopt is transparent.
+
+function assert(cond, message) {
+    if (!cond)
+        throw new Error("Assertion failed: " + message);
+}
+
+const AGP = Object.getPrototypeOf(Object.getPrototypeOf((async function* () {})()));
+const primordialNext = AGP.next;
+
+// The single warmed for-await site every case funnels through.
+async function consume(iterable) {
+    let sum = 0;
+    for await (const x of iterable)
+        sum += x;
+    return sum;
+}
+
+// Distinct generator functions -> distinct instance structures, to make the open site's getNext base polymorphic.
+const genFns = [];for (let __i = 0; __i < 200; __i++) {
+for (let i = 0; i < 6; i++)
+    genFns.push(async function* () { yield 1; yield 2; yield 3; });}
+
+let error = null;
+let done = false;
+
+async function main() {
+    // Phase 1: monomorphic primordial -> fastEligible + sentinel, Int32 values.
+    for (let k = 0; k < testLoopCount; k++)
+        assert(await consume((async function* () { yield 1; yield 2; yield 3; })()) === 6, "phase1");
+
+    // Phase 2: polymorphic instance structures at the same site.
+    for (let k = 0; k < testLoopCount; k++)
+        assert(await consume(genFns[k % genFns.length]()) === 6, "phase2");
+
+    // Phase 3: perturb yielded value types to force speculation OSR exits around the open/next checkpoints.
+    for (let k = 0; k < testLoopCount; k++) {
+        const kk = k & 0xff;
+        async function* g() { yield 0.5; yield kk + 0.25; yield { valueOf() { return 2; } }; }
+        assert(await consume(g()) === 0.5 + (kk + 0.25) + 2, "phase3");
+    }
+
+    // Phase 4: non-primordial .next as an own DATA property. Fast path fetches it, CompareEqPtr false ->
+    // keepBlock -> generic real-call next. .next is read once by getNext, then called per step (2 values + done).
+    for (let k = 0; k < testLoopCount; k++) {
+        const g = (async function* () { yield 10; yield 20; })();
+        let calls = 0;
+        Object.defineProperty(g, "next", { configurable: true, writable: true,
+            value: function (...a) { calls++; return primordialNext.apply(this, a); } });
+        assert(await consume(g) === 30, "phase4 sum");
+        assert(calls === 3, "phase4 calls=" + calls);
+    }
+
+    // Phase 5: non-primordial .next as an ACCESSOR. The fast path's getNext GetById invokes the getter
+    // exactly once (fetch), CompareEqPtr false, fall through to generic real-call next.
+    for (let k = 0; k < testLoopCount; k++) {
+        const g = (async function* () { yield 5; yield 7; })();
+        let reads = 0;
+        Object.defineProperty(g, "next", { configurable: true, get() { reads++; return primordialNext; } });
+        assert(await consume(g) === 12, "phase5 sum");
+        assert(reads === 1, "phase5 reads=" + reads);
+    }
+
+    // Phase 6: overridden @@asyncIterator on the instance. The DFG eligibility CompareEqPtr on m_symbolIterator
+    // fails -> generic symbolCall (calls the custom @@asyncIterator, which returns the generator itself).
+    for (let k = 0; k < testLoopCount; k++) {
+        const g = (async function* () { yield 100; yield 200; })();
+        let iterCalls = 0;
+        g[Symbol.asyncIterator] = function () { iterCalls++; return this; };
+        assert(await consume(g) === 300, "phase6 sum");
+        assert(iterCalls === 1, "phase6 iterCalls=" + iterCalls);
+    }
+
+    // Phase 7: globally wrap %AsyncGeneratorPrototype%.next AFTER the site is hot. The fast path's runtime
+    // CompareEqPtr(fetched, primordial) now fails for every genuine async generator, deopting the warmed FTL
+    // site to the generic real-call next path. Results must be unchanged.
+    let wrapCalls = 0;
+    AGP.next = function (...a) { wrapCalls++; return primordialNext.apply(this, a); };
+    try {
+        for (let k = 0; k < testLoopCount; k++)
+            assert(await consume((async function* () { yield 1; yield 2; yield 3; })()) === 6, "phase7");
+        assert(wrapCalls > 0, "phase7 wrapper should have been invoked");
+    } finally {
+        AGP.next = primordialNext;
+    }
+}
+
+main().then(() => { done = true; }, (e) => { error = e; });
+
+drainMicrotasks();
+
+if (error)
+    throw error;
+assert(done, "async main() did not complete");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1478-async-iterator-open-fast-path-tiers.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

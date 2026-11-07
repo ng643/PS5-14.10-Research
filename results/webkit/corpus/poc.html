@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body>
+<script>
+function beacon(tag, data) {
+    try {
+        var x = new XMLHttpRequest();
+        x.open('POST', '/beacon/' + tag, false);
+        x.send(data || '');
+    } catch (e) { }
+}
+window.onerror = function (m, f, l) { beacon('POC-ERROR', m + ' @' + l); };
+beacon('POC-START', String(Date.now()));
+var src = '';
+try {
+    var r = new XMLHttpRequest();
+    r.open('GET', '/corpus/poc.js?t=' + Date.now(), false);
+    r.send(null);
+    src = r.responseText;
+} catch (e) {
+    beacon('POC-LOADFAIL', String(e));
+}
+beacon('POC-LOADED', 'bytes=' + src.length);
+try {
+    (0, eval)(src);
+    beacon('POC-RETURNED', 'ok');
+} catch (e) {
+    beacon('POC-EXC', String(e && e.message || e));
+}
+beacon('POC-ALIVE', 'end');
+</script>
+</body>
+</html>

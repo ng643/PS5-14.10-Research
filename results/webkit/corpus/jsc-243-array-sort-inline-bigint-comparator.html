@@ -1,0 +1,189 @@
+<!doctype html><meta charset="utf-8"><title>array-sort-inline-bigint-comparator.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Array.prototype.sort(comparator) must throw TypeError when the comparator
+// returns a BigInt (or Symbol), because runtime/StableSort.h's
+// coerceComparatorResultToBoolean finishes with `toNumber(cmp) < 0`, and
+// ToNumber on a BigInt/Symbol throws TypeError.
+//
+// Before the fix, the DFG ArraySortIntrinsic modelled the coercion as
+// `CompareLess(cmp, 0) || cmp === false`. CompareLess's generic runtime path
+// (jsLess) handles BigInt-vs-Number via bigIntCompare without calling ToNumber,
+// so if CompareLess ever ran in the inlined fast path with a BigInt input (for
+// instance via UntypedUse specialization from polymorphic warmup), the sort
+// would silently succeed where baseline throws. The fix replaces the numeric
+// branch with an explicit ToNumber node, which throws for BigInt/Symbol and
+// brings the DFG intrinsic in line with baseline regardless of speculation
+// outcome.
+
+function sortIt(a, c) { return a.sort(c); }
+
+function expectTypeError(body, desc) {
+    try { body(); }
+    catch (e) {
+        if (!(e instanceof TypeError))
+            throw new Error(desc + ": expected TypeError, got " + e);
+        return;
+    }
+    throw new Error(desc + ": expected TypeError, got no throw");
+}
+
+// --- Case 1: BigInt-only warmup. Drives whatever speculation path the DFG
+// picks when it has only seen BigInt returns.
+for (let i = 0; i < testLoopCount; ++i)
+    expectTypeError(() => sortIt([5, 3, 1, 4, 2], () => -1n), "BigInt-only warmup iter " + i);
+
+// --- Case 2: Int32 warmup, then a BigInt-returning comparator. The Int32
+// speculation in the inlined CompareLess/ToNumber chain will fail on a BigInt
+// input, but the slow path / baseline must still throw.
+for (let i = 0; i < testLoopCount; ++i)
+    sortIt([5, 3, 1, 4, 2], (a, b) => a - b);
+for (let i = 0; i < testLoopCount; ++i)
+    expectTypeError(() => sortIt([5, 3, 1, 4, 2], () => -1n), "after Int32 warmup iter " + i);
+
+// --- Case 3: Mixed warmup (Int32, Boolean, Object) to push CompareLess toward
+// UntypedUse. This is the scenario the old code was most vulnerable in: the
+// old CompareLess-on-BigInt would NOT throw (returns true via bigIntCompare),
+// so the fix's ToNumber is what keeps us correct here.
+for (let i = 0; i < testLoopCount; ++i) {
+    sortIt([5, 3, 1, 4, 2], (a, b) => a - b);
+    sortIt([5, 3, 1, 4, 2], (a, b) => a > b);        // boolean
+    sortIt([5, 3, 1, 4, 2], (a, b) => ({ valueOf() { return a - b; } })); // object
+}
+for (let i = 0; i < testLoopCount; ++i)
+    expectTypeError(() => sortIt([5, 3, 1, 4, 2], () => -1n), "after polymorphic warmup iter " + i);
+
+// --- Case 4: Positive BigInt. `toNumber(1n)` also throws, so this must throw too.
+for (let i = 0; i < testLoopCount; ++i)
+    expectTypeError(() => sortIt([5, 3, 1, 4, 2], () => 1n), "positive BigInt iter " + i);
+
+// --- Case 5: 0n (zero BigInt). `toNumber(0n)` also throws.
+for (let i = 0; i < testLoopCount; ++i)
+    expectTypeError(() => sortIt([5, 3, 1, 4, 2], () => 0n), "zero BigInt iter " + i);
+
+// --- Case 6: Symbol comparator return. `toNumber(Symbol)` throws TypeError.
+for (let i = 0; i < testLoopCount; ++i)
+    expectTypeError(() => sortIt([5, 3, 1, 4, 2], () => Symbol.iterator), "Symbol iter " + i);
+
+// --- Case 7: Object whose valueOf returns a BigInt. ToPrimitive-then-ToNumber
+// still throws.
+for (let i = 0; i < testLoopCount; ++i) {
+    const obj = { valueOf() { return -1n; } };
+    expectTypeError(() => sortIt([5, 3, 1, 4, 2], () => obj), "object-valueOf-BigInt iter " + i);
+}
+
+// --- Case 8: Early-BigInt in an otherwise-numeric comparator. The comparator
+// returns Int32 for most pairs but BigInt for one specific (pivot, current)
+// pair that actually occurs during insertion sort of [5, 3, 1, 4, 2] --
+// the last comparison is cmp(2, 1) when placing pivot=2. Sorting must throw
+// once it hits the BigInt case.
+for (let i = 0; i < testLoopCount; ++i) {
+    const cmp = (a, b) => (a === 2 && b === 1) ? -1n : (a - b);
+    expectTypeError(() => sortIt([5, 3, 1, 4, 2], cmp), "mid-sort BigInt iter " + i);
+}
+
+// --- Case 9: length-2 array (tiny fast path). Still must throw.
+for (let i = 0; i < testLoopCount; ++i)
+    expectTypeError(() => sortIt([2, 1], () => -1n), "len2 BigInt iter " + i);
+
+// --- Sanity: non-BigInt comparators must NOT throw, to catch any accidental
+// over-throwing regression in the ToNumber path.
+for (let i = 0; i < testLoopCount; ++i) {
+    const r = sortIt([5, 3, 1, 4, 2], (a, b) => a - b);
+    if (r[0] !== 1 || r[4] !== 5) throw new Error("regression in numeric sort: " + r);
+}
+for (let i = 0; i < testLoopCount; ++i) {
+    // null / undefined / string: must not throw.
+    sortIt([5, 3, 1, 4, 2], () => null);
+    sortIt([5, 3, 1, 4, 2], () => undefined);
+    sortIt([5, 3, 1, 4, 2], () => "abc");
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-243-array-sort-inline-bigint-comparator.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

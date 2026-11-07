@@ -1,0 +1,213 @@
+<!doctype html><meta charset="utf-8"><title>regexp-nongreedy-varcount-content-backtrack.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Regression test for NonGreedy {m,n}? parentheses backtracking in the YarrJIT.
+//
+// The JIT drives NonGreedy expansion (adding iterations) from END.bt, but when
+// expansion and the latest iteration's content retries are exhausted it must undo
+// the latest iteration and content-backtrack the PREVIOUS iteration, then let
+// forward execution re-expand. Three bugs in that area:
+//
+//   1. min > 0, count >= min: took the Greedy "accept fewer" path instead of
+//      content-retrying earlier iterations -> non-leftmost / missed matches.
+//   2. min > 0 content retry: restoreParenContext clobbered frame.beginIndex with
+//      the popped iteration's begin, so END.bt's progress check refused to
+//      re-expand after shrinking an earlier iteration.
+//   3. min == 0: the NonGreedy backtrack was an empty break, so completed
+//      iterations were never content-backtracked at all.
+//
+// All three produced a wrong result (null or a non-leftmost match) in the JIT
+// while the interpreter and V8 are correct. We run each pattern enough times to
+// tier up so the JIT result is what gets checked.
+
+function run(re, str) {
+    var m = null;
+    for (var i = 0; i < 200; ++i) {
+        re.lastIndex = 0;
+        m = re.exec(str);
+    }
+    return m ? JSON.stringify(Array.prototype.slice.call(m)) + "@" + m.index : "null";
+}
+
+function check(re, str, expected) {
+    var actual = run(re, str);
+    if (actual !== expected)
+        throw new Error("FAILED " + re + " on '" + str + "': expected " + expected + " but got " + actual);
+}
+
+// Bug 1: NonGreedy min>0 must retry earlier iterations' alternatives for a leftmost match.
+check(/(?:aab|ab|a){1,2}?b/, "aaba", '["aab"]@0');
+
+// Bug 2: NonGreedy min>0 must re-expand after shrinking an earlier iteration (3+2+2 split).
+check(/^(?:a{2,3}){1,3}?b$/, "aaaaaaab", '["aaaaaaab"]@0');
+
+// Bug 3: NonGreedy min==0 must content-backtrack completed iterations (3+2+2 split).
+check(/^(?:a{2,3}){0,3}?b$/, "aaaaaaab", '["aaaaaaab"]@0');
+
+// Additional NonGreedy coverage.
+check(/(?:a){0,3}?b/, "aaab", '["aaab"]@0');
+check(/(?:a){1,3}?b/, "b", "null");
+check(/(?:a){2,3}?b/, "aaab", '["aaab"]@0');
+check(/(?:a){2,3}?b/, "aab", '["aab"]@0');
+check(/(?:ab|a){2,4}?c/, "ababc", '["ababc"]@0');
+check(/(?:a|aa|aaa){1,3}?b/, "aaaaaab", '["aaaaaab"]@0');
+check(/(?:a|aa|aaa){0,3}?b/, "aaaaaab", '["aaaaaab"]@0');
+check(/c(?:a{1,2}){1,3}?b/, "caaaaab", '["caaaaab"]@0');
+check(/(?:a{2}){1,3}?b/, "aaaaaab", '["aaaaaab"]@0');
+check(/(foo|foobar){1,2}?baz/, "foofoobarbaz", '["foofoobarbaz","foobar"]@0');
+
+// min==0 NonGreedy total-failure path: BEGIN.bt reaches count==0 after popping the
+// first actual iteration. The empty (zero-iteration) alternative was already tried
+// first via the forward skip, so propagating failure is correct — the parens must
+// return no match here, not silently re-accept empty.
+check(/^(?:a){0,3}?b$/, "aac", "null");
+check(/(?:ab){0,2}?c/, "abx", "null");
+check(/^(?:a{2,3}){0,3}?b$/, "aaaaaaac", "null");
+check(/^(?:a{2,3}){0,3}?$/, "a", "null");
+check(/^(?:aa|a){0,3}?b$/, "aaac", "null");
+// ...and the empty/skip-first alternative still matches when it should:
+check(/^(?:a){0,3}?b$/, "b", '["b"]@0');
+check(/(?:ab){0,2}?c/, "c", '["c"]@0');
+check(/^(?:a{2,3}){0,3}?b$/, "b", '["b"]@0');
+
+// Greedy controls must remain correct after the refactor of the shared path.
+check(/^(?:a{2,3}){1,3}b$/, "aaaaaaab", '["aaaaaaab"]@0');
+check(/(?:aab|ab|a){1,2}b/, "aaba", '["aab"]@0');
+check(/(foo|foobar){1,2}baz/, "foofoobarbaz", '["foofoobarbaz","foobar"]@0');
+
+// Nested variable-count parens must enforce the INNER lazy minimum. The inner
+// (?:a+){2,3}? needs >= 2 iterations; accepting 1 (via a mis-restored outer frame on
+// the JIT, or a missing min-refill on the interpreter content-backtrack) wrongly matches.
+check(/^((?:a+){2,3}?){2,3}ba/, "aaababa", "null");
+
+// Interpreter (also forced here via lookbehind): NonGreedy parens must not accept
+// fewer than quantityMinCount iterations after a content backtrack. {2,3}? needs >= 2.
+check(/(?<=Q)(?:xy|x){2,3}?yxw/, "Qxyxwab", "null");
+
+// Mandatory iterations (count <= min) may match zero-length on backtrack: the {1,3}
+// group's single mandatory iteration must be allowed to retry to the empty alternative
+// so the following "b" can match at index 0.
+check(/^(a|b|){1,3}b/, "bybaaybww", '["b",""]@0');
+check(/^(?:a|b|){1,2}?b/, "b", '["b"]@0');
+
+// Greedy accept-fewer must keep EXACTLY quantityMinCount surviving iterations when it
+// drops down to the minimum (the cannotAcceptFewer test is `Below min`, not `BelowOrEqual`).
+// Here forward overshoots to 3-4 iterations, then must drop back to exactly 2 so the tail
+// matches; with a `BelowOrEqual` threshold these would wrongly content-backtrack to null.
+check(/^(?:(a)|(b)){2,3}ba$/, "abba", '["abba",null,"b"]@0');
+check(/^(?:(a)|(b)){2,4}ba$/, "aabba", '["aabba",null,"b"]@0');
+check(/^(?:(x)|(y)){2,3}yx$/, "xyyx", '["xyyx",null,"y"]@0');
+check(/^(?:(a)|(bb)){2,3}bbc$/, "abbbbc", '["abbbbc",null,"bb"]@0');
+check(/^(?:a{2,3}){2,3}$/, "aaaa", '["aaaa"]@0');   // 2+2, drop to exactly min
+check(/^(?:a{2,3}){2,3}$/, "aaa", "null");          // can't reach min -> fail
+check(/^(?:a{1,2}){2,4}aa$/, "aaaaaa", '["aaaaaa"]@0');
+
+// Greedy accept-zero (min==0, count==0): the group matches zero iterations and the inner
+// captures must reset to undefined via the restored pre-iteration snapshot — even though
+// the greedy forward had set them — without an explicit clear on that success path.
+check(/^(?:(a))*ab$/, "ab", '["ab",null]@0');
+check(/^(?:(a))*(b)$/, "b", '["b",null,"b"]@0');
+check(/^(?:(a)(c))*ac$/, "ac", '["ac",null,null]@0');
+
+// Greedy re-expansion after accept-fewer: backtracking must shrink an earlier iteration
+// and then ADD another to refill (e.g. the 3+2+2 split below). This relies on the
+// accept-fewer path decrementing matchAmount before jumping to End.reentry, so that when
+// the surviving iteration is later re-processed END.forward's re-increment lands on the
+// correct count and its `count < max` check still allows adding the extra iteration.
+// Dropping that decrement makes these return null (END.forward over-counts -> thinks max
+// is reached -> never adds the needed iteration).
+check(/^(?:a{2,3}){1,3}b$/, "aaaaaaab", '["aaaaaaab"]@0');     // 3+2+2
+check(/^(?:a{2,3}){1,4}b$/, "aaaaaaaaab", '["aaaaaaaaab"]@0'); // 3+2+2+2
+check(/^(?:a{2,3}){2,4}c$/, "aaaaaaaac", '["aaaaaaaac"]@0');
+check(/^(?:a{2,4}){2,3}d$/, "aaaaaaad", '["aaaaaaad"]@0');
+check(/^(?:a{1,3}){2,3}x$/, "aaaaax", '["aaaaax"]@0');
+check(/^(?:ab|abc){1,3}d$/, "ababcd", '["ababcd"]@0');
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1118-regexp-nongreedy-varcount-content-backtrack.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

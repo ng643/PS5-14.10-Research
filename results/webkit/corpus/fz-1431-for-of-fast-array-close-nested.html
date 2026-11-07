@@ -1,0 +1,186 @@
+<!doctype html><meta charset="utf-8"><title>for-of-fast-array-close-nested.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// for-of and array destructuring over an Array may run without an Array Iterator object. Whenever IteratorClose becomes
+// observable (a "return" property shows up on the iterator's prototype chain), the object the loop never made has to be there,
+// be an Array Iterator, belong to the right Array and be positioned after the last element that was visited.
+
+function shouldBe(actual, expected, message) {
+    if (actual !== expected)
+        throw new Error((message ? message + ": " : "") + "expected " + expected + " but got " + actual);
+}
+
+const ArrayIteratorPrototype = Object.getPrototypeOf([][Symbol.iterator]());
+const IteratorPrototype = Object.getPrototypeOf(ArrayIteratorPrototype);
+const originalNext = ArrayIteratorPrototype.next;
+let seenIterators = [];
+
+let log = [];
+function installReturn(where) {
+    where.return = function () {
+        // The index is observable through a next() on the iterator that was handed to us.
+        let step = originalNext.call(this);
+        log.push("return " + Object.prototype.toString.call(this) + " " + (Object.getPrototypeOf(this) === ArrayIteratorPrototype) + " " + JSON.stringify(step));
+        seenIterators.push(this);
+        return {};
+    };
+}
+function removeReturn(where) { delete where.return; }
+
+// Every way out of a loop. `hook` runs in the loop body at element `at`.
+function continueOuter(array, at, hook) { let seen = []; outer: for (let i = 0; i < 2; i++) { for (let x of array) { seen.push(x); if (x === at) { hook(); continue outer; } } } return seen.join(); }
+function breakOuter(array, at, hook) { let seen = []; outer: for (let i = 0; i < 2; i++) { for (let x of array) { seen.push(x); if (x === at) { hook(); break outer; } } } return seen.join(); }
+function nested(array, at, hook) { let seen = []; for (let x of array) { for (let y of array) { seen.push(x * 10 + y); if (y === at) { hook(); break; } } if (x === at) break; } return seen.join(); }
+
+const noHook = () => { };
+function warm(f, array, at) { for (let i = 0; i < testLoopCount; i++) f(array(), at, noHook); }
+
+let scenarios = [
+    [continueOuter, 4, "1,2,3,4,1,2,3,4", 'return [object Array Iterator] true {"done":true}|return [object Array Iterator] true {"done":true}'],
+    [breakOuter, 2, "1,2", 'return [object Array Iterator] true {"value":3,"done":false}'],
+    [nested, 2, "11,12,21,22", 'return [object Array Iterator] true {"value":3,"done":false}|return [object Array Iterator] true {"value":3,"done":false}|return [object Array Iterator] true {"value":3,"done":false}'],
+];
+
+// 1. Nothing is observable while no "return" exists; this also warms every function up in the state where there is no iterator object.
+for (let [f, at, expected] of scenarios) {
+    warm(f, () => [1, 2, 3, 4], at);
+    log = [];
+    shouldBe(f([1, 2, 3, 4], at, noHook), expected, f.name);
+    shouldBe(log.filter(s => s.startsWith("return")).length, 0, f.name + " quiet");
+}
+
+// 2. "return" installed from inside the loop body on each of the three prototypes in turn. The close that follows must call it
+// on a real Array Iterator at the right position. Only the very first case still opens its loop without an iterator object:
+// from then on this realm has seen an observable IteratorClose (watchpoints do not come back) and the functions compiled for
+// the no-object state have to cope with loops that do have one.
+// for-of-fast-array-close-fresh-realm-loops.js gives every case a realm of its own.
+let holders = [ArrayIteratorPrototype, IteratorPrototype, Object.prototype];for (let __i = 0; __i < 200; __i++) {
+let round = 0;}
+for (let holder of holders) {
+    for (let [f, at, expected, expectedLog] of scenarios) {
+        log = [];
+        seenIterators = [];
+        let array = [1, 2, 3, 4];
+        let result = f(array, at, () => installReturn(holder));
+        removeReturn(holder);
+        shouldBe(log.filter(s => s.startsWith("return")).join("|"), expectedLog, f.name + " log (" + round + ")");
+        shouldBe(result, expected, f.name + " result (" + round + ")");
+        for (let iterator of seenIterators) {
+            shouldBe(typeof iterator, "object");
+            shouldBe(Object.getPrototypeOf(iterator), ArrayIteratorPrototype);
+        }
+        // Each close saw its own object.
+        shouldBe(new Set(seenIterators).size, seenIterators.length, f.name + " distinct iterators");
+    }
+    round++;
+}
+
+// 3. From now on the protocol is observable for good (watchpoints do not come back). With "return" installed all the time, every
+// close calls it; functions already compiled for the no-object state keep giving the same answers.
+let closes = 0;
+ArrayIteratorPrototype.return = function () { closes++; return {}; };
+for (let [f, at, expected, expectedLog] of scenarios) {
+    let expectedCloses = expectedLog.split("|").filter(s => s.startsWith("return")).length;
+    for (let i = 0; i < testLoopCount; i++) {
+        closes = 0;
+        log = [];
+        shouldBe(f([1, 2, 3, 4], at, noHook), expected, f.name + " after");
+        shouldBe(closes, expectedCloses, f.name + " closes after");
+    }
+}
+installReturn(ArrayIteratorPrototype);
+for (let [f, at, expected, expectedLog] of scenarios) {
+    log = [];
+    shouldBe(f([1, 2, 3, 4], at, noHook), expected, f.name + " after");
+    shouldBe(log.filter(s => s.startsWith("return")).join("|"), expectedLog, f.name + " log after");
+}
+removeReturn(ArrayIteratorPrototype);
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1431-for-of-fast-array-close-nested.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

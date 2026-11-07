@@ -1,0 +1,210 @@
+2026-10-23T11:02:48.032+00:00 GET RELAPSE-EV:Retry|setup failed: Error: Scope not leaked. attempt 49 t=1792753365741 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:02:48.034+00:00 ACCESS GET /beacon/RELAPSE-EV%3ARetry%7Csetup%20failed%3A%20Error%3A%20Scope%20not%20leaked.%20attempt%2049?t=1792753365741 204
+2026-10-23T11:02:48.046+00:00 GET RELAPSE-EV:Retry|setup failed: Error: Scope not leaked. attempt 52 t=1792753368784 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:02:48.048+00:00 ACCESS GET /beacon/RELAPSE-EV%3ARetry%7Csetup%20failed%3A%20Error%3A%20Scope%20not%20leaked.%20attempt%2052?t=1792753368784 204
+2026-10-23T11:02:48.054+00:00 GET RELAPSE-EV:Attempt|51 t=1792753368518 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:02:48.054+00:00 ACCESS GET /beacon/RELAPSE-EV%3AAttempt%7C51?t=1792753368518 204
+2026-10-23T11:02:48.060+00:00 GET RELAPSE-EV:Attempt|52 t=1792753369536 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:02:48.060+00:00 ACCESS GET /beacon/RELAPSE-EV%3AAttempt%7C52?t=1792753369536 204
+2026-10-23T11:02:48.065+00:00 GET RELAPSE-EV:Retry|setup failed: Error: Scope not leaked. attempt 53 t=1792753369797 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:02:48.066+00:00 ACCESS GET /beacon/RELAPSE-EV%3ARetry%7Csetup%20failed%3A%20Error%3A%20Scope%20not%20leaked.%20attempt%2053?t=1792753369797 204
+2026-10-23T11:02:48.348+00:00 GET RELAPSE-EV:Attempt|53 t=1792753370550 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:02:48.349+00:00 ACCESS GET /beacon/RELAPSE-EV%3AAttempt%7C53?t=1792753370550 204
+2026-10-23T11:02:48.527+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:02:48.588+00:00 GET RELAPSE-EV:Retry|setup failed: Error: Scope not leaked. attempt 54 t=1792753370813 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:02:48.588+00:00 ACCESS GET /beacon/RELAPSE-EV%3ARetry%7Csetup%20failed%3A%20Error%3A%20Scope%20not%20leaked.%20attempt%2054?t=1792753370813 204
+2026-10-23T11:02:48.671+00:00 GET RELAPSE-EV:Attempt|49 t=1792753366493 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:02:48.672+00:00 ACCESS GET /beacon/RELAPSE-EV%3AAttempt%7C49?t=1792753366493 204
+2026-10-23T11:02:48.941+00:00 GET RELAPSE-EV:Retry|setup failed: Error: Scope not leaked. attempt 50 t=1792753366756 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:02:48.942+00:00 ACCESS GET /beacon/RELAPSE-EV%3ARetry%7Csetup%20failed%3A%20Error%3A%20Scope%20not%20leaked.%20attempt%2050?t=1792753366756 204
+2026-10-23T11:02:49.325+00:00 GET RELAPSE-EV:Attempt|54 t=1792753371565 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:02:49.326+00:00 ACCESS GET /beacon/RELAPSE-EV%3AAttempt%7C54?t=1792753371565 204
+2026-10-23T11:02:56.650+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-23T11:03:00.565+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T11:03:00.637+00:00 ACCESS GET /probe/p_leakscope.js?cb=1792753359 200
+2026-10-23T11:03:00.812+00:00 ACCESS GET /raw/p_leakscope.js?cb=1792753359&cb=1792753359 200
+2026-10-23T11:03:00.993+00:00 ACCESS GET /corpus/leakscope.html?v=1 200
+2026-10-23T11:03:01.082+00:00 GET LEAK-BOOT t=1792753383284 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:03:01.083+00:00 ACCESS GET /beacon/LEAK-BOOT?t=1792753383284 204
+2026-10-23T11:03:01.108+00:00 GET LEAK-A:undefined t=1792753383284 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:03:01.109+00:00 ACCESS GET /beacon/LEAK-A%3Aundefined?t=1792753383284 204
+2026-10-23T11:03:01.147+00:00 GET LEAK-B:number:[object Number]=41 t=1792753383284 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:03:01.148+00:00 ACCESS GET /beacon/LEAK-B%3Anumber%3A%5Bobject%20Number%5D%3D41?t=1792753383284 204
+2026-10-23T11:03:01.190+00:00 GET LEAK-C-ERR:undefined is not an object (evaluating 'f()') t=1792753383285 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:03:01.191+00:00 ACCESS GET /beacon/LEAK-C-ERR%3Aundefined%20is%20not%20an%20object%20(evaluating%20'f()')?t=1792753383285 204
+2026-10-23T11:03:01.211+00:00 GET LEAK-DONE t=1792753383286 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:03:01.212+00:00 ACCESS GET /beacon/LEAK-DONE?t=1792753383286 204
+2026-10-23T11:03:08.854+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:03:29.533+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:03:50.694+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:04:11.365+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:04:19.849+00:00 ACCESS GET /corpus/leakscope2.html 200
+2026-10-23T11:04:23.537+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-23T11:04:32.541+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:04:33.636+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T11:04:33.686+00:00 ACCESS GET /probe/p_leakscope.js?cb=1792753459 200
+2026-10-23T11:04:33.853+00:00 ACCESS GET /raw/p_leakscope.js?cb=1792753459&cb=1792753459 200
+2026-10-23T11:04:34.044+00:00 ACCESS GET /corpus/leakscope2.html?v=2 200
+2026-10-23T11:04:34.120+00:00 GET SCOPE-BOOT t=1792753476327 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:04:34.122+00:00 ACCESS GET /beacon/SCOPE-BOOT?t=1792753476327 204
+2026-10-23T11:04:34.162+00:00 GET SCOPE-A_method=undefined t=1792753476327 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:04:34.163+00:00 ACCESS GET /beacon/SCOPE-A_method%3Dundefined?t=1792753476327 204
+2026-10-23T11:04:34.208+00:00 GET SCOPE-D_static=function:[object Function] t=1792753476329 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:04:34.208+00:00 GET SCOPE-C_getter=object:[object Object] keys= t=1792753476328 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:04:34.209+00:00 ACCESS GET /beacon/SCOPE-D_static%3Dfunction%3A%5Bobject%20Function%5D?t=1792753476329 204
+2026-10-23T11:04:34.209+00:00 ACCESS GET /beacon/SCOPE-C_getter%3Dobject%3A%5Bobject%20Object%5D%20keys%3D?t=1792753476328 204
+2026-10-23T11:04:34.297+00:00 GET SCOPE-G_protoget=object:[object Object] keys= t=1792753476329 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:04:34.298+00:00 ACCESS GET /beacon/SCOPE-E_derived%3Dobject%3A%5Bobject%20Object%5D%20keys%3D?t=1792753476329 204
+2026-10-23T11:04:34.298+00:00 ACCESS GET /beacon/SCOPE-G_protoget%3Dobject%3A%5Bobject%20Object%5D%20keys%3D?t=1792753476329 204
+2026-10-23T11:04:34.379+00:00 GET SCOPE-H_exact=undefined t=1792753476329 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:04:34.380+00:00 ACCESS GET /beacon/SCOPE-H_exact%3Dundefined?t=1792753476329 204
+2026-10-23T11:04:34.388+00:00 GET SCOPE-DONE t=1792753476329 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:04:34.388+00:00 ACCESS GET /beacon/SCOPE-DONE?t=1792753476329 204
+2026-10-23T11:04:35.719+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T11:04:35.720+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-23T11:04:35.720+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-23T11:04:35.720+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T11:04:53.422+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:05:14.190+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:05:20.779+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T11:05:34.687+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:05:55.354+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:06:13.539+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-23T11:06:15.826+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:06:36.593+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:06:57.483+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:07:04.111+00:00 ACCESS GET /corpus/leakcat.html 200
+2026-10-23T11:07:13.540+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-23T11:07:18.260+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:07:37.423+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:07:40.672+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-23T11:07:45.172+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-23T11:07:56.680+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-23T11:07:58.285+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:07:59.956+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T11:08:00.014+00:00 ACCESS GET /probe/p_leakscope.js?cb=1792753459 200
+2026-10-23T11:08:00.163+00:00 ACCESS GET /raw/p_leakscope.js?cb=1792753459&cb=1792753459 200
+2026-10-23T11:08:00.349+00:00 ACCESS GET /corpus/leakscope2.html?v=2 200
+2026-10-23T11:08:00.416+00:00 GET SCOPE-BOOT t=1792753682633 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:00.417+00:00 ACCESS GET /beacon/SCOPE-BOOT?t=1792753682633 204
+2026-10-23T11:08:00.432+00:00 GET SCOPE-A_method=undefined t=1792753682633 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:00.433+00:00 ACCESS GET /beacon/SCOPE-A_method%3Dundefined?t=1792753682633 204
+2026-10-23T11:08:00.482+00:00 GET SCOPE-C_getter=object:[object Object] keys= t=1792753682633 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:00.483+00:00 ACCESS GET /beacon/SCOPE-C_getter%3Dobject%3A%5Bobject%20Object%5D%20keys%3D?t=1792753682633 204
+2026-10-23T11:08:00.489+00:00 GET SCOPE-D_static=function:[object Function] t=1792753682633 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:00.489+00:00 ACCESS GET /beacon/SCOPE-D_static%3Dfunction%3A%5Bobject%20Function%5D?t=1792753682633 204
+2026-10-23T11:08:00.524+00:00 GET SCOPE-E_derived=object:[object Object] keys= t=1792753682633 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:00.525+00:00 ACCESS GET /beacon/SCOPE-E_derived%3Dobject%3A%5Bobject%20Object%5D%20keys%3D?t=1792753682633 204
+2026-10-23T11:08:00.563+00:00 GET SCOPE-G_protoget=object:[object Object] keys= t=1792753682634 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:00.564+00:00 ACCESS GET /beacon/SCOPE-G_protoget%3Dobject%3A%5Bobject%20Object%5D%20keys%3D?t=1792753682634 204
+2026-10-23T11:08:00.570+00:00 GET SCOPE-H_exact=undefined t=1792753682634 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:00.571+00:00 ACCESS GET /beacon/SCOPE-H_exact%3Dundefined?t=1792753682634 204
+2026-10-23T11:08:00.590+00:00 GET SCOPE-DONE t=1792753682634 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:00.591+00:00 ACCESS GET /beacon/SCOPE-DONE?t=1792753682634 204
+2026-10-23T11:08:16.808+00:00 ACCESS GET /probe/p_relapse_test.js 200
+2026-10-23T11:08:20.352+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:08:22.495+00:00 ACCESS GET /raw/p_relapse_test.js?cb=1 200
+2026-10-23T11:08:32.990+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-23T11:08:41.216+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:08:47.801+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T11:08:47.862+00:00 ACCESS GET /probe/p_leakscope.js?cb=1792753459 200
+2026-10-23T11:08:48.011+00:00 ACCESS GET /raw/p_leakscope.js?cb=1792753459&cb=1792753459 200
+2026-10-23T11:08:48.178+00:00 ACCESS GET /corpus/leakscope2.html?v=2 200
+2026-10-23T11:08:48.212+00:00 GET SCOPE-BOOT t=1792753730447 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:48.213+00:00 ACCESS GET /beacon/SCOPE-BOOT?t=1792753730447 204
+2026-10-23T11:08:48.250+00:00 GET SCOPE-A_method=undefined t=1792753730448 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:48.251+00:00 ACCESS GET /beacon/SCOPE-A_method%3Dundefined?t=1792753730448 204
+2026-10-23T11:08:48.309+00:00 GET SCOPE-C_getter=object:[object Object] keys= t=1792753730448 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:48.310+00:00 ACCESS GET /beacon/SCOPE-C_getter%3Dobject%3A%5Bobject%20Object%5D%20keys%3D?t=1792753730448 204
+2026-10-23T11:08:48.333+00:00 GET SCOPE-D_static=function:[object Function] t=1792753730449 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:48.333+00:00 ACCESS GET /beacon/SCOPE-D_static%3Dfunction%3A%5Bobject%20Function%5D?t=1792753730449 204
+2026-10-23T11:08:48.353+00:00 GET SCOPE-E_derived=object:[object Object] keys= t=1792753730449 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:48.354+00:00 ACCESS GET /beacon/SCOPE-E_derived%3Dobject%3A%5Bobject%20Object%5D%20keys%3D?t=1792753730449 204
+2026-10-23T11:08:48.421+00:00 GET SCOPE-G_protoget=object:[object Object] keys= t=1792753730449 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:48.421+00:00 GET SCOPE-H_exact=undefined t=1792753730449 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:48.422+00:00 ACCESS GET /beacon/SCOPE-G_protoget%3Dobject%3A%5Bobject%20Object%5D%20keys%3D?t=1792753730449 204
+2026-10-23T11:08:48.422+00:00 ACCESS GET /beacon/SCOPE-H_exact%3Dundefined?t=1792753730449 204
+2026-10-23T11:08:48.458+00:00 GET SCOPE-DONE t=1792753730449 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:08:48.460+00:00 ACCESS GET /beacon/SCOPE-DONE?t=1792753730449 204
+2026-10-23T11:09:00.493+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:09:19.766+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:09:24.791+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T11:09:26.094+00:00 ACCESS GET /raw/p_leakscope.js?cb=1 200
+2026-10-23T11:09:41.435+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:09:48.151+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T11:09:48.204+00:00 ACCESS GET /probe/p_leakscope.js?cb=1792753766 200
+2026-10-23T11:09:48.338+00:00 ACCESS GET /raw/p_leakscope.js?cb=1792753766&cb=1792753766 200
+2026-10-23T11:09:48.556+00:00 ACCESS GET /corpus/leakcat.html?v=3 200
+2026-10-23T11:09:48.595+00:00 GET CAT-BOOT t=1792753790824 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.595+00:00 ACCESS GET /beacon/CAT-BOOT?t=1792753790824 204
+2026-10-23T11:09:48.601+00:00 GET CAT-01-super-proxy = undefined t=1792753790824 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.601+00:00 ACCESS GET /beacon/CAT-01-super-proxy%20%3D%20undefined?t=1792753790824 204
+2026-10-23T11:09:48.628+00:00 GET CAT-02-with-proxy ERR Can't find variable: qqq t=1792753790825 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.629+00:00 ACCESS GET /beacon/CAT-02-with-proxy%20ERR%20Can't%20find%20variable%3A%20qqq?t=1792753790825 204
+2026-10-23T11:09:48.653+00:00 GET CAT-03-eval-with ERR Can't find variable: qqq t=1792753790825 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.654+00:00 ACCESS GET /beacon/CAT-03-eval-with%20ERR%20Can't%20find%20variable%3A%20qqq?t=1792753790825 204
+2026-10-23T11:09:48.730+00:00 GET CAT-05-caller = function:[object Function] {length,name,prototype} t=1792753790826 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+17.0 Safari/605.1.15
+2026-10-23T11:09:48.731+00:00 ACCESS GET /beacon/CAT-04-arguments%20ERR%20fn%20is%20not%20a%20function.%20(In%20'fn()'%2C%20'fn'%20is%20an%20instance%20of%20Arguments)?t=1792753790826 204
+2026-10-23T11:09:48.731+00:00 ACCESS GET /beacon/CAT-05-caller%20%3D%20function%3A%5Bobject%20Function%5D%20%7Blength%2Cname%2Cprototype%7D?t=1792753790826 204
+2026-10-23T11:09:48.788+00:00 GET CAT-06-callsite = string:[object String] {0,1,2,3} t=1792753790826 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.789+00:00 ACCESS GET /beacon/CAT-06-callsite%20%3D%20string%3A%5Bobject%20String%5D%20%7B0%2C1%2C2%2C3%7D?t=1792753790826 204
+2026-10-23T11:09:48.804+00:00 GET CAT-07-iterator-proto = number:[object Number] t=1792753790827 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.805+00:00 ACCESS GET /beacon/CAT-07-iterator-proto%20%3D%20number%3A%5Bobject%20Number%5D?t=1792753790827 204
+2026-10-23T11:09:48.843+00:00 GET CAT-08-proxy-gopd = undefined t=1792753790827 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.844+00:00 ACCESS GET /beacon/CAT-08-proxy-gopd%20%3D%20undefined?t=1792753790827 204
+2026-10-23T11:09:48.864+00:00 GET CAT-09-document-all = undefined:[object HTMLAllCollection] {0,1,2,3} t=1792753790828 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.865+00:00 ACCESS GET /beacon/CAT-09-document-all%20%3D%20undefined%3A%5Bobject%20HTMLAllCollection%5D%20%7B0%2C1%2C2%2C3%7D?t=1792753790828 204
+2026-10-23T11:09:48.882+00:00 GET CAT-10-iframe-realm = function:[object Function] {getPrototypeOf,setPrototypeOf,getOwnPropertyDescriptor,getOwnPropertyDescriptors} t=1792753790834 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.883+00:00 ACCESS GET /beacon/CAT-10-iframe-realm%20%3D%20function%3A%5Bobject%20Function%5D%20%7BgetPrototypeOf%2CsetPrototypeOf%2CgetOwnPropertyDescriptor%2CgetOwnPropertyDescriptors%7D?t=1792753790834 204
+2026-10-23T11:09:48.891+00:00 GET CAT-11-toPrimitive = string:[object String] {0,1,2,3} t=1792753790835 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.892+00:00 ACCESS GET /beacon/CAT-11-toPrimitive%20%3D%20string%3A%5Bobject%20String%5D%20%7B0%2C1%2C2%2C3%7D?t=1792753790835 204
+2026-10-23T11:09:48.924+00:00 GET CAT-12-sort-this = object:[object Window] {tag,document,probe,NaN} t=1792753790835 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.924+00:00 ACCESS GET /beacon/CAT-12-sort-this%20%3D%20object%3A%5Bobject%20Window%5D%20%7Btag%2Cdocument%2Cprobe%2CNaN%7D?t=1792753790835 204
+2026-10-23T11:09:48.959+00:00 GET CAT-13-construct-proxy = function:[object Function] {length,name,prototype} t=1792753790836 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:48.960+00:00 ACCESS GET /beacon/CAT-13-construct-proxy%20%3D%20function%3A%5Bobject%20Function%5D%20%7Blength%2Cname%2Cprototype%7D?t=1792753790836 204
+2026-10-23T11:09:49.024+00:00 GET CAT-14-class-scope = undefined t=1792753790836 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:49.024+00:00 ACCESS GET /beacon/CAT-14-class-scope%20%3D%20undefined?t=1792753790836 204
+2026-10-23T11:09:49.030+00:00 GET CAT-15-private-brand = number:[object Number] t=1792753790836 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:49.031+00:00 ACCESS GET /beacon/CAT-15-private-brand%20%3D%20number%3A%5Bobject%20Number%5D?t=1792753790836 204
+2026-10-23T11:09:49.048+00:00 GET CAT-DONE t=1792753790836 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:09:49.048+00:00 ACCESS GET /beacon/CAT-DONE?t=1792753790836 204
+2026-10-23T11:10:03.409+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:10:22.709+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:10:43.967+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:11:05.626+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:11:27.284+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:11:35.741+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-23T11:11:35.765+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-23T11:11:35.786+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T11:11:35.787+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T11:11:49.072+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:12:08.972+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:12:12.199+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T11:12:20.815+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T11:12:29.289+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:12:38.262+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-23T11:12:40.692+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-23T11:12:48.654+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:12:56.718+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-23T11:13:08.120+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:13:27.890+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:13:47.164+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:13:49.082+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:13:53.514+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T11:14:08.457+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:14:30.146+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:14:51.310+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:15:11.427+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T11:15:13.336+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:15:33.404+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:15:39.506+00:00 ACCESS GET /raw/p_relapse_test.js?cb=9 200
+2026-10-23T11:15:44.288+00:00 ACCESS GET /status 200
+2026-10-23T11:15:55.381+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:16:06.080+00:00 ACCESS GET /corpus/skip.json 200
+2026-10-23T11:16:06.125+00:00 ACCESS GET /probe/p_relapse_test.js 200
+2026-10-23T11:16:17.098+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:16:36.453+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T11:16:36.761+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:16:43.752+00:00 ACCESS GET /status 200
+2026-10-23T11:16:55.896+00:00 DNS Q telemetry-console.api.playstation.com 1

@@ -1,0 +1,17 @@
+2026-10-20T08:05:58.355+00:00 GET V168-l50q47-P-CHAIN-START-1-NOPOPUP-CYCLES-1 t=1792483556989&n=1 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:05:58.385+00:00 GET V168-l50q47-P-BUILD-1-NOPOPUP t=1792483557019&n=2 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:05:58.417+00:00 GET V168-l50q47-P-F1-APPENDED-1 t=1792483557048&n=3 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:05:58.611+00:00 GET V168-t420xx-I-READY t=1792483557245&n=1 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:05:58.658+00:00 GET V168-t420xx-I-NOPOPUP-OK t=1792483557274&n=2 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:05:58.695+00:00 GET V168-l50q47-P-CHAIN-START-2-NOPOPUP-CYCLES-1 t=1792483557321&n=4 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:05:58.728+00:00 GET V168-l50q47-P-BUILD-2-NOPOPUP t=1792483557358&n=5 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:05:58.757+00:00 GET V168-l50q47-P-F1-APPENDED-2 t=1792483557391&n=6 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:05:58.971+00:00 GET V168-l50q47-P-F1-LOADED-2 t=1792483557605&n=7 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:05:58.998+00:00 GET V168-l50q47-P-BUILD-1-NOPOPUP t=1792483557632&n=8 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:05:59.029+00:00 GET V168-l50q47-P-F1-APPENDED-1 t=1792483557660&n=9 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T08:06:18.317+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T08:08:29.774+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T08:08:32.544+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-20T08:09:11.863+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-20T08:09:25.841+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T08:10:34.684+00:00 DNS BLOCK smetrics.aem.playstation.com 1

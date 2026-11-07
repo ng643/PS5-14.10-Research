@@ -1,0 +1,114 @@
+2026-10-24T18:39:55.307+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:40:11.775+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-24T18:40:11.847+00:00 ACCESS GET /probe/p_ffset_ladder.js?cb=1792867184 200
+2026-10-24T18:40:12.009+00:00 ACCESS GET /raw/p_ffset_ladder.js?cb=1792867184&cb=1792867184 200
+2026-10-24T18:40:12.182+00:00 ACCESS GET /corpus/ffset-ladder.html?t=1792867214519 200
+2026-10-24T18:40:12.227+00:00 ACCESS GET /corpus/ffset-config.json?t=1792867214599 200
+2026-10-24T18:40:12.366+00:00 POST CALL  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=0 del=0 rm=1 lay=1 bufs=0x256 CALL load n=0'
+2026-10-24T18:40:12.374+00:00 ACCESS POST /beacon/CALL 204
+2026-10-24T18:40:12.409+00:00 POST GETTER  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=0 del=0 rm=1 lay=1 bufs=0x256 GETTER enter'
+2026-10-24T18:40:12.411+00:00 ACCESS POST /beacon/GETTER 204
+2026-10-24T18:40:12.446+00:00 POST GETTER  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=0 del=0 rm=1 lay=1 bufs=0x256 GETTER style-removed'
+2026-10-24T18:40:12.448+00:00 ACCESS POST /beacon/GETTER 204
+2026-10-24T18:40:12.481+00:00 POST GETTER  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=0 del=0 rm=1 lay=1 bufs=0x256 GETTER returning'
+2026-10-24T18:40:12.484+00:00 ACCESS POST /beacon/GETTER 204
+2026-10-24T18:40:12.516+00:00 POST PROMISE  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=0 del=0 rm=1 lay=1 bufs=0x256 PROMISE returned n=0'
+2026-10-24T18:40:12.517+00:00 ACCESS POST /beacon/PROMISE 204
+2026-10-24T18:40:12.548+00:00 POST RESOLVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=0 del=0 rm=1 lay=1 bufs=0x256 RESOLVED n=0 size=2'
+2026-10-24T18:40:12.551+00:00 ACCESS POST /beacon/RESOLVED 204
+2026-10-24T18:40:12.854+00:00 POST SURVIVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=0 del=0 rm=1 lay=1 bufs=0x256 SURVIVED n=0'
+2026-10-24T18:40:12.856+00:00 ACCESS POST /beacon/SURVIVED 204
+2026-10-24T18:40:12.895+00:00 POST CALL  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=1 del=0 rm=1 lay=1 bufs=0x256 CALL load n=1'
+2026-10-24T18:40:12.898+00:00 ACCESS POST /beacon/CALL 204
+2026-10-24T18:40:12.932+00:00 POST PROMISE  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=1 del=0 rm=1 lay=1 bufs=0x256 PROMISE returned n=1'
+2026-10-24T18:40:12.936+00:00 ACCESS POST /beacon/PROMISE 204
+2026-10-24T18:40:12.970+00:00 POST RESOLVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=1 del=0 rm=1 lay=1 bufs=0x256 RESOLVED n=1 size=2'
+2026-10-24T18:40:12.971+00:00 ACCESS POST /beacon/RESOLVED 204
+2026-10-24T18:40:13.221+00:00 POST SURVIVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=1 del=0 rm=1 lay=1 bufs=0x256 SURVIVED n=1'
+2026-10-24T18:40:13.223+00:00 ACCESS POST /beacon/SURVIVED 204
+2026-10-24T18:40:13.262+00:00 POST CALL  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=2 del=0 rm=1 lay=1 bufs=0x256 CALL load n=2'
+2026-10-24T18:40:13.264+00:00 ACCESS POST /beacon/CALL 204
+2026-10-24T18:40:13.299+00:00 POST PROMISE  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=2 del=0 rm=1 lay=1 bufs=0x256 PROMISE returned n=2'
+2026-10-24T18:40:13.302+00:00 ACCESS POST /beacon/PROMISE 204
+2026-10-24T18:40:13.331+00:00 POST RESOLVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=2 del=0 rm=1 lay=1 bufs=0x256 RESOLVED n=2 size=2'
+2026-10-24T18:40:13.334+00:00 ACCESS POST /beacon/RESOLVED 204
+2026-10-24T18:40:13.597+00:00 POST SURVIVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=2 del=0 rm=1 lay=1 bufs=0x256 SURVIVED n=2'
+2026-10-24T18:40:13.600+00:00 ACCESS POST /beacon/SURVIVED 204
+2026-10-24T18:40:13.634+00:00 POST CALL  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=4 del=0 rm=1 lay=1 bufs=0x256 CALL load n=4'
+2026-10-24T18:40:13.638+00:00 ACCESS POST /beacon/CALL 204
+2026-10-24T18:40:13.672+00:00 POST PROMISE  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=4 del=0 rm=1 lay=1 bufs=0x256 PROMISE returned n=4'
+2026-10-24T18:40:13.674+00:00 ACCESS POST /beacon/PROMISE 204
+2026-10-24T18:40:13.714+00:00 POST RESOLVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=4 del=0 rm=1 lay=1 bufs=0x256 RESOLVED n=4 size=2'
+2026-10-24T18:40:13.716+00:00 ACCESS POST /beacon/RESOLVED 204
+2026-10-24T18:40:13.957+00:00 POST SURVIVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=4 del=0 rm=1 lay=1 bufs=0x256 SURVIVED n=4'
+2026-10-24T18:40:13.959+00:00 ACCESS POST /beacon/SURVIVED 204
+2026-10-24T18:40:13.989+00:00 POST CALL  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=8 del=0 rm=1 lay=1 bufs=0x256 CALL load n=8'
+2026-10-24T18:40:13.991+00:00 ACCESS POST /beacon/CALL 204
+2026-10-24T18:40:14.021+00:00 POST PROMISE  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=8 del=0 rm=1 lay=1 bufs=0x256 PROMISE returned n=8'
+2026-10-24T18:40:14.023+00:00 ACCESS POST /beacon/PROMISE 204
+2026-10-24T18:40:14.055+00:00 POST RESOLVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=8 del=0 rm=1 lay=1 bufs=0x256 RESOLVED n=8 size=2'
+2026-10-24T18:40:14.057+00:00 ACCESS POST /beacon/RESOLVED 204
+2026-10-24T18:40:14.307+00:00 POST SURVIVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=8 del=0 rm=1 lay=1 bufs=0x256 SURVIVED n=8'
+2026-10-24T18:40:14.310+00:00 ACCESS POST /beacon/SURVIVED 204
+2026-10-24T18:40:14.340+00:00 POST CALL  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=16 del=0 rm=1 lay=1 bufs=0x256 CALL load n=16'
+2026-10-24T18:40:14.342+00:00 ACCESS POST /beacon/CALL 204
+2026-10-24T18:40:14.379+00:00 POST PROMISE  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=16 del=0 rm=1 lay=1 bufs=0x256 PROMISE returned n=16'
+2026-10-24T18:40:14.381+00:00 ACCESS POST /beacon/PROMISE 204
+2026-10-24T18:40:14.416+00:00 POST RESOLVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=16 del=0 rm=1 lay=1 bufs=0x256 RESOLVED n=16 size=2'
+2026-10-24T18:40:14.418+00:00 ACCESS POST /beacon/RESOLVED 204
+2026-10-24T18:40:14.672+00:00 POST SURVIVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=16 del=0 rm=1 lay=1 bufs=0x256 SURVIVED n=16'
+2026-10-24T18:40:14.674+00:00 ACCESS POST /beacon/SURVIVED 204
+2026-10-24T18:40:14.706+00:00 POST CALL  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=32 del=0 rm=1 lay=1 bufs=0x256 CALL load n=32'
+2026-10-24T18:40:14.708+00:00 ACCESS POST /beacon/CALL 204
+2026-10-24T18:40:14.738+00:00 POST PROMISE  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=32 del=0 rm=1 lay=1 bufs=0x256 PROMISE returned n=32'
+2026-10-24T18:40:14.742+00:00 ACCESS POST /beacon/PROMISE 204
+2026-10-24T18:40:14.774+00:00 POST RESOLVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=32 del=0 rm=1 lay=1 bufs=0x256 RESOLVED n=32 size=2'
+2026-10-24T18:40:14.776+00:00 ACCESS POST /beacon/RESOLVED 204
+2026-10-24T18:40:14.861+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:40:15.026+00:00 POST SURVIVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=32 del=0 rm=1 lay=1 bufs=0x256 SURVIVED n=32'
+2026-10-24T18:40:15.028+00:00 ACCESS POST /beacon/SURVIVED 204
+2026-10-24T18:40:15.057+00:00 POST CALL  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=64 del=0 rm=1 lay=1 bufs=0x256 CALL load n=64'
+2026-10-24T18:40:15.059+00:00 ACCESS POST /beacon/CALL 204
+2026-10-24T18:40:15.092+00:00 POST PROMISE  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=64 del=0 rm=1 lay=1 bufs=0x256 PROMISE returned n=64'
+2026-10-24T18:40:15.094+00:00 ACCESS POST /beacon/PROMISE 204
+2026-10-24T18:40:15.126+00:00 POST RESOLVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=64 del=0 rm=1 lay=1 bufs=0x256 RESOLVED n=64 size=2'
+2026-10-24T18:40:15.128+00:00 ACCESS POST /beacon/RESOLVED 204
+2026-10-24T18:40:15.374+00:00 POST SURVIVED  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=64 del=0 rm=1 lay=1 bufs=0x256 SURVIVED n=64'
+2026-10-24T18:40:15.376+00:00 ACCESS POST /beacon/SURVIVED 204
+2026-10-24T18:40:15.405+00:00 POST ALIVE  192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15 'LAD step=64 del=0 rm=1 lay=1 bufs=0x256 ALIVE ladder complete'
+2026-10-24T18:40:15.407+00:00 ACCESS POST /beacon/ALIVE 204
+2026-10-24T18:40:18.013+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-24T18:40:35.819+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:40:56.074+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:41:16.929+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:41:18.143+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-24T18:41:37.081+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:41:57.171+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:42:18.161+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:42:38.412+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:42:59.265+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:43:19.419+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:43:39.568+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:43:52.231+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-24T18:43:54.593+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-24T18:43:55.561+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-24T18:43:59.824+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:44:19.373+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:44:40.229+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:44:49.682+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-24T18:44:49.682+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-24T18:44:49.689+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-24T18:44:49.691+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-24T18:45:00.383+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:45:18.041+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-24T18:45:20.440+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:45:34.760+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-24T18:45:41.494+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:46:01.452+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:46:22.404+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:46:34.318+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-24T18:46:42.687+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:47:02.837+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:47:23.701+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:47:43.853+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-24T18:48:05.006+00:00 DNS Q telemetry-console.api.playstation.com 1

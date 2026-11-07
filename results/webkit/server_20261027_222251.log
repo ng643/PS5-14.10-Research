@@ -1,0 +1,18 @@
+2026-10-27T22:22:55.444+00:00 DNS Q us.np.stun.playstation.net 1
+et 1
+2026-10-27T22:22:55.452+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-27T22:22:55.696+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-27T22:22:56.070+00:00 DNS Q sgst.prod.dl.playstation.net 1
+2026-10-27T22:23:06.564+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-27T22:23:40.632+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-27T22:23:41.559+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-27T22:23:42.190+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-27T22:23:48.273+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-27T22:23:55.601+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-27T22:24:07.847+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-27T22:24:17.463+00:00 ACCESS GET /document/gb/ps5/ 200
+2026-10-27T22:24:28.560+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-27T22:24:41.593+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-27T22:24:42.305+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-27T22:24:48.120+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-27T22:25:08.773+00:00 DNS Q telemetry-console.api.playstation.com 1

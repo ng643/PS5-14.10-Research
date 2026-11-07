@@ -1,0 +1,226 @@
+<!doctype html><meta charset="utf-8"><title>regexp-prototype-symbol-replace-edge-cases.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Test RegExp.prototype[Symbol.replace] edge cases
+
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`Expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+}
+
+function shouldThrow(func, errorType) {
+    let threw = false;
+    try {
+        func();
+    } catch (e) {
+        threw = true;
+        if (!(e instanceof errorType))
+            throw new Error(`Expected ${errorType.name} but got ${e.constructor.name}: ${e.message}`);
+    }
+    if (!threw)
+        throw new Error(`Expected ${errorType.name} to be thrown`);
+}
+
+// Test 1: Empty string input
+shouldBe(/a/[Symbol.replace]("", "b"), "");
+shouldBe(/a/g[Symbol.replace]("", "b"), "");
+shouldBe(/(?:)/[Symbol.replace]("", "X"), "X");
+shouldBe(/(?:)/g[Symbol.replace]("", "X"), "X");
+
+// Test 2: Empty match global replacement
+shouldBe(/(?:)/g[Symbol.replace]("abc", "-"), "-a-b-c-");
+shouldBe(/(?:)/g[Symbol.replace]("", "-"), "-");
+
+// Test 3: Empty replacement with empty match
+shouldBe(/(?:)/g[Symbol.replace]("abc", ""), "abc");
+
+// Test 4: Match that returns empty string
+shouldBe(/a*/g[Symbol.replace]("aaa", "X"), "XX"); // Matches "aaa" then "" at end
+
+// Test 5: Very long replacement string
+let longStr = "x".repeat(10000);
+shouldBe(/a/[Symbol.replace]("a", longStr), longStr);
+
+// Test 6: Very many matches
+let manyAs = "a".repeat(1000);
+shouldBe(/a/g[Symbol.replace](manyAs, "b"), "b".repeat(1000));
+
+// Test 7: Replacement with special regex characters (should be literal)
+shouldBe(/b/[Symbol.replace]("abc", "$"), "a$c");
+shouldBe(/b/[Symbol.replace]("abc", "^"), "a^c");
+shouldBe(/b/[Symbol.replace]("abc", "\\"), "a\\c");
+shouldBe(/b/[Symbol.replace]("abc", "["), "a[c");
+shouldBe(/b/[Symbol.replace]("abc", "("), "a(c");
+
+// Test 8: Non-string replacement value conversion
+shouldBe(/b/[Symbol.replace]("abc", 123), "a123c");
+shouldBe(/b/[Symbol.replace]("abc", true), "atruec");
+shouldBe(/b/[Symbol.replace]("abc", false), "afalsec");
+shouldBe(/b/[Symbol.replace]("abc", null), "anullc");
+shouldBe(/b/[Symbol.replace]("abc", undefined), "aundefinedc");
+shouldBe(/b/[Symbol.replace]("abc", { toString() { return "X"; } }), "aXc");
+
+// Test 9: Non-string input conversion (via call)
+shouldBe(/2/[Symbol.replace](123, "X"), "1X3");
+shouldBe(/r/[Symbol.replace](true, "X"), "tXue");
+
+// Test 10: Replacement with $ at end
+shouldBe(/b/[Symbol.replace]("abc", "X$"), "aX$c");
+shouldBe(/b/[Symbol.replace]("abc", "$"), "a$c");
+
+// Test 11: $< without closing >
+shouldBe(/(?<x>b)/[Symbol.replace]("abc", "$<x"), "a$<xc");
+shouldBe(/(?<x>b)/[Symbol.replace]("abc", "$<"), "a$<c");
+
+// Test 12: Overlapping matches (non-overlapping by design)
+shouldBe(/aa/g[Symbol.replace]("aaaa", "X"), "XX");
+
+// Test 13: Backreference larger than group count
+shouldBe(/(a)/[Symbol.replace]("abc", "$9"), "$9bc"); // Only 1 group, $9 is literal
+shouldBe(/(a)/[Symbol.replace]("abc", "$99"), "$99bc");
+
+// Test 14: lastIndex behavior with global flag
+let re = /a/g;
+re.lastIndex = 100;
+re[Symbol.replace]("aaa", "X"); // lastIndex should be reset to 0 for global replace
+// The result should still work correctly
+shouldBe(/a/g[Symbol.replace]("aaa", "X"), "XXX");
+
+// Test 15: lastIndex behavior with non-global flag
+re = /a/;
+re.lastIndex = 100;
+shouldBe(re[Symbol.replace]("aaa", "X"), "Xaa"); // lastIndex ignored for non-global
+
+// Test 16: Match at position 0
+shouldBe(/^/[Symbol.replace]("abc", "X"), "Xabc");
+shouldBe(/^/g[Symbol.replace]("abc", "X"), "Xabc");
+
+// Test 17: Match at end position
+shouldBe(/$/[Symbol.replace]("abc", "X"), "abcX");
+shouldBe(/$/g[Symbol.replace]("abc", "X"), "abcX");
+
+// Test 18: Type error when called on non-object
+shouldThrow(() => {
+    RegExp.prototype[Symbol.replace].call(null, "test", "x");
+}, TypeError);
+
+shouldThrow(() => {
+    RegExp.prototype[Symbol.replace].call(undefined, "test", "x");
+}, TypeError);
+
+shouldThrow(() => {
+    RegExp.prototype[Symbol.replace].call(123, "test", "x");
+}, TypeError);
+
+// Test 19: Works on plain objects with exec
+let fakeRegExp = {
+    flags: "",
+    exec: function(str) {
+        if (this.called) return null;
+        this.called = true;
+        let result = ["found"];
+        result.index = 0;
+        result.groups = undefined;
+        return result;
+    }
+};
+shouldBe(RegExp.prototype[Symbol.replace].call(fakeRegExp, "found it", "replaced"), "replaced it");
+
+// Test 20: Works with sticky flag
+shouldBe(/a/y[Symbol.replace]("aaab", "X"), "Xaab");
+shouldBe(/a/gy[Symbol.replace]("aaab", "X"), "XXXb");
+
+// Test 21: JIT warmup edge cases
+for (let i = 0; i < testLoopCount; i++) {
+    shouldBe(/(?:)/g[Symbol.replace]("", "X"), "X");
+    shouldBe(/(?:)/g[Symbol.replace]("abc", "-"), "-a-b-c-");
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1145-regexp-prototype-symbol-replace-edge-cases.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

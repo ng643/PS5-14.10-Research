@@ -1,0 +1,192 @@
+<!doctype html><meta charset="utf-8"><title>string-indexof-rope-walk-dynamic-onechar.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected, msg) {
+    if (actual !== expected)
+        throw new Error((msg ? msg + ": " : "") + "got " + actual + ", expected " + expected);
+}
+
+function makeRope(unit, depth) {
+    // depth-level balanced ternary rope, each fiber is `unit`
+    let s = unit;
+    for (let i = 0; i < depth; i++)
+        s = s + s + s;
+    return s;
+}
+
+function flatten(s) { s.charCodeAt(0); return s; }
+
+// Shallow 2-fiber rope with resolved fibers: tryFindOneChar walks without bailout.
+// Length = 1500 + 1500 = 3000 >= minLengthForRopeWalk (0x128 = 296)
+let shallowLeft = flatten("a".repeat(500) + "b" + "a".repeat(499) + "c" + "a".repeat(499));
+let shallowRight = flatten("a".repeat(499) + "d" + "a".repeat(500) + "e" + "a".repeat(499));
+function mkShallowRope() { return shallowLeft + shallowRight; }
+let shallowRope = mkShallowRope();
+let shallowFlat = ("" + shallowRope).slice(0); // force resolve
+
+// Deep rope: nested rope fibers → tryFindOneChar bails out (nullopt), falls through to view()
+let deepRope = makeRope("a".repeat(100) + "X" + "a".repeat(99), 4); // depth 4, len = 200 * 81 = 16200
+let deepFlat = ("" + deepRope).slice(0);
+
+// 16-bit 2-fiber rope with resolved fibers
+let wideLeft = flatten("あ".repeat(500) + "漢" + "あ".repeat(499));
+let wideRight = flatten("あ".repeat(500) + "字" + "あ".repeat(499));
+function mkWideRope() { return wideLeft + wideRight; }
+let wideRope = mkWideRope();try {
+let wideFlat = ("" + wideRope).slice(0);} catch (e) {}
+
+// needle must be a variable so DFG/FTL can't fold to WithOneChar at compile time.
+// Also pass through a function parameter to defeat tryGetString.
+function indexOf2(s, needle) { return s.indexOf(needle); }
+function indexOf3(s, needle, start) { return s.indexOf(needle, start); }
+noInline(indexOf2);
+noInline(indexOf3);
+
+let needles1 = ["a", "b", "c", "d", "e", "X", "z", ""];
+let needles2 = ["ab", "ba", "aa"];
+let needlesW = ["あ", "漢", "字"];
+
+for (let i = 0; i < testLoopCount; i++) {
+    // shallow rope, 1-char needle: hit/miss
+    for (let n of needles1) {
+        shouldBe(indexOf2(shallowRope, n), shallowFlat.indexOf(n), "shallow/" + n);
+        shouldBe(indexOf2(shallowRope, n), indexOf2(shallowFlat, n), "shallow-cross/" + n);
+    }
+    // shallow rope, 1-char needle with start index: before/at/after first occurrence, fiber boundary, past end
+    for (let start of [0, 499, 500, 501, 1000, 1001, 1499, 1500, 1501, 1999, 2000, 2999, 3000, 9999, -5]) {
+        for (let n of ["b", "c", "d", "e", "z"]) {
+            shouldBe(indexOf3(shallowRope, n, start), shallowFlat.indexOf(n, start), "shallow-idx/" + n + "/" + start);
+        }
+    }
+    // 0-char / 2-char needle: fall-through path, must still be correct
+    for (let n of needles2) {
+        shouldBe(indexOf2(shallowRope, n), shallowFlat.indexOf(n), "shallow-multi/" + n);
+        shouldBe(indexOf3(shallowRope, n, 100), shallowFlat.indexOf(n, 100), "shallow-multi-idx/" + n);
+    }
+    // deep rope: bail-out path, pos advanced then fall-through
+    for (let n of ["X", "a", "z"]) {
+        shouldBe(indexOf2(deepRope, n), deepFlat.indexOf(n), "deep/" + n);
+        shouldBe(indexOf3(deepRope, n, 5000), deepFlat.indexOf(n, 5000), "deep-idx/" + n);
+    }
+    // 16-bit
+    for (let n of needlesW) {
+        shouldBe(indexOf2(wideRope, n), wideFlat.indexOf(n), "wide/" + n);
+        shouldBe(indexOf3(wideRope, n, 600), wideFlat.indexOf(n, 600), "wide-idx/" + n);
+    }
+    // flat base: result unchanged
+    shouldBe(indexOf2(shallowFlat, "b"), 500, "flat-b");
+    shouldBe(indexOf3(shallowFlat, "c", 600), 1000, "flat-c-idx");
+}
+
+// Fiber-boundary characters: last/first char of each resolved fiber.
+let boundLeft = flatten("a".repeat(1499) + "P");
+let boundRight = flatten("Q" + "a".repeat(1499));
+function mkBoundRope() { return boundLeft + boundRight; }
+let boundFlat = flatten(mkBoundRope());
+for (let i = 0; i < testLoopCount; i++) {
+    let boundRope = mkBoundRope();
+    shouldBe(indexOf2(boundRope, "P"), 1499, "bound-P");
+    shouldBe(indexOf2(boundRope, "Q"), 1500, "bound-Q");
+    shouldBe(indexOf3(boundRope, "P", 1499), 1499, "bound-P-at");
+    shouldBe(indexOf3(boundRope, "P", 1500), -1, "bound-P-past");
+    shouldBe(indexOf3(boundRope, "Q", 1500), 1500, "bound-Q-at");
+    shouldBe(indexOf2(boundRope, "P"), boundFlat.indexOf("P"), "bound-cross-P");
+    shouldBe(indexOf2(boundRope, "Q"), boundFlat.indexOf("Q"), "bound-cross-Q");
+}
+
+// Below minLengthForRopeWalk: short rope skips the optimization, falls through
+let shortRope = ("a".repeat(50) + "M") + ("a".repeat(50)) + ("a".repeat(50));
+let shortFlat = ("" + shortRope).slice(0);
+for (let i = 0; i < testLoopCount; i++) {
+    shouldBe(indexOf2(shortRope, "M"), shortFlat.indexOf("M"), "short-M");
+    shouldBe(indexOf3(shortRope, "M", 40), shortFlat.indexOf("M", 40), "short-M-idx");
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1526-string-indexof-rope-walk-dynamic-onechar.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

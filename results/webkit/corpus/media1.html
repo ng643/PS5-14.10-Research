@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>media1</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function run(src, tag, expect){
+  var v = document.createElement('video');
+  v.muted = true; v.playsInline = true; v.preload = 'auto';
+  v.addEventListener('loadeddata', function(){
+    b(tag+'-LOADED-w'+v.videoWidth+'-h'+v.videoHeight);
+    var c = document.createElement('canvas');
+    c.width = v.videoWidth; c.height = v.videoHeight;
+    var x = c.getContext('2d');
+    x.drawImage(v, 0, 0);
+    var d = x.getImageData(0, 0, c.width, c.height).data;
+    var diff = 0, first = -1, firstv = '';
+    for (var i = 0; i < d.length; i += 4){
+      var dr = Math.abs(d[i]-expect[0]), dg = Math.abs(d[i+1]-expect[1]), db = Math.abs(d[i+2]-expect[2]);
+      // decoder rounding on chroma is expected; count only gross deviations
+      if (dr > 16 || dg > 16 || db > 16){ diff++; if (first < 0){ first = i>>2; firstv = d[i]+','+d[i+1]+','+d[i+2]+','+d[i+3]; } }
+    }
+    b(tag+'-PIX-diff'+diff+'-first'+first+'-v'+firstv.replace(/,/g,'.'));
+    if (first >= 0) b(tag+'-SAMPLE-'+d.slice(first*4, first*4+16).join('.'));
+    b(tag+'-END');
+  });
+  v.addEventListener('error', function(){ b(tag+'-ERR-'+(v.error?v.error.code:'?')); });
+  v.src = src; v.load();
+  b(tag+'-START');
+}
+b('M-START');
+run('/corpus/red34x18.mp4','M-RED',[255,0,0]);
+run('/corpus/green33x17.mp4','M-GREEN',[0,128,0]);
+b('M-DONE');
+</script></head><body>media</body></html>

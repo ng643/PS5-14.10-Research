@@ -1,0 +1,275 @@
+<!doctype html><meta charset="utf-8"><title>iterator-helpers-fast-path-drain-and-reentrancy.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Regression tests for the Iterator.prototype.toArray / forEach / etc. fast path
+// in forEachInIteratorProtocol, and Array.from(map.keys() / .values()) fast path
+// in tryCreateArrayFromMapIterator. Requirements:
+//   1. Seed iteration from the iterator's stored storage (not the map's current),
+//      so transit() can shift entry indices across rehashes/clears.
+//   2. Leave the iterator drained when iteration completes.
+//   3. The fast path and the user-visible callback share the iterator's cursor:
+//      a reentrant iter.next() inside the callback must advance the iterator,
+//      consuming the next element so the helper does not see it again.
+//      Closing the iterator inside the callback (iter.return-equivalent) must
+//      stop the helper.
+
+function shouldEq(actual, expected, msg) {
+    const a = JSON.stringify(actual);
+    const e = JSON.stringify(expected);
+    if (a !== e)
+        throw new Error("FAIL " + msg + ": got " + a + ", expected " + e);
+}
+
+// --- Iterator.prototype.toArray on Map/Set iterators ---
+
+// Partial-consume returns the remaining elements.
+{
+    const s = new Set([1, 2, 3]);
+    const it = s.values();
+    it.next();
+    shouldEq(it.toArray(), [2, 3], "set toArray after partial consume");
+}
+
+// Iterator must be drained after toArray.
+{
+    const s = new Set([1, 2, 3]);
+    const it = s.values();
+    it.toArray();
+    shouldEq(it.next(), { value: undefined, done: true }, "set: next() after toArray must be done");
+}
+{
+    const s = new Set([1, 2, 3]);
+    const it = s.values();
+    it.next();
+    it.toArray();
+    shouldEq(it.next(), { value: undefined, done: true }, "set: next() after partial+toArray must be done");
+}
+{
+    const m = new Map([[1, "a"], [2, "b"], [3, "c"]]);
+    const it = m.entries();
+    it.toArray();
+    shouldEq(it.next(), { value: undefined, done: true }, "map: next() after toArray must be done");
+}
+
+// Rehash with deletions during partial consume.
+{
+    const s = new Set();
+    s.add("a"); s.add("b"); s.add("c"); s.add("d");
+    const it = s.values();
+    it.next(); it.next();
+    s.delete("a"); s.delete("b");
+    s.add("e");
+    shouldEq(it.toArray(), ["c", "d", "e"], "set toArray after rehash with deletions");
+}
+
+// Drained iterator across clear().
+{
+    const s = new Set();
+    for (let i = 0; i < 1000; i++) s.add(i);
+    const it = s.values();
+    while (!it.next().done) {}
+    s.clear();
+    shouldEq(it.toArray(), [], "set toArray after drain+clear");
+}
+
+// --- Reentrancy: callback advances the iterator, helper picks up after it ---
+
+// Set: callback calls iter.next() once per element, "stealing" alternate entries.
+// Helper should see the rest. Total elements distributed between helper & callback
+// must equal the iterator contents in spec order.
+{
+    const s = new Set([10, 20, 30, 40, 50]);
+    const it = s.values();
+    const helperSaw = [];
+    const userTook = [];
+    it.forEach(v => {
+        helperSaw.push(v);
+        const n = it.next();
+        if (!n.done)
+            userTook.push(n.value);
+    });
+    shouldEq(helperSaw, [10, 30, 50], "set forEach: helper sees alternate elements when callback steals one each step");
+    shouldEq(userTook, [20, 40], "set forEach: callback's iter.next() takes interleaved elements");
+    shouldEq(it.next(), { value: undefined, done: true }, "set: drained after forEach");
+}
+
+// Map: same shape.
+{
+    const m = new Map([[1, "a"], [2, "b"], [3, "c"], [4, "d"], [5, "e"]]);
+    const it = m.values();
+    const helperSaw = [];
+    const userTook = [];
+    it.forEach(v => {
+        helperSaw.push(v);
+        const n = it.next();
+        if (!n.done)
+            userTook.push(n.value);
+    });
+    shouldEq(helperSaw, ["a", "c", "e"], "map forEach: helper sees alternate elements");
+    shouldEq(userTook, ["b", "d"], "map forEach: callback gets the rest");
+    shouldEq(it.next(), { value: undefined, done: true }, "map: drained after forEach");
+}
+
+// Callback drains the iterator entirely via repeated iter.next() — helper must
+// then see no more elements.
+{
+    const s = new Set([1, 2, 3, 4, 5]);
+    const it = s.values();
+    const helperSaw = [];
+    const userTook = [];
+    it.forEach(v => {
+        helperSaw.push(v);
+        if (v === 1) {
+            while (true) {
+                const n = it.next();
+                if (n.done) break;
+                userTook.push(n.value);
+            }
+        }
+    });
+    shouldEq(helperSaw, [1], "set forEach: helper stops after callback drains rest");
+    shouldEq(userTook, [2, 3, 4, 5], "set forEach: callback drained the rest");
+    shouldEq(it.next(), { value: undefined, done: true }, "set: drained");
+}
+
+// --- Array.from(map.keys()) / Array.from(map.values()) ---
+
+// Partial-consume returns remaining elements.
+{
+    const m = new Map([[1, "a"], [2, "b"], [3, "c"]]);
+    const it = m.keys();
+    it.next();
+    shouldEq(Array.from(it), [2, 3], "Array.from(map.keys()) after partial consume");
+}
+
+// Iterator drained after Array.from.
+{
+    const m = new Map([[1, "a"], [2, "b"], [3, "c"]]);
+    const it = m.keys();
+    Array.from(it);
+    shouldEq(it.next(), { value: undefined, done: true }, "map: next() after Array.from must be done");
+}
+{
+    const m = new Map([[1, "a"], [2, "b"], [3, "c"]]);
+    const it = m.values();
+    it.next();
+    Array.from(it);
+    shouldEq(it.next(), { value: undefined, done: true }, "map: next() after partial+Array.from must be done");
+}
+
+// Fresh iterator on a map with deletions — fast path skips empties.
+{
+    const m = new Map([[1, "a"], [2, "b"], [3, "c"], [4, "d"]]);
+    m.delete(2);
+    m.delete(3);
+    shouldEq(Array.from(m.keys()), [1, 4], "Array.from(map.keys()) fresh, with deletions");
+}
+
+// Partial consume across a rehash with deletions.
+{
+    const m = new Map();
+    m.set("a", 1); m.set("b", 2); m.set("c", 3); m.set("d", 4);
+    const it = m.keys();
+    it.next(); it.next();
+    m.delete("a"); m.delete("b");
+    m.set("e", 5);
+    shouldEq(Array.from(it), ["c", "d", "e"], "Array.from(map.keys()) after rehash with deletions");
+}
+
+// Repeat under JIT tiers.
+for (let i = 0; i < 1000; i++) {
+    const m = new Map([[1, "a"], [2, "b"], [3, "c"]]);
+    const it = m.keys();
+    it.next();
+    shouldEq(Array.from(it), [2, 3], "Array.from(map.keys()) loop");
+    shouldEq(it.next(), { value: undefined, done: true }, "iterator drained loop");
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-721-iterator-helpers-fast-path-drain-and-reentrancy.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

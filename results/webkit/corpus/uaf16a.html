@@ -1,0 +1,22 @@
+<!doctype html><meta charset="utf-8"><title>f16a</title><body><script>
+function b(m){var x=new XMLHttpRequest();x.open('GET','/beacon/F16A-'+m,false);try{x.send()}catch(e){}}
+function q(ms){return new Promise(r=>setTimeout(r,ms))}
+(async function(){
+  b('START');
+  var faces=[];
+  for (var i=0;i<200;i++){
+    var f=new FontFace('f'+i,'local("Helvetica")');
+    document.fonts.add(f);
+    faces.push(f);
+  }
+  var pr=[];
+  for (var i=0;i<faces.length;i++) pr.push(faces[i].load().then(function(){return 1},function(){return 0}));
+  var st=await Promise.all(pr);
+  b('LOADED-'+st.reduce(function(a,c){return a+c},0));
+  for (var i=0;i<faces.length;i++) document.fonts.delete(faces[i]);
+  faces.length=0; faces=null;
+  await q(300);
+  b('NAV');
+  location.href='/corpus/uaf16b.html';
+})();
+</script></body>

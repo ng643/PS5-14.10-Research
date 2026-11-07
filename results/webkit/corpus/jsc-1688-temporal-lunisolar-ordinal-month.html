@@ -1,0 +1,226 @@
+<!doctype html><meta charset="utf-8"><title>temporal-lunisolar-ordinal-month.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+function shouldBe(actual, expected, message) {
+    if (actual !== expected)
+        throw new Error(`${message}: expected ${expected}, got ${actual}`);
+}
+
+function shouldThrow(errorType, callback, message) {
+    try {
+        callback();
+    } catch (error) {
+        if (error instanceof errorType)
+            return;
+        throw new Error(`${message}: expected ${errorType.name}, got ${error}`);
+    }
+    throw new Error(`${message}: expected ${errorType.name}`);
+}
+
+for (const { calendar, year, ordinal, monthCode } of [
+    { calendar: "chinese", year: 2012, ordinal: 5, monthCode: "M04L" },
+    { calendar: "dangi", year: 2012, ordinal: 4, monthCode: "M03L" },
+]) {
+    const fields = { calendar, year, month: ordinal, day: 1 };
+    const coded = Temporal.PlainDate.from({ calendar, year, monthCode, day: 1 });
+    for (const { name, create } of [
+        { name: "PlainDate", create: () => Temporal.PlainDate.from(fields) },
+        { name: "PlainDateTime", create: () => Temporal.PlainDateTime.from({ ...fields, hour: 12 }) },
+        { name: "PlainYearMonth", create: () => Temporal.PlainYearMonth.from(fields) },
+        { name: "ZonedDateTime", create: () => Temporal.ZonedDateTime.from({ ...fields, hour: 12, timeZone: "UTC" }) },
+    ]) {
+        const result = create();
+        shouldBe(result.month, ordinal, `${name} ${calendar} ordinal month`);
+        shouldBe(result.monthCode, monthCode, `${name} ${calendar} leap month code`);
+    }
+    shouldBe(Temporal.PlainDate.from(fields).equals(coded), true, `${calendar} numeric/coded equality`);
+    const previous = Temporal.PlainDate.from({ calendar, year, month: ordinal - 1, day: 1 });
+    shouldBe(previous.with({ month: ordinal }).monthCode, monthCode, `${calendar} PlainDate.with`);
+    shouldBe(Temporal.PlainDateTime.from({ ...fields, month: ordinal - 1 }).with({ month: ordinal }).monthCode, monthCode, `${calendar} PlainDateTime.with`);
+    shouldBe(Temporal.PlainYearMonth.from({ ...fields, month: ordinal - 1 }).with({ month: ordinal }).monthCode, monthCode, `${calendar} PlainYearMonth.with`);
+    shouldBe(Temporal.ZonedDateTime.from({ ...fields, month: ordinal - 1, timeZone: "UTC" }).with({ month: ordinal }).monthCode, monthCode, `${calendar} ZonedDateTime.with`);
+    shouldThrow(RangeError, () => Temporal.PlainDate.from({ ...fields, month: ordinal + 1, monthCode }), `${calendar} month/monthCode consistency`);
+    shouldThrow(TypeError, () => Temporal.PlainMonthDay.from({ calendar, month: ordinal, monthCode, day: 1 }), `${calendar} PlainMonthDay.from year requirement`);
+    shouldBe(Temporal.PlainMonthDay.from({ ...fields, monthCode }).monthCode, monthCode, `${calendar} PlainMonthDay.from with year`);
+    const monthDay = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 1 });
+    shouldThrow(TypeError, () => monthDay.with({ month: ordinal, monthCode }), `${calendar} PlainMonthDay.with year requirement`);
+    shouldBe(monthDay.with({ year, month: ordinal, monthCode }).monthCode, monthCode, `${calendar} PlainMonthDay.with with year`);
+}
+
+for (const { calendar, isoDate, year, month, monthCode } of [
+    { calendar: "chinese", isoDate: "2012-05-21", year: 2012, month: 5, monthCode: "M04L" },
+    { calendar: "dangi", isoDate: "2020-05-23", year: 2020, month: 5, monthCode: "M04L" },
+]) {
+    const date = Temporal.PlainDate.from(`${isoDate}[u-ca=${calendar}]`);
+    shouldBe(date.year, year, `${calendar} related year`);
+    shouldBe(date.month, month, `${calendar} extracted ordinal month`);
+    shouldBe(date.monthCode, monthCode, `${calendar} extracted month code`);
+}
+
+for (const [calendar, monthCode, oldMonth, newMonth] of [["chinese", "M06L", 7, 6], ["dangi", "M05L", 6, 5]]) {
+    const date = Temporal.PlainDate.from({ calendar, year: 2017, monthCode, day: 1 });
+    shouldBe(date.month, oldMonth, `${calendar} source leap ordinal`);
+    shouldBe(date.with({ year: 2024 }).month, newMonth, `${calendar} with year inherits monthCode only`);
+}
+
+for (let i = 0; i < 100; ++i)
+    shouldBe(Temporal.PlainDate.from({ calendar: "chinese", year: 2012, month: 5, day: 1 }).monthCode, "M04L", "JIT ordinal month");
+
+for (const relativeTo of [
+    { calendar: "chinese", year: 2012, month: 5, monthCode: "M04L", day: 1 },
+    { calendar: "dangi", year: 2012, month: 4, monthCode: "M03L", day: 1 },
+    { calendar: "hebrew", year: 5784, month: 7, monthCode: "M06", day: 1 },
+]) {
+    const monthCodeOnly = { ...relativeTo };
+    delete monthCodeOnly.month;
+    const duration = Temporal.Duration.from({ months: 1, days: 15 });
+    const mismatch = { ...relativeTo, month: relativeTo.month + 1 };
+    shouldBe(Temporal.Duration.compare({ months: 1 }, { days: 29 }, { relativeTo }), Temporal.Duration.compare({ months: 1 }, { days: 29 }, { relativeTo: monthCodeOnly }), `${relativeTo.calendar} Duration.compare relativeTo ordinal month`);
+    shouldBe(duration.round({ largestUnit: "days", relativeTo }).toString(), duration.round({ largestUnit: "days", relativeTo: monthCodeOnly }).toString(), `${relativeTo.calendar} Duration.round relativeTo ordinal month`);
+    shouldBe(duration.total({ unit: "days", relativeTo }), duration.total({ unit: "days", relativeTo: monthCodeOnly }), `${relativeTo.calendar} Duration.total relativeTo ordinal month`);
+    shouldThrow(RangeError, () => Temporal.Duration.compare({ months: 1 }, { days: 29 }, { relativeTo: mismatch }), `${relativeTo.calendar} Duration.compare rejects ordinal mismatch`);
+    shouldThrow(RangeError, () => duration.round({ largestUnit: "days", relativeTo: mismatch }), `${relativeTo.calendar} Duration.round rejects ordinal mismatch`);
+    shouldThrow(RangeError, () => duration.total({ unit: "days", relativeTo: mismatch }), `${relativeTo.calendar} Duration.total rejects ordinal mismatch`);
+}
+
+for (const { calendar, year, month, monthCode } of [
+    { calendar: "gregory", year: 2021, month: 4, monthCode: "M04" },
+    { calendar: "hebrew", year: 5784, month: 7, monthCode: "M06" },
+    { calendar: "islamic-civil", year: 1445, month: 4, monthCode: "M04" },
+]) {
+    shouldThrow(TypeError, () => Temporal.PlainMonthDay.from({ calendar, month, monthCode, day: 1 }), `${calendar} PlainMonthDay.from year requirement`);
+    shouldThrow(TypeError, () => Temporal.PlainMonthDay.from({ calendar, year, day: 32 }, { overflow: "reject" }), `${calendar} missing month before day range`);
+    shouldThrow(TypeError, () => Temporal.PlainMonthDay.from({ calendar, year, month, monthCode: "M01" }), `${calendar} missing day before month conflict`);
+    shouldThrow(TypeError, () => Temporal.PlainMonthDay.from({ calendar, year: 300001, monthCode }), `${calendar} missing day before year range`);
+    shouldThrow(TypeError, () => Temporal.PlainMonthDay.from({ calendar, year: 300001, day: 1 }), `${calendar} missing month before year range`);
+    const monthDay = Temporal.PlainMonthDay.from({ calendar, monthCode, day: 1 });
+    shouldBe(monthDay.monthCode, monthCode, `${calendar} monthCode-only reference year`);
+    shouldThrow(TypeError, () => monthDay.with({ month, monthCode }), `${calendar} PlainMonthDay.with year requirement`);
+    shouldBe(monthDay.with({ year, month, monthCode }).monthCode, monthCode, `${calendar} PlainMonthDay.with with year`);
+    shouldThrow(RangeError, () => monthDay.with({ year: 300001 }), `${calendar} PlainMonthDay.with year range`);
+}
+
+shouldBe(Temporal.PlainMonthDay.from({ calendar: "gregory", era: "ce", eraYear: 2021, month: 4, monthCode: "M04", day: 1 }).monthCode, "M04", "PlainMonthDay era and eraYear identify the year");
+
+for (const { calendar, year, month, monthCode, daysInMonth } of [
+    { calendar: "chinese", year: 2012, month: 5, monthCode: "M04L", daysInMonth: 29 },
+    { calendar: "dangi", year: 2020, month: 5, monthCode: "M04L", daysInMonth: 29 },
+]) {
+    const date = Temporal.PlainDate.from({ calendar, year, month, monthCode, day: 1 });
+    shouldBe(date.daysInMonth, daysInMonth, `${calendar} direct daysInMonth`);
+    shouldBe(date.monthsInYear, 13, `${calendar} direct monthsInYear`);
+    shouldBe(Temporal.PlainDate.from({ calendar, year, month: 1e9, day: 1 }).month, 13, `${calendar} large ordinal constrains`);
+    shouldThrow(RangeError, () => Temporal.PlainDate.from({ calendar, year, month: 1e9, day: 1 }, { overflow: "reject" }), `${calendar} large ordinal rejects`);
+    shouldThrow(RangeError, () => Temporal.PlainDate.from({ calendar, year: 300001, month: 1, day: 1 }), `${calendar} large year rejects`);
+}
+
+for (const [calendar, before, leapStart, leapEnd, after] of [
+    ["chinese", "2012-05-20", "2012-05-21", "2012-06-18", "2012-06-19"],
+    ["dangi", "2020-05-22", "2020-05-23", "2020-06-20", "2020-06-21"],
+]) {
+    const dates = [before, leapStart, leapEnd, after].map(date => Temporal.PlainDate.from(`${date}[u-ca=${calendar}]`));
+    shouldBe(`${dates[0].month}/${dates[0].monthCode}/${dates[0].day}`, "4/M04/30", `${calendar} before leap boundary`);
+    shouldBe(`${dates[1].month}/${dates[1].monthCode}/${dates[1].day}`, "5/M04L/1", `${calendar} leap boundary start`);
+    shouldBe(`${dates[2].month}/${dates[2].monthCode}/${dates[2].day}`, "5/M04L/29", `${calendar} leap boundary end`);
+    shouldBe(`${dates[3].month}/${dates[3].monthCode}/${dates[3].day}`, "6/M05/1", `${calendar} after leap boundary`);
+    const regularStart = Temporal.PlainDate.from(`${calendar === "chinese" ? "2012-04-21" : "2020-04-23"}[u-ca=${calendar}]`);
+    shouldBe(regularStart.add({ months: 1 }).toString(), `${leapStart}[u-ca=${calendar}]`, `${calendar} baseline add parity`);
+    shouldBe(dates[3].subtract({ months: 1 }).toString(), `${leapStart}[u-ca=${calendar}]`, `${calendar} baseline subtract parity`);
+    shouldBe(regularStart.until(dates[3], { largestUnit: "months" }).toString(), "P2M", `${calendar} baseline until parity`);
+    shouldBe(dates[3].since(regularStart, { largestUnit: "months" }).toString(), "P2M", `${calendar} baseline since parity`);
+}
+
+const hebrew = Temporal.PlainDate.from({ calendar: "hebrew", year: 5784, monthCode: "M05L", day: 1 });
+shouldBe(`${hebrew.month}/${hebrew.monthCode}/${hebrew.daysInMonth}/${hebrew.monthsInYear}`, "6/M05L/30/13", "Hebrew controls unchanged");
+const gregory = Temporal.PlainDate.from({ calendar: "gregory", year: 2021, month: 2, day: 1 });
+shouldBe(`${gregory.daysInMonth}/${gregory.monthsInYear}`, "28/12", "non-target calendar controls unchanged");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1688-temporal-lunisolar-ordinal-month.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

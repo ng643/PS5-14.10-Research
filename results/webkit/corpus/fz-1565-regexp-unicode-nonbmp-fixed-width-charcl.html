@@ -1,0 +1,166 @@
+<!doctype html><meta charset="utf-8"><title>regexp-unicode-nonbmp-fixed-width-charclass-index-overshoot.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected, msg) {
+    if (actual !== expected)
+        throw new Error(`FAIL: ${msg}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+}
+
+function shouldBeArray(actual, expected, msg) {
+    if (actual === null || expected === null) {
+        if (actual !== expected)
+            throw new Error(`FAIL: ${msg}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+        return;
+    }
+    if (actual.length !== expected.length)
+        throw new Error(`FAIL: ${msg}: length mismatch: expected ${expected.length}, got ${actual.length}`);
+    for (let i = 0; i < expected.length; i++) {
+        if (actual[i] !== expected[i])
+            throw new Error(`FAIL: ${msg}: index ${i}: expected ${JSON.stringify(expected[i])}, got ${JSON.stringify(actual[i])}`);
+    }
+}
+
+let emoji = "\u{1F600}";
+let emoji2 = "\u{1F601}";
+let emoji3 = "\u{1F602}";
+
+function makeSubstring(codeUnits, sliceLength) {
+    let parent = String.fromCharCode(...codeUnits);
+    return parent.slice(0, sliceLength);
+}
+
+let slice1A = makeSubstring([0xD83D, 0xDE00, 0x41], 2);
+let slice1X = makeSubstring([0xD83D, 0xDE00, 0x58], 2);gc();
+let slice3Z = makeSubstring([0xD83D, 0xDE00, 0xD83D, 0xDE01, 0xD83D, 0xDE02, 0x5A], 6);
+let slice2Q = makeSubstring([0xD83D, 0xDE00, 0xD83D, 0xDE01, 0x51], 4);
+
+let full1A = emoji + "A";
+let full2Q = emoji + emoji2 + "Q";
+let full3Z = emoji + emoji2 + emoji3 + "Z";
+
+for (let i = 0; i < testLoopCount; i++) {
+    shouldBe(/[\u{1F600}-\u{1F64F}]*A/u.exec(slice1A), null, "Greedy* range 1x slice");
+    shouldBe(/[\u{1F600}-\u{1F64F}]*Z/u.exec(slice3Z), null, "Greedy* range 3x slice");
+    shouldBe(/[\u{1F600}]*X/u.exec(slice1X), null, "Greedy* single-char-class slice");
+    shouldBe(/[\u{1F600}-\u{1F64F}]+A/u.exec(slice1A), null, "Greedy+ range slice");
+    shouldBe(/[\u{1F600}-\u{1F64F}]{1,3}A/u.exec(slice1A), null, "Greedy{1,3} range slice");
+    shouldBe(/[\u{1F600}-\u{1F64F}]{0,5}Z/u.exec(slice3Z), null, "Greedy{0,5} range 3x slice");
+
+    shouldBe(/[\u{1F600}-\u{1F64F}]*?Q/u.exec(slice2Q), null, "NonGreedy*? range 2x slice");
+    shouldBe(/[\u{1F600}-\u{1F64F}]+?Q/u.exec(slice2Q), null, "NonGreedy+? range 2x slice");
+    shouldBe(/[\u{1F600}]*?X/u.exec(slice1X), null, "NonGreedy*? single-char-class slice");
+
+    shouldBe(/[\u{1F600}-\u{1F64F}]*A/v.exec(slice1A), null, "Greedy* range slice /v flag");
+    shouldBe(/[\u{1F600}-\u{1F64F}]*?Q/v.exec(slice2Q), null, "NonGreedy*? range slice /v flag");
+
+    shouldBe(/[a\u{1F600}]*A/u.exec(slice1A), null, "mixed-width class Greedy (slow path)");
+    shouldBe(/[a\u{1F600}]*?Q/u.exec(slice2Q), null, "mixed-width class NonGreedy (slow path)");
+    shouldBe(/[^a-z]*A/u.exec(slice1A), null, "inverted class Greedy (slow path)");
+
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]*A/u.exec(full1A), [emoji + "A"], "Greedy* full input match");
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]*Z/u.exec(full3Z), [emoji + emoji2 + emoji3 + "Z"], "Greedy* 3x full input match");
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]*/u.exec(emoji + emoji2), [emoji + emoji2], "Greedy* 2x no trailing");
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]*/u.exec(emoji + emoji2 + emoji3), [emoji + emoji2 + emoji3], "Greedy* 3x no trailing");
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]+A/u.exec(full1A), [emoji + "A"], "Greedy+ full input match");
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]{1,3}Z/u.exec(full3Z), [emoji + emoji2 + emoji3 + "Z"], "Greedy{1,3} full input match");
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]*?Q/u.exec(full2Q), [emoji + emoji2 + "Q"], "NonGreedy*? full input match");
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]*?$/u.exec(emoji + emoji2), [emoji + emoji2], "NonGreedy*? anchor 2x");
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]+?$/u.exec(emoji + emoji2 + emoji3), [emoji + emoji2 + emoji3], "NonGreedy+? anchor 3x");
+
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]*/u.exec(emoji + "B"), [emoji], "Greedy* stop at BMP");
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]*B/u.exec(emoji + "B"), [emoji + "B"], "Greedy* + trailing BMP");
+    shouldBe(/[\u{1F600}-\u{1F64F}]*C/u.exec(emoji + "B"), null, "Greedy* + trailing BMP mismatch");
+
+    shouldBeArray(/[\u{1F600}]*$/u.exec(emoji), [emoji], "Greedy* end anchor 1x");
+    shouldBeArray(/[\u{1F600}]*$/u.exec(emoji + emoji), [emoji + emoji], "Greedy* end anchor 2x");
+
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1565-regexp-unicode-nonbmp-fixed-width-charcl.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

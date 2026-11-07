@@ -1,0 +1,49 @@
+<!doctype html><meta charset=utf-8><title>inflate</title><body><script>
+"use strict";
+function bc(t){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+encodeURIComponent(t),false);x.send();}catch(e){}}
+bc('IF-HELLO loaded');
+if(!window.DecompressionStream){bc('IF-NOAPI');}else{
+var FMT=['deflate','gzip','deflate-raw'];
+function rnd(s){return function(){s^=s<<13;s^=s>>>17;s^=s<<5;return (s>>>0)/4294967296;};}
+var seed=(Date.now()&0xFFFFFF)|1; var R=rnd(seed);
+bc('IF-START seed='+seed);
+function enc(a){var s='';for(var i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s);}
+/* a valid deflate stream: stored block with payload */
+function stored(payload){var n=payload.length;var h=[0x01,n&255,(n>>8)&255,(~n)&255,((~n)>>8)&255];return h.concat(payload);}
+function huff(){/* dynamic block header with a bogus code-length code */return [0x05,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00];}
+var CASES=[];
+(function(){var p=[];for(var i=0;i<32;i++)p.push(0x41+(i&15));
+ CASES.push(['stored-ok',stored(p)]);
+ for(var k=0;k<6;k++){var s=stored(p);var off=4+(k%4);s[off]=(s[off]+1+k*37)&255;CASES.push(['stored-len'+k,s]);}
+ CASES.push(['bfinal-empty',[0x03,0x00]]);
+ CASES.push(['huff-bad',huff()]);
+ CASES.push(['dist-first',[0x63,0x00,0x00,0x00,0x00,0x02,0x03,0x00]]);
+ CASES.push(['trunc-1',[0x01,0x20]]);
+ CASES.push(['trunc-2',[0x05,0x00,0x00,0x00]]);
+ for(var k=0;k<4;k++){var b=[];for(var i=0;i<64;i++)b.push((i*7+k)&255);CASES.push(['spray'+k,b]);}
+})();
+var i=0,round=0,fails=0,oks=0;
+function tick(){ if(i>=CASES.length){ round++; if(round>60){ bc('IF-DONE rounds='+round+' oks='+oks+' err='+fails); return; } i=0; }
+ var c=CASES[i++]; var name=c[0], bytes=c[1];
+ /* mutate half of the cases */
+ if((i&1)===0&&bytes.length){ var j=(R()*bytes.length)|0; bytes=bytes.slice(); bytes[j]=(bytes[j]+1+((R()*255)|0))&255; }
+ var fmt=FMT[(i+round)%FMT.length];
+ var done=0;
+ try{
+  var ds=new DecompressionStream(fmt);
+  var w=ds.writable.getWriter(); var rd=ds.readable.getReader();
+  rd.read().then(function(r){ if(done++)return;
+    if(r.done){oks++;} else {oks++;}
+    if((i%25)===0)bc('IF-IT r='+round+' i='+i+' '+name+' '+fmt+' len='+(r.value?r.value.length:0));
+    step();
+  },function(e){ if(done++)return; fails++; if((i%25)===0)bc('IF-ERR r='+round+' i='+i+' '+name+' '+fmt+' '+(e&&e.name)); step(); });
+  w.write(new Uint8Array(bytes)).catch(function(){});
+  w.close().catch(function(){});
+ }catch(e){ fails++; bc('IF-THROW '+name+' '+(e&&e.name)); setTimeout(step,0); }
+ var guard=setTimeout(function(){ if(done++)return; bc('IF-TIMEOUT r='+round+' '+name+' '+fmt); step(); },600);
+ function step(){ clearTimeout(guard); setTimeout(tick,0); }
+}
+bc('IF-CASES n='+CASES.length);
+tick();
+}
+</script>

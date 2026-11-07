@@ -1,0 +1,140 @@
+<!doctype html><meta charset="utf-8"><title>domfuzz</title>
+<script>
+(function(){
+  var q = location.search, m = /[?&]s=(\d+)/.exec(q);
+  var seed = m ? +m[1] : 1;
+  var pm = /[?&]p=(\d+)/.exec(q);
+  var prev = pm ? +pm[1] : -1;
+  var TRACE = /[?&]trace=1/.test(q);
+  function mark(tag, sync){
+    var u = location.origin + '/beacon/FZ-' + tag + '?t=' + Date.now();
+    if (!sync) { try { if (navigator.sendBeacon && navigator.sendBeacon(u)) return; } catch(e){} }
+    try { var x = new XMLHttpRequest(); x.open('GET', u, false); x.send(); } catch(e){}
+  }
+  var st = seed >>> 0 || 1;
+  function reseed(x){ st = (x >>> 0) || 1; }
+  function rnd(){ st ^= st << 13; st >>>= 0; st ^= st >>> 17; st ^= st << 5; st >>>= 0; return st; }
+  function pick(a){ return a[rnd() % a.length]; }
+  function num(n){ return rnd() % n; }
+  var tags = ['div','span','p','a','b','i','ul','li','table','tr','td','svg','math','canvas','input','select','option','textarea','video','audio','picture','source','details','summary','slot','template','object','embed','label','form','button','dialog','marquee','font','nobr','plaintext','iframe','math','svg'];
+  var attrs = ['class','id','style','dir','lang','hidden','tabindex','contenteditable','draggable','aria-label','data-x','slot','is','href','src','rel','type','value','width','height','viewBox','d','fill','filter','clip-path','mask','transform','points','pathLength','color-interpolation-filters'];
+  var words = ['a','b','x','foo','bar','__proto__','constructor','prototype','toString','valueOf','length','0','1e999','NaN','-0','-0x1','\u0000','\ud800','\uffff','…','<\!--','--\>','<\/script>','&amp;','&#x0;','%s','%n'];
+  var cssprops = ['color','background','background-image','display','position','inset','width','height','margin','padding','border','border-radius','transform','transition','animation','filter','backdrop-filter','clip-path','mask','contain','container-type','content-visibility','will-change','font-feature-settings','text-shadow','--v','grid-template-areas','aspect-ratio','offset-path','shape-outside','view-transition-name','zoom','color-scheme','scroll-timeline','animation-timeline'];
+  function cssval(){
+    var r = num(12);
+    if (r===0) return 'calc(' + num(100) + 'px + ' + num(10) + '%)';
+    if (r===1) return 'var(--v, ' + num(10) + 'px)';
+    if (r===2) return 'url(' + pick(words) + ')';
+    if (r===3) return 'image-set("' + pick(words) + '" 1x)';
+    if (r===4) return 'repeating-linear-gradient(' + num(360) + 'deg, red 0 ' + num(9) + 'px, blue ' + num(9) + 'px)';
+    if (r===5) return 'color-mix(in srgb, red ' + num(100) + '%, blue)';
+    if (r===6) return '(' + num(9) + ')';
+    if (r===7) return 'attr(' + pick(attrs) + ' type(<number>))';
+    if (r===8) return 'anchor-size(width)';
+    if (r===9) return 'sibling-index()';
+    if (r===10) return 'env(safe-area-inset-top, ' + num(9) + 'px)';
+    return num(1000) + 'px';
+  }
+  function styleText(){
+    var s = '', n = 1 + num(6);
+    for (var i=0;i<n;i++){
+      var sel = pick(['*','div','span','a',':root',':has(> div)','::part(x)','::slotted(*)',':is(div, span)',':where(.a)','svg|*','a:visited','::before','::after','::marker','::first-letter','input::placeholder','*:nth-child(' + num(9) + ' of div)']);
+      var p = pick(cssprops), v = cssval();
+      var r = num(6);
+      if (r===0) s += '@media (min-width:' + num(2000) + 'px){' + sel + '{' + p + ':' + v + '}}';
+      else if (r===1) s += '@supports (' + p + ': ' + v + '){' + sel + '{' + p + ': ' + v + '}}';
+      else if (r===2) s += '@container (min-width:' + num(999) + 'px){' + sel + '{' + p + ':' + v + '}}';
+      else if (r===3) s += sel + '{' + p + ': ' + v + '; ' + pick(cssprops) + ': ' + cssval() + '}';
+      else if (r===4) s += '@font-face{font-family:' + pick(words) + ';src:local(' + pick(words) + ');unicode-range:U+' + (0x20+num(200)).toString(16) + '}';
+      else s += sel + '{' + p + ': ' + v + ' !important}';
+    }
+    return s;
+  }
+  function build(root){
+    var n = 8 + num(48);
+    if (TRACE) mark('N' + seed + '-ops=' + n, true);
+    for (var i=0;i<n;i++){
+      var t = pick(tags);
+      var an = num(6), r = num(14);
+      if (TRACE) mark('T' + seed + '-' + i + ':' + t + ':a' + an + ':r' + r, true);
+      var el;
+      try { el = document.createElement(t); } catch(e){ continue; }
+      for (var j=0;j<an;j++){
+        var a = pick(attrs), v = pick(words);
+        try { el.setAttribute(a, v); } catch(e){}
+      }
+      try {
+        if (r===0) el.textContent = pick(words) + pick(words);
+        else if (r===1) el.innerHTML = '<' + pick(tags) + ' ' + pick(attrs) + '="' + pick(words) + '">' + pick(words);
+        else if (r===2) { var c = document.createElement(pick(tags)); el.appendChild(c); }
+        else if (r===3) el.setAttribute('style', styleText());
+        else if (r===4) { var stl = document.createElement('style'); stl.textContent = styleText(); document.head.appendChild(stl); }
+        else if (r===5) { var c2 = document.createElement('div'); c2.setAttribute('slot', pick(words)); el.appendChild(c2); }
+        else if (r===6) { if (el.attachShadow) { var sh = el.attachShadow({mode:'open'}); sh.appendChild(document.createElement(pick(tags))); } }
+        else if (r===7) { var mo = new MutationObserver(function(){}); mo.observe(el, {subtree:true, childList:true, attributes:true, characterData:true}); }
+        else if (r===8) { var rng = document.createRange(); rng.selectNodeContents(document.documentElement); if (rng.detach) rng.detach(); }
+        else if (r===9 && el.style) { el.style.setProperty('--v', cssval()); el.style.cssText += ';' + pick(cssprops) + ':' + cssval(); }
+        else if (r===10) { el.setAttribute('class', pick(words) + ' ' + pick(words)); }
+        else if (r===11) {
+          var doc2 = document.implementation.createHTMLDocument('');
+          var d2 = doc2.createElement(pick(tags));
+          d2.innerHTML = '<' + pick(tags) + '>' + pick(words) + '</' + pick(tags) + '>';
+          doc2.body.appendChild(d2);
+          var moved = document.adoptNode(d2);
+          el.appendChild(moved);
+          moved.setAttribute(pick(attrs), pick(words));
+        }
+        else if (r===12) {
+          var deep = el.cloneNode(true);
+          if (el.parentNode) el.parentNode.replaceChild(deep, el);
+          deep.appendChild(document.createElement(pick(tags)));
+          el = deep;
+        }
+        else if (r===13) {
+          var rg = document.createRange();
+          var holder = document.createElement('div');
+          holder.appendChild(document.createElement(pick(tags)));
+          document.documentElement.appendChild(holder);
+          rg.selectNodeContents(holder);
+          holder.removeChild(holder.firstChild);
+          document.documentElement.appendChild(holder.firstChild || document.createElement('span'));
+        }
+      } catch(e) {}
+      try {
+        var par = num(4) === 0 ? root : pick(root.childNodes.length ? root.childNodes : [root]);
+        if (par && par.appendChild) par.appendChild(el); else root.appendChild(el);
+      } catch(e) { try { root.appendChild(el); } catch(e2){} }
+    }
+    try { document.documentElement.offsetHeight; } catch(e){}
+    try { var d = document.createElement('dialog'); if (d.showModal) { d.showModal(); d.close(); } } catch(e){}
+    try { var cv = document.createElement('canvas'); var g = cv.getContext('2d'); g.fillRect(0,0,1,1); g.filter = 'blur(2px)'; g.drawImage(cv,0,0); } catch(e){}
+    try { var vd = document.createElement('video'); vd.src = 'x'; if (vd.load) vd.load(); } catch(e){}
+    try { var sv = document.createElement('svg'); sv.setAttribute('viewBox','0 0 1 1'); sv.innerHTML = '<filter id=f><feTurbulence baseFrequency=' + num(9) + '/></filter><path d="M0 0 L' + num(999) + ' 0" filter="url(#f)"/>'; root.appendChild(sv); } catch(e){}
+  }
+  function fsync(tag){
+    var u = location.origin + '/beacon/FZ-' + tag + '?t=' + Date.now();
+    try { var x = new XMLHttpRequest(); x.open('GET', u, false); x.send(); } catch(e){}
+  }
+  var BATCH = 8;
+  function run(){
+    var k = 0;
+    function one(){
+      if (k >= BATCH) { try { location.replace('?s=' + (seed + BATCH)); } catch(e){} return; }
+      var cur = seed + k; k++;
+      reseed(cur);
+      try { mark('S' + cur); } catch(e){}
+      try {
+        var root = document.createElement('div');
+        document.documentElement.appendChild(root);
+        build(root);
+      } catch(e) { try { mark('X' + cur + '-' + (e && e.name)); } catch(e2){} }
+      try { document.documentElement.offsetHeight; } catch(e){}
+      try { mark('D' + cur); } catch(e){}
+      setTimeout(one, 0);
+    }
+    one();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+})();
+</script>

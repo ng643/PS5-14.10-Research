@@ -1,0 +1,75 @@
+2026-10-25T12:59:17.097+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-25T12:59:17.213+00:00 DNS Q qgve.dl.playstation.net 1
+2026-10-25T12:59:17.227+00:00 DNS Q qgve.dl.playstation.net 1
+2026-10-25T12:59:17.291+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-25T12:59:19.794+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-25T12:59:21.024+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T12:59:24.588+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-25T12:59:24.589+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-25T12:59:24.589+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-25T12:59:24.590+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-25T12:59:31.112+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-25T12:59:40.122+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T12:59:59.558+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-25T13:00:02.631+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:00:22.195+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:00:27.151+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-25T13:00:39.659+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-25T13:00:44.669+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:01:08.240+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:01:27.197+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-25T13:01:28.715+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:01:49.965+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:02:01.893+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-25T13:02:09.914+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:02:27.213+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-25T13:02:30.166+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:02:50.119+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:03:09.473+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:03:30.527+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:03:35.310+00:00 DNS Q feature-discovery-assets-amd.dl.playstation.net 1
+2026-10-25T13:03:35.937+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-25T13:03:38.007+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-25T13:03:46.297+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-25T13:03:46.364+00:00 ACCESS GET /probe/p_ppc.js?cb=1792933155 200
+2026-10-25T13:03:46.520+00:00 ACCESS GET /raw/p_ppc.js?cb=1792933155&cb=1792933155 200
+2026-10-25T13:03:46.735+00:00 ACCESS GET /corpus/ppc-cache.html?t=1792933432113 200
+2026-10-25T13:03:46.930+00:00 POST PPC-BOOT t=1792933432203 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:46.931+00:00 ACCESS POST /beacon/PPC-BOOT?t=1792933432203 204
+2026-10-25T13:03:46.974+00:00 POST PPC-R1=v:P1 t=1792933432205 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:46.975+00:00 ACCESS POST /beacon/PPC-R1=v:P1?t=1792933432205 204
+2026-10-25T13:03:46.988+00:00 POST PPC-C2=v:P1 t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:46.989+00:00 ACCESS POST /beacon/PPC-C2=v:P1?t=1792933432206 204
+2026-10-25T13:03:46.995+00:00 POST PPC-S1=v:P1 t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:46.996+00:00 ACCESS POST /beacon/PPC-S1=v:P1?t=1792933432206 204
+2026-10-25T13:03:47.010+00:00 POST PPC-ALIVE t=1792933432222 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.011+00:00 ACCESS POST /beacon/PPC-ALIVE?t=1792933432222 204
+2026-10-25T13:03:47.017+00:00 POST PPC-C3=v:P1 t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.018+00:00 POST PPC-D-built=128 t=1792933432208 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.018+00:00 ACCESS POST /beacon/PPC-C3=v:P1?t=1792933432206 204
+2026-10-25T13:03:47.018+00:00 ACCESS POST /beacon/PPC-D-built=128?t=1792933432208 204
+2026-10-25T13:03:47.024+00:00 POST PPC-D-churn=20000 t=1792933432221 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.024+00:00 POST PPC-T4=v:undefined t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.024+00:00 ACCESS POST /beacon/PPC-D-churn=20000?t=1792933432221 204
+2026-10-25T13:03:47.025+00:00 ACCESS POST /beacon/PPC-T4=v:undefined?t=1792933432206 204
+2026-10-25T13:03:47.032+00:00 POST PPC-T1=v:P1 t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.032+00:00 POST PPC-C1=v:P1 t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.032+00:00 POST PPC-T2=v:OWN t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.033+00:00 ACCESS POST /beacon/PPC-T1=v:P1?t=1792933432206 204
+2026-10-25T13:03:47.033+00:00 ACCESS POST /beacon/PPC-C1=v:P1?t=1792933432206 204
+2026-10-25T13:03:47.033+00:00 ACCESS POST /beacon/PPC-T2=v:OWN?t=1792933432206 204
+2026-10-25T13:03:47.037+00:00 POST PPC-S3=v:P2 t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.038+00:00 POST PPC-R2=v:P2 t=1792933432205 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.038+00:00 ACCESS POST /beacon/PPC-S3=v:P2?t=1792933432206 204
+2026-10-25T13:03:47.038+00:00 ACCESS POST /beacon/PPC-R2=v:P2?t=1792933432205 204
+2026-10-25T13:03:47.039+00:00 POST PPC-D-after=56 t=1792933432222 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.040+00:00 ACCESS POST /beacon/PPC-D-after=56?t=1792933432222 204
+2026-10-25T13:03:47.042+00:00 POST PPC-C4=v:P1 t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.044+00:00 POST PPC-S2=v:undefined t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.044+00:00 ACCESS POST /beacon/PPC-C4=v:P1?t=1792933432206 204
+2026-10-25T13:03:47.044+00:00 ACCESS POST /beacon/PPC-S2=v:undefined?t=1792933432206 204
+2026-10-25T13:03:47.867+00:00 POST PPC-T3=v:P1 t=1792933432206 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-25T13:03:47.868+00:00 ACCESS POST /beacon/PPC-T3=v:P1?t=1792933432206 204
+2026-10-25T13:03:51.999+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:04:12.853+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-25T13:04:33.212+00:00 DNS Q telemetry-console.api.playstation.com 1

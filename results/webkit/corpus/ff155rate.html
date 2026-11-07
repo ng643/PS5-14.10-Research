@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>rate</title>
+<body><p>rate</p>
+<script>
+function b(x){ var i=new Image(); i.src='/beacon/'+x+'?t='+Date.now(); }
+b('RATE-PARSE');
+var it = 0, curIter = -1, fired = false, curStyle = '';
+Object.defineProperty(FontFace.prototype, 'then', {
+  configurable: true,
+  get: function(){
+    if (fired) return undefined;
+    fired = true;
+    var i = curIter;
+    b('RATE-'+i+'-GET');
+    var v = document.getElementById(curStyle);
+    if (v) { v.remove(); b('RATE-'+i+'-RM'); }
+    try { document.fonts.delete(this); b('RATE-'+i+'-DEL-' + document.fonts.size); } catch(e){ b('RATE-'+i+'-DELERR'); }
+    document.body.offsetHeight;
+    b('RATE-'+i+'-LAY');
+    return undefined;
+  },
+  set: function(){}
+});
+function step(){
+  if (it >= 10) { b("RATE-DONE"); return; }
+  var i = it++;
+  curIter = i; fired = false; curStyle = 'vs'+i;
+  b('RATE-'+i+'-START');
+  var st = document.createElement('style');
+  st.id = curStyle;
+  st.textContent = "@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(st);
+  var A = new FontFace('a', 'local(Helvetica)', {unicodeRange: 'U+0041'});
+  document.fonts.add(A);
+  void A.loaded;
+  b('RATE-'+i+'-LOAD');
+  document.fonts.load('1em a, x', 'AB').then(
+    function(){ b('RATE-'+i+'-RES'); },
+    function(){ b('RATE-'+i+'-REJ'); }
+  );
+  setTimeout(function(){
+    try { document.body.offsetHeight; } catch(e){}
+    b('RATE-'+i+'-END');
+    setTimeout(step, 60);
+  }, 120);
+}
+step();
+</script>

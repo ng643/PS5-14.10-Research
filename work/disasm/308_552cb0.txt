@@ -1,0 +1,20 @@
+00552cb0 55                     push    rbp
+00552cb1 4889e5                 mov     rbp, rsp
+00552cb4 4156                   push    r14
+00552cb6 53                     push    rbx
+00552cb7 4889f3                 mov     rbx, rsi
+00552cba 4989fe                 mov     r14, rdi
+00552cbd e85e4c5b00             call    0xffffffff8b4c7920   ; -> b07920 
+00552cc2 85c0                   test    eax, eax
+00552cc4 740f                   je      0xffffffff8af12cd5
+00552cc6 4c89f7                 mov     rdi, r14
+00552cc9 4889de                 mov     rsi, rbx
+00552ccc 5b                     pop     rbx
+00552ccd 415e                   pop     r14
+00552ccf 5d                     pop     rbp
+00552cd0 e9ab4badff             jmp     0xffffffff8a9e7880
+00552cd5 b84e000000             mov     eax, 0x4e
+00552cda 5b                     pop     rbx
+00552cdb 415e                   pop     r14
+00552cdd 5d                     pop     rbp
+00552cde c3                     ret     

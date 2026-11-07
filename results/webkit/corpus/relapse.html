@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>relapse-test</title></head>
+<body>
+<script>
+function mark(t){ try { (new Image()).src = '/beacon/RELAPSE-' + encodeURIComponent(String(t).slice(0,140)) + '?t=' + Date.now(); } catch(e){} }
+window.onerror = function(m,s,l){ mark('ERR:' + m + '@' + l); return true; };
+window.onunhandledrejection = function(e){ mark('REJ:' + (e && e.reason && e.reason.message || e && e.reason)); };
+mark('BOOT');
+</script>
+<script src="/corpus/relapse-webkit.js"></script>
+<script>
+mark('LOADED:' + (typeof establishPrimitive));
+try {
+  var r = establishPrimitive(function (tag, detail) {
+    mark('EV:' + tag + (detail === undefined || detail === '' ? '' : '|' + detail));
+  });
+  if (r && r.then) { r.then(function(v){ mark('DONE:' + String(v).slice(0,60)); })
+                      .catch(function(e){ mark('THROW:' + (e && e.message || e)); }); }
+  else mark('RETURNED:' + String(r).slice(0,60));
+} catch (e) { mark('THROW:' + (e && e.message || e)); }
+</script>
+</body></html>

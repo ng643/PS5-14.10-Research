@@ -1,0 +1,184 @@
+<!doctype html><meta charset="utf-8"><title>temporal-monthday-refyear.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+}
+
+function shouldThrow(fn, type) {
+    let err;
+    try { fn(); } catch (e) { err = e; }
+    if (!(err instanceof type))
+        throw new Error(`Expected ${type.name} but got ${err}`);
+}
+
+// Bug: Multiple issues in ecmaReferenceYear and calendarDateFromFields for non-ISO calendars:
+// 1. Non-lunisolar calendars (gregory, buddhist, japanese, roc, coptic, ethiopic, etc.)
+//    accepted leap month codes (M01L etc.) instead of throwing RangeError.
+// 2. ecmaReferenceYear tables had errors:
+//    - Chinese M01L/M12L: wrong year (1898) → should be UseRegularIfConstrain
+//    - Chinese month 11 bigDay: wrong condition order (day>26 checked before bigDay)
+//    - Ethiopic: used Coptic AM years instead of Ethiopic years (+276 offset)
+//    - Hebrew: only M05L (Adar I) valid; others should throw MonthNotInCalendar
+//    - Islamic-civil/tbla: used UmmAlQura table instead of Tabular table
+// 3. calendarDateFromFields Reject validation: compared UCAL_MONTH+1 and IS_LEAP_MONTH
+//    instead of using computeMonthCode for lunisolar calendars (Hebrew M05L gave wrong slot).
+
+// ── Non-lunisolar calendars reject ALL leap month codes ──────────────────
+for (const cal of ["gregory", "buddhist", "japanese", "roc", "coptic", "ethiopic",
+                   "ethioaa", "persian", "indian"]) {
+    shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:cal}), RangeError);
+    shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M06L", day:1, calendar:cal}), RangeError);
+}
+
+// ── Chinese/Dangi: M01L and M12L use constrain fallback ──────────────────
+// M01L constrain → use M01 reference year. M01L reject → throw.
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:"chinese"}).toString(), "1972-02-15[u-ca=chinese]");
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01L", day:30, calendar:"chinese"}).toString(), "1970-03-07[u-ca=chinese]");
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:"chinese"}, {overflow:"reject"}), RangeError);try {
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M12L", day:1, calendar:"chinese"}).toString(), "1972-01-16[u-ca=chinese]");} catch (e) {}
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M12L", day:1, calendar:"chinese"}, {overflow:"reject"}), RangeError);
+
+// Valid Chinese leap months work in both modes
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M04L", day:1, calendar:"chinese"}).toString(), "1963-05-23[u-ca=chinese]");
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M04L", day:1, calendar:"chinese"}, {overflow:"reject"}).toString(), "1963-05-23[u-ca=chinese]");
+
+// ── Chinese month 11 bigDay: year 1969, not 1971 ──────────────────────────
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M11", day:30, calendar:"chinese"}).toString(), "1970-01-07[u-ca=chinese]");
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M11", day:27, calendar:"chinese"}).toString(), "1972-01-13[u-ca=chinese]");
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M11", day:1, calendar:"chinese"}).toString(), "1972-12-06[u-ca=chinese]");
+
+// ── Ethiopic: uses year offset +276 from Coptic ───────────────────────────
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01", day:1, calendar:"ethiopic"}).toString(), "1972-09-11[u-ca=ethiopic]");
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01", day:1, calendar:"coptic"}).toString(), "1972-09-11[u-ca=coptic]");
+
+// ── Hebrew: M05L (Adar I) only valid leap month ────────────────────────────
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M05L", day:1, calendar:"hebrew"}).toString(), "1970-02-07[u-ca=hebrew]");
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M05L", day:1, calendar:"hebrew"}, {overflow:"reject"}).toString(), "1970-02-07[u-ca=hebrew]");
+// Hebrew M01L, M02L, etc. don't exist in Hebrew calendar
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:"hebrew"}), RangeError);
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M07L", day:1, calendar:"hebrew"}), RangeError);
+
+// ── Islamic-civil/tbla: use tabular table, not UmmAlQura ─────────────────
+// Tabular: month 2 bigDay (day=30) uses year 1392; UmmAlQura uses 1390
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M02", day:30, calendar:"islamic-civil"}).toString(), "1972-04-14[u-ca=islamic-civil]");
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M02", day:30, calendar:"islamic-tbla"}).toString(), "1972-04-13[u-ca=islamic-tbla]");
+// UmmAlQura M02 day=30 → year 1390
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M02", day:29, calendar:"islamic-civil"}).toString(), "1972-04-14[u-ca=islamic-civil]");
+
+// ── Dangi (Chinese alias): same lunisolar behaviour as Chinese ─────────────
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:"dangi"}).toString(), "1972-02-15[u-ca=dangi]");
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:"dangi"}, {overflow:"reject"}), RangeError);
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M05L", day:1, calendar:"dangi"}).toString(), "1971-06-23[u-ca=dangi]");
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01", day:1, calendar:"dangi"}).toString(), "1972-02-15[u-ca=dangi]");
+
+// ── Persian (non-lunisolar): reject all leap month codes ──────────────────
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:"persian"}), RangeError);
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M07L", day:1, calendar:"persian"}), RangeError);
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01", day:1, calendar:"persian"}).toString(), "1972-03-21[u-ca=persian]");
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M07", day:30, calendar:"persian"}).toString(), "1972-10-22[u-ca=persian]");
+
+// ── Islamic-umalqura (non-lunisolar for month codes): reject leap month codes ─
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:"islamic-umalqura"}), RangeError);
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01", day:1, calendar:"islamic-umalqura"}).toString(), "1972-02-16[u-ca=islamic-umalqura]");
+
+// ── roc, japanese (non-lunisolar): reject leap month codes ───────────────
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:"roc"}), RangeError);
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01", day:1, calendar:"roc"}).toString(), "1972-01-01[u-ca=roc]");
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:"japanese"}), RangeError);
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01", day:1, calendar:"japanese"}).toString(), "1972-01-01[u-ca=japanese]");
+
+// ── Indian (non-lunisolar): reject leap month codes ───────────────────────
+shouldThrow(() => Temporal.PlainMonthDay.from({monthCode:"M01L", day:1, calendar:"indian"}), RangeError);
+shouldBe(Temporal.PlainMonthDay.from({monthCode:"M01", day:1, calendar:"indian"}).toString(), "1972-03-21[u-ca=indian]");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1466-temporal-monthday-refyear.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

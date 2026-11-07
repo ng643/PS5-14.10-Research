@@ -1,0 +1,395 @@
+<!doctype html><meta charset="utf-8"><title>get-arguments-length-fast.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`bad value: ${String(actual)} should be ${String(expected)}`);
+}
+
+function shouldThrow(func, errorMessage) {
+    var errorThrown = false;
+    var error = null;
+    try {
+        func();
+    } catch (e) {
+        errorThrown = true;
+        error = e;
+    }
+    if (!errorThrown)
+        throw new Error('not thrown');
+    if (String(error) !== errorMessage)
+        throw new Error(`bad error: ${String(error)} expected ${errorMessage}`);
+}
+
+// ----- Use the fast path ----- 
+function argumentLength() {
+    shouldBe(arguments.length, 2);
+}
+argumentLength(1, 2);
+
+function argumentsWithNestedNormalFunction() {
+    function nested() {
+        var arguments = 0;
+    }
+    nested();
+    shouldBe(arguments.length, 2);
+}
+argumentsWithNestedNormalFunction(1, 2);
+
+function declareLexicalArgumentsWithBlock() {
+    {
+        let arguments = 1;
+    }
+    shouldBe(arguments.length, 3);
+}
+declareLexicalArgumentsWithBlock(1, 2, 3);
+
+function forInLetArguments() {
+    for (let arguments in [1, 2]) {
+    }
+    shouldBe(arguments.length, 2);
+}
+forInLetArguments(1, 2);
+
+function forOfLetArguments() {
+    for (let arguments of [1, 2]) {
+    }
+    shouldBe(arguments.length, 0);
+}
+forOfLetArguments();
+
+function argumentsDotLengthDot() {
+    arguments.length.p1 = 1;
+    shouldBe(arguments.length.p1, undefined);
+}
+argumentsDotLengthDot();
+
+function argumentsDotLengthOpenBracket() {
+    arguments.length["p1"] = 1;
+    shouldBe(arguments.length["p1"], undefined);
+}
+argumentsDotLengthOpenBracket();
+
+function assignArgumentsDotLengthDot() {
+    let a = arguments.length.p1;
+    shouldBe(a, undefined);
+}
+assignArgumentsDotLengthDot();
+
+function assignArgumentsDotLengthOpenBracket() {
+    let a = arguments.length["p1"];
+    shouldBe(a, undefined);
+}
+assignArgumentsDotLengthOpenBracket();
+
+function callArgumentsLength() {
+    arguments.length();
+}
+shouldThrow(callArgumentsLength, `TypeError: arguments.length is not a function. (In 'arguments.length()', 'arguments.length' is 0)`);
+
+function callArgumentsLengthWithArgs() {
+    arguments.length(1, 2, 3, 4, 5);
+}
+shouldThrow(callArgumentsLengthWithArgs, `TypeError: arguments.length is not a function. (In 'arguments.length(1, 2, 3, 4, 5)', 'arguments.length' is 0)`);
+
+// ----- Should use the fast path but currently not supported ----- 
+function declareArrowFunctionArgumentsWithBlock() {
+    {
+        let arguments = () => { };
+        arguments();
+    }
+    shouldBe(arguments.length, 3);
+}
+declareArrowFunctionArgumentsWithBlock(1, 2, 3);
+
+// ----- Shouldn't use the fast path ----- 
+function argumentsNonLengthAccess() {
+    arguments.callee;
+    shouldBe(arguments.length, 1);
+}
+argumentsNonLengthAccess(1);
+
+function argumentsLengthAssignment() {
+    arguments.length = 3;
+    shouldBe(arguments.length, 3);
+}
+argumentsLengthAssignment(1);
+
+function argumentsAssignmentLHS() {
+    arguments = 0;
+    shouldBe(arguments.length, undefined);
+}
+argumentsAssignmentLHS();
+
+function argumentsAssignmentRHS() {
+    var a = arguments;
+    shouldBe(arguments.length, 0);
+}
+argumentsAssignmentRHS();
+
+function argumentsLengthIncAndDec() {
+    arguments.length++;
+    arguments.length--;
+    ++arguments.length;
+    --arguments.length;
+    shouldBe(arguments.length, 0);
+}
+argumentsLengthIncAndDec();
+
+function argumentsDestructuringAssignment() {
+    [arguments.length, arguments.length] = [1, 1];
+    shouldBe(arguments.length, 1);
+}
+argumentsDestructuringAssignment();
+
+function declareVarArguments() {
+    var arguments = 0;
+    shouldBe(arguments.length, undefined);
+}
+declareVarArguments();
+
+function declareVarArgumentsWithBlock() {
+    {
+        var arguments = 0;
+    }
+    shouldBe(arguments.length, undefined);
+}
+declareVarArgumentsWithBlock();
+
+function declareLexicalArguments() {
+    var arguments = 0;
+    shouldBe(arguments.length, undefined);
+}
+declareLexicalArguments();
+declareLexicalArguments();
+
+function declareArrowFunctionArguments() {
+    var arguments = () => { };
+    arguments();
+    shouldBe(arguments.length, 0);
+}
+declareArrowFunctionArguments(1, 2, 3);
+
+function declareFunctionArguments() {
+    function arguments() { }
+    arguments();
+    shouldBe(arguments.length, 0);
+}
+declareFunctionArguments();
+
+function declareFunctionArgumentsWithBlock() {
+    {
+        function arguments() { }
+        arguments();
+    }
+    shouldBe(arguments.length, 0);
+}
+declareFunctionArgumentsWithBlock();
+
+function declareParameterArguments(arguments) {
+    shouldBe(arguments.length, undefined);
+}
+declareParameterArguments(1);
+
+function returnArguments() {
+    shouldBe(arguments.length, 1);
+    return arguments;
+}
+returnArguments(1);
+
+function helper() { }
+function passArgumentsToFunctionCall() {
+    helper(arguments);
+    shouldBe(arguments.length, 1);
+}
+passArgumentsToFunctionCall(1);
+
+function ifArguments() {
+    if (arguments) { }
+    shouldBe(arguments.length, 1);
+}
+ifArguments(1);
+
+function forInArguments() {
+    for (arguments in [1, 2]) {
+    }
+    shouldBe(arguments, "1");
+    shouldBe(arguments.length, 1);
+}
+forInArguments(1, 2);
+
+function forInVarArguments() {
+    for (var arguments in [1, 2]) {
+    }
+    shouldBe(arguments.length, 1);
+}
+forInVarArguments(1, 2);
+
+function forOfArguments() {
+    for (arguments of [1, 2]) {
+    }
+    shouldBe(arguments.length, undefined);
+}
+forOfArguments();
+
+function forOfVarArguments() {
+    for (var arguments of [1, 2]) {
+    }
+    shouldBe(arguments.length, undefined);
+}
+forOfVarArguments();
+
+function withArguments() {
+    with (arguments) { }
+    shouldBe(arguments.length, 1);
+}
+withArguments(1);
+
+function argumentsWithNestedFunctions() {
+    var nestedArrowFunction = () => {
+        shouldBe(arguments.length, 1);
+    };
+    nestedArrowFunction(1, 2);
+
+    var nestedAsyncArrowFunction = () => {
+        shouldBe(arguments.length, 1);
+        arguments = 1;
+    };
+    nestedAsyncArrowFunction(1, 2);
+
+    shouldBe(arguments.length, undefined);
+}
+argumentsWithNestedFunctions(1);
+
+function argumentsLengthTryCatch() {
+    try {
+        throw ["foo"];
+    } catch (arguments) {
+        var arguments = ["foo", "bar"];
+    }
+    shouldBe(arguments.length, 3);
+}for (let __i = 0; __i < 200; __i++) {
+argumentsLengthTryCatch(1, 2, 3);}
+
+function argumentsLengthWith() {
+    var object = { 'arguments': ["foo"] };
+
+    with (object) {
+        var arguments = ["foo", "bar"];
+    }
+
+    shouldBe(arguments.length, 0);
+}
+argumentsLengthWith();
+
+function shouldBeAsync(expected, run, msg) {
+    let actual;
+    var hadError = false;
+    run().then(function (value) { actual = value; },
+        function (error) { hadError = true; actual = error; });
+    drainMicrotasks();
+    if (hadError)
+        throw actual;
+    shouldBe(expected, actual, msg);
+}
+
+async function argumentsWithAsyncFunction() {
+    if (arguments.length === 3 &&
+        arguments.callee.name === "argumentsWithAsyncFunction")
+        return 14;
+}
+shouldBeAsync(14, () => argumentsWithAsyncFunction(1, 2, 3));
+
+{
+    var arguments = [3, 2];
+    shouldBe(arguments.length, 2);
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-0661-get-arguments-length-fast.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

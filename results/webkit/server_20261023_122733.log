@@ -1,0 +1,23 @@
+2026-10-23T11:27:35.713+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:27:38.277+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-23T11:27:40.793+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-23T11:27:45.276+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-23T11:27:56.008+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:27:56.807+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-23T11:28:18.172+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:28:39.839+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:28:59.404+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:29:18.804+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:29:51.778+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:30:03.177+00:00 DNS Q feature-discovery-assets-amd.dl.playstation.net 1
+2026-10-23T11:30:03.699+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T11:30:03.761+00:00 ACCESS GET /probe/p_close83.js?cb=1792754843 200
+2026-10-23T11:30:03.894+00:00 ACCESS GET /raw/p_close83.js?cb=1792754843&cb=1792754843 200
+2026-10-23T11:30:04.108+00:00 ACCESS GET /corpus/close-083.html?i=82 200
+2026-10-23T11:30:04.191+00:00 POST V172-id3vlv-BEFORE-82 t=1792755006373&n=1 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:30:04.193+00:00 ACCESS POST /beacon/V172-id3vlv-BEFORE-82?t=1792755006373&n=1 204
+2026-10-23T11:30:11.624+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:30:32.070+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:30:32.709+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T11:30:52.668+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:31:11.861+00:00 DNS Q telemetry-console.api.playstation.com 1

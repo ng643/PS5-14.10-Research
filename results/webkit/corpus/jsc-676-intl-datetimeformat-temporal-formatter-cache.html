@@ -1,0 +1,212 @@
+<!doctype html><meta charset="utf-8"><title>intl-datetimeformat-temporal-formatter-cache.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Stress test for createTemporalFormatter caching:
+// The formatter for each TemporalFieldKind is computed once and cached.
+// Verify that repeated calls and mixed-kind calls produce correct, consistent output.
+
+function shouldBe(actual, expected, msg) {
+    if (actual !== expected)
+        throw new Error(`${msg}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+}
+
+// Fixed epoch for deterministic output regardless of timezone.
+const t = new Date(Date.UTC(2024, 0, 15, 10, 30, 45)); // 2024-01-15T10:30:45Z
+
+const plainDate = new Temporal.PlainDate(2024, 1, 15);
+const plainTime = new Temporal.PlainTime(10, 30, 45);
+const plainDateTime = new Temporal.PlainDateTime(2024, 1, 15, 10, 30, 45);
+const plainYM = new Temporal.PlainYearMonth(2024, 1);
+const plainMD = new Temporal.PlainMonthDay(1, 15);
+const instant = new Temporal.Instant(BigInt(t.getTime()) * 1_000_000n);
+
+const fmt = new Intl.DateTimeFormat("en-US", {
+    year: "numeric", month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit", second: "2-digit",
+    timeZone: "UTC",
+    calendar: "iso8601"
+});
+
+// 1. Repeated calls on same kind must produce identical output.
+{
+    const N = 100;
+    const first = fmt.format(plainDate);
+    for (let i = 0; i < N; i++)
+        shouldBe(fmt.format(plainDate), first, `plainDate iteration ${i}`);
+
+    const firstTime = fmt.format(plainTime);
+    for (let i = 0; i < N; i++)
+        shouldBe(fmt.format(plainTime), firstTime, `plainTime iteration ${i}`);
+
+    const firstDT = fmt.format(plainDateTime);
+    for (let i = 0; i < N; i++)
+        shouldBe(fmt.format(plainDateTime), firstDT, `plainDateTime iteration ${i}`);
+}
+
+// 2. Different kinds on same formatter don't interfere — interleave them.
+{
+    const r1 = fmt.format(plainDate);
+    const r2 = fmt.format(plainTime);
+    const r3 = fmt.format(plainDateTime);
+    const r4 = fmt.format(plainYM);
+    const r5 = fmt.format(plainMD);
+
+    for (let i = 0; i < 50; i++) {
+        shouldBe(fmt.format(plainDate), r1, `interleaved plainDate ${i}`);
+        shouldBe(fmt.format(plainTime), r2, `interleaved plainTime ${i}`);
+        shouldBe(fmt.format(plainDateTime), r3, `interleaved plainDateTime ${i}`);
+        shouldBe(fmt.format(plainYM), r4, `interleaved plainYearMonth ${i}`);
+        shouldBe(fmt.format(plainMD), r5, `interleaved plainMonthDay ${i}`);
+    }
+}
+
+// 3. Plain types must use GMT (not the formatter's timezone), so the date
+//    fields come from the Temporal value itself, not from epoch conversion.
+{
+    // A formatter with a non-UTC timezone — plain types must still show the
+    // Temporal value's fields unchanged (they don't do timezone conversion).
+    const fmtLA = new Intl.DateTimeFormat("en-US", {
+        year: "numeric", month: "numeric", day: "numeric",
+        hour: "numeric", minute: "2-digit",
+        timeZone: "America/Los_Angeles"
+    });
+    // PlainDate 2024-01-15 must format as Jan 15, regardless of LA offset.
+    const pdResult = fmtLA.format(plainDate);
+    shouldBe(pdResult.includes("1/15/2024") || pdResult.includes("15"), true,
+        "PlainDate should show Jan 15 regardless of LA timezone");
+
+    // Instant uses the formatter's timezone (LA), so it could shift the day.
+    const instResult = fmtLA.format(instant); // 10:30 UTC = 02:30 LA → Jan 15 still
+    // Just verify it formats without throwing and is consistent.
+    shouldBe(fmtLA.format(instant), instResult, "Instant result stable");
+
+    // Repeated calls still match.
+    for (let i = 0; i < 20; i++) {
+        shouldBe(fmtLA.format(plainDate), pdResult, `LA plainDate ${i}`);
+        shouldBe(fmtLA.format(instant), instResult, `LA instant ${i}`);
+    }
+}
+
+// 4. formatToParts and format share the same cache — verify consistency.
+{
+    const partsDate = fmt.formatToParts(plainDate);
+    const fmtDate = fmt.format(plainDate);
+    const reconstructed = partsDate.map(p => p.value).join("");
+    shouldBe(reconstructed, fmtDate, "formatToParts reconstructs same string as format");
+
+    for (let i = 0; i < 30; i++) {
+        shouldBe(fmt.format(plainDate), fmtDate, `format after formatToParts ${i}`);
+        shouldBe(fmt.formatToParts(plainDate).map(p => p.value).join(""), fmtDate,
+            `formatToParts after format ${i}`);
+    }
+}
+
+// 5. dateStyle/timeStyle formatters cache correctly.
+{
+    const fmtDS = new Intl.DateTimeFormat("en-US", { dateStyle: "short", timeZone: "UTC" });
+    const fmtTS = new Intl.DateTimeFormat("en-US", { timeStyle: "short", timeZone: "UTC" });
+
+    const dsDate = fmtDS.format(plainDate);
+    const tsTime = fmtTS.format(plainTime);
+    const tsDT = fmtTS.format(plainDateTime);
+
+    for (let i = 0; i < 50; i++) {
+        shouldBe(fmtDS.format(plainDate), dsDate, `dateStyle plainDate ${i}`);
+        shouldBe(fmtTS.format(plainTime), tsTime, `timeStyle plainTime ${i}`);
+        shouldBe(fmtTS.format(plainDateTime), tsDT, `timeStyle plainDateTime ${i}`);
+    }
+
+    // dateStyle + PlainTime must throw (no overlap).
+    let threw = false;
+    try { fmtDS.format(plainTime); } catch (e) { threw = true; }
+    shouldBe(threw, true, "dateStyle + PlainTime must throw TypeError");
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-676-intl-datetimeformat-temporal-formatter-cache.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

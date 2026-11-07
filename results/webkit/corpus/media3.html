@@ -1,0 +1,64 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>media3</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var T = 0;
+var trials = [
+  {n:'A-direct', kind:'direct', src:'/corpus/v_a.mp4'},
+  {n:'B-frag',   kind:'direct', src:'/corpus/v_b.mp4'},
+  {n:'C-high',   kind:'direct', src:'/corpus/v_c.mp4'},
+  {n:'D-mse',    kind:'mse',    src:'/corpus/v_a.mp4'}
+];
+function sample(v, tag){
+  try {
+    var w = v.videoWidth, h = v.videoHeight;
+    var c = document.createElement('canvas'); c.width = w; c.height = h;
+    var x = c.getContext('2d'); x.drawImage(v, 0, 0);
+    var d = x.getImageData(0, 0, w, h).data;
+    var diff = 0, first = -1;
+    for (var i = 0; i < d.length; i += 4){
+      if (Math.abs(d[i]-255) > 16 || d[i+1] > 16 || d[i+2] > 16){ diff++; if (first < 0) first = i >> 2; }
+    }
+    b(tag + '-DIM-' + w + 'x' + h + '-diff' + diff + '-first' + first);
+    if (first >= 0) b(tag + '-SAMPLE-' + d.slice(first*4, first*4+12).join('.'));
+  } catch (e) { b(tag + '-SAMPLE-THROW-' + (e.name || '?')); }
+}
+function next(){ T++; if (T < trials.length) start(); else b('ALL-DONE'); }
+function start(){
+  var t = trials[T], tag = 'T' + T + '-' + t.n;
+  b(tag + '-START');
+  var v = document.createElement('video');
+  v.muted = true; v.playsInline = true; v.preload = 'auto';
+  document.body.appendChild(v);
+  var done = false;
+  function finish(why){ if (done) return; done = true; b(tag + '-' + why); setTimeout(next, 120); }
+  v.addEventListener('error', function(){ finish('VERR-' + (v.error ? v.error.code : '?')); });
+  v.addEventListener('loadeddata', function(){
+    b(tag + '-LOADED');
+    sample(v, tag);
+    finish('OK');
+  });
+  setTimeout(function(){ finish('TIMEOUT-rs' + v.readyState); }, 5000);
+  if (t.kind === 'direct'){
+    v.src = t.src; v.load();
+  } else {
+    var xhr = new XMLHttpRequest(); xhr.open('GET', t.src); xhr.responseType = 'arraybuffer';
+    xhr.onload = function(){
+      var ms = new MediaSource(); v.src = URL.createObjectURL(ms);
+      ms.addEventListener('sourceopen', function(){
+        var sb = null;
+        var cands = ['video/mp4; codecs="avc1.42E01E"','video/mp4'];
+        for (var j = 0; j < cands.length && !sb; j++){ try { sb = ms.addSourceBuffer(cands[j]); b(tag + '-SB-' + j); } catch (e) {} }
+        if (!sb) return finish('NOSB');
+        sb.addEventListener('updateend', function(){ b(tag + '-APPENDED'); });
+        try { sb.appendBuffer(new Uint8Array(xhr.response)); b(tag + '-APPEND-CALLED'); } catch (e) { b(tag + '-APPEND-THROW-' + (e.name || '?')); }
+        v.play().catch(function(){});
+      });
+    };
+    xhr.onerror = function(){ finish('XHRERR'); };
+    xhr.send();
+  }
+}
+b('M3-START');
+document.addEventListener('DOMContentLoaded', start);
+b('M3-ARMED');
+</script></head><body><p>media3</p></body></html>

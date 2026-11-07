@@ -1,0 +1,242 @@
+<!doctype html><meta charset="utf-8"><title>string-last-index-of-search-longer-than-subject.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`bad value: expected ${expected} got ${actual}`);
+}
+
+// A needle that cannot fit in the searched range must report "not found" without disturbing any of
+// the other cases, including the empty needle, which always matches.
+const nonLatin1 = "\u2014";
+
+function lastIndexOf(subject, search) { return subject.lastIndexOf(search); }
+noInline(lastIndexOf);
+function lastIndexOfAt(subject, search, position) { return subject.lastIndexOf(search, position); }
+noInline(lastIndexOfAt);
+function startsWith(subject, search) { return subject.startsWith(search); }
+noInline(startsWith);
+function startsWithAt(subject, search, position) { return subject.startsWith(search, position); }
+noInline(startsWithAt);
+function endsWith(subject, search) { return subject.endsWith(search); }
+noInline(endsWith);
+function endsWithAt(subject, search, position) { return subject.endsWith(search, position); }
+noInline(endsWithAt);
+
+// Compute expectations with straightforward reference implementations.
+function matchesAt(subject, search, index) {
+    if (index < 0 || index + search.length > subject.length)
+        return false;
+    for (let i = 0; i < search.length; ++i) {
+        if (subject[index + i] !== search[i])
+            return false;
+    }
+    return true;
+}
+
+function referenceLastIndexOf(subject, search, position) {
+    const maxStart = subject.length - search.length;
+    if (maxStart < 0)
+        return -1;
+    let start = maxStart;
+    if (position !== undefined)
+        start = Math.min(Math.max(position | 0, 0), maxStart);
+    for (let i = start; i >= 0; --i) {
+        if (matchesAt(subject, search, i))
+            return i;
+    }
+    return -1;
+}
+
+function referenceStartsWith(subject, search, position) {
+    const start = Math.min(Math.max((position === undefined ? 0 : position) | 0, 0), subject.length);
+    return matchesAt(subject, search, start);
+}
+
+function referenceEndsWith(subject, search, position) {
+    const end = position === undefined ? subject.length : Math.min(Math.max(position | 0, 0), subject.length);
+    return matchesAt(subject, search, end - search.length);
+}
+
+const subjects = ["", "a", "abc", "abcabcabc", "abc" + nonLatin1, nonLatin1 + "abc"];
+const searches = ["", "a", "c", "abc", "abcd", "abcabcabc", "abcabcabca", nonLatin1, "x"];for (let __i = 0; __i < 200; __i++) {
+const positions = [0, 1, 2, 3, 100];}
+
+const cases = [];
+for (const subject of subjects) {
+    for (const search of searches) {
+        cases.push({
+            subject, search,
+            lastIndexOf: referenceLastIndexOf(subject, search, undefined),
+            startsWith: referenceStartsWith(subject, search, undefined),
+            endsWith: referenceEndsWith(subject, search, undefined),
+            at: positions.map(position => ({
+                position,
+                lastIndexOf: referenceLastIndexOf(subject, search, position),
+                startsWith: referenceStartsWith(subject, search, position),
+                endsWith: referenceEndsWith(subject, search, position),
+            })),
+        });
+    }
+}
+
+for (let iteration = 0; iteration < testLoopCount; ++iteration) {
+    for (const c of cases) {
+        shouldBe(lastIndexOf(c.subject, c.search), c.lastIndexOf);
+        shouldBe(startsWith(c.subject, c.search), c.startsWith);
+        shouldBe(endsWith(c.subject, c.search), c.endsWith);
+        for (const at of c.at) {
+            shouldBe(lastIndexOfAt(c.subject, c.search, at.position), at.lastIndexOf);
+            shouldBe(startsWithAt(c.subject, c.search, at.position), at.startsWith);
+            shouldBe(endsWithAt(c.subject, c.search, at.position), at.endsWith);
+        }
+    }
+}
+
+// Ropes: the length checks must not consult a resolved view, on either the subject or the needle.
+// "long" is longer than JSString::minLengthForRopeWalk, so it also exercises the rope-walking paths.
+const long = "abcdefgh".repeat(38);
+
+function lastIndexOfRopeSubject(a, b, search) { return (a + b).lastIndexOf(search); }
+noInline(lastIndexOfRopeSubject);
+function startsWithRopeSubject(a, b, search) { return (a + b).startsWith(search); }
+noInline(startsWithRopeSubject);
+function endsWithRopeSubject(a, b, search) { return (a + b).endsWith(search); }
+noInline(endsWithRopeSubject);
+function lastIndexOfRopeSearch(subject, c, d) { return subject.lastIndexOf(c + d); }
+noInline(lastIndexOfRopeSearch);
+function startsWithRopeSearch(subject, c, d) { return subject.startsWith(c + d); }try {
+noInline(startsWithRopeSearch);} catch (e) {}
+function endsWithRopeSearch(subject, c, d) { return subject.endsWith(c + d); }
+noInline(endsWithRopeSearch);
+function lastIndexOfRopeSubjectAt(a, b, search, position) { return (a + b).lastIndexOf(search, position); }
+noInline(lastIndexOfRopeSubjectAt);
+
+const ropeCases = [
+    ["abc", "def", "cd"],
+    ["abc", "def", "abcdefg"],
+    ["abc", nonLatin1, nonLatin1],
+    ["abc", "def", ""],
+    [long, "abc", "c"],
+    [long, "abc", "cd"],
+    ["abc", long, long + "x"],
+    ["", "abc", "abcd"],
+].map(([a, b, search]) => {
+    const joined = a + b;
+    return {
+        a, b, search,
+        lastIndexOf: referenceLastIndexOf(joined, search, undefined),
+        startsWith: referenceStartsWith(joined, search, undefined),
+        endsWith: referenceEndsWith(joined, search, undefined),
+        lastIndexOfAtFour: referenceLastIndexOf(joined, search, 4),
+        lastIndexOfAtMinusOne: referenceLastIndexOf(joined, search, -1),
+    };
+});
+
+for (let iteration = 0; iteration < testLoopCount; ++iteration) {
+    for (const c of ropeCases) {
+        shouldBe(lastIndexOfRopeSubject(c.a, c.b, c.search), c.lastIndexOf);
+        shouldBe(startsWithRopeSubject(c.a, c.b, c.search), c.startsWith);
+        shouldBe(endsWithRopeSubject(c.a, c.b, c.search), c.endsWith);
+        shouldBe(lastIndexOfRopeSubjectAt(c.a, c.b, c.search, 4), c.lastIndexOfAtFour);
+        shouldBe(lastIndexOfRopeSubjectAt(c.a, c.b, c.search, -1), c.lastIndexOfAtMinusOne);
+    }
+
+    // The needle is a rope that is longer than the subject, so it must be rejected without being
+    // resolved.
+    shouldBe(lastIndexOfRopeSearch("abc", long, long), -1);
+    shouldBe(startsWithRopeSearch("abc", long, long), false);
+    shouldBe(endsWithRopeSearch("abc", long, long), false);
+    shouldBe(lastIndexOfRopeSearch("abcabc", "ab", "c"), 3);
+    shouldBe(startsWithRopeSearch("abcabc", "ab", "c"), true);
+    shouldBe(endsWithRopeSearch("abcabc", "ab", "c"), true);
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1241-string-last-index-of-search-longer-than-.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

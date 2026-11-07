@@ -1,0 +1,8 @@
+002d36f0 55                     push    rbp
+002d36f1 4889e5                 mov     rbp, rsp
+002d36f4 c705e22b7c0101000000   mov     dword ptr [rip + 0x17c2be2], 1
+002d36fe 48c705bfdfa802ffffffff mov     qword ptr [rip + 0x2a8dfbf], 0xffffffffffffffff
+002d3709 48c705f4c8a80200000000 mov     qword ptr [rip + 0x2a8c8f4], 0
+002d3714 31c0                   xor     eax, eax
+002d3716 5d                     pop     rbp
+002d3717 c3                     ret     

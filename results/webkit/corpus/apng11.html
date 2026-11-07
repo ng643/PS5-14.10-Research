@@ -1,0 +1,31 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng11</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url; }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function drawN(w,im){ var c=document.createElement('canvas'); c.width=w; c.height=1; var g=c.getContext('2d'); g.drawImage(im,0,0); var d=g.getImageData(0,0,w,1).data; window.__last=c; return d; }
+var seq=0;
+function load(im){ return img('/corpus/'+im+'?n='+(++seq)); }
+function forceGC(){ for(var i=0;i<10;i++){ var j=new ArrayBuffer(4*1024*1024); j=null; } return 1; }
+function cnt(d,n,val){ var c=0; for(var i=0;i<n*4;i++) if(d[i]===val) c++; return c; }
+function mag(d,n){ var c=0; for(var i=0;i<n;i++) if(d[i*4]===0xFF&&d[i*4+1]===0x00&&d[i*4+2]===0xFF) c++; return c; }
+function rep(tag,d,n){ b(tag+'-mag-'+mag(d,n)+'-aa-'+cnt(d,n,0xAA)+'-hex-'+hexAll(d.slice(0,24*4),24)); }
+function step1(){ // control: fw1 twice
+  return load('apng-fw1.png').then(function(a){ var d1=drawN(64,a); rep('A11-A1',d1,64);
+    return load('apng-fw1.png').then(function(c){ var d2=drawN(64,c); rep('A11-A2',d2,64); }); });
+}
+function step2(){ // magenta first, then fw1
+  return load('mag64.png').then(function(m){ var dm=drawN(64,m); rep('A11-B0',dm,64);
+    return load('apng-fw1.png').then(function(f){ var d=drawN(64,f); rep('A11-B1',d,64); }); });
+}
+function step3(){ // pattern first, GC, then fw1
+  return load('pat64.png').then(function(p){ var dp=drawN(64,p); rep('A11-C0',dp,64); forceGC();
+    return load('apng-fw1.png').then(function(f){ var d=drawN(64,f); rep('A11-C1',d,64); }); });
+}
+function step4(){ // pattern drawn, then fw1 twice (second decode should recycle first's buffer)
+  return load('pat64.png').then(function(p){ drawN(64,p);
+    return load('apng-fw1.png').then(function(f){ var d1=drawN(64,f); rep('A11-D1',d1,64);
+      return load('apng-fw1.png').then(function(g){ var d2=drawN(64,g); rep('A11-D2',d2,64); }); }); });
+}
+function boot(){ b('A11-BOOT'); step1().then(step2).then(step3).then(step4).then(function(){ b('A11-DONE'); }); }
+boot();
+</script></head><body><p>apng11</p></body></html>

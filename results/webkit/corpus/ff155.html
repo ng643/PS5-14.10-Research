@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>F155</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+window.onerror=function(m,s,l){b('F155-ONERR-'+m);return true;};
+b('F155-START');
+
+function churn(fill){
+  var a=[], i, s=fill.repeat(240);
+  for(i=0;i<3000;i++){ a.push(s + i); }
+  return a;
+}
+
+function phase(name, family, fill){
+  b(name+'-ADD');
+  var st=document.createElement('style');
+  st.textContent='@font-face{font-family:'+family+';src:local("Arial"),local("Helvetica")}';
+  document.head.appendChild(st);
+
+  var p;
+  try { p = document.fonts.load('1em '+family); }
+  catch(e){ b(name+'-LOADTHREW-'+e.name); return; }
+
+  b(name+'-LOADOK');
+  var junk = churn(fill);
+  p.then(function(faces){
+      b(name+'-THEN-'+faces.length);
+      try { st.parentNode.removeChild(st); } catch(e){ b(name+'-RMTHREW'); }
+      junk = churn(fill);
+      var c=false;
+      try { c = document.fonts.check('1em '+family); } catch(e){ b(name+'-CHECKTHREW'); }
+      b(name+'-CHECK-'+(c?'T':'F'));
+      junk = churn(fill);
+  }, function(e){
+      b(name+'-REJECT-'+e.name);
+  });
+}
+
+phase('FF-NUL','F155NUL','\u0000');
+setTimeout(function(){
+  b('FF-NUL-TIMEOUT');
+  phase('FF-41','F155A41','A');
+  setTimeout(function(){ b('FF-41-TIMEOUT'); b('F155-END'); }, 1500);
+}, 1500);
+</script>
+<p id=x>f155</p>

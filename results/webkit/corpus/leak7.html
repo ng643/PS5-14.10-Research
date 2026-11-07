@@ -1,0 +1,21 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>leak7</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function step(t,f){ b('L7-'+t+'-IN'); var r; try{ r=f(); }catch(e){ r='E_'+e.name; } b('L7-'+t+'-O-'+String(r).replace(/[^A-Za-z0-9_.:-]/g,'')); }
+step('FILL', function(){
+  var c=document.createElement('canvas'); c.width=16; c.height=16; var g=c.getContext('2d');
+  if(!g) return 'noctx';
+  g.fillStyle='rgb(255,0,0)'; g.fillRect(0,0,16,16);
+  var d=g.getImageData(0,0,16,16).data, nz=0;
+  for(var i=0;i<d.length;i++) if(d[i]) nz++;
+  return 'nz'+nz+'_p0_'+d[0]+'_'+d[1]+'_'+d[2]+'_'+d[3];
+});
+step('DATAURL', function(){
+  var c=document.createElement('canvas'); c.width=8; c.height=8; var g=c.getContext('2d');
+  if(!g) return 'noctx';
+  g.fillStyle='rgb(0,255,0)'; g.fillRect(0,0,8,8);
+  var u=c.toDataURL();
+  return 'len'+u.length+'_head'+u.slice(0,22).replace(/[^A-Za-z0-9]/g,'');
+});
+b('L7-DONE');
+</script></head><body><p>leak7</p></body></html>

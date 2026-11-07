@@ -1,0 +1,228 @@
+<!doctype html><meta charset="utf-8"><title>regexp-unicode-atom-fast-path.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`expected ${expected} but got ${actual}`);
+}
+
+function shouldBeArray(actual, expected) {
+    shouldBe(JSON.stringify(actual), JSON.stringify(expected));
+}
+
+// Multi-char atom under unicode flag.
+{
+    let str = "ab cd ab cd ab";
+    shouldBeArray(str.match(/ab/gu), ["ab", "ab", "ab"]);
+    shouldBeArray(str.match(/ab/gv), ["ab", "ab", "ab"]);
+    shouldBe(str.replace(/ab/gu, "X"), "X cd X cd X");
+    shouldBeArray(str.split(/ab/u), ["", " cd ", " cd ", ""]);
+}
+
+// Single-char atom under unicode flag.
+{
+    let str = "aaa";
+    shouldBeArray(str.match(/a/gu), ["a", "a", "a"]);
+    shouldBe(str.search(/a/u), 0);
+    shouldBe("xyz".search(/a/u), -1);
+}
+
+// exec / test fast path.
+{
+    let re = /ab/u;
+    let m = re.exec("xxabyy");
+    shouldBe(m.index, 2);
+    shouldBe(m[0], "ab");
+    shouldBe(/ab/u.test("xxabyy"), true);
+    shouldBe(/ab/u.test("xxaayy"), false);
+}
+
+// 16-bit input with surrogate pairs: atom must not match inside a surrogate pair.
+{
+    // U+10000 is "𐀀". Atom "ab" must not be confused.
+    let str = "\u{10000}ab\u{10000}ab";
+    shouldBeArray(str.match(/ab/gu), ["ab", "ab"]);
+    shouldBe(str.replace(/ab/gu, ""), "\u{10000}\u{10000}");
+}
+
+// Non-BMP fixed string: must NOT take atom fast path (still correct via Yarr).
+{
+    let str = "\u{1F600}x\u{1F600}";
+    shouldBeArray(str.match(/\u{1F600}/gu), ["\u{1F600}", "\u{1F600}"]);
+}
+
+// Lone-surrogate pattern: must NOT take atom fast path under unicode.
+// In unicode mode, /\uD800/u does NOT match the lead surrogate of a paired surrogate.
+{
+    let paired = "𐀀"; // U+10000
+    shouldBe(/\uD800/u.test(paired), false);
+    shouldBe(/\uD800/u.test("\uD800x"), true);
+    shouldBe(paired.match(/\uD800/gu), null);
+}
+
+// Lone trail surrogate.
+{
+    let paired = "𐀀";
+    shouldBe(/\uDC00/u.test(paired), false);
+    shouldBe(/\uDC00/u.test("x\uDC00"), true);
+}
+
+// Non-unicode lone surrogate: still takes atom path (no surrogate-pair semantics).
+{
+    let paired = "𐀀";
+    shouldBe(/\uD800/.test(paired), true);
+    shouldBeArray(paired.match(/\uD800/g), ["\uD800"]);
+}
+
+// RegExp.$_ etc. should reflect the last match.
+{
+    "xxabyy".match(/ab/gu);
+    shouldBe(RegExp.lastMatch, "ab");
+    shouldBe(RegExp.leftContext, "xx");
+    shouldBe(RegExp.rightContext, "yy");
+}
+
+// 16-bit BMP atom (non-ASCII, non-surrogate).
+{
+    let str = "あいあい";
+    shouldBeArray(str.match(/あ/gu), ["あ", "あ"]);
+    shouldBeArray(str.match(/あい/gu), ["あい", "あい"]);
+}
+
+// Boundary BMP characters adjacent to surrogate range.
+{
+    shouldBeArray("퟿퟿".match(/퟿/gu), ["퟿", "퟿"]);
+    shouldBeArray("".match(//gu), ["", ""]);
+}
+
+// Input contains broken trail surrogate before atom.
+{
+    shouldBeArray("\uDC00ab".match(/ab/gu), ["ab"]);
+    shouldBe("\uDC00ab".search(/ab/u), 1);
+}
+
+// Mixed BMP-and-surrogate atom must NOT be extracted.
+{
+    shouldBeArray("a\uD800x".match(/a\uD800/gu), ["a\uD800"]);
+    shouldBe("a\u{10000}x".match(/a\uD800/gu), null);
+}
+
+// dotAll flag does not affect fixed-string atoms.
+{
+    shouldBeArray("a.b a.b".match(/a/gsu), ["a", "a"]);
+}
+
+// matchAll iterator.
+{
+    let indices = [];
+    for (let m of "ab-ab".matchAll(/ab/gu))
+        indices.push(m.index);
+    shouldBeArray(indices, [0, 3]);
+}
+
+// replace and replaceAll.
+{
+    shouldBe("ab-ab-ab".replace(/ab/gu, "X"), "X-X-X");
+    shouldBe("ab-ab-ab".replaceAll(/ab/gu, ""), "--");
+    shouldBe("ab-ab".replace(/ab/u, "X"), "X-ab");
+}
+
+// JIT tier-up consistency.
+{
+    function f(s) { return s.match(/ab/gu); }
+    noInline(f);
+    for (let i = 0; i < 10000; i++) {
+        let r = f("xxab--ab");
+        if (r.length !== 2 || r[0] !== "ab" || r[1] !== "ab")
+            throw new Error("JIT tier-up mismatch at " + i);
+    }
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1193-regexp-unicode-atom-fast-path.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

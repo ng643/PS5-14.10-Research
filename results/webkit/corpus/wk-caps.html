@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>caps</title>
+</head>
+<body>
+<h1 id="h">caps</h1>
+<pre id="out">running</pre>
+<script>
+(function () {
+  var OUT = [];
+  function b(tag) {
+    try {
+      var x = new XMLHttpRequest();
+      x.open('GET', '/beacon/' + tag + '|' + encodeURIComponent(OUT.join(' ')), false);
+      x.send(null);
+    } catch (e) {}
+  }
+  function t(name, fn) {
+    var v = 0;
+    try { v = fn() ? 1 : 0; } catch (e) { v = 'E'; }
+    OUT.push(name + '=' + v);
+  }
+  function flush(group) {
+    OUT.unshift(group);
+    b(group);
+    OUT = [];
+  }
+
+  OUT.push('BOOT');
+  flush('CAPS-Z');
+
+  // ---- group A: recent JS builtins ----
+  t('toSorted', function () { return typeof [].toSorted === 'function'; });
+  t('toReversed', function () { return typeof [].toReversed === 'function'; });
+  t('toSpliced', function () { return typeof [].toSpliced === 'function'; });
+  t('withArr', function () { return typeof [].with === 'function'; });
+  t('groupBy', function () { return typeof Object.groupBy === 'function'; });
+  t('mapGroupBy', function () { return typeof Map.groupBy === 'function'; });
+  t('fromAsync', function () { return typeof Array.fromAsync === 'function'; });
+  t('withResolvers', function () { return typeof Promise.withResolvers === 'function'; });
+  t('structuredClone', function () { return typeof structuredClone === 'function'; });
+  t('isWellFormed', function () { return typeof ''.isWellFormed === 'function'; });
+  t('toWellFormed', function () { return typeof ''.toWellFormed === 'function'; });
+  t('findLast', function () { return typeof [].findLast === 'function'; });
+  t('arrayAt', function () { return typeof [].at === 'function'; });
+  t('hasOwn', function () { return typeof Object.hasOwn === 'function'; });
+  t('replaceAll', function () { return typeof ''.replaceAll === 'function'; });
+  t('regexV', function () { new RegExp('a', 'v'); return true; });
+  t('regexD', function () { new RegExp('a', 'd'); return true; });
+  t('regexpEscape', function () { return typeof RegExp.escape === 'function'; });
+  t('lookBehind', function () { return /(?<=a)b/.test('ab'); });
+  t('namedGroups', function () { return /(?<x>a)/.exec('a').groups.x === 'a'; });
+  t('symAsyncDispose', function () { return typeof Symbol.asyncDispose === 'symbol'; });
+  t('durationFmt', function () { return typeof Intl.DurationFormat === 'function'; });
+  t('segmenter', function () { return typeof Intl.Segmenter === 'function'; });
+  flush('CAPS-A');
+
+  // ---- group B: language / numbers / memory features ----
+  t('bigint', function () { return typeof BigInt === 'function'; });
+  t('bigint64arr', function () { return typeof BigInt64Array === 'function'; });
+  t('float16arr', function () { return typeof Float16Array === 'function'; });
+  t('weakref', function () { return typeof WeakRef === 'function'; });
+  t('finreg', function () { return typeof FinalizationRegistry === 'function'; });
+  t('proxy', function () { return typeof Proxy === 'function'; });
+  t('reflect', function () { return typeof Reflect === 'object'; });
+  t('atomics', function () { return typeof Atomics === 'object'; });
+  t('sab', function () { return typeof SharedArrayBuffer === 'function'; });
+  t('wasm', function () { return typeof WebAssembly === 'object'; });
+  t('wasmValidate', function () {
+    return WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0]));
+  });
+  t('wasmTag', function () { return typeof WebAssembly.Tag === 'function'; });
+  t('wasmFunc', function () { return typeof WebAssembly.Function === 'function'; });
+  t('wasmCompileStream', function () { return typeof WebAssembly.compileStreaming === 'function'; });
+  t('gcExposed', function () { return typeof gc === 'function'; });
+  t('inspect', function () { return typeof inspect === 'function'; });
+  t('v8', function () { return typeof $vm === 'object'; });
+  t('errorStack', function () { return typeof Error.captureStackTrace === 'function'; });
+  t('errorCause', function () { return new Error('x', { cause: 1 }).cause === 1; });
+  t('errAggregate', function () { return typeof AggregateError === 'function'; });
+  t('mathF16', function () { return typeof Math.f16round === 'function'; });
+  t('mathSumPrecise', function () { return typeof Math.sumPrecise === 'function'; });
+  flush('CAPS-B');
+
+  // ---- group C: platform APIs ----
+  t('worker', function () { return typeof Worker === 'function'; });
+  t('moduleWorker', function () { try { new Worker('data:,', { type: 'module' }); return true; } catch (e) { return false; } });
+  t('offscreen', function () { return typeof OffscreenCanvas === 'function'; });
+  t('crypto', function () { return typeof crypto === 'object' && typeof crypto.subtle === 'object'; });
+  t('idb', function () { return typeof indexedDB === 'object'; });
+  t('sw', function () { return typeof navigator.serviceWorker === 'object'; });
+  t('audioWorklet', function () { return typeof AudioWorkletNode === 'function'; });
+  t('rtc', function () { return typeof RTCPeerConnection === 'function'; });
+  t('speech', function () { return typeof speechSynthesis === 'object'; });
+  t('gamepad', function () { return typeof navigator.getGamepads === 'function'; });
+  t('pointerLock', function () { return typeof document.body.requestPointerLock === 'function'; });
+  t('fetch', function () { return typeof fetch === 'function'; });
+  t('streams', function () { return typeof ReadableStream === 'function'; });
+  t('decompress', function () { return typeof DecompressionStream === 'function'; });
+  t('scheduler', function () { return typeof scheduler === 'object' && typeof scheduler.postTask === 'function'; });
+  t('idleCb', function () { return typeof requestIdleCallback === 'function'; });
+  t('resizeObs', function () { return typeof ResizeObserver === 'function'; });
+  t('intersect', function () { return typeof IntersectionObserver === 'function'; });
+  t('visualViewport', function () { return typeof visualViewport === 'object' && visualViewport !== null; });
+  t('fontFaceSet', function () { return typeof document.fonts === 'object'; });
+  t('websocket', function () { return typeof WebSocket === 'function'; });
+  t('webauthn', function () { return typeof navigator.credentials === 'object'; });
+  t('mediasource', function () { return typeof MediaSource === 'function'; });
+  t('videoDecoder', function () { return typeof VideoDecoder === 'function'; });
+  t('imageDecoder', function () { return typeof ImageDecoder === 'function'; });
+  t('gpu', function () { return typeof navigator.gpu === 'object'; });
+  flush('CAPS-C');
+
+  // ---- group D: WebGL ----
+  var glv = 'none', glr = 'none', glver = 'none', glsl = 'none';
+  try {
+    var c = document.createElement('canvas');
+    var gl = c.getContext('webgl2') || c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (gl) {
+      glv = gl.getParameter(gl.VERSION) || 'null';
+      glsl = gl.getParameter(gl.SHADING_LANGUAGE_VERSION) || 'null';
+      glr = gl.getParameter(gl.RENDERER) || 'null';
+      var dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      if (dbg) {
+        glr = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || glr;
+        glver = gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || 'null';
+      }
+      var exts = (gl.getSupportedExtensions() || []).length;
+      OUT.push('WebGLext=' + exts);
+      OUT.push('maxTex=' + gl.getParameter(gl.MAX_TEXTURE_SIZE));
+      OUT.push('maxVP=' + gl.getParameter(gl.MAX_VIEWPORT_DIMS));
+    }
+  } catch (e) {
+    OUT.push('WebGL-E=' + String(e).slice(0, 40));
+  }
+  OUT.push('glver=' + encodeURIComponent(String(glv).slice(0, 60)));
+  OUT.push('glsl=' + encodeURIComponent(String(glsl).slice(0, 40)));
+  OUT.push('glrenderer=' + encodeURIComponent(String(glr).slice(0, 80)));
+  OUT.push('glvendor=' + encodeURIComponent(String(glver).slice(0, 40)));
+  flush('CAPS-D');
+
+  // ---- group E: environment ----
+  OUT.push('cores=' + navigator.hardwareConcurrency);
+  OUT.push('mem=' + navigator.deviceMemory);
+  OUT.push('touch=' + navigator.maxTouchPoints);
+  OUT.push('sw=' + screen.width + 'x' + screen.height + 'x' + screen.colorDepth);
+  OUT.push('dpr=' + devicePixelRatio);
+  OUT.push('lang=' + navigator.language);
+  OUT.push('ua=' + encodeURIComponent(navigator.userAgent));
+  OUT.push('platform=' + encodeURIComponent(String(navigator.platform)));
+  OUT.push('secRes=' + (performance.now() - performance.now()));
+  OUT.push('now=' + performance.now());
+  OUT.push('origin=' + encodeURIComponent(String(location.origin)));
+  OUT.push('tz=' + encodeURIComponent(String(Intl.DateTimeFormat().resolvedOptions().timeZone)));
+  flush('CAPS-E');
+
+  document.getElementById('out').textContent = 'done';
+  OUT.push('END');
+  flush('CAPS-Z2');
+})();
+</script>
+</body>
+</html>

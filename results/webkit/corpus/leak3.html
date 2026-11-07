@@ -1,0 +1,14 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>leak3</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function nz(a){var n=0,f=-1;for(var i=0;i<a.length;i++){if(a[i]){n++;if(f<0)f=i;}}return n+'i'+f;}
+function step(t,f){ b('L3-'+t+'-IN'); var r; try{ r=f(); }catch(e){ r='E_'+e.name; } b('L3-'+t+'-O-'+String(r).replace(/[^A-Za-z0-9_.:-]/g,'')); }
+step('CANVASBOOL', function(){ var c=document.createElement('canvas'); c.width=8; c.height=8; var g=c.getContext('2d'); return 'ctx='+(g?'obj':'null'); });
+step('CANVAS2', function(){ var c=document.createElement('canvas'); c.width=8; c.height=8; var g=c.getContext('2d',{willReadFrequently:true}); return 'ctx='+(g?'obj':'null'); });
+step('IMG', function(){ var d=new ImageData(16,16); return nz(d.data); });
+step('TEXTRUN', function(){ var d=new TextDecoder('utf-8'); var v=d.decode(new Uint8Array([0xff,0xfe,0x80])); return 'len'+v.length; });
+step('TEXTRUN2', function(){ var d=new TextDecoder('utf-8',{fatal:false,ignoreBOM:false}); var buff=new Uint8Array(64); for(var i=0;i<64;i++) buff[i]=0x80|(i&7); return 'len'+d.decode(buff).length; });
+step('BITMAP', function(){ return 'skip'; });
+step('REGEX', function(){ var re=/a/g, s='aaaa'; var m=[]; var r; while((r=re.exec(s))) m.push(r.index); return 'hit'+m.length; });
+b('L3-DONE');
+</script></head><body><p>leak3</p></body></html>

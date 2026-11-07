@@ -1,0 +1,49 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>par3</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var TRIAL = 0, MAXT = 5, styleEl = null, firedHere = false;
+function setup(){
+  var name = 'f' + TRIAL;
+  var A = new FontFace(name, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: s" + TRIAL + "; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('TR' + TRIAL + '-SETUP');
+  firedHere = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (firedHere) return undefined;
+      firedHere = true;
+      b('TR' + TRIAL + '-GETTER-ENTER');
+      if (styleEl) styleEl.remove();
+      b('TR' + TRIAL + '-STYLE-REMOVED');
+      try { document.fonts.delete(this); } catch (e) {}
+      b('TR' + TRIAL + '-DELETED');
+      document.body.offsetHeight;
+      b('TR' + TRIAL + '-LAYOUT');
+      var r = 'err';
+      try { r = document.fonts.check('1em s' + TRIAL); } catch (e) { r = 'throw'; }
+      b('TR' + TRIAL + '-CHECK-' + r);
+      b('TR' + TRIAL + '-RET');
+      return undefined;
+    },
+    set: function(){}
+  });
+  document.fonts.load('1em ' + name + ', s' + TRIAL, 'AB').then(
+    function(){ b('TR' + TRIAL + '-RESOLVED'); next(); },
+    function(){ b('TR' + TRIAL + '-REJECTED'); next(); }
+  );
+  b('TR' + TRIAL + '-LOAD-CALLED');
+}
+function next(){
+  TRIAL++;
+  if (TRIAL < MAXT) setTimeout(setup, 150);
+  else b('TR-DONE-all');
+}
+function run(){ b('TR-PARSE'); setup(); }
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+</script></head><body><p>par3</p></body></html>

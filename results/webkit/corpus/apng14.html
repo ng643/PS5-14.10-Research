@@ -1,0 +1,22 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng14</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url; }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function mk(w,h,r,g,bl){ var c=document.createElement('canvas'); c.width=w; c.height=h; var x=c.getContext('2d'); x.fillStyle='rgba('+r+','+g+','+bl+',1)'; x.fillRect(0,0,w,h); return c; }
+function drawN(w,im){ var c=mk(w,1,0,0,0); var g=c.getContext('2d'); g.drawImage(im,0,0); var d=g.getImageData(0,0,w,1).data; return d; }
+var seq=0;
+function load(im){ return img('/corpus/'+im+'?n='+(++seq)); }
+var keep=[];
+function boot(){
+  b('A14-BOOT');
+  for(var i=0;i<64;i++){ var c=mk(32,32,(i*7)&0xFF,(i*13)&0xFF,(i*29)&0xFF); keep.push(c); }
+  var imgs=[];
+  for(var k=0;k<6;k++) imgs.push(load('apng-fw1.png'));
+  Promise.all(imgs).then(function(list){
+    for(var k=0;k<list.length;k++){ var d=drawN(64,list[k]); b('A14-R'+k+'-'+hexAll(d,40)); }
+    var im2=load('apng-fw8.png');
+    im2.then(function(m){ var d=drawN(64,m); b('A14-FW8-'+hexAll(d,40)); b('A14-DONE'); });
+  });
+}
+window.addEventListener('load',boot);
+</script></head><body><p>apng14</p></body></html>

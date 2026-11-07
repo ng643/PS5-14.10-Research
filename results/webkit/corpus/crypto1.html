@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>crypto1</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hx(u,n){var s='';for(var i=0;i<(n||u.length);i++)s+=('0'+u[i].toString(16)).slice(-2);return s;}
+function scan(tag,u){var hits=0;for(var i=0;i+8<=u.length;i+=4){if(u[i+4]===0x7f&&u[i+5]===0x00)hits++;}b(tag+'-PTR-'+hits);}
+function nz(u){var c=0;for(var i=0;i<u.length;i++)if(u[i])c++;return c;}
+function boot(){
+  b('C-BOOT-'+typeof crypto+'-'+(crypto&&crypto.subtle?'subtle':'nosubtle'));
+  try{
+    for(var k=0;k<4;k++){ var a=new Uint8Array(32); crypto.getRandomValues(a); b('C-RND'+k+'-'+hx(a,32)); }
+    var big=new Uint8Array(4096); crypto.getRandomValues(big);
+    b('C-BIG-nz-'+nz(big)+'-'+hx(big,64)); scan('C-BIG',big);
+    var b2=new Uint8Array(4096); crypto.getRandomValues(b2);
+    b('C-BIG2-nz-'+nz(b2)+'-'+hx(b2,64));
+    var same=0; for(var i=0;i<4096;i++) if(big[i]===b2[i]) same++; b('C-BIGSAME-'+same);
+  }catch(e){ b('C-RND-ERR-'+String(e).slice(0,40)); }
+  try{
+    crypto.subtle.digest('SHA-256', new Uint8Array([97,98,99])).then(function(d){
+      b('C-DIGEST-'+hx(new Uint8Array(d),32));
+    }).catch(function(e){ b('C-DIGEST-ERR-'+String(e).slice(0,40)); });
+  }catch(e){ b('C-DIGEST-THROW-'+String(e).slice(0,40)); }
+  try{
+    crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt']).then(function(k){
+      return crypto.subtle.exportKey('raw',k);
+    }).then(function(raw){
+      var u=new Uint8Array(raw); b('C-KEY-'+hx(u,32)); scan('C-KEY',u);
+      return crypto.subtle.encrypt({name:'AES-GCM',iv:new Uint8Array(12)}, {name:'AES-GCM'}, new Uint8Array(0));
+    }).then(function(ct){ b('C-ENC-len-'+ct.byteLength); }).catch(function(e){ b('C-ENC-ERR-'+String(e).slice(0,40)); });
+  }catch(e){ b('C-KEY-THROW-'+String(e).slice(0,40)); }
+  setTimeout(function(){ b('C-DONE'); },3000);
+}
+window.addEventListener('load',boot);
+</script></head><body><p>crypto1</p></body></html>

@@ -1,0 +1,305 @@
+<script>var window = this;
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+
+
+var testRunner = (function () {
+  function any() {
+    return new Proxy(function () {}, {
+      get: function (t, k) {
+        if (k === Symbol.toPrimitive) return function () { return 0; };
+        if (k === 'toString') return function () { return ''; };
+        return any();
+      },
+      apply: function () { return any(); },
+      construct: function () { return any(); }
+    });
+  }
+  return any();
+})();
+var internals = testRunner;
+var accessibilityController = testRunner;
+
+
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<html><body>
+<p>This test passes if it does not crash.</p>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+let currentIdentifier = 0x4000 + Math.floor(Math.random() * 0x100000);
+function genId() { return currentIdentifier++; }
+
+async function main() {
+    if (!window.IPC)
+        return;
+
+    const { CoreIPC, ArgumentSerializer, StreamConnection } = await import('./coreipc.js');
+
+    // CoreIPC.js aliases RetainPtr<CGColorSpaceRef> -> CoreIPCCGColorSpace, but the
+    // generated coder wraps it in a leading `bool isEngaged`. Override the field type
+    // so serializeOptional inserts the bool.
+    CoreIPC.typeInfo['WebCore::PlatformColorSpace'][0].type =
+        'std::optional<WebKit::CoreIPCCGColorSpace>';
+
+    // CoreIPC.js's StreamConnection uses a 0.1s defaultTimeout which silently drops
+    // messages on a busy machine; use a longer one.
+    function newStreamConnectionLongTimeout() {
+        const pair = IPC.createStreamClientConnection(14, 60);
+        const sc = Object.create(StreamConnection.prototype);
+        sc.handle = pair[1];
+        sc.connection = pair[0];
+        sc.connection.open();
+        sc.newInterface = (name, id) => {
+            const iface = { connection: sc.connection };
+            for (const [k, v] of Object.entries(CoreIPC.messages)) {
+                const us = k.indexOf('_');
+                if (k.substring(0, us) !== name)
+                    continue;
+                const fn = k.substring(us + 1);
+                if (v.replyArguments === null) {
+                    iface[fn] = (args) => {
+                        const s = ArgumentSerializer.serializeArguments(v.arguments, args);
+                        sc.connection.sendMessage(id, v.name, s);
+                    };
+                } else {
+                    iface[fn] = (args, cb) => {
+                        const s = ArgumentSerializer.serializeArguments(v.arguments, args);
+                        sc.connection.sendWithAsyncReply(id, v.name, s, (r) => cb && cb(r));
+                    };
+                }
+            }
+            return iface;
+        };
+        return sc;
+    }
+
+    function createRemoteRenderingBackend() {
+        const streamConnection = newStreamConnectionLongTimeout();
+        const renderingBackendIdentifier = genId();
+        CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, {
+            renderingBackendIdentifier: renderingBackendIdentifier,
+            connectionHandle: streamConnection
+        });
+        const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
+        const didInitializeReply = streamConnection.connection.waitForMessage(
+            renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 5);
+        streamConnection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
+        return { streamConnection, remoteRenderingBackend, remoteRenderingBackendIdentifier: renderingBackendIdentifier };
+    }
+
+    function createRemoteImageBuffer(rb) {
+        const imageBufferIdentifier = genId();
+        const graphicsContextIdentifier = genId();
+        rb.remoteRenderingBackend.CreateImageBuffer({
+            logicalSize: { width: 64, height: 64 },
+            renderingMode: 0,
+            renderingPurpose: 0,
+            resolutionScale: 1.0,
+            colorSpace: { serializableColorSpace: { alias: { optionalValue: { m_cgColorSpace: { alias: { variantType: 'WebCore::ColorSpace', variant: 19 } } } } } },
+            bufferFormat: { pixelFormat: 2, useLosslessCompression: 1 },
+            identifier: imageBufferIdentifier,
+            contextIdentifier: graphicsContextIdentifier
+        });
+        return {
+            remoteGraphicsContext: rb.streamConnection.newInterface("RemoteGraphicsContext", graphicsContextIdentifier),
+            graphicsContextIdentifier
+        };
+    }
+
+    function createDisplayListRecorder(rb) {
+        const recorderIdentifier = genId();
+        rb.remoteRenderingBackend.CreateDisplayListRecorder({ identifier: recorderIdentifier });
+        return {
+            remoteGraphicsContext: rb.streamConnection.newInterface("RemoteGraphicsContext", recorderIdentifier),
+            recorderIdentifier
+        };
+    }
+
+    function createDisplayListFromRecorder(rb, recorderIdentifier) {
+        const displayListIdentifier = genId();
+        rb.remoteRenderingBackend.SinkDisplayListRecorderIntoDisplayList({
+            identifier: recorderIdentifier,
+            displayListIdentifier
+        });
+        return { displayListIdentifier };
+    }
+
+    function makeControlPartArgs(variantType, type, sizePx) {
+        const variant = (type === undefined) ? {} : { type: type };
+        return {
+            part: { subclasses: { variantType: variantType, variant: variant } },
+            borderRect: {
+                rect: { location: { x: 0, y: 0 }, size: { width: sizePx, height: sizePx } },
+                radiiTopLeft:     { width: 0, height: 0 },
+                radiiTopRight:    { width: 0, height: 0 },
+                radiiBottomLeft:  { width: 0, height: 0 },
+                radiiBottomRight: { width: 0, height: 0 }
+            },
+            deviceScaleFactor: 1,
+            style: {
+                states: 0, fontSize: 13, zoomFactor: 1,
+                accentColor: { data: {} }, textColor: { data: {} },
+                borderWidth: { top: 0, right: 0, bottom: 0, left: 0 }
+            }
+        };
+    }
+
+    function recordControlParts(ctx, sizePx, count) {
+        // Mix part types so the singleton ControlFactoryMac would touch several
+        // distinct lazy NSCell members and the shared WebControlView on every replay.
+        // StyleAppearance integer values match Source/WebCore/platform/StyleAppearance.h
+        // on main: None=0, Auto=1, Base=2, BaseSelect=3, Checkbox=4, Radio=5,
+        // PushButton=6, SquareButton=7, Button=8, DefaultButton=9. Each value must be
+        // valid for its ControlPart subclass (ButtonPart accepts Button/DefaultButton/
+        // PushButton/SquareButton; ToggleButtonPart accepts Checkbox/Radio) or CoreIPC's
+        // serializer throws a SerializationError (visible text-diff failure) rather than
+        // silently passing.
+        const items = [
+            ['WebCore::ButtonPart', 8],          // Button         -> m_buttonCell
+            ['WebCore::ButtonPart', 9],          // DefaultButton  -> m_defaultButtonCell
+            ['WebCore::ButtonPart', 6],          // PushButton     -> m_buttonCell
+            ['WebCore::ToggleButtonPart', 4],    // Checkbox       -> m_checkboxCell
+            ['WebCore::ToggleButtonPart', 5],    // Radio          -> m_radioCell
+            ['WebCore::MenuListPart', undefined],
+            ['WebCore::SearchFieldPart', undefined],
+        ];
+        for (let i = 0; i < count; i++) {
+            const [vt, ty] = items[i % items.length];
+            ctx.DrawControlPart(makeControlPartArgs(vt, ty, sizePx));
+        }
+    }
+
+    // For one rendering backend: build innerDL (with DrawControlPart items), wrap it in
+    // outerDL (with a DrawDisplayList(innerDL) item), and create a CG-backed ImageBuffer
+    // whose RemoteGraphicsContext can replay outerDL.
+    function setupBackend(sizePx) {
+        const rb = createRemoteRenderingBackend();
+
+        const inner = createDisplayListRecorder(rb);
+        recordControlParts(inner.remoteGraphicsContext, sizePx, 30);
+        const innerDL = createDisplayListFromRecorder(rb, inner.recorderIdentifier);
+
+        const outer = createDisplayListRecorder(rb);
+        outer.remoteGraphicsContext.DrawDisplayList({ identifier: innerDL.displayListIdentifier });
+        const outerDL = createDisplayListFromRecorder(rb, outer.recorderIdentifier);
+
+        const ib = createRemoteImageBuffer(rb);
+
+        return { rb, ib, outerDL: outerDL.displayListIdentifier };
+    }
+
+    // Race nested DrawDisplayList replay across multiple RemoteRenderingBackend
+    // work-queue threads. Before the fix, the inner replay falls back to
+    // ControlFactory::singleton() and concurrently mutates shared NSCell state.
+    const A = setupBackend(20);
+    const B = setupBackend(200);
+    const C = setupBackend(40);
+    const D = setupBackend(120);
+
+    for (let i = 0; i < 0x40; i++) {
+        A.ib.remoteGraphicsContext.DrawDisplayList({ identifier: A.outerDL });
+        B.ib.remoteGraphicsContext.DrawDisplayList({ identifier: B.outerDL });
+        C.ib.remoteGraphicsContext.DrawDisplayList({ identifier: C.outerDL });
+        D.ib.remoteGraphicsContext.DrawDisplayList({ identifier: D.outerDL });
+    }
+
+    const deadline = performance.now() + 2000;
+    while (performance.now() < deadline) { }
+    for (const backend of [A, B, C, D])
+        backend.rb.streamConnection.connection.invalidate();
+}
+
+setTimeout(() => {
+    main().catch(e => console.log('FAIL: ' + e + '\n' + (e.stack || '')))
+          .finally(() => window.testRunner?.notifyDone());
+}, 0);
+setTimeout(() => window.testRunner?.notifyDone(), 20000);
+</script>
+<script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-lay-188-nested-display-list-draw-control-part-crash-html.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=layout.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script></body></html>

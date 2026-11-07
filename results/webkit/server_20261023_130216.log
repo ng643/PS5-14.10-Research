@@ -1,0 +1,518 @@
+2026-10-23T12:02:18.132+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:02:38.318+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-23T12:02:40.005+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:02:41.001+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-23T12:02:59.060+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:03:03.038+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-23T12:03:06.351+00:00 DNS Q feature-discovery-assets-amd.dl.playstation.net 1
+2026-10-23T12:03:06.767+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T12:03:06.851+00:00 ACCESS GET /probe/p_relapse_test.js?cb=1792754139 200
+2026-10-23T12:03:07.005+00:00 ACCESS GET /raw/p_relapse_test.js?cb=1792754139&cb=1792754139 200
+2026-10-23T12:03:07.171+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?start=0&count=1000&list=layout.json 200
+2026-10-23T12:03:07.316+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&start=0&count=1000&list=layout.json 200
+2026-10-23T12:03:07.372+00:00 ACCESS GET /corpus/layout.json?t=1792756989526 200
+2026-10-23T12:03:07.411+00:00 ACCESS GET /corpus/skip.json?t=1792756989581 200
+2026-10-23T12:03:07.549+00:00 POST V172-390ugi-BOOT-232-from-0-to-232 t=1792756989712&n=1 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:07.550+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-0-to-232?t=1792756989712&n=1 204
+2026-10-23T12:03:07.569+00:00 ACCESS GET /corpus/lay-001-accessible-name-chain-depth-no-crash-html.html?i=0&next=1&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:07.664+00:00 POST V172-390ugi-BEFORE-0 t=1792756989808&n=2 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:07.666+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-0?t=1792756989808&n=2 204
+2026-10-23T12:03:07.709+00:00 POST V172-390ugi-OK-0-lay-001-accessible-name-chain-depth-no-crash-html.html t=1792756989839&n=3 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:07.711+00:00 ACCESS POST /beacon/V172-390ugi-OK-0-lay-001-accessible-name-chain-depth-no-crash-html.html?t=1792756989839&n=3 204
+2026-10-23T12:03:07.743+00:00 POST V172-390ugi-GAP-0 t=1792756989840&n=4 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:07.743+00:00 ACCESS POST /beacon/V172-390ugi-GAP-0?t=1792756989840&n=4 204
+2026-10-23T12:03:07.880+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=1&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:08.066+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=1&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:08.147+00:00 ACCESS GET /corpus/layout.json?t=1792756990272 200
+2026-10-23T12:03:08.221+00:00 ACCESS GET /corpus/skip.json?t=1792756990369 200
+2026-10-23T12:03:08.410+00:00 POST V172-390ugi-BOOT-232-from-1-to-232 t=1792756990530&n=5 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:08.411+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-1-to-232?t=1792756990530&n=5 204
+2026-10-23T12:03:08.460+00:00 ACCESS GET /corpus/lay-002-accessible-name-recursion-no-crash-html.html?i=1&next=2&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:08.539+00:00 POST V172-390ugi-BEFORE-1 t=1792756990697&n=6 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:08.541+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-1?t=1792756990697&n=6 204
+2026-10-23T12:03:08.559+00:00 ACCESS GET /corpus/resources/cake.png 404
+2026-10-23T12:03:08.569+00:00 POST V172-390ugi-OK-1-lay-002-accessible-name-recursion-no-crash-html.html t=1792756990700&n=7 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:08.572+00:00 ACCESS POST /beacon/V172-390ugi-OK-1-lay-002-accessible-name-recursion-no-crash-html.html?t=1792756990700&n=7 204
+2026-10-23T12:03:08.594+00:00 POST V172-390ugi-GAP-1 t=1792756990700&n=8 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:08.595+00:00 ACCESS POST /beacon/V172-390ugi-GAP-1?t=1792756990700&n=8 204
+2026-10-23T12:03:08.614+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=2&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:08.751+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=2&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:08.780+00:00 ACCESS GET /corpus/layout.json?t=1792756990949 200
+2026-10-23T12:03:08.817+00:00 ACCESS GET /corpus/skip.json?t=1792756990986 200
+2026-10-23T12:03:08.961+00:00 POST V172-390ugi-BOOT-232-from-2-to-232 t=1792756991118&n=9 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:08.962+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-2-to-232?t=1792756991118&n=9 204
+2026-10-23T12:03:08.983+00:00 ACCESS GET /corpus/lay-003-aria-hidden-deep-dom-no-crash-html.html?i=2&next=3&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:09.023+00:00 POST V172-390ugi-BEFORE-2 t=1792756991189&n=10 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:09.025+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-2?t=1792756991189&n=10 204
+2026-10-23T12:03:09.028+00:00 POST V172-390ugi-OK-2-lay-003-aria-hidden-deep-dom-no-crash-html.html t=1792756991191&n=11 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:09.029+00:00 ACCESS POST /beacon/V172-390ugi-OK-2-lay-003-aria-hidden-deep-dom-no-crash-html.html?t=1792756991191&n=11 204
+2026-10-23T12:03:09.043+00:00 POST V172-390ugi-GAP-2 t=1792756991191&n=12 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:09.044+00:00 ACCESS POST /beacon/V172-390ugi-GAP-2?t=1792756991191&n=12 204
+2026-10-23T12:03:09.114+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=3&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:09.250+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=3&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:09.283+00:00 ACCESS GET /corpus/layout.json?t=1792756991450 200
+2026-10-23T12:03:09.312+00:00 ACCESS GET /corpus/skip.json?t=1792756991484 200
+2026-10-23T12:03:09.468+00:00 POST V172-390ugi-BOOT-232-from-3-to-232 t=1792756991613&n=13 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:09.469+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-3-to-232?t=1792756991613&n=13 204
+2026-10-23T12:03:09.508+00:00 ACCESS GET /corpus/lay-004-aria-owns-crash-after-subtree-update-html.html?i=3&next=4&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:09.600+00:00 POST V172-390ugi-BEFORE-3 t=1792756991723&n=14 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:09.603+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-3?t=1792756991723&n=14 204
+2026-10-23T12:03:09.681+00:00 POST V172-390ugi-OK-3-lay-004-aria-owns-crash-after-subtree-update-html.html t=1792756991723&n=15 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:09.683+00:00 ACCESS POST /beacon/V172-390ugi-OK-3-lay-004-aria-owns-crash-after-subtree-update-html.html?t=1792756991723&n=15 204
+2026-10-23T12:03:09.704+00:00 POST V172-390ugi-GAP-3 t=1792756991723&n=16 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:09.705+00:00 ACCESS POST /beacon/V172-390ugi-GAP-3?t=1792756991723&n=16 204
+2026-10-23T12:03:09.763+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=4&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:09.938+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=4&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:09.968+00:00 ACCESS GET /corpus/layout.json?t=1792756992136 200
+2026-10-23T12:03:10.038+00:00 ACCESS GET /corpus/skip.json?t=1792756992188 200
+2026-10-23T12:03:10.180+00:00 POST V172-390ugi-BOOT-232-from-4-to-232 t=1792756992341&n=17 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:10.181+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-4-to-232?t=1792756992341&n=17 204
+2026-10-23T12:03:10.199+00:00 ACCESS GET /corpus/lay-005-base-select-list-box-content-html.html?i=4&next=5&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:10.261+00:00 POST V172-390ugi-BEFORE-4 t=1792756992406&n=18 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:10.263+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-4?t=1792756992406&n=18 204
+2026-10-23T12:03:10.298+00:00 POST V172-390ugi-OK-4-lay-005-base-select-list-box-content-html.html t=1792756992407&n=19 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:10.300+00:00 ACCESS POST /beacon/V172-390ugi-OK-4-lay-005-base-select-list-box-content-html.html?t=1792756992407&n=19 204
+2026-10-23T12:03:10.313+00:00 POST V172-390ugi-GAP-4 t=1792756992407&n=20 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:10.314+00:00 ACCESS POST /beacon/V172-390ugi-GAP-4?t=1792756992407&n=20 204
+2026-10-23T12:03:10.339+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=5&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:10.579+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=5&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:10.660+00:00 ACCESS GET /corpus/layout.json?t=1792756992778 200
+2026-10-23T12:03:10.745+00:00 ACCESS GET /corpus/skip.json?t=1792756992888 200
+2026-10-23T12:03:10.880+00:00 POST V172-390ugi-BOOT-232-from-5-to-232 t=1792756993048&n=21 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:10.880+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-5-to-232?t=1792756993048&n=21 204
+2026-10-23T12:03:10.950+00:00 ACCESS GET /corpus/lay-006-base-select-list-box-html.html?i=5&next=6&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:11.015+00:00 POST V172-390ugi-BEFORE-5 t=1792756993158&n=22 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:11.017+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-5?t=1792756993158&n=22 204
+2026-10-23T12:03:11.044+00:00 POST V172-390ugi-OK-5-lay-006-base-select-list-box-html.html t=1792756993159&n=23 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:11.046+00:00 ACCESS POST /beacon/V172-390ugi-OK-5-lay-006-base-select-list-box-html.html?t=1792756993159&n=23 204
+2026-10-23T12:03:11.073+00:00 POST V172-390ugi-GAP-5 t=1792756993159&n=24 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:11.074+00:00 ACCESS POST /beacon/V172-390ugi-GAP-5?t=1792756993159&n=24 204
+2026-10-23T12:03:11.080+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=6&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:11.243+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=6&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:11.286+00:00 ACCESS GET /corpus/layout.json?t=1792756993441 200
+2026-10-23T12:03:11.329+00:00 ACCESS GET /corpus/skip.json?t=1792756993495 200
+2026-10-23T12:03:11.467+00:00 POST V172-390ugi-BOOT-232-from-6-to-232 t=1792756993634&n=25 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:11.468+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-6-to-232?t=1792756993634&n=25 204
+2026-10-23T12:03:11.494+00:00 ACCESS GET /corpus/lay-007-crash-deleting-dynamically-updated-text-input-html.html?i=6&next=7&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:11.560+00:00 POST V172-390ugi-BEFORE-6 t=1792756993708&n=26 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:11.563+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-6?t=1792756993708&n=26 204
+2026-10-23T12:03:11.620+00:00 POST V172-390ugi-OK-6-lay-007-crash-deleting-dynamically-updated-text-input-html.html t=1792756993709&n=27 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:11.621+00:00 POST V172-390ugi-GAP-6 t=1792756993709&n=28 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:11.622+00:00 ACCESS POST /beacon/V172-390ugi-GAP-6?t=1792756993709&n=28 204
+2026-10-23T12:03:11.622+00:00 ACCESS POST /beacon/V172-390ugi-OK-6-lay-007-crash-deleting-dynamically-updated-text-input-html.html?t=1792756993709&n=27 204
+2026-10-23T12:03:11.656+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=7&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:11.803+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=7&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:11.859+00:00 ACCESS GET /corpus/layout.json?t=1792756994007 200
+2026-10-23T12:03:11.964+00:00 ACCESS GET /corpus/skip.json?t=1792756994092 200
+2026-10-23T12:03:12.148+00:00 POST V172-390ugi-BOOT-232-from-7-to-232 t=1792756994267&n=29 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:12.149+00:00 ACCESS GET /corpus/lay-008-text-attribute-empty-li-html.html?i=7&next=8&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:12.150+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-7-to-232?t=1792756994267&n=29 204
+2026-10-23T12:03:12.201+00:00 POST V172-390ugi-BEFORE-7 t=1792756994359&n=30 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:12.202+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-7?t=1792756994359&n=30 204
+2026-10-23T12:03:12.207+00:00 POST V172-390ugi-OK-7-lay-008-text-attribute-empty-li-html.html t=1792756994359&n=31 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:12.209+00:00 ACCESS POST /beacon/V172-390ugi-OK-7-lay-008-text-attribute-empty-li-html.html?t=1792756994359&n=31 204
+2026-10-23T12:03:12.253+00:00 POST V172-390ugi-GAP-7 t=1792756994359&n=32 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:12.254+00:00 ACCESS POST /beacon/V172-390ugi-GAP-7?t=1792756994359&n=32 204
+2026-10-23T12:03:12.301+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=8&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:12.439+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=8&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:12.533+00:00 ACCESS GET /corpus/layout.json?t=1792756994644 200
+2026-10-23T12:03:12.566+00:00 ACCESS GET /corpus/skip.json?t=1792756994737 200
+2026-10-23T12:03:12.714+00:00 POST V172-390ugi-BOOT-232-from-8-to-232 t=1792756994885&n=33 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:12.715+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-8-to-232?t=1792756994885&n=33 204
+2026-10-23T12:03:12.788+00:00 ACCESS GET /corpus/lay-009-text-attribute-run-offsets-for-inline-elements-html.html?i=8&next=9&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:12.837+00:00 POST V172-390ugi-BEFORE-8 t=1792756994993&n=34 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:12.838+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-8?t=1792756994993&n=34 204
+2026-10-23T12:03:12.842+00:00 POST V172-390ugi-OK-8-lay-009-text-attribute-run-offsets-for-inline-elements-html.html t=1792756994994&n=35 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:12.844+00:00 ACCESS POST /beacon/V172-390ugi-OK-8-lay-009-text-attribute-run-offsets-for-inline-elements-html.html?t=1792756994994&n=35 204
+2026-10-23T12:03:12.879+00:00 POST V172-390ugi-GAP-8 t=1792756994994&n=36 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:12.880+00:00 ACCESS POST /beacon/V172-390ugi-GAP-8?t=1792756994994&n=36 204
+2026-10-23T12:03:12.907+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=9&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:13.058+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=9&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:13.137+00:00 ACCESS GET /corpus/layout.json?t=1792756995257 200
+2026-10-23T12:03:13.215+00:00 ACCESS GET /corpus/skip.json?t=1792756995351 200
+2026-10-23T12:03:13.370+00:00 POST V172-390ugi-BOOT-232-from-9-to-232 t=1792756995518&n=37 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:13.371+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-9-to-232?t=1792756995518&n=37 204
+2026-10-23T12:03:13.428+00:00 ACCESS GET /corpus/lay-010-accessible-name-recursion-no-crash-html.html?i=9&next=10&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:13.488+00:00 POST V172-390ugi-BEFORE-9 t=1792756995645&n=38 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:13.490+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-9?t=1792756995645&n=38 204
+2026-10-23T12:03:13.495+00:00 ACCESS GET /resources/cake.png 404
+2026-10-23T12:03:13.573+00:00 POST V172-390ugi-OK-9-lay-010-accessible-name-recursion-no-crash-html.html t=1792756995648&n=39 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:13.574+00:00 ACCESS POST /beacon/V172-390ugi-OK-9-lay-010-accessible-name-recursion-no-crash-html.html?t=1792756995648&n=39 204
+2026-10-23T12:03:13.603+00:00 POST V172-390ugi-GAP-9 t=1792756995648&n=40 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:13.604+00:00 ACCESS POST /beacon/V172-390ugi-GAP-9?t=1792756995648&n=40 204
+2026-10-23T12:03:13.661+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=10&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:13.709+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=10&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:13.743+00:00 ACCESS GET /corpus/layout.json?t=1792756995912 200
+2026-10-23T12:03:13.826+00:00 ACCESS GET /corpus/skip.json?t=1792756995978 200
+2026-10-23T12:03:14.016+00:00 POST V172-390ugi-BOOT-232-from-10-to-232 t=1792756996127&n=41 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:14.016+00:00 ACCESS GET /corpus/lay-011-base-select-list-box-removal-html.html?i=10&next=11&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:14.017+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-10-to-232?t=1792756996127&n=41 204
+2026-10-23T12:03:14.083+00:00 POST V172-390ugi-BEFORE-10 t=1792756996230&n=42 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:14.085+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-10?t=1792756996230&n=42 204
+2026-10-23T12:03:14.096+00:00 POST V172-390ugi-OK-10-lay-011-base-select-list-box-removal-html.html t=1792756996231&n=43 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:14.098+00:00 ACCESS POST /beacon/V172-390ugi-OK-10-lay-011-base-select-list-box-removal-html.html?t=1792756996231&n=43 204
+2026-10-23T12:03:14.134+00:00 POST V172-390ugi-GAP-10 t=1792756996231&n=44 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:14.135+00:00 ACCESS POST /beacon/V172-390ugi-GAP-10?t=1792756996231&n=44 204
+2026-10-23T12:03:14.196+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=11&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:14.344+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=11&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:14.398+00:00 ACCESS GET /corpus/layout.json?t=1792756996544 200
+2026-10-23T12:03:14.511+00:00 ACCESS GET /corpus/skip.json?t=1792756996657 200
+2026-10-23T12:03:14.651+00:00 POST V172-390ugi-BOOT-232-from-11-to-232 t=1792756996813&n=45 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:14.653+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-11-to-232?t=1792756996813&n=45 204
+2026-10-23T12:03:14.672+00:00 ACCESS GET /corpus/lay-012-typing-in-document-with-no-ax-object-cache-html.html?i=11&next=12&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:14.730+00:00 POST V172-390ugi-BEFORE-11 t=1792756996881&n=46 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:14.732+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-11?t=1792756996881&n=46 204
+2026-10-23T12:03:14.736+00:00 POST V172-390ugi-OK-11-lay-012-typing-in-document-with-no-ax-object-cache-html.html t=1792756996882&n=47 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:14.738+00:00 ACCESS POST /beacon/V172-390ugi-OK-11-lay-012-typing-in-document-with-no-ax-object-cache-html.html?t=1792756996882&n=47 204
+2026-10-23T12:03:14.742+00:00 POST V172-390ugi-GAP-11 t=1792756996883&n=48 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:14.742+00:00 ACCESS POST /beacon/V172-390ugi-GAP-11?t=1792756996883&n=48 204
+2026-10-23T12:03:14.812+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=12&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:14.993+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=12&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:15.037+00:00 ACCESS GET /corpus/layout.json?t=1792756997203 200
+2026-10-23T12:03:15.088+00:00 ACCESS GET /corpus/skip.json?t=1792756997251 200
+2026-10-23T12:03:15.235+00:00 POST V172-390ugi-BOOT-232-from-12-to-232 t=1792756997392&n=49 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:15.236+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-12-to-232?t=1792756997392&n=49 204
+2026-10-23T12:03:15.253+00:00 ACCESS GET /corpus/lay-013-bounds-for-range-multibyte-glyphs-html.html?i=12&next=13&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:15.307+00:00 POST V172-390ugi-BEFORE-12 t=1792756997464&n=50 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:15.310+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-12?t=1792756997464&n=50 204
+2026-10-23T12:03:15.319+00:00 POST V172-390ugi-OK-12-lay-013-bounds-for-range-multibyte-glyphs-html.html t=1792756997465&n=51 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:15.321+00:00 ACCESS POST /beacon/V172-390ugi-OK-12-lay-013-bounds-for-range-multibyte-glyphs-html.html?t=1792756997465&n=51 204
+2026-10-23T12:03:15.367+00:00 POST V172-390ugi-GAP-12 t=1792756997465&n=52 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:15.367+00:00 ACCESS POST /beacon/V172-390ugi-GAP-12?t=1792756997465&n=52 204
+2026-10-23T12:03:15.390+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=13&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:15.574+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=13&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:15.640+00:00 ACCESS GET /corpus/layout.json?t=1792756997787 200
+2026-10-23T12:03:15.711+00:00 ACCESS GET /corpus/skip.json?t=1792756997847 200
+2026-10-23T12:03:15.853+00:00 POST V172-390ugi-BOOT-232-from-13-to-232 t=1792756998013&n=53 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:15.854+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-13-to-232?t=1792756998013&n=53 204
+2026-10-23T12:03:15.914+00:00 ACCESS GET /corpus/lay-014-typing-in-document-with-no-ax-object-cache-html.html?i=13&next=14&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:16.055+00:00 POST V172-390ugi-OK-13-lay-014-typing-in-document-with-no-ax-object-cache-html.html t=1792756998149&n=55 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:16.057+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-13?t=1792756998148&n=54 204
+2026-10-23T12:03:16.058+00:00 ACCESS POST /beacon/V172-390ugi-OK-13-lay-014-typing-in-document-with-no-ax-object-cache-html.html?t=1792756998149&n=55 204
+2026-10-23T12:03:16.106+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=14&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:16.112+00:00 POST V172-390ugi-GAP-13 t=1792756998149&n=56 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:16.113+00:00 ACCESS POST /beacon/V172-390ugi-GAP-13?t=1792756998149&n=56 204
+2026-10-23T12:03:16.279+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=14&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:16.359+00:00 ACCESS GET /corpus/layout.json?t=1792756998494 200
+2026-10-23T12:03:16.454+00:00 ACCESS GET /corpus/skip.json?t=1792756998583 200
+2026-10-23T12:03:16.639+00:00 POST V172-390ugi-BOOT-232-from-14-to-232 t=1792756998760&n=57 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:16.640+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-14-to-232?t=1792756998760&n=57 204
+2026-10-23T12:03:16.664+00:00 ACCESS GET /corpus/lay-015-select-whitespace-collapsed-text-html.html?i=14&next=15&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:16.747+00:00 POST V172-390ugi-BEFORE-14 t=1792756998898&n=58 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:16.749+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-14?t=1792756998898&n=58 204
+2026-10-23T12:03:16.754+00:00 POST V172-390ugi-OK-14-lay-015-select-whitespace-collapsed-text-html.html t=1792756998901&n=59 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:16.755+00:00 ACCESS POST /beacon/V172-390ugi-OK-14-lay-015-select-whitespace-collapsed-text-html.html?t=1792756998901&n=59 204
+2026-10-23T12:03:16.759+00:00 POST V172-390ugi-GAP-14 t=1792756998901&n=60 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:16.760+00:00 ACCESS POST /beacon/V172-390ugi-GAP-14?t=1792756998901&n=60 204
+2026-10-23T12:03:16.856+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=15&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:17.012+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=15&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:17.061+00:00 ACCESS GET /corpus/layout.json?t=1792756999209 200
+2026-10-23T12:03:17.138+00:00 ACCESS GET /corpus/skip.json?t=1792756999281 200
+2026-10-23T12:03:17.306+00:00 POST V172-390ugi-BOOT-232-from-15-to-232 t=1792756999441&n=61 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:17.306+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-15-to-232?t=1792756999441&n=61 204
+2026-10-23T12:03:17.338+00:00 ACCESS GET /corpus/lay-016-svg-use-cycle-no-crash-html.html?i=15&next=16&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:17.455+00:00 POST V172-390ugi-OK-15-lay-016-svg-use-cycle-no-crash-html.html t=1792756999550&n=63 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:17.457+00:00 ACCESS POST /beacon/V172-390ugi-OK-15-lay-016-svg-use-cycle-no-crash-html.html?t=1792756999550&n=63 204
+2026-10-23T12:03:17.458+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-15?t=1792756999549&n=62 204
+2026-10-23T12:03:17.485+00:00 POST V172-390ugi-GAP-15 t=1792756999550&n=64 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:17.486+00:00 ACCESS POST /beacon/V172-390ugi-GAP-15?t=1792756999550&n=64 204
+2026-10-23T12:03:17.544+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=16&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:17.722+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=16&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:17.791+00:00 ACCESS GET /corpus/layout.json?t=1792756999921 200
+2026-10-23T12:03:17.896+00:00 ACCESS GET /corpus/skip.json?t=1792757000004 200
+2026-10-23T12:03:18.123+00:00 POST V172-390ugi-BOOT-232-from-16-to-232 t=1792757000199&n=65 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:18.124+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-16-to-232?t=1792757000199&n=65 204
+2026-10-23T12:03:18.152+00:00 ACCESS GET /corpus/lay-017-svg-filter-on-1px-element-html.html?i=16&next=17&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:18.250+00:00 POST V172-390ugi-BEFORE-16 t=1792757000366&n=66 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:18.252+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-16?t=1792757000366&n=66 204
+2026-10-23T12:03:18.272+00:00 POST V172-390ugi-OK-16-lay-017-svg-filter-on-1px-element-html.html t=1792757000367&n=67 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:18.274+00:00 ACCESS POST /beacon/V172-390ugi-OK-16-lay-017-svg-filter-on-1px-element-html.html?t=1792757000367&n=67 204
+2026-10-23T12:03:18.275+00:00 POST V172-390ugi-GAP-16 t=1792757000368&n=68 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:18.275+00:00 ACCESS POST /beacon/V172-390ugi-GAP-16?t=1792757000368&n=68 204
+2026-10-23T12:03:18.340+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=17&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:18.499+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=17&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:18.551+00:00 ACCESS GET /corpus/layout.json?t=1792757000704 200
+2026-10-23T12:03:18.598+00:00 ACCESS GET /corpus/skip.json?t=1792757000764 200
+2026-10-23T12:03:18.755+00:00 POST V172-390ugi-BOOT-232-from-17-to-232 t=1792757000906&n=69 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:18.756+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-17-to-232?t=1792757000906&n=69 204
+2026-10-23T12:03:18.781+00:00 ACCESS GET /corpus/lay-018-clipboard-write-item-crash-html.html?i=17&next=18&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:18.864+00:00 POST V172-390ugi-BEFORE-17 t=1792757001017&n=70 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:18.866+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-17?t=1792757001017&n=70 204
+2026-10-23T12:03:18.871+00:00 POST V172-390ugi-OK-17-lay-018-clipboard-write-item-crash-html.html t=1792757001018&n=71 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:18.872+00:00 ACCESS POST /beacon/V172-390ugi-OK-17-lay-018-clipboard-write-item-crash-html.html?t=1792757001018&n=71 204
+2026-10-23T12:03:18.875+00:00 POST V172-390ugi-GAP-17 t=1792757001019&n=72 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:18.875+00:00 ACCESS POST /beacon/V172-390ugi-GAP-17?t=1792757001019&n=72 204
+2026-10-23T12:03:18.958+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=18&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:19.104+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=18&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:19.165+00:00 ACCESS GET /corpus/layout.json?t=1792757001302 200
+2026-10-23T12:03:19.220+00:00 ACCESS GET /corpus/skip.json?t=1792757001374 200
+2026-10-23T12:03:19.383+00:00 POST V172-390ugi-BOOT-232-from-18-to-232 t=1792757001523&n=73 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:19.384+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-18-to-232?t=1792757001523&n=73 204
+2026-10-23T12:03:19.414+00:00 ACCESS GET /corpus/lay-019-find-interaction-ignorable-character-html.html?i=18&next=19&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:19.523+00:00 POST V172-390ugi-BEFORE-18 t=1792757001634&n=74 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+ (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:19.525+00:00 ACCESS POST /beacon/V172-390ugi-OK-18-lay-019-find-interaction-ignorable-character-html.html?t=1792757001634&n=75 204
+2026-10-23T12:03:19.526+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-18?t=1792757001634&n=74 204
+2026-10-23T12:03:19.553+00:00 POST V172-390ugi-GAP-18 t=1792757001634&n=76 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:19.554+00:00 ACCESS POST /beacon/V172-390ugi-GAP-18?t=1792757001634&n=76 204
+2026-10-23T12:03:19.619+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=19&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:19.794+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=19&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:19.841+00:00 ACCESS GET /corpus/layout.json?t=1792757001991 200
+2026-10-23T12:03:19.881+00:00 ACCESS GET /corpus/skip.json?t=1792757002046 200
+2026-10-23T12:03:20.045+00:00 POST V172-390ugi-BOOT-232-from-19-to-232 t=1792757002183&n=77 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:20.046+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-19-to-232?t=1792757002183&n=77 204
+2026-10-23T12:03:20.096+00:00 ACCESS GET /corpus/lay-020-respond-to-changed-selection-null-end-of-word-crash-html.html?i=19&next=20&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:20.186+00:00 POST V172-390ugi-BEFORE-19 t=1792757002318&n=78 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:20.189+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-19?t=1792757002318&n=78 204
+2026-10-23T12:03:20.246+00:00 POST V172-390ugi-GAP-19 t=1792757002321&n=80 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+pleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:20.248+00:00 ACCESS POST /beacon/V172-390ugi-GAP-19?t=1792757002321&n=80 204
+2026-10-23T12:03:20.249+00:00 ACCESS POST /beacon/V172-390ugi-OK-19-lay-020-respond-to-changed-selection-null-end-of-word-crash-html.html?t=1792757002321&n=79 204
+2026-10-23T12:03:20.317+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=20&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:20.471+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=20&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:20.531+00:00 ACCESS GET /corpus/layout.json?t=1792757002670 200
+2026-10-23T12:03:20.600+00:00 ACCESS GET /corpus/skip.json?t=1792757002747 200
+2026-10-23T12:03:20.651+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:03:20.740+00:00 POST V172-390ugi-BOOT-232-from-20-to-232 t=1792757002901&n=81 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:20.742+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-20-to-232?t=1792757002901&n=81 204
+2026-10-23T12:03:20.761+00:00 ACCESS GET /corpus/lay-021-redo-reapply-edit-command-crash-html.html?i=20&next=21&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:20.832+00:00 POST V172-390ugi-BEFORE-20 t=1792757002986&n=82 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:20.834+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-20?t=1792757002986&n=82 204
+2026-10-23T12:03:20.891+00:00 POST V172-390ugi-OK-20-lay-021-redo-reapply-edit-command-crash-html.html t=1792757002989&n=83 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:20.894+00:00 ACCESS POST /beacon/V172-390ugi-OK-20-lay-021-redo-reapply-edit-command-crash-html.html?t=1792757002989&n=83 204
+2026-10-23T12:03:20.904+00:00 POST V172-390ugi-GAP-20 t=1792757002989&n=84 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:20.905+00:00 ACCESS POST /beacon/V172-390ugi-GAP-20?t=1792757002989&n=84 204
+2026-10-23T12:03:20.911+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=21&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:21.048+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=21&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:21.104+00:00 ACCESS GET /corpus/layout.json?t=1792757003258 200
+2026-10-23T12:03:21.170+00:00 ACCESS GET /corpus/skip.json?t=1792757003321 200
+2026-10-23T12:03:21.309+00:00 POST V172-390ugi-BOOT-232-from-21-to-232 t=1792757003474&n=85 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:21.310+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-21-to-232?t=1792757003474&n=85 204
+2026-10-23T12:03:21.332+00:00 ACCESS GET /corpus/lay-022-css-animation-range-calc-crash-html.html?i=21&next=22&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:21.434+00:00 POST V172-390ugi-BEFORE-21 t=1792757003558&n=86 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:21.435+00:00 POST V172-390ugi-OK-21-lay-022-css-animation-range-calc-crash-html.html t=1792757003560&n=87 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:21.437+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-21?t=1792757003558&n=86 204
+2026-10-23T12:03:21.438+00:00 ACCESS POST /beacon/V172-390ugi-OK-21-lay-022-css-animation-range-calc-crash-html.html?t=1792757003560&n=87 204
+2026-10-23T12:03:21.460+00:00 POST V172-390ugi-GAP-21 t=1792757003560&n=88 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:21.461+00:00 ACCESS POST /beacon/V172-390ugi-GAP-21?t=1792757003560&n=88 204
+2026-10-23T12:03:21.545+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=22&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:21.742+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=22&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:21.777+00:00 ACCESS GET /corpus/layout.json?t=1792757003939 200
+2026-10-23T12:03:21.821+00:00 ACCESS GET /corpus/skip.json?t=1792757003991 200
+2026-10-23T12:03:21.984+00:00 POST V172-390ugi-BOOT-232-from-22-to-232 t=1792757004123&n=89 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:21.985+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-22-to-232?t=1792757004123&n=89 204
+2026-10-23T12:03:22.031+00:00 ACCESS GET /corpus/lay-023-request-animation-frame-during-dom-mutation-html.html?i=22&next=23&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:22.072+00:00 POST V172-390ugi-BEFORE-22 t=1792757004237&n=90 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:22.074+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-22?t=1792757004237&n=90 204
+2026-10-23T12:03:22.143+00:00 POST V172-390ugi-OK-22-lay-023-request-animation-frame-during-dom-mutation-html.html t=1792757004272&n=91 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:22.145+00:00 ACCESS POST /beacon/V172-390ugi-OK-22-lay-023-request-animation-frame-during-dom-mutation-html.html?t=1792757004272&n=91 204
+2026-10-23T12:03:22.178+00:00 POST V172-390ugi-GAP-22 t=1792757004273&n=92 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:22.179+00:00 ACCESS POST /beacon/V172-390ugi-GAP-22?t=1792757004273&n=92 204
+2026-10-23T12:03:22.199+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=23&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:22.371+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=23&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:22.468+00:00 ACCESS GET /corpus/layout.json?t=1792757004568 200
+2026-10-23T12:03:22.563+00:00 ACCESS GET /corpus/skip.json?t=1792757004676 200
+2026-10-23T12:03:22.746+00:00 POST V172-390ugi-BOOT-232-from-23-to-232 t=1792757004865&n=93 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:22.747+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-23-to-232?t=1792757004865&n=93 204
+2026-10-23T12:03:22.777+00:00 ACCESS GET /corpus/lay-024-canvas-getcontext-reentrant-html.html?i=23&next=24&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:22.867+00:00 POST V172-390ugi-BEFORE-23 t=1792757004989&n=94 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:22.869+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-23?t=1792757004989&n=94 204
+2026-10-23T12:03:22.893+00:00 POST V172-390ugi-OK-23-lay-024-canvas-getcontext-reentrant-html.html t=1792757004991&n=95 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:22.893+00:00 POST V172-390ugi-GAP-23 t=1792757004991&n=96 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:22.895+00:00 ACCESS POST /beacon/V172-390ugi-GAP-23?t=1792757004991&n=96 204
+2026-10-23T12:03:22.896+00:00 ACCESS POST /beacon/V172-390ugi-OK-23-lay-024-canvas-getcontext-reentrant-html.html?t=1792757004991&n=95 204
+2026-10-23T12:03:22.939+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=24&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:23.086+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=24&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:23.173+00:00 ACCESS GET /corpus/layout.json?t=1792757005285 200
+2026-10-23T12:03:23.226+00:00 ACCESS GET /corpus/skip.json?t=1792757005389 200
+2026-10-23T12:03:23.361+00:00 POST V172-390ugi-BOOT-232-from-24-to-232 t=1792757005528&n=97 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:23.362+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-24-to-232?t=1792757005528&n=97 204
+2026-10-23T12:03:23.387+00:00 ACCESS GET /corpus/lay-025-canvas-layer-after-max-save-count-html.html?i=24&next=25&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:23.455+00:00 POST V172-390ugi-BEFORE-24 t=1792757005605&n=98 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:23.457+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-24?t=1792757005605&n=98 204
+2026-10-23T12:03:23.478+00:00 POST V172-390ugi-OK-24-lay-025-canvas-layer-after-max-save-count-html.html t=1792757005607&n=99 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:23.481+00:00 ACCESS POST /beacon/V172-390ugi-OK-24-lay-025-canvas-layer-after-max-save-count-html.html?t=1792757005607&n=99 204
+2026-10-23T12:03:23.510+00:00 POST V172-390ugi-GAP-24 t=1792757005608&n=100 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:23.511+00:00 ACCESS POST /beacon/V172-390ugi-GAP-24?t=1792757005608&n=100 204
+2026-10-23T12:03:23.533+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=25&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:23.688+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=25&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:23.742+00:00 ACCESS GET /corpus/layout.json?t=1792757005886 200
+2026-10-23T12:03:23.814+00:00 ACCESS GET /corpus/skip.json?t=1792757005959 200
+2026-10-23T12:03:23.945+00:00 POST V172-390ugi-BOOT-232-from-25-to-232 t=1792757006115&n=101 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:23.946+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-25-to-232?t=1792757006115&n=101 204
+2026-10-23T12:03:23.973+00:00 ACCESS GET /corpus/lay-026-first-letter-stale-checked-ptr-crash-html.html?i=25&next=26&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:24.066+00:00 POST V172-390ugi-BEFORE-25 t=1792757006189&n=102 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:24.068+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-25?t=1792757006189&n=102 204
+2026-10-23T12:03:24.126+00:00 POST V172-390ugi-GAP-25 t=1792757006192&n=104 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:24.126+00:00 POST V172-390ugi-OK-25-lay-026-first-letter-stale-checked-ptr-crash-html.html t=1792757006191&n=103 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:24.128+00:00 ACCESS POST /beacon/V172-390ugi-GAP-25?t=1792757006192&n=104 204
+2026-10-23T12:03:24.129+00:00 ACCESS POST /beacon/V172-390ugi-OK-25-lay-026-first-letter-stale-checked-ptr-crash-html.html?t=1792757006191&n=103 204
+2026-10-23T12:03:24.170+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=26&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:24.319+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=26&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:24.376+00:00 ACCESS GET /corpus/layout.json?t=1792757006518 200
+2026-10-23T12:03:24.498+00:00 ACCESS GET /corpus/skip.json?t=1792757006598 200
+2026-10-23T12:03:24.651+00:00 POST V172-390ugi-BOOT-232-from-26-to-232 t=1792757006804&n=105 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:24.652+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-26-to-232?t=1792757006804&n=105 204
+2026-10-23T12:03:24.692+00:00 ACCESS GET /corpus/lay-027-container-query-listbox-expected-html.html?i=26&next=27&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:24.788+00:00 POST V172-390ugi-BEFORE-26 t=1792757006907&n=106 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+TML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:24.792+00:00 ACCESS POST /beacon/V172-390ugi-OK-26-lay-027-container-query-listbox-expected-html.html?t=1792757006908&n=107 204
+2026-10-23T12:03:24.793+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-26?t=1792757006907&n=106 204
+2026-10-23T12:03:24.823+00:00 POST V172-390ugi-GAP-26 t=1792757006908&n=108 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:24.825+00:00 ACCESS POST /beacon/V172-390ugi-GAP-26?t=1792757006908&n=108 204
+2026-10-23T12:03:24.843+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=27&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:24.987+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=27&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:25.055+00:00 ACCESS GET /corpus/layout.json?t=1792757007185 200
+2026-10-23T12:03:25.123+00:00 ACCESS GET /corpus/skip.json?t=1792757007258 200
+2026-10-23T12:03:25.297+00:00 POST V172-390ugi-BOOT-232-from-27-to-232 t=1792757007425&n=109 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:25.297+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-27-to-232?t=1792757007425&n=109 204
+2026-10-23T12:03:25.322+00:00 ACCESS GET /corpus/lay-028-container-query-listbox-html.html?i=27&next=28&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:25.453+00:00 POST V172-390ugi-BEFORE-27 t=1792757007540&n=110 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:25.456+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-27?t=1792757007540&n=110 204
+2026-10-23T12:03:25.457+00:00 POST V172-390ugi-OK-27-lay-028-container-query-listbox-html.html t=1792757007541&n=111 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:25.458+00:00 ACCESS POST /beacon/V172-390ugi-OK-27-lay-028-container-query-listbox-html.html?t=1792757007541&n=111 204
+2026-10-23T12:03:25.474+00:00 POST V172-390ugi-GAP-27 t=1792757007541&n=112 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:25.475+00:00 ACCESS POST /beacon/V172-390ugi-GAP-27?t=1792757007541&n=112 204
+2026-10-23T12:03:25.501+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=28&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:25.690+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=28&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:25.835+00:00 ACCESS GET /corpus/layout.json?t=1792757007889 200
+2026-10-23T12:03:25.926+00:00 ACCESS GET /corpus/skip.json?t=1792757008074 200
+2026-10-23T12:03:26.108+00:00 POST V172-390ugi-BOOT-232-from-28-to-232 t=1792757008231&n=113 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:26.109+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-28-to-232?t=1792757008231&n=113 204
+2026-10-23T12:03:26.115+00:00 ACCESS GET /corpus/lay-029-container-query-orientation-modal-dialog-crash-html.html?i=28&next=29&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:26.198+00:00 POST V172-390ugi-BEFORE-28 t=1792757008342&n=114 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:26.202+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-28?t=1792757008342&n=114 204
+2026-10-23T12:03:26.205+00:00 POST V172-390ugi-OK-28-lay-029-container-query-orientation-modal-dialog-crash-html.html t=1792757008343&n=115 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:26.208+00:00 ACCESS POST /beacon/V172-390ugi-OK-28-lay-029-container-query-orientation-modal-dialog-crash-html.html?t=1792757008343&n=115 204
+2026-10-23T12:03:26.246+00:00 POST V172-390ugi-GAP-28 t=1792757008343&n=116 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:26.248+00:00 ACCESS POST /beacon/V172-390ugi-GAP-28?t=1792757008343&n=116 204
+2026-10-23T12:03:26.267+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=29&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:26.421+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=29&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:26.492+00:00 ACCESS GET /corpus/layout.json?t=1792757008630 200
+2026-10-23T12:03:26.526+00:00 ACCESS GET /corpus/skip.json?t=1792757008695 200
+2026-10-23T12:03:26.680+00:00 POST V172-390ugi-BOOT-232-from-29-to-232 t=1792757008835&n=117 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:26.682+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-29-to-232?t=1792757008835&n=117 204
+2026-10-23T12:03:26.704+00:00 ACCESS GET /corpus/lay-030-position-visibility-line-break-anchor-crash-html.html?i=29&next=30&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:26.871+00:00 POST V172-390ugi-BEFORE-29 t=1792757008925&n=118 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:26.874+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-29?t=1792757008925&n=118 204
+2026-10-23T12:03:26.904+00:00 POST V172-390ugi-OK-29-lay-030-position-visibility-line-break-anchor-crash-html.html t=1792757008926&n=119 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:26.907+00:00 ACCESS POST /beacon/V172-390ugi-OK-29-lay-030-position-visibility-line-break-anchor-crash-html.html?t=1792757008926&n=119 204
+2026-10-23T12:03:26.927+00:00 POST V172-390ugi-GAP-29 t=1792757008927&n=120 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:26.929+00:00 ACCESS POST /beacon/V172-390ugi-GAP-29?t=1792757008927&n=120 204
+2026-10-23T12:03:26.971+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=30&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:27.154+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=30&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:27.240+00:00 ACCESS GET /corpus/layout.json?t=1792757009352 200
+2026-10-23T12:03:27.327+00:00 ACCESS GET /corpus/skip.json?t=1792757009466 200
+2026-10-23T12:03:27.515+00:00 POST V172-390ugi-BOOT-232-from-30-to-232 t=1792757009630&n=121 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:27.517+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-30-to-232?t=1792757009630&n=121 204
+2026-10-23T12:03:27.543+00:00 ACCESS GET /corpus/lay-031-at-property-initial-value-crash-html.html?i=30&next=31&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:27.632+00:00 POST V172-390ugi-BEFORE-30 t=1792757009777&n=122 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:27.634+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-30?t=1792757009777&n=122 204
+2026-10-23T12:03:27.660+00:00 POST V172-390ugi-OK-30-lay-031-at-property-initial-value-crash-html.html t=1792757009778&n=123 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:27.664+00:00 ACCESS POST /beacon/V172-390ugi-OK-30-lay-031-at-property-initial-value-crash-html.html?t=1792757009778&n=123 204
+2026-10-23T12:03:27.700+00:00 POST V172-390ugi-GAP-30 t=1792757009778&n=124 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:27.701+00:00 ACCESS POST /beacon/V172-390ugi-GAP-30?t=1792757009778&n=124 204
+2026-10-23T12:03:27.723+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=31&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:27.877+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=31&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:27.908+00:00 ACCESS GET /corpus/layout.json?t=1792757010075 200
+2026-10-23T12:03:27.991+00:00 ACCESS GET /corpus/skip.json?t=1792757010112 200
+2026-10-23T12:03:28.154+00:00 POST V172-390ugi-BOOT-232-from-31-to-232 t=1792757010294&n=125 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:28.155+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-31-to-232?t=1792757010294&n=125 204
+2026-10-23T12:03:28.198+00:00 ACCESS GET /corpus/lay-032-computed-style-coordinated-shorthand-layer-count-crash-html.html?i=31&next=32&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:28.261+00:00 POST V172-390ugi-BEFORE-31 t=1792757010410&n=126 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:28.266+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-31?t=1792757010410&n=126 204
+2026-10-23T12:03:28.334+00:00 POST V172-390ugi-OK-31-lay-032-computed-style-coordinated-shorthand-layer-count-crash-html.html t=1792757010411&n=127 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:28.335+00:00 POST V172-390ugi-GAP-31 t=1792757010411&n=128 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:28.337+00:00 ACCESS POST /beacon/V172-390ugi-GAP-31?t=1792757010411&n=128 204
+2026-10-23T12:03:28.339+00:00 ACCESS POST /beacon/V172-390ugi-OK-31-lay-032-computed-style-coordinated-shorthand-layer-count-crash-html.html?t=1792757010411&n=127 204
+2026-10-23T12:03:28.384+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=32&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:28.563+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=32&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:28.618+00:00 ACCESS GET /corpus/layout.json?t=1792757010762 200
+2026-10-23T12:03:28.656+00:00 ACCESS GET /corpus/skip.json?t=1792757010826 200
+2026-10-23T12:03:28.799+00:00 POST V172-390ugi-BOOT-232-from-32-to-232 t=1792757010958&n=129 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:28.800+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-32-to-232?t=1792757010958&n=129 204
+2026-10-23T12:03:28.820+00:00 ACCESS GET /corpus/lay-033-match-result-cache-has-style-relation-crash-html.html?i=32&next=33&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:28.886+00:00 POST V172-390ugi-BEFORE-32 t=1792757011027&n=130 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:28.889+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-32?t=1792757011027&n=130 204
+2026-10-23T12:03:28.892+00:00 POST V172-390ugi-OK-32-lay-033-match-result-cache-has-style-relation-crash-html.html t=1792757011030&n=131 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:28.896+00:00 ACCESS POST /beacon/V172-390ugi-OK-32-lay-033-match-result-cache-has-style-relation-crash-html.html?t=1792757011030&n=131 204
+2026-10-23T12:03:28.898+00:00 POST V172-390ugi-GAP-32 t=1792757011031&n=132 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:28.899+00:00 ACCESS POST /beacon/V172-390ugi-GAP-32?t=1792757011031&n=132 204
+2026-10-23T12:03:28.955+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=33&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:29.107+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=33&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:29.138+00:00 ACCESS GET /corpus/layout.json?t=1792757011304 200
+2026-10-23T12:03:29.176+00:00 ACCESS GET /corpus/skip.json?t=1792757011345 200
+2026-10-23T12:03:29.316+00:00 POST V172-390ugi-BOOT-232-from-33-to-232 t=1792757011479&n=133 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:29.317+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-33-to-232?t=1792757011479&n=133 204
+2026-10-23T12:03:29.337+00:00 ACCESS GET /corpus/lay-034-pseudo-element-text-transform-invalidation-crash-html.html?i=33&next=34&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:29.404+00:00 POST V172-390ugi-BEFORE-33 t=1792757011545&n=134 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:29.408+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-33?t=1792757011545&n=134 204
+2026-10-23T12:03:29.413+00:00 POST V172-390ugi-OK-33-lay-034-pseudo-element-text-transform-invalidation-crash-html.html t=1792757011548&n=135 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:29.416+00:00 ACCESS POST /beacon/V172-390ugi-OK-33-lay-034-pseudo-element-text-transform-invalidation-crash-html.html?t=1792757011548&n=135 204
+2026-10-23T12:03:29.480+00:00 POST V172-390ugi-GAP-33 t=1792757011548&n=136 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:29.482+00:00 ACCESS POST /beacon/V172-390ugi-GAP-33?t=1792757011548&n=136 204
+2026-10-23T12:03:29.532+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=34&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:29.678+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=34&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:29.746+00:00 ACCESS GET /corpus/layout.json?t=1792757011875 200
+2026-10-23T12:03:29.826+00:00 ACCESS GET /corpus/skip.json?t=1792757011979 200
+2026-10-23T12:03:29.988+00:00 POST V172-390ugi-BOOT-232-from-34-to-232 t=1792757012125&n=137 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:29.990+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-34-to-232?t=1792757012125&n=137 204
+2026-10-23T12:03:30.012+00:00 ACCESS GET /corpus/lay-035-style-scope-destruction-crash-html.html?i=34&next=35&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:30.096+00:00 POST V172-390ugi-BEFORE-34 t=1792757012228&n=138 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:30.096+00:00 POST V172-390ugi-OK-34-lay-035-style-scope-destruction-crash-html.html t=1792757012230&n=139 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:30.100+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-34?t=1792757012228&n=138 204
+2026-10-23T12:03:30.102+00:00 ACCESS POST /beacon/V172-390ugi-OK-34-lay-035-style-scope-destruction-crash-html.html?t=1792757012230&n=139 204
+2026-10-23T12:03:30.142+00:00 POST V172-390ugi-GAP-34 t=1792757012230&n=140 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:30.142+00:00 ACCESS POST /beacon/V172-390ugi-GAP-34?t=1792757012230&n=140 204
+2026-10-23T12:03:30.216+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=35&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:30.377+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=35&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:30.427+00:00 ACCESS GET /corpus/layout.json?t=1792757012575 200
+2026-10-23T12:03:30.543+00:00 ACCESS GET /corpus/skip.json?t=1792757012689 200
+2026-10-23T12:03:30.702+00:00 POST V172-390ugi-BOOT-232-from-35-to-232 t=1792757012860&n=141 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:30.704+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-35-to-232?t=1792757012860&n=141 204
+2026-10-23T12:03:30.722+00:00 ACCESS GET /corpus/lay-036-transform-translate-parsing-crash-html.html?i=35&next=36&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:30.775+00:00 POST V172-390ugi-BEFORE-35 t=1792757012930&n=142 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:30.777+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-35?t=1792757012930&n=142 204
+2026-10-23T12:03:30.786+00:00 POST V172-390ugi-OK-35-lay-036-transform-translate-parsing-crash-html.html t=1792757012932&n=143 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:30.789+00:00 ACCESS POST /beacon/V172-390ugi-OK-35-lay-036-transform-translate-parsing-crash-html.html?t=1792757012932&n=143 204
+2026-10-23T12:03:30.793+00:00 POST V172-390ugi-GAP-35 t=1792757012932&n=144 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:30.795+00:00 ACCESS POST /beacon/V172-390ugi-GAP-35?t=1792757012932&n=144 204
+2026-10-23T12:03:30.856+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=36&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:30.996+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=36&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:31.031+00:00 ACCESS GET /corpus/layout.json?t=1792757013194 200
+2026-10-23T12:03:31.066+00:00 ACCESS GET /corpus/skip.json?t=1792757013235 200
+2026-10-23T12:03:31.205+00:00 POST V172-390ugi-BOOT-232-from-36-to-232 t=1792757013367&n=145 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:31.206+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-36-to-232?t=1792757013367&n=145 204
+2026-10-23T12:03:31.226+00:00 ACCESS GET /corpus/lay-037-dashed-function-result-token-lifetime-html.html?i=36&next=37&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:31.292+00:00 POST V172-390ugi-BEFORE-36 t=1792757013446&n=146 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:31.296+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-36?t=1792757013446&n=146 204
+2026-10-23T12:03:31.298+00:00 POST V172-390ugi-OK-36-lay-037-dashed-function-result-token-lifetime-html.html t=1792757013448&n=147 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:31.301+00:00 ACCESS POST /beacon/V172-390ugi-OK-36-lay-037-dashed-function-result-token-lifetime-html.html?t=1792757013448&n=147 204
+2026-10-23T12:03:31.306+00:00 POST V172-390ugi-GAP-36 t=1792757013449&n=148 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:31.308+00:00 ACCESS POST /beacon/V172-390ugi-GAP-36?t=1792757013449&n=148 204
+2026-10-23T12:03:31.411+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=37&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:31.562+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=37&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:31.622+00:00 ACCESS GET /corpus/layout.json?t=1792757013764 200
+2026-10-23T12:03:31.670+00:00 ACCESS GET /corpus/skip.json?t=1792757013835 200
+2026-10-23T12:03:31.836+00:00 POST V172-390ugi-BOOT-232-from-37-to-232 t=1792757013995&n=149 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:31.837+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-37-to-232?t=1792757013995&n=149 204
+2026-10-23T12:03:31.856+00:00 ACCESS GET /corpus/lay-038-view-transitions-update-layer-lists-crash-html.html?i=37&next=38&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:31.917+00:00 POST V172-390ugi-BEFORE-37 t=1792757014080&n=150 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:31.921+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-37?t=1792757014080&n=150 204
+2026-10-23T12:03:31.932+00:00 POST V172-390ugi-OK-37-lay-038-view-transitions-update-layer-lists-crash-html.html t=1792757014084&n=151 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:31.937+00:00 ACCESS POST /beacon/V172-390ugi-OK-37-lay-038-view-transitions-update-layer-lists-crash-html.html?t=1792757014084&n=151 204
+2026-10-23T12:03:31.940+00:00 POST V172-390ugi-GAP-37 t=1792757014084&n=152 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:31.941+00:00 ACCESS POST /beacon/V172-390ugi-GAP-37?t=1792757014084&n=152 204
+2026-10-23T12:03:32.077+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=38&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:32.273+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=38&count=1000&v=390ugi&g=1 200
+2026-10-23T12:03:32.324+00:00 ACCESS GET /corpus/layout.json?t=1792757014471 200
+2026-10-23T12:03:32.379+00:00 ACCESS GET /corpus/skip.json?t=1792757014539 200
+2026-10-23T12:03:32.609+00:00 POST V172-390ugi-BOOT-232-from-38-to-232 t=1792757014685&n=153 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:32.610+00:00 ACCESS GET /corpus/lay-039-view-transitions-update-pseudo-element-crash-html.html?i=38&next=39&e=232&c=1000&v=390ugi&g=1 200
+2026-10-23T12:03:32.610+00:00 ACCESS POST /beacon/V172-390ugi-BOOT-232-from-38-to-232?t=1792757014685&n=153 204
+2026-10-23T12:03:32.669+00:00 POST V172-390ugi-BEFORE-38 t=1792757014831&n=154 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:32.672+00:00 ACCESS POST /beacon/V172-390ugi-BEFORE-38?t=1792757014831&n=154 204
+2026-10-23T12:03:32.710+00:00 POST V172-390ugi-OK-38-lay-039-view-transitions-update-pseudo-element-crash-html.html t=1792757014866&n=155 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:32.714+00:00 ACCESS POST /beacon/V172-390ugi-OK-38-lay-039-view-transitions-update-pseudo-element-crash-html.html?t=1792757014866&n=155 204
+2026-10-23T12:03:32.718+00:00 POST V172-390ugi-GAP-38 t=1792757014866&n=156 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:03:32.719+00:00 ACCESS POST /beacon/V172-390ugi-GAP-38?t=1792757014866&n=156 204

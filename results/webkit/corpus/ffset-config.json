@@ -1,0 +1,14 @@
+{
+ "filler": 8,
+ "del": 0,
+ "rm": 1,
+ "layout": 1,
+ "text": "AB",
+ "font": "1em a, x",
+ "jsig": 64,
+ "strlo": 32,
+ "strhi": 512,
+ "strstep": 16,
+ "strper": 4,
+ "reload": 1
+}

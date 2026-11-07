@@ -1,0 +1,154 @@
+<!doctype html><meta charset="utf-8"><title>temporal-era-boundaries.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+function shouldBe(actual, expected, label) {
+    if (actual !== expected)
+        throw new Error(`${label}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+}
+
+function assertPD(d, year, month, day, era, eraYear, label) {
+    shouldBe(d.year, year, `${label} year`);
+    shouldBe(d.month, month, `${label} month`);
+    shouldBe(d.day, day, `${label} day`);
+    shouldBe(d.era, era, `${label} era`);
+    shouldBe(d.eraYear, eraYear, `${label} eraYear`);
+}
+
+// gregory / roc / islamic-civil / ethiopic: non-positive eraYear remaps to opposite era.
+{
+    const d = Temporal.PlainDate.from({ calendar: "gregory", era: "ce", eraYear: 0, monthCode: "M01", day: 1 });
+    assertPD(d, 0, 1, 1, "bce", 1, "gregory ce 0 -> bce 1");
+    const d2 = Temporal.PlainDate.from({ calendar: "gregory", era: "bce", eraYear: -1, monthCode: "M01", day: 1 });
+    assertPD(d2, 2, 1, 1, "ce", 2, "gregory bce -1 -> ce 2");
+    const d3 = Temporal.PlainDate.from({ calendar: "roc", era: "roc", eraYear: 0, monthCode: "M01", day: 1 });
+    assertPD(d3, 0, 1, 1, "broc", 1, "roc roc 0 -> broc 1");
+    const d4 = Temporal.PlainDate.from({ calendar: "islamic-civil", era: "ah", eraYear: 0, monthCode: "M01", day: 1 });
+    assertPD(d4, 0, 1, 1, "bh", 1, "islamic-civil ah 0 -> bh 1");
+    const d5 = Temporal.PlainDate.from({ calendar: "ethiopic", era: "am", eraYear: 0, monthCode: "M01", day: 1 });
+    assertPD(d5, 0, 1, 1, "aa", 5500, "ethiopic am 0 -> aa 5500");
+    const d6 = Temporal.PlainDate.from({ calendar: "ethiopic", era: "aa", eraYear: 0, monthCode: "M01", day: 1 });
+    assertPD(d6, -5500, 1, 1, "aa", 0, "ethiopic aa 0 (not remapped)");
+}
+
+// Single-era calendars: negative eraYear NOT remapped.
+for (const [cal, era] of [["buddhist","be"], ["coptic","am"], ["ethioaa","aa"], ["hebrew","am"], ["indian","shaka"], ["persian","ap"]]) {
+    for (const y of [-1, 0, 1]) {
+        const d = Temporal.PlainDate.from({ calendar: cal, era, eraYear: y, monthCode: "M01", day: 1 });
+        shouldBe(d.era, era, `${cal} ${era} ${y} era`);
+        shouldBe(d.eraYear, y, `${cal} ${era} ${y} eraYear`);
+    }
+}
+
+// Japanese dated era boundaries + pre-Gregorian meiji fallback.
+{
+    const d = Temporal.PlainDate.from({ calendar: "japanese", era: "reiwa", eraYear: 1, monthCode: "M04", day: 30 });
+    assertPD(d, 2019, 4, 30, "heisei", 31, "reiwa 1 before start -> heisei 31");
+    const d2 = Temporal.PlainDate.from({ calendar: "japanese", era: "heisei", eraYear: 31, monthCode: "M05", day: 1 });
+    assertPD(d2, 2019, 5, 1, "reiwa", 1, "heisei 31 on reiwa start -> reiwa 1");
+    const d3 = Temporal.PlainDate.from({ calendar: "japanese", era: "meiji", eraYear: 5, monthCode: "M12", day: 31 });
+    assertPD(d3, 1872, 12, 31, "ce", 1872, "meiji 5 (pre-1873) -> ce 1872");
+    const d4 = Temporal.PlainDate.from({ calendar: "japanese", era: "ce", eraYear: 1873, monthCode: "M01", day: 1 });
+    assertPD(d4, 1873, 1, 1, "meiji", 6, "ce 1873 -> meiji 6");
+}
+
+// Case-insensitive alias canonicalizes then remaps.
+{
+    const d = Temporal.PlainDate.from({ calendar: "gregory", era: "AD", eraYear: 0, monthCode: "M01", day: 1 });
+    assertPD(d, 0, 1, 1, "bce", 1, "AD 0 -> bce 1");
+}
+
+// Case-insensitive alias canonicalizes then remaps.
+{
+    const d = Temporal.PlainDate.from({ calendar: "gregory", era: "AD", eraYear: 0, monthCode: "M01", day: 1 });
+    assertPD(d, 0, 1, 1, "bce", 1, "AD 0 -> bce 1");
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1631-temporal-era-boundaries.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

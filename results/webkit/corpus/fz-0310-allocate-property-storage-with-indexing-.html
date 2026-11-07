@@ -1,0 +1,266 @@
+<!doctype html><meta charset="utf-8"><title>allocate-property-storage-with-indexing-header.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`expected ${String(expected)} but got ${String(actual)}`);
+}
+
+const symbol = Symbol("tag");
+
+const makers = {
+    empty: {
+        tagger: "symbol",
+        hot: true,
+        make: `return [];`,
+        length: 0,
+    },
+    int32: {
+        tagger: "nine",
+        make: `return [i, i + 1, i + 2];`,
+        length: 3,
+        element: (i, index) => i + index,
+    },
+    double: {
+        tagger: "one",
+        make: `return [i + 0.5, i + 1.5];`,
+        length: 2,
+        element: (i, index) => i + index + 0.5,
+    },
+    contiguous: {
+        tagger: "nine",
+        hot: true,
+        make: `return [i, "b", "c", "d", i + 4];`,
+        length: 5,
+        element: (i, index) => index % 4 ? "abcd"[index] : i + index,
+    },
+    holes: {
+        tagger: "one",
+        hot: true,
+        make: `const array = new Array(9); array[4] = i + 4; array[8] = i + 8; return array;`,
+        length: 9,
+        element: (i, index) => index % 4 || !index ? undefined : i + index,
+        hole: (index) => index % 4 || !index,
+        push: false,
+    },
+    large: {
+        tagger: "symbol",
+        make: `const array = new Array(1200); array[0] = i; array[1199] = i + 1; return array;`,
+        length: 1200,
+        element: (i, index) => !index ? i : index === 1199 ? i + 1 : undefined,
+        hole: (index) => index && index !== 1199,
+        indices: [0, 1, 600, 1198, 1199],
+    },
+    copyOnWrite: {
+        tagger: "nine",
+        make: `return [1, 2, 3];`,
+        length: 3,
+        element: (i, index) => index + 1,
+    },
+    arrayStorage: {
+        tagger: "checked",
+        hot: true,
+        make: `const array = []; ensureArrayStorage(array); for (let k = 8; k--;) array.unshift(i + k); return array;`,
+        length: 8,
+        element: (i, index) => i + index,
+    },
+    object: {
+        tagger: "nine",
+        make: `const object = {}; object[0] = i; object[1] = "x"; object[2] = i + 2; return object;`,
+        element: (i, index) => index === 1 ? "x" : i + index,
+        indices: [0, 1, 2],
+    },
+    typedArray: {
+        tagger: "symbol",
+        make: `const array = new Uint16Array(4); array[1] = i; return array;`,
+        length: 4,
+        element: (i, index) => index === 1 ? i & 0xffff : 0,
+    },
+};
+
+const taggers = {
+    one: {
+        tag: `target.tag = value;`,
+        check(target, value) {
+            shouldBe(target.tag, value);
+        },
+    },
+    checked: {
+        tag: `if (target.tag !== undefined) return null; target.tag = value;`,
+        check(target, value) {
+            shouldBe(target.tag, value);
+        },
+    },
+    symbol: {
+        tag: `target[symbol] = value;`,
+        check(target, value) {
+            shouldBe(target[symbol], value);
+        },
+    },
+    nine: {
+        tag: `target.p0 = value; target.p1 = value + 1; target.p2 = value + 2; target.p3 = value + 3; target.p4 = value + 4; target.p5 = value + 5; target.p6 = value + 6; target.p7 = value + 7; target.p8 = value + 8;`,
+        check(target, value) {
+            shouldBe(target.p0, value);
+            shouldBe(target.p1, value + 1);
+            shouldBe(target.p2, value + 2);
+            shouldBe(target.p3, value + 3);
+            shouldBe(target.p4, value + 4);
+            shouldBe(target.p5, value + 5);
+            shouldBe(target.p6, value + 6);
+            shouldBe(target.p7, value + 7);
+            shouldBe(target.p8, value + 8);
+        },
+    },
+};for (let __i = 0; __i < 200; __i++) {
+
+let counter = 0;}gc();
+function compile(parameters, body) {
+    const result = new Function("symbol", `return function (${parameters}) { ${body} /* ${counter++} */ };`)(symbol);
+    noInline(result);
+    return result;
+}
+
+function checkElements(maker, target, i) {
+    shouldBe(target.length, maker.length);
+    const indices = maker.indices;
+    const count = indices ? indices.length : maker.length;
+    for (let k = 0; k < count; ++k) {
+        const index = indices ? indices[k] : k;
+        shouldBe(target[index], maker.element(i, index));
+        if (maker.hole)
+            shouldBe(index in target, !maker.hole(index));
+    }
+}
+
+function run(maker, tagger, make, tag, iterations) {
+    const push = maker.push !== false && Array.isArray(make(0));
+    const kept = [];
+    for (let i = 0; i < iterations; ++i) {
+        const target = tag(make(i), i);
+        if (!(i & 63))
+            kept.push(target, i);
+        tagger.check(target, i);
+        if (i < 64 || !(i & 15))
+            checkElements(maker, target, i);
+        if (push) {
+            target.push(i);
+            shouldBe(target.length, maker.length + 1);
+            shouldBe(target[maker.length], i);
+        }
+    }
+    for (let k = 0; k < kept.length; k += 2) {
+        const target = kept[k];
+        const i = kept[k + 1];
+        tagger.check(target, i);
+        if (push)
+            target.pop();
+        checkElements(maker, target, i);
+    }
+}
+noInline(run);
+
+const few = Math.max(Math.ceil(testLoopCount / 16), 60);
+
+const shared = {};
+for (const tagName of ["one", "symbol", "nine"])
+    shared[tagName] = compile("target, value", `${taggers[tagName].tag} return target;`);
+
+for (const makeName in makers) {
+    const maker = makers[makeName];
+    const make = compile("i", maker.make);
+    const tagger = taggers[maker.tagger];
+    run(maker, tagger, make, compile("target, value", `${tagger.tag} return target;`), maker.hot ? testLoopCount : few);
+    if (makeName === "copyOnWrite")
+        continue;
+    for (const tagName in shared)
+        run(maker, taggers[tagName], make, shared[tagName], few);
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-0310-allocate-property-storage-with-indexing-.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

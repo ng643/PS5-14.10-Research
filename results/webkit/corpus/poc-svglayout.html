@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>svglayout</title></head>
+<body><script>
+// Forced-layout reference cycles in SVG.
+// Case 1 is upstream bug 258171 verbatim (fix 0d62c4b948, whose pre-image is
+// byte-identical in the shipped tree): a <marker> carrying a clip-path that
+// resolves to a clipPath whose <line> carries marker-start back to the marker.
+// The other cases are the same shape through mask / filter / nested <use>.
+// Each case beacons before and after its forced layout, so a death names it.
+
+function beacon(tag) {
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', '/beacon/' + encodeURIComponent(tag) + '?t=' + Date.now(), false);
+    x.send(null);
+  } catch (e) {}
+}
+
+beacon('SL-HELLO loaded');
+var NAMES = ['upstream-258171', 'mask', 'filter', 'deep-use', 'nested-svg'];
+
+function markup(name) {
+  if (name === 'upstream-258171') {
+    return '<svg><marker id="x21" viewBox="0,0,0,0">' +
+           '<marker style="clip-path: url(#x18);"></marker></svg>' +
+           '<svg id="x22"><clipPath id="x18">' +
+           '<line marker-start="url(#x21)"></clipPath></svg>';
+  }
+  if (name === 'mask') {
+    return '<svg><mask id="m1"><rect width="4" height="4" mask="url(#m1)"/></mask>' +
+           '<g mask="url(#m1)"><rect width="8" height="8"/></g></svg>';
+  }
+  if (name === 'filter') {
+    return '<svg><filter id="f1"><feImage href="#f2"/></filter>' +
+           '<filter id="f2"><feImage href="#f1"/></filter>' +
+           '<rect width="8" height="8" filter="url(#f1)"/></svg>';
+  }
+  if (name === 'deep-use') {
+    var s = '<svg>';
+    for (var i = 0; i < 64; i++) {
+      s += '<g id="u' + i + '"><use href="#u' + ((i + 1) % 64) + '"/></g>';
+    }
+    return s + '</svg>';
+  }
+  var t = '';
+  for (var d = 0; d < 64; d++) t += '<svg width="8" height="8" viewBox="0 0 8 8">';
+  t += '<defs><clipPath id="c9"><rect width="2" height="2"/></clipPath></defs>';
+  for (var k = 0; k < 64; k++) t += '</svg>';
+  return t;
+}
+
+function probeSel(name) {
+  if (name === 'upstream-258171') return 'line';
+  if (name === 'mask') return 'g';
+  if (name === 'filter') return 'rect';
+  return 'svg';
+}
+
+var host = document.createElement('div');
+document.body.appendChild(host);
+
+beacon('SL-START cases=' + NAMES.length);
+for (var c = 0; c < NAMES.length; c++) {
+  var name = NAMES[c];
+  host.innerHTML = markup(name);
+  beacon('SL-CASE ' + name + ' built');
+  var el = host.querySelector(probeSel(name)) || host.firstElementChild;
+  try {
+    if (el && el.getBoundingClientRect) {
+      var r = el.getBoundingClientRect();
+      beacon('SL-CASE ' + name + ' rect ' + Math.round(r.width) + 'x' + Math.round(r.height));
+    }
+    if (el && el.getBBox) {
+      var b = el.getBBox();
+      beacon('SL-CASE ' + name + ' bbox ' + Math.round(b.width) + 'x' + Math.round(b.height));
+    }
+    document.body.getBoundingClientRect();
+    beacon('SL-CASE ' + name + ' laid-out');
+  } catch (e) {
+    beacon('SL-CASE ' + name + ' exc ' + (e && e.name));
+  }
+  host.innerHTML = '';
+}
+beacon('SL-DONE');
+setTimeout(function() { location.reload(); }, 400);
+</script></body></html>

@@ -1,0 +1,135 @@
+<!doctype html><meta charset="utf-8"><title>yarr-jit-non-greedy-parentheses-backtrack.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Regression test: Yarr JIT crash on non-greedy ParenthesesSubpattern
+// backtracking when the body is fully backed out and returnAddress was
+// never set. The NestedAlternativeEnd backtrack path would jump to an
+// uninitialized return address, causing a crash.
+
+// Simpler non-greedy backtrack cases.
+var r2 = /(a|b)*?c/;
+var m = r2.exec("abc");
+if (!m || m[0] !== "abc")
+    throw new Error("Expected 'abc', got " + (m ? m[0] : "null"));
+
+// Non-greedy group that matches zero iterations, then backtracks.
+var r3 = /(x|y)*?z/;
+var m3 = r3.exec("z");
+if (!m3 || m3[0] !== "z")
+    throw new Error("Expected 'z', got " + (m3 ? m3[0] : "null"));
+
+// Non-greedy group with body that fails on some backtrack paths.
+var r4 = /(?:(a+|b+))*?c/;
+var m4 = r4.exec("aabbc");
+if (!m4 || m4[0] !== "aabbc")
+    throw new Error("Expected 'aabbc', got " + (m4 ? m4[0] : "null"));
+
+// Minimal reproducer: non-greedy multi-alt group inside FixedCount.
+// FixedCount inter-iteration backtracking re-enters NestedAlternativeEnd.bt
+// where the uninitialized returnAddress would cause SIGBUS on ARM64E.
+/(?:(a|b)*?.){2}xx/.exec('aabbcc');
+/((a|b)*?[a-c]){3}cp/.exec('aabbbccc');
+/((a|b)*?.){2}cp/.exec('aabbbccc');
+
+// Nested non-greedy inside FixedCount: previously caused SIGSEGV due to stale
+// ParenContext chain after restoreParenContext. Inner Greedy/NonGreedy patterns'
+// parenContextHead must be cleared after restore to prevent freed-context reuse.
+var r5 = /((a|b)*?(.)??.){3}cp/s;
+if (r5.exec('aabbbccc') !== null)
+    throw new Error("Expected null for /((a|b)*?(.)??.){3}cp/s with 'aabbbccc'");
+if (r5.exec('aabbccc') !== null)
+    throw new Error("Expected null for /((a|b)*?(.)??.){3}cp/s with 'aabbccc'");
+
+// Complex regex with deeply nested patterns that previously crashed (SIGSEGV).
+var r6 = new RegExp(unescape('%28%28%28%29%28%29%28%28%28%29%28%29%2A%2E%7C%28%29%28%68%3E%28%28%28%29%28%29%28%29%28%29%29%2F%6C%2E%28%1F%28%29%28%2D%28%00%5B%5C%44%C3%5D%6F%5E%8E%28%29%29%28%29%21%29%28%29%29%29%38%7E%29%40%77%EB%29%2A%3F%28%28%3F%3A%2E%29%3F%3F%29%29%5B%0A%61%2D%63%5D%29%29%7B%33%7D%63%70'),'dimsu');
+if (r6.exec('aabbbccc') !== null)
+    throw new Error("Expected null for complex regex with 'aabbbccc'");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1891-yarr-jit-non-greedy-parentheses-backtrack.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

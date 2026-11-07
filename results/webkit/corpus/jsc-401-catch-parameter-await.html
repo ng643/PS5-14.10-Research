@@ -1,0 +1,331 @@
+<!doctype html><meta charset="utf-8"><title>catch-parameter-await.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`expected ${expected} but got ${actual}`);
+}
+
+function shouldThrowSyntaxError(parse, source, message) {
+    let thrown = false;
+    let error;
+    try {
+        parse(source);
+    } catch (e) {
+        thrown = true;
+        error = e;
+    }
+    if (!thrown)
+        throw new Error(`"${source}" should throw "${message}" but did not throw`);
+    // checkModuleSyntax() throws a string, so compare the string form.
+    if (String(error) !== message)
+        throw new Error(`"${source}" should throw "${message}" but threw "${String(error)}"`);
+}
+
+function shouldParse(parse, source) {
+    try {
+        parse(source);
+    } catch (e) {
+        throw new Error(`"${source}" should parse but threw "${String(e)}"`);
+    }
+}
+
+const AsyncFunction = (async function () { }).constructor;
+const AsyncGeneratorFunction = (async function* () { }).constructor;
+const GeneratorFunction = (function* () { }).constructor;
+
+const parseScript = (source) => (0, eval)(source);
+const parseModule = (source) => checkModuleSyntax(source);
+const parseWith = (constructor) => (source) => new constructor(source);
+
+// Eval code does not inherit [Await] from an async caller. The async function runs
+// synchronously up to here, so the error is rethrown to the caller rather than
+// turned into a rejected promise.
+function parseEvalCodeInAsyncFunction(source) {
+    let error;
+    (async function () {
+        try {
+            eval(source);
+        } catch (e) {
+            error = e;
+        }
+    })();
+    if (error)
+        throw error;
+}
+
+const parameters = [
+    String.raw`await`,
+    String.raw`\u0061wait`,
+    String.raw`aw\u{61}it`,
+    String.raw`[await]`,
+    String.raw`[...await]`,
+    String.raw`{ await }`,
+    String.raw`{ x: \u0061wait }`,
+];
+
+// Each template is tested with BODY replaced by a try statement binding each parameter.
+function sourcesFor(template) {
+    let sources = [];
+    for (let parameter of parameters)
+        sources.push(template.replaceAll(`BODY`, `try { } catch (${parameter}) { }`));
+    return sources;
+}
+
+function shouldReject(parse, template, reason, suffix = ``) {
+    let message = `SyntaxError: Cannot use 'await' as a catch parameter name ${reason}.${suffix}`;
+    for (let source of sourcesFor(template))
+        shouldThrowSyntaxError(parse, source, message);
+}
+
+function shouldAccept(parse, template) {
+    for (let source of sourcesFor(template))
+        shouldParse(parse, source);
+}
+
+// 'await' is not an identifier in async functions.
+shouldReject(parseScript, `async function f() { BODY }`, `in an async function`);
+shouldReject(parseScript, `(async function () { BODY })`, `in an async function`);
+shouldReject(parseScript, `(async () => { BODY })`, `in an async function`);
+shouldReject(parseScript, `(async a => { BODY })`, `in an async function`);
+shouldReject(parseScript, `({ async m() { BODY } })`, `in an async function`);
+shouldReject(parseScript, `(class { static async m() { BODY } })`, `in an async function`);
+shouldReject(parseScript, `async function* f() { BODY }`, `in an async function`);
+shouldReject(parseScript, `({ async *m() { BODY } })`, `in an async function`);
+shouldReject(parseScript, `"use strict"; async function f() { BODY }`, `in an async function`);
+shouldReject(parseScript, `function f() { async function g() { BODY } }`, `in an async function`);
+shouldReject(parseScript, `async function f() { { BODY } }`, `in an async function`);
+shouldReject(parseScript, `async function f() { if (true) BODY }`, `in an async function`);
+shouldReject(parseScript, `async function f() { switch (0) { case 0: BODY } }`, `in an async function`);
+shouldReject(parseScript, `async function f() { try { BODY } finally { } }`, `in an async function`);
+shouldReject(parseScript, `async function f() { try { } catch (e) { BODY } }`, `in an async function`);
+shouldReject(parseScript, `async function f() { try { } finally { BODY } }`, `in an async function`);
+shouldReject(parseScript, `async function f() { BODY finally { } }`, `in an async function`);
+shouldReject(parseWith(AsyncFunction), `BODY`, `in an async function`);
+shouldReject(parseWith(AsyncGeneratorFunction), `BODY`, `in an async function`);
+
+// 'await' is not an identifier in class static blocks.
+shouldReject(parseScript, `class C { static { BODY } }`, `in a static block`);
+shouldReject(parseScript, `(class { static { BODY } })`, `in a static block`);
+shouldReject(parseScript, `class C { static { { BODY } } }`, `in a static block`);
+shouldReject(parseScript, `class C { static { try { } catch (e) { BODY } } }`, `in a static block`);
+shouldReject(parseScript, `function f() { class C { static { BODY } } }`, `in a static block`);
+shouldReject(parseScript, `class C { static { function f() { class D { static { BODY } } } } }`, `in a static block`);
+shouldReject(parseScript, `class C { static { async function f() { BODY } } }`, `in an async function`);
+shouldReject(parseScript, `class C { static { (async () => { BODY }); } }`, `in an async function`);
+
+// 'await' is not an identifier anywhere in module code.
+shouldReject(parseModule, `BODY`, `in a module`, `:1`);
+shouldReject(parseModule, `{ BODY }`, `in a module`, `:1`);
+shouldReject(parseModule, `function f() { BODY }`, `in a module`, `:1`);
+shouldReject(parseModule, `function* f() { BODY }`, `in a module`, `:1`);
+shouldReject(parseModule, `(() => { BODY });`, `in a module`, `:1`);
+shouldReject(parseModule, `({ m() { BODY } });`, `in a module`, `:1`);
+shouldReject(parseModule, `export default function () { BODY }`, `in a module`, `:1`);
+shouldReject(parseModule, `async function f() { BODY }`, `in an async function`, `:1`);
+shouldReject(parseModule, `class C { static { BODY } }`, `in a static block`, `:1`);
+
+// 'await' is an identifier everywhere else.
+shouldAccept(parseScript, `BODY`);
+shouldAccept(parseScript, `"use strict"; BODY`);
+shouldAccept(parseScript, `try { } catch (e) { BODY } finally { BODY }`);
+shouldAccept(parseScript, `function f() { BODY }`);
+shouldAccept(parseScript, `function f() { "use strict"; BODY }`);
+shouldAccept(parseScript, `function* f() { BODY }`);
+shouldAccept(parseScript, `(() => { BODY })`);
+shouldAccept(parseScript, `({ m() { BODY } })`);
+shouldAccept(parseScript, `({ get x() { BODY } })`);
+shouldAccept(parseScript, `(class { constructor() { BODY } })`);
+shouldAccept(parseScript, `(class { static m() { BODY } })`);
+shouldAccept(parseScript, `async function f() { function g() { BODY } }`);
+shouldAccept(parseScript, `async function f() { function* g() { BODY } }`);
+shouldAccept(parseScript, `async function f() { (() => { BODY }); }`);
+shouldAccept(parseScript, `async function f() { ({ m() { BODY } }); }`);
+shouldAccept(parseScript, `(async () => { (() => { BODY }); })`);
+shouldAccept(parseScript, `async function* f() { function g() { BODY } }`);
+shouldAccept(parseScript, `class C { static { function f() { BODY } } }`);
+shouldAccept(parseScript, `class C { static { (() => { BODY }); } }`);
+shouldAccept(parseScript, `class C { static { ({ m() { BODY } }); } }`);
+shouldAccept(parseScript, `class C { static { } m() { BODY } }`);
+shouldAccept(parseScript, `class C { static { } } BODY`);
+shouldAccept(parseScript, `async function f() { } BODY`);
+shouldAccept(parseWith(Function), `BODY`);
+shouldAccept(parseWith(GeneratorFunction), `BODY`);
+shouldAccept((source) => eval(source), `BODY`);
+shouldAccept(parseEvalCodeInAsyncFunction, `BODY`);
+
+// Other catch parameters are not affected.
+for (let parameter of [`e`, `async`, `yield`, `let`, `awaits`, `{ await: e }`, `[e = async () => { await 0; }]`]) {
+    let statement = `try { } catch (${parameter}) { }`;
+    shouldParse(parseScript, `async function f() { ${statement} }`);
+    shouldParse(parseScript, `(async () => { ${statement} })`);
+    shouldParse(parseWith(AsyncFunction), statement);
+}
+for (let parameter of [`e`, `async`, `awaits`, `{ await: e }`, `[e = async () => { await 0; }]`]) {
+    let statement = `try { } catch (${parameter}) { }`;
+    shouldParse(parseScript, `class C { static { ${statement} } }`);
+    shouldParse(parseModule, statement);
+}
+shouldParse(parseScript, `async function f() { try { } catch { await 0; } }`);
+shouldParse(parseScript, `async function f() { try { } catch (e) { await e; } }`);
+shouldParse(parseScript, `async function f() { try { } catch ([e = await 0]) { } }`);
+shouldParse(parseModule, `try { } catch { await 0; }`);
+shouldParse(parseModule, `try { } catch (e) { await e; }`);
+
+// 'yield' and 'let' catch parameters keep their own errors.
+shouldThrowSyntaxError(parseScript, `function* f() { try { } catch (yield) { } }`, `SyntaxError: Cannot use 'yield' as a catch parameter name in a generator function.`);
+shouldThrowSyntaxError(parseScript, `async function* f() { try { } catch (yield) { } }`, `SyntaxError: Cannot use 'yield' as a catch parameter name in a generator function.`);
+shouldThrowSyntaxError(parseScript, `"use strict"; try { } catch (yield) { }`, `SyntaxError: Cannot use 'yield' as a catch parameter name in strict mode.`);
+shouldThrowSyntaxError(parseScript, `"use strict"; try { } catch (let) { }`, `SyntaxError: Cannot use 'let' as a catch parameter name in strict mode.`);
+shouldThrowSyntaxError(parseScript, `class C { static { try { } catch (yield) { } } }`, `SyntaxError: Cannot use 'yield' as a catch parameter name in strict mode.`);
+
+// A catch parameter named 'await' is an ordinary binding where it is allowed.
+try {
+    throw 1;
+} catch (await) {
+    shouldBe(await, 1);
+    await = 2;
+    shouldBe(await, 2);
+    shouldBe((() => await)(), 2);
+}
+
+try {
+    throw 3;
+} catch (\u0061wait) {
+    shouldBe(await, 3);
+}
+
+try {
+    throw { await: 4 };
+} catch ({ await }) {
+    shouldBe(await, 4);
+}
+
+function inFunction(value) {
+    "use strict";
+    try {
+        throw value;
+    } catch (await) {
+        return await;
+    }
+}
+shouldBe(inFunction(5), 5);
+
+async function inAsyncFunction(value) {
+    let nested = () => {
+        try {
+            throw value;
+        } catch (await) {
+            return await + 1;
+        }
+    };
+    return await nested();
+}
+
+class InStaticBlock {
+    static value;
+    static {
+        this.value = function () {
+            try {
+                throw 8;
+            } catch (await) {
+                return await;
+            }
+        }();
+    }
+}
+shouldBe(InStaticBlock.value, 8);
+
+let result;
+inAsyncFunction(6).then((value) => { result = value; });
+drainMicrotasks();
+shouldBe(result, 7);
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-401-catch-parameter-await.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

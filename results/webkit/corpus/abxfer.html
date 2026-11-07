@@ -1,0 +1,56 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>abxfer</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var wsrc='onmessage=function(e){var v=new Uint8Array(e.data);var r=[];for(var i=0;i<8;i++)r.push(v[i]);postMessage(r.join(","));};';
+function mkWorker(){ return new Worker(URL.createObjectURL(new Blob([wsrc],{type:'text/javascript'}))); }
+function state(v){ try{ return 'len='+v.length+' b0='+(v.length?v[0]:'na')+' b1='+(v.length>1?v[1]:'na'); }catch(e){ return 'throw:'+String(e).slice(0,30); } }
+
+function boot(){
+  b('X-BOOT');
+  // A: transfer to a worker, then read the original view
+  try{
+    var ab=new ArrayBuffer(0x1000), v=new Uint8Array(ab);
+    for(var i=0;i<16;i++) v[i]=0x41+i;
+    var w=mkWorker();
+    var done=false;
+    w.onmessage=function(e){
+      b('X-A-WORKER-'+e.data);
+      b('X-A-OLD-'+state(v));
+      // reclaim: allocate strings of the same size, alternating markers
+      var keep=[];
+      for(var k=0;k<4000;k++){ var s=''; for(var j=0;j<250;j++) s+=String.fromCharCode(0x61+((j+k)%26)); keep.push(s); }
+      var s2=''; for(var j=0;j<64;j++) s2+=String.fromCharCode(0x41+((j)%26));
+      keep.push(s2);
+      try{ var o=''; for(var i2=0;i2<32;i2++) o+=('0'+v[i2].toString(16)).slice(-2); b('X-A-AFTER-'+o); }catch(e2){ b('X-A-AFTER-THROW-'+String(e2).slice(0,30)); }
+      b('X-A-END'); done=true; sectionB();
+    };
+    w.postMessage(ab,[ab]);
+    b('X-A-POSTED-'+state(v));
+    if(!done) setTimeout(function(){ if(!done){ b('X-A-TIMEOUT'); sectionB(); } },2500);
+  }catch(e){ b('X-A-ERR-'+String(e).slice(0,40)); sectionB(); }
+}
+function sectionB(){
+  try{
+    var ab=new ArrayBuffer(0x1000), v=new Uint8Array(ab);
+    for(var i=0;i<16;i++) v[i]=0x55;
+    var c=structuredClone(ab,{transfer:[ab]});
+    b('X-B-OLD-'+state(v));
+    var cv=new Uint8Array(c); b('X-B-NEW-'+state(cv));
+    var keep=[];
+    for(var k=0;k<3000;k++){ var s=''; for(var j=0;j<250;j++) s+=String.fromCharCode(0x41+((j+k)%26)); keep.push(s); }
+    try{ var o=''; for(var i2=0;i2<32;i2++) o+=('0'+v[i2].toString(16)).slice(-2); b('X-B-AFTER-'+o); }catch(e2){ b('X-B-AFTER-THROW-'+String(e2).slice(0,30)); }
+  }catch(e){ b('X-B-ERR-'+String(e).slice(0,40)); }
+  sectionC();
+}
+function sectionC(){
+  try{
+    var ab=new ArrayBuffer(0x100), v=new Uint8Array(ab);
+    for(var i=0;i<16;i++) v[i]=0x77;
+    var ch=new MessageChannel();
+    ch.port1.postMessage(ab,[ab]);
+    b('X-C-OLD-'+state(v));
+    ch.port2.onmessage=function(e){ b('X-C-GOT-'+new Uint8Array(e.data)[0]); b('X-C-DONE'); };
+    ch.port2.start&&ch.port2.start();
+  }catch(e){ b('X-C-ERR-'+String(e).slice(0,40)); b('X-C-DONE'); }
+}
+window.addEventListener('load',boot);
+</script></head><body><p>abxfer</p></body></html>

@@ -34,8 +34,9 @@ if (uVar9 < 0x41) { … dispatch … }
 
 So **any call with `arg4 >= 0x41` skips every arm and returns `0x800E0001`.** That is the
 explanation for probe 55c's "400+ commands all return `0x800E0001`": it placed the command in
-`arg1` (so `arg0` was 0) and did not control `arg4`, which landed at or above `0x41`. The sweep
-measured the size gate, not the command space.
+`arg1` (so `arg0` was 0) and did not control `arg4`, which landed at or above `0x41`. That
+capture is therefore **void** as a command-space sweep - it measured the size gate, not the
+command space. `1335a` and `1336a` are the runs that dispatch (`arg4 = 0x40`).
 
 If the copyout does not return 4 **and** `*(int *)(td + 0x398) != 0`, the handler calls
 `invalidInstructionException()` and does not return. Our process has that thread flag set, which

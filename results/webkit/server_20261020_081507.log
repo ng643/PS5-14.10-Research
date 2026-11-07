@@ -1,0 +1,87 @@
+2026-10-20T07:24:09.341+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:24:09.351+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-20T07:24:09.369+00:00 DNS Q qgve.dl.playstation.net 1
+om 1
+2026-10-20T07:24:09.369+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-20T07:24:09.463+00:00 DNS Q feature-discovery-assets-amd.dl.playstation.net 1
+2026-10-20T07:24:09.520+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-20T07:24:09.927+00:00 DNS Q bclog.np.rds.s0.playstation.net 1
+2026-10-20T07:24:10.704+00:00 DNS Q fuk01.ps5.update.playstation.net 1
+2026-10-20T07:24:11.655+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-20T07:24:13.328+00:00 DNS BLOCK ps5.np.playstation.net 28
+2026-10-20T07:24:13.328+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:24:13.335+00:00 DNS BLOCK ps5.np.playstation.net 28
+2026-10-20T07:24:13.366+00:00 DNS BLOCK ps5.np.playstation.net 28
+2026-10-20T07:24:13.369+00:00 DNS Q ð0 1
+2026-10-20T07:24:13.727+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:24:13.976+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-20T07:24:14.543+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-20T07:24:14.543+00:00 DNS BLOCK feature-discovery-tip-config.rnps.dl.playstation.net 1
+2026-10-20T07:24:14.544+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:24:14.544+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:24:14.546+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:24:14.548+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:24:14.549+00:00 DNS BLOCK ps5-app-cloud-config.rnps.dl.playstation.net 1
+2026-10-20T07:24:14.549+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:24:14.550+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:24:14.550+00:00 DNS BLOCK takedown.api.playstation.com 1
+2026-10-20T07:24:17.014+00:00 DNS Q us.np.stun.playstation.net 1
+2026-10-20T07:24:17.448+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-20T07:24:20.506+00:00 DNS Q sgst.prod.dl.playstation.net 1
+2026-10-20T07:24:25.776+00:00 DNS Q ps4-system.sec.np.dl.playstation.net 1
+2026-10-20T07:24:28.839+00:00 POST V166-8l16ov-BOOT-124-from-0-to-25 t=1792481067513&n=1 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:28.844+00:00 POST V166-8l16ov-BEFORE-0 t=1792481067514&n=2 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:29.023+00:00 POST V166-8l16ov-OK-0-LayoutTests_svg_text_display-contents-in-text-crash.html t=1792481067708&n=3 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:29.104+00:00 POST V166-8l16ov-BEFORE-1 t=1792481067789&n=4 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:29.121+00:00 DNS Q qgve.dl.playstation.net 1
+2026-10-20T07:24:29.260+00:00 POST V166-8l16ov-OK-1-LayoutTests_fast_dom_HTMLLinkElement_link-expect-in-shadow-tree-removed-crash.html t=1792481067949&n=5 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:29.346+00:00 POST V166-8l16ov-BEFORE-2 t=1792481068030&n=6 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:29.516+00:00 POST V166-8l16ov-OK-2-LayoutTests_fast_css_custom-properties_at-property-initial-value-crash.html t=1792481068188&n=7 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:29.592+00:00 POST V166-8l16ov-BEFORE-3 t=1792481068269&n=8 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:29.811+00:00 POST V166-8l16ov-OK-3-LayoutTests_accessibility_base-select-list-box-content.html t=1792481068499&n=9 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:29.893+00:00 POST V166-8l16ov-BEFORE-4 t=1792481068580&n=10 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:30.241+00:00 POST V166-8l16ov-OK-4-LayoutTests_accessibility_isolated-tree_base-select-list-box-removal.html t=1792481068931&n=11 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:30.335+00:00 POST V166-8l16ov-BEFORE-5 t=1792481069012&n=12 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:30.513+00:00 POST V166-8l16ov-OK-5-LayoutTests_fast_text_text-removal-after-abspos-br-crash.html t=1792481069196&n=13 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:30.589+00:00 POST V166-8l16ov-BEFORE-6 t=1792481069276&n=14 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:30.910+00:00 POST V166-8l16ov-OK-6-LayoutTests_accessibility_base-select-list-box.html t=1792481069595&n=15 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:30.990+00:00 POST V166-8l16ov-BEFORE-7 t=1792481069675&n=16 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:31.212+00:00 POST V166-8l16ov-OK-7-LayoutTests_fast_forms_select_listbox-keydown-change-event-destroys-renderer-crash.html t=1792481069900&n=17 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:31.315+00:00 POST V166-8l16ov-BEFORE-8 t=1792481069980&n=18 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:31.473+00:00 POST V166-8l16ov-OK-8-LayoutTests_fast_forms_input-placeholder-moves-without-layout-crash.html t=1792481070162&n=19 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:31.568+00:00 POST V166-8l16ov-BEFORE-9 t=1792481070243&n=20 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:31.722+00:00 POST V166-8l16ov-OK-9-LayoutTests_fast_forms_search_search-field-gpu-process-teardown-no-crash.html t=1792481070414&n=21 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:31.806+00:00 POST V166-8l16ov-BEFORE-10 t=1792481070494&n=22 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:31.960+00:00 POST V166-8l16ov-OK-10-LayoutTests_fast_css_match-result-cache-has-style-relation-crash.html t=1792481070648&n=23 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:32.044+00:00 POST V166-8l16ov-BEFORE-11 t=1792481070729&n=24 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:32.395+00:00 POST V166-8l16ov-OK-11-LayoutTests_accessibility_accessible-name-chain-depth-no-crash.html t=1792481071083&n=25 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:32.485+00:00 POST V166-8l16ov-BEFORE-12 t=1792481071175&n=26 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:32.852+00:00 POST V166-8l16ov-OK-12-LayoutTests_accessibility_accessible-name-recursion-no-crash.html t=1792481071542&n=27 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:32.951+00:00 POST V166-8l16ov-BEFORE-13 t=1792481071623&n=28 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:33.253+00:00 POST V166-8l16ov-OK-13-LayoutTests_accessibility_isolated-tree_accessible-name-recursion-no-crash.html t=1792481071937&n=29 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:33.359+00:00 POST V166-8l16ov-BEFORE-14 t=1792481072018&n=30 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:33.495+00:00 POST V166-8l16ov-OK-14-LayoutTests_ipc_register-url-schemes-as-cors-enabled-null-scheme-crash.html t=1792481072184&n=31 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:33.608+00:00 POST V166-8l16ov-BEFORE-15 t=1792481072264&n=32 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:33.674+00:00 POST V166-8l16ov-OK-15-LayoutTests_ipc_add-text-animation-missing-uuid-crash.html t=1792481072363&n=33 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:33.758+00:00 POST V166-8l16ov-BEFORE-16 t=1792481072444&n=34 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:33.805+00:00 POST V166-8l16ov-OK-16-LayoutTests_ipc_did-end-partial-intelligence-text-animation-crash.html t=1792481072492&n=35 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:33.888+00:00 POST V166-8l16ov-BEFORE-17 t=1792481072573&n=36 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:34.259+00:00 POST V166-8l16ov-OK-17-LayoutTests_storage_filesystemaccess_writable-file-stream-detached-frame.html t=1792481072941&n=37 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:34.334+00:00 POST V166-8l16ov-BEFORE-18 t=1792481073022&n=38 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:34.388+00:00 POST V166-8l16ov-OK-18-LayoutTests_ipc_blob-registry-null-url-crash.html t=1792481073076&n=39 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:34.471+00:00 POST V166-8l16ov-BEFORE-19 t=1792481073157&n=40 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:34.877+00:00 POST V166-8l16ov-OK-19-LayoutTests_accessibility_isolated-tree_mac_typing-in-document-with-no-ax-object-cache.html t=1792481073547&n=41 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:34.940+00:00 POST V166-8l16ov-BEFORE-20 t=1792481073628&n=42 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:35.335+00:00 POST V166-8l16ov-OK-20-LayoutTests_accessibility_mac_typing-in-document-with-no-ax-object-cache.html t=1792481074025&n=43 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:35.420+00:00 POST V166-8l16ov-BEFORE-21 t=1792481074106&n=44 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:35.611+00:00 POST V166-8l16ov-OK-21-LayoutTests_fast_css_css-anchor-position_position-visibility-line-break-anchor-crash.html t=1792481074255&n=45 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:35.692+00:00 POST V166-8l16ov-BEFORE-22 t=1792481074336&n=46 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:35.783+00:00 POST V166-8l16ov-OK-22-LayoutTests_http_tests_cache_memory-cache-partition-drift.html t=1792481074465&n=47 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:35.863+00:00 POST V166-8l16ov-BEFORE-23 t=1792481074546&n=48 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:36.038+00:00 POST V166-8l16ov-OK-23-LayoutTests_http_tests_cache_resources_memory-cache-partition-drift-frame.html t=1792481074703&n=49 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:36.124+00:00 POST V166-8l16ov-BEFORE-24 t=1792481074783&n=50 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:36.175+00:00 POST V166-8l16ov-OK-24-LayoutTests_http_tests_webshare_shareddatareader-didfinishloading-crash.html t=1792481074864&n=51 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:24:36.255+00:00 POST V166-8l16ov-CORPUS-DONE-24 t=1792481074945&n=52 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T07:25:10.862+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:26:15.417+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T07:26:17.663+00:00 DNS BLOCK ps5.np.playstation.net 1

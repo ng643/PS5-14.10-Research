@@ -1,0 +1,153 @@
+<!doctype html><meta charset="utf-8"><title>regexp-unicode-mixed-width-charclass-fixed-count-backtrack.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBeArray(actual, expected, msg) {
+    if (actual === null || expected === null) {
+        if (actual !== expected)
+            throw new Error(`FAIL: ${msg}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+        return;
+    }
+    if (actual.length !== expected.length)
+        throw new Error(`FAIL: ${msg}: length mismatch: expected ${expected.length}, got ${actual.length}`);
+    for (let i = 0; i < expected.length; i++) {
+        if (actual[i] !== expected[i])
+            throw new Error(`FAIL: ${msg}: index ${i}: expected ${JSON.stringify(expected[i])}, got ${JSON.stringify(actual[i])}`);
+    }
+}
+
+let np = "\u{10000}"; // U+10000 (non-BMP, 2 code units)
+let emoji = "\u{1F600}";
+
+for (let i = 0; i < testLoopCount; i++) {
+    // Backtrack from in-loop failure: index advanced for surrogates, then class fails
+    shouldBeArray(/[a\u{10000}]{2}Z|./u.exec(np + np + "X"), [np], "{2} 2x non-BMP, fail at Z, alt2 dot");
+    shouldBeArray(/[a\u{10000}]{3}Z|b/u.exec("a" + np + "Xb"), ["b"], "{3} BMP+non-BMP, fail in loop, alt2 char");
+    shouldBeArray(/[a\u{10000}]{2}Z|\u{10000}a/u.exec(np + "aXY"), [np + "a"], "{2} non-BMP+BMP, fail at Z, alt2 seq");
+    shouldBeArray(/[a\u{10000}]{3}|./u.exec(np + "aXY"), [np], "{3} non-BMP+BMP, fail in loop (count 2/3), alt2 dot");
+    shouldBeArray(/[a\u{10000}]{2}Z|X/u.exec("aaX"), ["X"], "{2} all-BMP, fail at Z, alt2 (sanity: index unchanged)");
+    shouldBeArray(/[a\u{10000}]{2}Z|\u{10000}\u{10000}/u.exec(np + np + "X"), [np + np], "{2} 2x non-BMP, fail at Z, alt2 same");
+
+    // Backtrack from following-term failure: full {n} matched, index advanced, then trailing fails
+    shouldBeArray(/[a\u{10000}]{2}Z|a\u{10000}/u.exec("a" + np + "X"), ["a" + np], "{2} matched, Z fails, alt2 prefix");
+    shouldBeArray(/[a\u{10000}]{3}Q|\u{10000}{2}/u.exec(np + np + np + "X"), [np + np], "{3} 3x non-BMP matched, Q fails, alt2");
+
+    // Inverted class (also takes mixed-width else branch)
+    shouldBeArray(/[^b]{2}Z|./u.exec(np + np + "X"), [np], "{2} inverted 2x non-BMP, fail at Z, alt2 dot");
+    shouldBeArray(/[^b]{2}Z|\u{10000}a/u.exec(np + "aX"), [np + "a"], "{2} inverted non-BMP+BMP, fail at Z, alt2");
+
+    // /v flag
+    shouldBeArray(/[a\u{10000}]{2}Z|./v.exec(np + np + "X"), [np], "{2} 2x non-BMP /v, fail at Z, alt2 dot");
+
+    // Multiple surrogates in {n} (cumulative index drift)
+    shouldBeArray(/[a\u{10000}]{4}Z|./u.exec(np + np + np + np + "X"), [np], "{4} 4x non-BMP (drift+4), fail at Z, alt2 dot");
+    shouldBeArray(/[a\u{10000}]{4}Z|\u{10000}{4}/u.exec(np + np + np + np + "X"), [np + np + np + np], "{4} 4x non-BMP, fail, alt2 4x");
+
+    // Mixed BMP and non-BMP in same {n} (partial drift)
+    shouldBeArray(/[a\u{10000}]{4}Z|./u.exec("a" + np + "a" + np + "X"), ["a"], "{4} BMP-nonBMP-BMP-nonBMP (drift+2), fail, alt2 dot");
+
+    // Short input: jumpIfNoAvailableInput fires before loop (storeToFrame must precede jump)
+    shouldBeArray(/[a\u{10000}]{2}Z|x/u.exec(""), null, "{2} empty input (jump fires before loop)");
+    shouldBeArray(/[a\u{10000}]{2}Z|x/u.exec("x"), ["x"], "{2} 1-unit input (jump fires before loop)");
+
+    // Capture group around the term
+    shouldBeArray(/([a\u{10000}]{2})Z|(.)/u.exec(np + np + "X"), [np, undefined, np], "{2} capture, fail at Z, alt2 dot");
+
+    // Positive cases: should still match
+    shouldBeArray(/[a\u{10000}]{2}Z/u.exec(np + np + "Z"), [np + np + "Z"], "{2} 2x non-BMP + Z (positive)");
+    shouldBeArray(/[a\u{10000}]{3}/u.exec("a" + np + "a"), ["a" + np + "a"], "{3} mixed (positive)");
+    shouldBeArray(/[a\u{10000}]{2}/u.exec(np + "a"), [np + "a"], "{2} non-BMP+BMP (positive)");
+    shouldBeArray(/[^b]{3}Z/u.exec(np + np + np + "Z"), [np + np + np + "Z"], "{3} inverted 3x non-BMP + Z (positive)");
+
+    // Fixed-width class control: hasOnlyNonBMP, no index drift, should still work
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]{2}Z|./u.exec(emoji + emoji + "X"), [emoji], "{2} fixed-width non-BMP-only, fail at Z, alt2 (control)");
+    shouldBeArray(/[\u{1F600}-\u{1F64F}]{2}Z/u.exec(emoji + emoji + "Z"), [emoji + emoji + "Z"], "{2} fixed-width non-BMP-only + Z (positive control)");
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1203-regexp-unicode-mixed-width-charclass-fixed-count-backtrack.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

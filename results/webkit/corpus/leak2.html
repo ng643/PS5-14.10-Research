@@ -1,0 +1,16 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>leak2</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function nz(a){var n=0,f=-1;for(var i=0;i<a.length;i++){if(a[i]){n++;if(f<0)f=i;}}return n+":"+f;}
+function step(tag, fn){ b('L2-'+tag+'-IN'); var r; try{ r=fn(); }catch(e){ r='err:'+e.name; } b('L2-'+tag+'-OUT-'+String(r).replace(/[^A-Za-z0-9:._-]/g,'_')); }
+var keep=[]; for(var i=0;i<4000;i++){ keep.push(new Array(176).join('L')); }
+b('L2-CHURNED');
+step('U8', function(){ return nz(new Uint8Array(256)); });
+step('F64', function(){ return nz(new Float64Array(64)); });
+step('DV', function(){ var dv=new DataView(new ArrayBuffer(256)), d=[]; for(var i=0;i<256;i++) d.push(dv.getUint8(i)); return nz(d); });
+step('CANVAS', function(){ var c=document.createElement('canvas'); c.width=64; c.height=64; document.body.appendChild(c); window.__c=c; window.__ctx=c.getContext('2d'); return nz(window.__ctx.getImageData(0,0,64,64).data); });
+step('CREATED', function(){ return nz(window.__ctx.createImageData(32,32).data); });
+step('DRAWN', function(){ window.__ctx.font='20px x'; window.__ctx.fillText('AAAAAAAA',2,32); return nz(window.__ctx.getImageData(0,0,64,64).data); });
+step('OFFSCR', function(){ var o=new OffscreenCanvas(16,16); return nz(o.getContext('2d').getImageData(0,0,16,16).data); });
+b('L2-DONE');
+</script></head><body><p>leak2</p></body></html>

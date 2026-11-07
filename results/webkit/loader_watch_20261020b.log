@@ -1,0 +1,26 @@
+LOADER-UP 192.168.1.121:9026
+RUN C:\Users\box12\AppData\Local\Programs\Python\Python311\python.exe tools/send_probe.py probes/phase17_new_vectors/80a_thr_create_cs43_threading.lua --ip 192.168.1.121 --port 9026 --save --metadata --total-timeout 300
+[*] Connecting to 192.168.1.121:9026...
+[*] Connected, sending 16515 bytes...
+[*] Waiting for response...
+=== PROBE 80a: THR_CREATE CS=0x43 THREADING TEST ===
+TEST_SECTION=1
+
+[0] canary pid=83
+[0] main TID=0x00000000_00018C88
+[0] eboot text base=0x00000000_74DAC000
+[0] ret gadget=0x00000000_74DAC042
+[string "-- CRASH_CLASS: HIGH (may still panic if CS..."]:106: bad argument #2 to 'format' (number expected, got table)
+stack traceback:
+	[C]: in function 'format'
+	[string "-- CRASH_CLASS: HIGH (may still panic if CS..."]:106: in main chunk
+	/savedata0/misc.lua:92: in function 'run_with_coroutine'
+	/savedata0/main.lua:85: in function 'run_lua_code'
+	/savedata0/main.lua:216: in function 'remote_lua_loader'
+	/savedata0/main.lua:315: in function 'run_loader'
+	/savedata0/main.lua:321: in function </savedata0/main.lua:259>
+[*] Received 719 bytes total
+[*] Saved to results\phase17_new_vectors\80a_thr_create_cs43_threading_20261020_163237.txt
+[*] Run record: results\phase17_new_vectors\80a_thr_create_cs43_threading_20261020_163237.json
+[*] Status: COMPLETE (0.016s)
+SEND_PROBE-EXIT 0

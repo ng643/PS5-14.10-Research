@@ -1,0 +1,17 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>leak5</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function scan(a){var n=0,f=-1,tail=0;for(var i=0;i<a.length;i++){if(a[i]){n++;if(f<0)f=i;if(i>=64)tail++;}}return 'len'+a.length+'_nz'+n+'_first'+f+'_tailnz'+tail;}
+b('L5-START');
+var x=new XMLHttpRequest();
+x.open('GET','/trunc?want=4096&give=64',true);
+x.responseType='arraybuffer';
+x.onload=function(){
+  try{ b('L5-LOAD-'+scan(new Uint8Array(x.response))); }catch(e){ b('L5-LOAD-E_'+e.name); }
+  b('L5-DONE');
+};
+x.onerror=function(){ b('L5-ERR-status'+x.status); b('L5-DONE'); };
+x.onprogress=function(e){ if(e.total) b('L5-PROG-'+e.loaded+'of'+e.total); };
+x.send(null);
+setTimeout(function(){ b('L5-TIMEOUT-st'+x.status+'rs'+x.readyState); }, 4000);
+</script></head><body><p>leak5</p></body></html>

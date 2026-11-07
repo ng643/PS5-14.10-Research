@@ -1,0 +1,219 @@
+<!doctype html><meta charset="utf-8"><title>object-toprimitive-fastpath-overrides.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(a, b) { if (a !== b) throw new Error("bad: " + a + " !== " + b); }
+
+// Objects with an own or exotic override must always take the full, spec-compliant slow path.
+
+// own valueOf returning a number.
+(function () {
+    var v = { valueOf() { return 5; } };
+    shouldBe(v < 10, true);
+    shouldBe(v + 1, 6);
+})();
+
+// own toString.
+(function () {
+    var s = { toString() { return "z"; } };
+    shouldBe(`${s}`, "z");
+})();
+
+// own Symbol.toPrimitive.
+(function () {
+    var tp = { [Symbol.toPrimitive](hint) { return hint; } };
+    shouldBe(`${tp}`, "string");
+    shouldBe(Number.isNaN(+tp), true);
+    shouldBe(tp + "", "default");
+})();
+
+// own Symbol.toStringTag.
+(function () {
+    var tag = { [Symbol.toStringTag]: "X" };
+    shouldBe(`${tag}`, "[object X]");
+})();
+
+// Mixed-operand relational compares against a plain object.
+(function () {
+    var o = {};
+    shouldBe(o < 5, false);
+    shouldBe(1 < o, false);
+    shouldBe("a" < o, false);
+    shouldBe(o < "b", true);
+    shouldBe(o <= 5, false);
+    shouldBe(5 <= o, false);
+    shouldBe(o > 5, false);
+    shouldBe(o >= 5, false);
+})();
+
+// Arrays use their own fast path, not the plain-object one.
+(function () {
+    shouldBe([1, 2] < [1, 3], true);
+})();
+
+// Object.create(null) has no toString/valueOf/toPrimitive, so ToPrimitive throws.
+(function () {
+    var n = Object.create(null);
+    var threw = false;
+    try {
+        `${n}`;
+    } catch (e) {
+        threw = e instanceof TypeError;
+    }
+    shouldBe(threw, true);
+
+    threw = false;
+    try {
+        n + 1;
+    } catch (e) {
+        threw = e instanceof TypeError;
+    }
+    shouldBe(threw, true);
+
+    threw = false;
+    try {
+        n < 5;
+    } catch (e) {
+        threw = e instanceof TypeError;
+    }
+    shouldBe(threw, true);
+})();
+
+// Object identity (a == b) is unaffected, same-realm and cross-realm.
+(function () {
+    var a = {}, b = {};
+    shouldBe(a == b, false);
+    shouldBe(a == a, true);
+
+    var other = createGlobalObject();
+    var otherObjectCtor = other.Object;
+    var crossA = new otherObjectCtor();
+    var crossB = new otherObjectCtor();
+    shouldBe(crossA == crossB, false);
+    shouldBe(crossA == crossA, true);
+})();try {
+
+// Cross-realm: the verdict must be computed against the object's own realm, so an override on
+// the other realm's Object.prototype.toString is honored when coercing from the main realm.
+(function () {
+    var other = createGlobalObject();
+    var o = new other.Object();
+
+    var p = new other.Object();
+    for (var i = 0; i < testLoopCount; ++i) {
+        o < p;
+        o <= p;
+        `${o}`;
+    }
+
+    shouldBe(`${o}`, "[object Object]");
+    shouldBe(o + "", "[object Object]");
+    shouldBe(String(o), "[object Object]");
+    shouldBe(o < o, false);
+    shouldBe(o <= o, true);
+    shouldBe(o > o, false);
+    shouldBe(o >= o, true);
+
+    other.Object.prototype.toString = function () { return "custom-other-realm"; };
+    shouldBe(`${o}`, "custom-other-realm");
+    shouldBe(o + "", "custom-other-realm");
+    shouldBe(String(o), "custom-other-realm");
+})();} catch (e) {}
+
+// The default fast path coexists with all the overridden cases above without cross-contamination.
+(function () {
+    function Plain() {}
+    var p = new Plain();
+    for (var i = 0; i < testLoopCount; ++i) {
+        shouldBe(`${p}`, "[object Object]");
+        shouldBe(p < 5, false);
+    }
+})();
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1055-object-toprimitive-fastpath-overrides.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

@@ -1,0 +1,185 @@
+<!doctype html><meta charset="utf-8"><title>regexp-yarr-jit-fixed-count-capture.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+function shouldBe(actual, expected, message) {
+    if (JSON.stringify(actual) !== JSON.stringify(expected))
+        throw new Error(message + ": expected " + JSON.stringify(expected) + " but got " + JSON.stringify(actual));
+}
+
+// Test 1: Basic fixed count with capture
+(function() {
+    var re = /^From\s+\S+\s+([a-zA-Z]{3}\s+){2}\d{1,2}\s+\d\d:\d\d/;
+    var result = re.exec("From abcd  Mon Sep 01 12:33:02 1997");
+    shouldBe(result[0], "From abcd  Mon Sep 01 12:33", "Test 1 full match");
+    shouldBe(result[1], "Sep ", "Test 1 capture");
+})();
+
+// Test 2: Backreference requiring within-iteration backtracking (main failing case)
+(function() {
+    var re = /(([a-c])b*?\2){3}/;
+    var result = re.exec("ababbbcbc");
+    shouldBe(result, ["ababbbcbc", "cbc", "c"], "Test 2 backreference");
+})();
+
+// Test 3: Simple fixed count capture
+(function() {
+    var re = /((x)){2}y/;
+    var result = re.exec("xxy");
+    shouldBe(result, ["xxy", "x", "x"], "Test 3 simple capture");
+})();
+
+// Test 4: Fixed count with no match
+(function() {
+    var re = /((x)){2}y/;
+    var result = re.exec("xxz");
+    shouldBe(result, null, "Test 4 no match");
+})();
+
+// Test 5: Alternatives inside fixed group
+(function() {
+    var re = /(x|y){3}z/;
+    var result = re.exec("xxyz");
+    shouldBe(result, ["xxyz", "y"], "Test 5 alternatives");
+})();
+
+// Test 6: Greedy inside fixed count (reference behavior from V8/interpreter)
+(function() {
+    var re = /(a+){2}b/;
+    var result = re.exec("aaab");
+    shouldBe(result, ["aaab", "a"], "Test 6 greedy inside fixed");
+})();
+
+// Test 7: Non-greedy inside fixed count
+(function() {
+    var re = /(a+?){2}b/;
+    var result = re.exec("aaab");
+    shouldBe(result, ["aaab", "aa"], "Test 7 non-greedy inside fixed");
+})();
+
+// Test 8: Deeply nested captures
+(function() {
+    var re = /(((a)b)+){2}c/;
+    var result = re.exec("ababababc");
+    // Iter1 of {2} matches "ababab" (greedy + inside)
+    // Iter2 of {2} matches "ab"
+    // Last capture of group 1 is "ab", group 2 is "ab", group 3 is "a"
+    shouldBe(result, ["ababababc", "ab", "ab", "a"], "Test 8 nested");
+})();
+
+// Test 9: Non-capturing fixed count (uses simpler FixedCount opcodes)
+(function() {
+    var re = /(?:abc){3}d/;
+    var result = re.exec("abcabcabcd");
+    shouldBe(result, ["abcabcabcd"], "Test 9 non-capturing fixed count");
+})();
+
+// Test 10: Non-capturing fixed count with alternatives
+(function() {
+    var re = /(?:a|b){4}c/;
+    var result = re.exec("ababc");
+    shouldBe(result, ["ababc"], "Test 10 non-capturing with alternatives");
+})();
+
+// Test 11: Non-capturing fixed count no match
+(function() {
+    var re = /(?:abc){3}d/;
+    var result = re.exec("abcabcd");
+    shouldBe(result, null, "Test 11 non-capturing no match");
+})();
+
+// Test 12: Mixed capturing and non-capturing
+(function() {
+    var re = /(?:x){2}(y){2}z/;
+    var result = re.exec("xxyyz");
+    shouldBe(result, ["xxyyz", "y"], "Test 12 mixed capturing and non-capturing");
+})();
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1216-regexp-yarr-jit-fixed-count-capture.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

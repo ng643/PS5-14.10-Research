@@ -1,0 +1,279 @@
+<!doctype html><meta charset="utf-8"><title>regexp-test-sticky-first-char-filter.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Verify the sticky RegExp.test first-character fast-fail filter: a filtered no-match must behave
+// exactly like the operation - reset lastIndex to 0, return false, and leave RegExp's global match
+// state (RegExp.$1, lastMatch, input, contexts) untouched.
+
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error("bad value: " + actual + " expected: " + expected);
+}
+
+function shouldThrow(fn, name) {
+    let threw = false;
+    try { fn(); } catch (e) { threw = true; shouldBe(e.constructor.name, name); }
+    if (!threw)
+        throw new Error("expected " + name);
+}
+
+// A capturing sticky regexp that cannot match empty: first char must be a digit.
+const re = /(\d)(\d)?/y;
+const input = "a12b3";
+
+function step() {
+    // Prior success at index 1 ("12"), which records global state and advances lastIndex.
+    re.lastIndex = 1;
+    shouldBe(re.test(input), true);
+    shouldBe(re.lastIndex, 3);
+    const savedLastMatch = RegExp.lastMatch;   // "12"
+    const savedParen1 = RegExp.$1;              // "1"
+    const savedParen2 = RegExp.$2;              // "2"
+    const savedLeft = RegExp.leftContext;       // "a"
+    const savedRight = RegExp.rightContext;     // "b3"
+    const savedInput = RegExp.input;            // input
+    shouldBe(savedLastMatch, "12");
+    shouldBe(savedParen1, "1");
+    shouldBe(savedParen2, "2");
+
+    // No-match at index 0 ('a' is not a digit): this is the filtered fast-fail path.
+    re.lastIndex = 0;
+    shouldBe(re.test(input), false);
+    shouldBe(re.lastIndex, 0);                  // sticky no-match resets lastIndex to 0.
+    // Global state must be UNCHANGED by the failed test.
+    shouldBe(RegExp.lastMatch, savedLastMatch);
+    shouldBe(RegExp.$1, savedParen1);
+    shouldBe(RegExp.$2, savedParen2);
+    shouldBe(RegExp.leftContext, savedLeft);
+    shouldBe(RegExp.rightContext, savedRight);
+    shouldBe(RegExp.input, savedInput);
+
+    // No-match at a filtered position past the last digit ('b' at index 3).
+    re.lastIndex = 3;
+    shouldBe(re.test(input), false);
+    shouldBe(re.lastIndex, 0);
+
+    // lastIndex beyond the end: false + reset, matching operationRegExpTestString.
+    re.lastIndex = 100;
+    shouldBe(re.test(input), false);
+    shouldBe(re.lastIndex, 0);
+
+    // A match at a byte that passes the filter (digit "3" at index 4) advances lastIndex.
+    re.lastIndex = 4;
+    shouldBe(re.test(input), true);
+    shouldBe(re.lastIndex, 5);
+}
+
+for (let i = 0; i < testLoopCount; ++i)
+    step();
+
+// Inverted leading class and quantified leading group are now filterable for sticky test too.
+(function () {
+    const reInv = /[^a-z]/y;
+    const reGrp = /([0-9a-fA-F]){4}/y;
+    for (let i = 0; i < testLoopCount; ++i) {
+        reInv.lastIndex = 0;
+        shouldBe(reInv.test("Abc"), true);   // 'A' not in a-z
+        shouldBe(reInv.lastIndex, 1);
+        reInv.lastIndex = 0;
+        shouldBe(reInv.test("abc"), false);  // 'a' filtered
+        shouldBe(reInv.lastIndex, 0);
+
+        reGrp.lastIndex = 0;
+        shouldBe(reGrp.test("dead"), true);
+        shouldBe(reGrp.lastIndex, 4);
+        reGrp.lastIndex = 0;
+        shouldBe(reGrp.test("zzzz"), false); // 'z' filtered
+        shouldBe(reGrp.lastIndex, 0);
+    }
+})();
+
+// Negative lastIndex is not isUInt32; the filter must delegate to the operation, which clamps and
+// searches from 0. Here index 0 is 'a' (no match) so the result is false with lastIndex reset.
+(function () {
+    const re2 = /(\d)(\d)?/y;
+    for (let i = 0; i < testLoopCount; ++i) {
+        re2.lastIndex = -5;
+        shouldBe(re2.test("a12"), false);
+        shouldBe(re2.lastIndex, 0);
+    }
+})();
+
+// A non-writable lastIndex must make a failing sticky test throw a TypeError (Set(...,,true)); the
+// filter guards on the writable flag and delegates to the operation, which throws.
+(function () {
+    for (let i = 0; i < testLoopCount; ++i) {
+        const re3 = /\d+/y;
+        re3.lastIndex = 0;
+        Object.defineProperty(re3, "lastIndex", { writable: false });
+        shouldThrow(() => re3.test("abc"), "TypeError");
+    }
+})();
+
+// 16-bit (non-Latin-1) subject strings must still behave correctly (filter is 8-bit only, so this
+// exercises the delegated path). The digit "5" is Latin-1 but the string is 16-bit.
+(function () {
+    const re4 = /\d/y;
+    const wide = "\u3042\u3044" + "5";   // forces a 16-bit string
+    for (let i = 0; i < testLoopCount; ++i) {
+        re4.lastIndex = 0;
+        shouldBe(re4.test(wide), false);   // first char is a wide non-digit
+        shouldBe(re4.lastIndex, 0);
+        re4.lastIndex = 2;
+        shouldBe(re4.test(wide), true);
+        shouldBe(re4.lastIndex, 3);
+    }
+})();
+
+// A .compile() that changes the pattern fires the realm's RegExp-recompiled watchpoint, jettisoning
+// the code that baked the old bitmap: the old filter must not produce wrong answers for the new
+// pattern.
+(function () {
+    const re5 = /a+/y;
+    function check(s, expected) { re5.lastIndex = 0; shouldBe(re5.test(s), expected); }
+    for (let i = 0; i < testLoopCount; ++i) { check("abc", true); check("zzz", false); }
+    re5.compile("z+", "y");
+    for (let i = 0; i < testLoopCount; ++i) { check("zzz", true); check("abc", false); }
+})();
+
+// An empty-matchable sticky pattern matches empty AT lastIndex whatever byte is there, so it must
+// never be filtered - and a match (even an empty one) must not reset lastIndex to 0. This is what
+// the builder's `consumes` propagation protects; every other test here uses a pattern with a minimum
+// size of at least 1, so nothing else would notice if that propagation were lost.
+(function () {
+    // [pattern, expected test("b") at lastIndex 0, expected lastIndex afterwards]
+    const emptyMatchable = [
+        [/a*/y, true, 0], [/x?/y, true, 0], [/(a)?/y, true, 0], [/(?:)/y, true, 0],
+        [/a|/y, true, 0], [/(a*)/y, true, 0], [/\b/y, true, 0],
+        [/$/y, false, 0],      // "b" has no end-of-input at index 0
+        [/(?=a)/y, false, 0],  // the lookahead fails, so this is a real no-match
+    ];
+    for (let i = 0; i < testLoopCount; ++i) {
+        for (const [re, expectedTest, expectedLastIndex] of emptyMatchable) {
+            re.lastIndex = 0;
+            shouldBe(re.test("b"), expectedTest);
+            shouldBe(re.lastIndex, expectedLastIndex);
+        }
+
+        // The same at a non-zero lastIndex: the empty match happens there, so lastIndex stays put.
+        const star = /q*/y;
+        star.lastIndex = 2;
+        shouldBe(star.test("abc"), true);
+        shouldBe(star.lastIndex, 2);
+    }
+})();
+
+// The `gy` combination is filterable too, and takes the same path: a sticky match must begin at
+// lastIndex, and RegExpBuiltinExec resets lastIndex to 0 on failure for global as well as for sticky,
+// which is what the inline no-match path stores.
+(function () {
+    const re6 = /\d+/gy;
+    const re7 = /[^a-z]/gy;
+    for (let i = 0; i < testLoopCount; ++i) {
+        re6.lastIndex = 0;
+        shouldBe(re6.test("42x"), true);
+        shouldBe(re6.lastIndex, 2);
+        shouldBe(re6.test("42x"), false);   // 'x' at lastIndex 2 is filtered
+        shouldBe(re6.lastIndex, 0);
+
+        re6.lastIndex = 1;
+        shouldBe(re6.test("a1"), true);
+        shouldBe(re6.lastIndex, 2);
+
+        re7.lastIndex = 0;
+        shouldBe(re7.test("Abc"), true);
+        shouldBe(re7.lastIndex, 1);
+        re7.lastIndex = 0;
+        shouldBe(re7.test("abc"), false);   // 'a' filtered
+        shouldBe(re7.lastIndex, 0);
+    }
+})();
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-1190-regexp-test-sticky-first-char-filter.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

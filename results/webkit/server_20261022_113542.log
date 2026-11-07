@@ -1,0 +1,40 @@
+2026-10-22T10:35:42.743+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-22T10:35:42.806+00:00 DNS Q bclog.np.rds.s0.playstation.net 1
+2026-10-22T10:35:42.907+00:00 DNS Q qgve.dl.playstation.net 1
+2026-10-22T10:35:42.996+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-22T10:35:42.998+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-22T10:35:42.999+00:00 DNS Q gs-sec.ww.np.dl.playstation.net 1
+2026-10-22T10:35:45.457+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:35:48.505+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-22T10:36:05.062+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:36:28.126+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:36:49.895+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:36:52.415+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-22T10:37:09.355+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-22T10:37:09.904+00:00 DNS Q cfss.crs.playstation.net 1
+2026-10-22T10:37:10.869+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:37:11.996+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-22T10:37:13.285+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-22T10:37:23.500+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-22T10:37:23.553+00:00 ACCESS GET /probe/p446-fontface-uaf.js?cb=1792665135 200
+2026-10-22T10:37:23.696+00:00 ACCESS GET /raw/p446-fontface-uaf.js?cb=1792665135&cb=1792665135 200
+2026-10-22T10:37:23.773+00:00 GET V172-wxz374-BEFORE-fontface t=1792665445506 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:37:23.774+00:00 ACCESS GET /beacon/V172-wxz374-BEFORE-fontface?t=1792665445506 204
+2026-10-22T10:37:23.819+00:00 GET V172-wxz374-API-yes t=1792665445541 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:37:23.821+00:00 ACCESS GET /beacon/V172-wxz374-API-yes?t=1792665445541 204
+2026-10-22T10:37:23.845+00:00 GET V172-wxz374-CONSTRUCT-feedface-probe t=1792665445582 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:37:23.847+00:00 ACCESS GET /beacon/V172-wxz374-CONSTRUCT-feedface-probe?t=1792665445582 204
+2026-10-22T10:37:23.881+00:00 GET V172-wxz374-FACE-A-found t=1792665445617 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:37:23.883+00:00 ACCESS GET /beacon/V172-wxz374-FACE-A-found?t=1792665445617 204
+2026-10-22T10:37:23.947+00:00 GET V172-wxz374-A-DONE-then=true t=1792665445645 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:37:23.949+00:00 ACCESS GET /beacon/V172-wxz374-A-DONE-then=true?t=1792665445645 204
+2026-10-22T10:37:23.987+00:00 GET V172-wxz374-B-ISSUED t=1792665445710 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:37:23.989+00:00 ACCESS GET /beacon/V172-wxz374-B-ISSUED?t=1792665445710 204
+2026-10-22T10:37:25.523+00:00 GET V172-wxz374-B-LATER-then=false t=1792665447250 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:37:25.525+00:00 ACCESS GET /beacon/V172-wxz374-B-LATER-then=false?t=1792665447250 204
+2026-10-22T10:37:25.571+00:00 GET V172-wxz374-DONE t=1792665447287 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:37:25.573+00:00 ACCESS GET /beacon/V172-wxz374-DONE?t=1792665447287 204
+2026-10-22T10:37:32.651+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:37:56.141+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:38:07.005+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-22T10:38:09.394+00:00 DNS BLOCK ps5.np.playstation.net 1

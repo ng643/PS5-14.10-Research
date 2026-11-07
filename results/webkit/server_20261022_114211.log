@@ -1,0 +1,20 @@
+2026-10-22T10:42:23.760+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:42:29.917+00:00 ACCESS GET /probe/p448-fontface-localise.js?cb=1792665619 200
+2026-10-22T10:42:29.986+00:00 ACCESS GET /raw/p448-fontface-localise.js?cb=1792665619&cb=1792665619 200
+2026-10-22T10:42:30.065+00:00 GET V172-lfkr4p-BOOT t=1792665751752 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:42:30.067+00:00 ACCESS GET /beacon/V172-lfkr4p-BOOT?t=1792665751752 204
+2026-10-22T10:42:30.737+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-22T10:42:30.803+00:00 ACCESS GET /probe/p449-fontface-cap.js?cb=1792665693 200
+2026-10-22T10:42:30.982+00:00 ACCESS GET /raw/p449-fontface-cap.js?cb=1792665693&cb=1792665693 200
+2026-10-22T10:42:31.016+00:00 GET V172-7exafg-BOOT t=1792665752739 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:42:31.018+00:00 ACCESS GET /beacon/V172-7exafg-BOOT?t=1792665752739 204
+2026-10-22T10:42:31.047+00:00 GET V172-7exafg-ffB-returned-fired=1 t=1792665752775 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:42:31.048+00:00 ACCESS GET /beacon/V172-7exafg-ffB-returned-fired=1?t=1792665752775 204
+2026-10-22T10:42:31.081+00:00 GET V172-7exafg-B-block-done t=1792665752803 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-22T10:42:31.082+00:00 ACCESS GET /beacon/V172-7exafg-B-block-done?t=1792665752803 204
+2026-10-22T10:42:31.561+00:00 DNS Q cfss.crs.playstation.net 1
+2026-10-22T10:42:31.716+00:00 DNS Q crepo.ww.dl.playstation.net 1
+2026-10-22T10:42:34.340+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-22T10:42:42.986+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:43:03.749+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T10:43:07.029+00:00 DNS Q uef.np.dl.playstation.net 1

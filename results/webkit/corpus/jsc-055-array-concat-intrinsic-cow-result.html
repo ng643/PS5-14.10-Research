@@ -1,0 +1,177 @@
+<!doctype html><meta charset="utf-8"><title>array-concat-intrinsic-cow-result.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Tests that Array.prototype.concat's COW (copy-on-write) result path is correctly modeled
+// in the DFG abstract interpreter. When one operand is empty and the other is a
+// CopyOnWrite-butterflied array, concatAppendArray takes a fast path that reuses the source
+// butterfly and returns a CopyOnWrite-indexed result. If the DFG's abstract result structure
+// set omits CopyOnWrite variants, downstream speculation on the result can OSR-exit
+// spuriously.
+
+function assert(cond, msg) {
+    if (!cond)
+        throw new Error("Bad: " + (msg || ""));
+}
+noInline(assert);
+
+function shallowEq(a, b) {
+    assert(a.length === b.length, "length " + a.length + " vs " + b.length);
+    for (let i = 0; i < a.length; i++)
+        assert(a[i] === b[i], "index " + i);
+}
+noInline(shallowEq);
+
+// Array literals like `[1, 2, 3]` produce CopyOnWriteArrayWithInt32 until written to. Keeping
+// them unmodified throughout the test preserves the COW state and exercises the COW
+// fast-path in concatAppendArray.
+function firstEmpty() {
+    return [].concat([1, 2, 3]);
+}
+noInline(firstEmpty);
+
+function secondEmpty() {
+    return [1, 2, 3].concat([]);
+}
+noInline(secondEmpty);
+
+function firstEmptyDouble() {
+    return [].concat([1.5, 2.5, 3.5]);
+}
+noInline(firstEmptyDouble);
+
+function secondEmptyDouble() {
+    return [1.5, 2.5, 3.5].concat([]);
+}
+noInline(secondEmptyDouble);
+
+function firstEmptyContiguous() {
+    return [].concat(["a", "b", "c"]);
+}
+noInline(firstEmptyContiguous);
+
+function secondEmptyContiguous() {
+    return ["a", "b", "c"].concat([]);
+}
+noInline(secondEmptyContiguous);
+
+// Also exercise a downstream use of the result — iterating and summing — so that any
+// speculation on the result's structure actually needs to be sound.
+function sumAfterConcat(producer) {
+    const arr = producer();
+    let out = 0;
+    for (let i = 0; i < arr.length; i++)
+        out = out + arr[i];
+    return out;
+}
+noInline(sumAfterConcat);
+
+for (let i = 0; i < testLoopCount; i++) {
+    shallowEq(firstEmpty(), [1, 2, 3]);
+    shallowEq(secondEmpty(), [1, 2, 3]);
+    shallowEq(firstEmptyDouble(), [1.5, 2.5, 3.5]);
+    shallowEq(secondEmptyDouble(), [1.5, 2.5, 3.5]);
+    shallowEq(firstEmptyContiguous(), ["a", "b", "c"]);
+    shallowEq(secondEmptyContiguous(), ["a", "b", "c"]);
+
+    assert(sumAfterConcat(firstEmpty) === 6, "sum firstEmpty");
+    assert(sumAfterConcat(secondEmpty) === 6, "sum secondEmpty");
+    assert(sumAfterConcat(firstEmptyDouble) === 7.5, "sum firstEmptyDouble");
+    assert(sumAfterConcat(secondEmptyDouble) === 7.5, "sum secondEmptyDouble");
+}
+
+// Mutate the result to confirm it is a distinct-enough array (COW or not, the observable
+// semantic is that writing to the result does not affect the source).
+const source = [10, 20, 30];
+const result = source.concat([]);
+result[0] = 999;
+assert(source[0] === 10, "source mutated");
+assert(result[0] === 999, "result didn't mutate");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-055-array-concat-intrinsic-cow-result.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

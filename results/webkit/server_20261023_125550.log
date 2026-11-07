@@ -1,0 +1,145 @@
+2026-10-23T11:55:56.821+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:56:16.799+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:56:28.373+00:00 POST V172-0xb1n1-BEFORE-224 t=1792756265566&n=56 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:28.376+00:00 ACCESS POST /beacon/V172-0xb1n1-BEFORE-224?t=1792756265566&n=56 204
+2026-10-23T11:56:28.397+00:00 POST V172-0xb1n1-OK-224-lay-225-animation-suspension-no-timelines-controller-crash-html.html t=1792756590539&n=57 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:28.399+00:00 ACCESS POST /beacon/V172-0xb1n1-OK-224-lay-225-animation-suspension-no-timelines-controller-crash-html.html?t=1792756590539&n=57 204
+2026-10-23T11:56:28.420+00:00 POST V172-0xb1n1-GAP-224 t=1792756590539&n=58 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:28.422+00:00 ACCESS POST /beacon/V172-0xb1n1-GAP-224?t=1792756590539&n=58 204
+2026-10-23T11:56:28.440+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=225&count=1000&v=0xb1n1&g=1 200
+2026-10-23T11:56:28.603+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=225&count=1000&v=0xb1n1&g=1 200
+2026-10-23T11:56:28.657+00:00 ACCESS GET /corpus/layout.json?t=1792756590811 200
+2026-10-23T11:56:28.730+00:00 ACCESS GET /corpus/skip.json?t=1792756590875 200
+2026-10-23T11:56:28.893+00:00 POST V172-0xb1n1-SKIP-225-to-226 t=1792756591042&n=59 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:28.894+00:00 ACCESS POST /beacon/V172-0xb1n1-SKIP-225-to-226?t=1792756591042&n=59 204
+2026-10-23T11:56:28.913+00:00 ACCESS GET /corpus/lay-227-offset-path-shape-cache-thread-safety-popup-html.html?i=226&next=227&e=232&c=1000&v=0xb1n1&g=1 200
+2026-10-23T11:56:28.926+00:00 POST V172-0xb1n1-BOOT-232-from-226-to-232 t=1792756591042&n=60 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:28.927+00:00 ACCESS POST /beacon/V172-0xb1n1-BOOT-232-from-226-to-232?t=1792756591042&n=60 204
+2026-10-23T11:56:28.989+00:00 POST V172-0xb1n1-BEFORE-226 t=1792756591140&n=61 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:28.991+00:00 ACCESS POST /beacon/V172-0xb1n1-BEFORE-226?t=1792756591140&n=61 204
+2026-10-23T11:56:29.006+00:00 POST V172-0xb1n1-OK-226-lay-227-offset-path-shape-cache-thread-safety-popup-html.html t=1792756591142&n=62 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:29.009+00:00 ACCESS POST /beacon/V172-0xb1n1-OK-226-lay-227-offset-path-shape-cache-thread-safety-popup-html.html?t=1792756591142&n=62 204
+2026-10-23T11:56:29.037+00:00 POST V172-0xb1n1-GAP-226 t=1792756591142&n=63 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:29.038+00:00 ACCESS POST /beacon/V172-0xb1n1-GAP-226?t=1792756591142&n=63 204
+2026-10-23T11:56:29.096+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=227&count=1000&v=0xb1n1&g=1 200
+2026-10-23T11:56:29.263+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=227&count=1000&v=0xb1n1&g=1 200
+2026-10-23T11:56:29.350+00:00 ACCESS GET /corpus/layout.json?t=1792756591468 200
+2026-10-23T11:56:29.415+00:00 ACCESS GET /corpus/skip.json?t=1792756591591 200
+2026-10-23T11:56:30.354+00:00 DNS Q feature-discovery-assets-amd.dl.playstation.net 1
+2026-10-23T11:56:30.684+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T11:56:30.742+00:00 ACCESS GET /probe/p_relapse_test.js?cb=1792754139 200
+2026-10-23T11:56:30.894+00:00 ACCESS GET /raw/p_relapse_test.js?cb=1792754139&cb=1792754139 200
+2026-10-23T11:56:31.093+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?start=0&count=1000&list=layout.json 200
+2026-10-23T11:56:31.271+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&start=0&count=1000&list=layout.json 200
+2026-10-23T11:56:31.343+00:00 ACCESS GET /corpus/layout.json?t=1792756593484 200
+2026-10-23T11:56:31.390+00:00 ACCESS GET /corpus/skip.json?t=1792756593569 200
+2026-10-23T11:56:31.579+00:00 POST V172-ewwhwk-SKIP-0-to-227 t=1792756593716&n=2 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+
+2026-10-23T11:56:31.580+00:00 ACCESS POST /beacon/V172-ewwhwk-CURSOR-0-to-227?t=1792756593715&n=1 204
+2026-10-23T11:56:31.580+00:00 ACCESS POST /beacon/V172-ewwhwk-SKIP-0-to-227?t=1792756593716&n=2 204
+2026-10-23T11:56:31.600+00:00 POST V172-ewwhwk-BOOT-232-from-227-to-232 t=1792756593716&n=3 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:31.601+00:00 ACCESS POST /beacon/V172-ewwhwk-BOOT-232-from-227-to-232?t=1792756593716&n=3 204
+2026-10-23T11:56:31.621+00:00 ACCESS GET /corpus/lay-228-scroll-driven-animation-registry-update-crash-html.html?i=227&next=228&e=232&c=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:31.706+00:00 POST V172-ewwhwk-BEFORE-227 t=1792756593842&n=4 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:31.708+00:00 ACCESS POST /beacon/V172-ewwhwk-BEFORE-227?t=1792756593842&n=4 204
+2026-10-23T11:56:31.736+00:00 POST V172-ewwhwk-OK-227-lay-228-scroll-driven-animation-registry-update-crash-html.html t=1792756593843&n=5 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:31.736+00:00 POST V172-ewwhwk-GAP-227 t=1792756593843&n=6 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:31.737+00:00 ACCESS POST /beacon/V172-ewwhwk-GAP-227?t=1792756593843&n=6 204
+2026-10-23T11:56:31.738+00:00 ACCESS POST /beacon/V172-ewwhwk-OK-227-lay-228-scroll-driven-animation-registry-update-crash-html.html?t=1792756593843&n=5 204
+2026-10-23T11:56:31.758+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=228&count=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:31.928+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=228&count=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:32.019+00:00 ACCESS GET /corpus/layout.json?t=1792756594134 200
+2026-10-23T11:56:32.097+00:00 ACCESS GET /corpus/skip.json?t=1792756594246 200
+2026-10-23T11:56:32.241+00:00 POST V172-ewwhwk-BOOT-232-from-228-to-232 t=1792756594409&n=7 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:32.243+00:00 ACCESS POST /beacon/V172-ewwhwk-BOOT-232-from-228-to-232?t=1792756594409&n=7 204
+2026-10-23T11:56:32.331+00:00 ACCESS GET /corpus/lay-229-threaded-animation-offset-path-margin-box-crash-html.html?i=228&next=229&e=232&c=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:32.426+00:00 POST V172-ewwhwk-BEFORE-228 t=1792756594559&n=8 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:32.428+00:00 ACCESS POST /beacon/V172-ewwhwk-BEFORE-228?t=1792756594559&n=8 204
+2026-10-23T11:56:32.440+00:00 POST V172-ewwhwk-GAP-228 t=1792756594560&n=10 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:32.439+00:00 POST V172-ewwhwk-OK-228-lay-229-threaded-animation-offset-path-margin-box-crash-html.html t=1792756594560&n=9 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:32.440+00:00 ACCESS POST /beacon/V172-ewwhwk-GAP-228?t=1792756594560&n=10 204
+2026-10-23T11:56:32.442+00:00 ACCESS POST /beacon/V172-ewwhwk-OK-228-lay-229-threaded-animation-offset-path-margin-box-crash-html.html?t=1792756594560&n=9 204
+2026-10-23T11:56:32.504+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=229&count=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:32.655+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=229&count=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:32.709+00:00 ACCESS GET /corpus/layout.json?t=1792756594864 200
+2026-10-23T11:56:32.753+00:00 ACCESS GET /corpus/skip.json?t=1792756594926 200
+2026-10-23T11:56:32.924+00:00 POST V172-ewwhwk-BOOT-232-from-229-to-232 t=1792756595064&n=11 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:32.925+00:00 ACCESS POST /beacon/V172-ewwhwk-BOOT-232-from-229-to-232?t=1792756595064&n=11 204
+2026-10-23T11:56:32.972+00:00 ACCESS GET /corpus/lay-230-timing-function-threading-check-html.html?i=229&next=230&e=232&c=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:33.056+00:00 POST V172-ewwhwk-OK-229-lay-230-timing-function-threading-check-html.html t=1792756595194&n=13 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:33.056+00:00 POST V172-ewwhwk-BEFORE-229 t=1792756595193&n=12 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:33.059+00:00 ACCESS POST /beacon/V172-ewwhwk-OK-229-lay-230-timing-function-threading-check-html.html?t=1792756595194&n=13 204
+2026-10-23T11:56:33.061+00:00 ACCESS POST /beacon/V172-ewwhwk-BEFORE-229?t=1792756595193&n=12 204
+2026-10-23T11:56:33.075+00:00 POST V172-ewwhwk-GAP-229 t=1792756595194&n=14 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:33.076+00:00 ACCESS POST /beacon/V172-ewwhwk-GAP-229?t=1792756595194&n=14 204
+2026-10-23T11:56:33.110+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=230&count=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:33.255+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=230&count=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:33.280+00:00 ACCESS GET /corpus/layout.json?t=1792756595460 200
+2026-10-23T11:56:33.319+00:00 ACCESS GET /corpus/skip.json?t=1792756595497 200
+2026-10-23T11:56:33.469+00:00 POST V172-ewwhwk-BOOT-232-from-230-to-232 t=1792756595631&n=15 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:33.470+00:00 ACCESS POST /beacon/V172-ewwhwk-BOOT-232-from-230-to-232?t=1792756595631&n=15 204
+2026-10-23T11:56:33.488+00:00 ACCESS GET /corpus/lay-231-permissions-query-crash-html.html?i=230&next=231&e=232&c=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:33.545+00:00 POST V172-ewwhwk-BEFORE-230 t=1792756595710&n=16 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:33.547+00:00 ACCESS POST /beacon/V172-ewwhwk-BEFORE-230?t=1792756595710&n=16 204
+2026-10-23T11:56:33.550+00:00 POST V172-ewwhwk-OK-230-lay-231-permissions-query-crash-html.html t=1792756595711&n=17 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:33.552+00:00 ACCESS POST /beacon/V172-ewwhwk-OK-230-lay-231-permissions-query-crash-html.html?t=1792756595711&n=17 204
+2026-10-23T11:56:33.588+00:00 POST V172-ewwhwk-GAP-230 t=1792756595711&n=18 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:33.590+00:00 ACCESS POST /beacon/V172-ewwhwk-GAP-230?t=1792756595711&n=18 204
+2026-10-23T11:56:33.646+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?list=layout.json&start=231&count=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:33.820+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&list=layout.json&start=231&count=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:33.845+00:00 ACCESS GET /corpus/layout.json?t=1792756596024 200
+2026-10-23T11:56:33.916+00:00 ACCESS GET /corpus/skip.json?t=1792756596055 200
+2026-10-23T11:56:34.059+00:00 POST V172-ewwhwk-BOOT-232-from-231-to-232 t=1792756596228&n=19 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:34.060+00:00 ACCESS POST /beacon/V172-ewwhwk-BOOT-232-from-231-to-232?t=1792756596228&n=19 204
+2026-10-23T11:56:34.086+00:00 ACCESS GET /corpus/lay-232-weblock-manager-query-crash-html.html?i=231&next=232&e=232&c=1000&v=ewwhwk&g=1 200
+2026-10-23T11:56:34.169+00:00 POST V172-ewwhwk-BEFORE-231 t=1792756596311&n=20 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:34.172+00:00 ACCESS POST /beacon/V172-ewwhwk-BEFORE-231?t=1792756596311&n=20 204
+2026-10-23T11:56:34.193+00:00 POST V172-ewwhwk-OK-231-lay-232-weblock-manager-query-crash-html.html t=1792756596311&n=21 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:34.195+00:00 ACCESS POST /beacon/V172-ewwhwk-OK-231-lay-232-weblock-manager-query-crash-html.html?t=1792756596311&n=21 204
+2026-10-23T11:56:34.200+00:00 POST V172-ewwhwk-GAP-231 t=1792756596312&n=22 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:34.200+00:00 ACCESS POST /beacon/V172-ewwhwk-GAP-231?t=1792756596312&n=22 204
+2026-10-23T11:56:34.220+00:00 POST V172-ewwhwk-BATCH-END-231 t=1792756596312&n=23 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:34.221+00:00 ACCESS POST /beacon/V172-ewwhwk-BATCH-END-231?t=1792756596312&n=23 204
+2026-10-23T11:56:37.720+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:56:39.509+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-23T11:56:39.568+00:00 ACCESS GET /probe/p_relapse_test.js?cb=1792754139 200
+2026-10-23T11:56:39.728+00:00 ACCESS GET /raw/p_relapse_test.js?cb=1792754139&cb=1792754139 200
+2026-10-23T11:56:39.888+00:00 ACCESS GET /probe/p172-jsc-corpus-runner.js?start=0&count=1000&list=layout.json 200
+2026-10-23T11:56:40.044+00:00 ACCESS GET /raw/p172-jsc-corpus-runner.js?cb=1792619381&start=0&count=1000&list=layout.json 200
+2026-10-23T11:56:40.082+00:00 ACCESS GET /corpus/layout.json?t=1792756602259 200
+2026-10-23T11:56:40.129+00:00 ACCESS GET /corpus/skip.json?t=1792756602308 200
+2026-10-23T11:56:40.277+00:00 POST V172-u0bdvl-CURSOR-0-to-232 t=1792756602438&n=1 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:40.278+00:00 ACCESS POST /beacon/V172-u0bdvl-CURSOR-0-to-232?t=1792756602438&n=1 204
+2026-10-23T11:56:40.302+00:00 POST V172-u0bdvl-BOOT-232-from-232-to-232 t=1792756602439&n=3 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:40.303+00:00 ACCESS POST /beacon/V172-u0bdvl-SKIP-0-to-232?t=1792756602438&n=2 204
+2026-10-23T11:56:40.304+00:00 ACCESS POST /beacon/V172-u0bdvl-BOOT-232-from-232-to-232?t=1792756602439&n=3 204
+2026-10-23T11:56:40.333+00:00 POST V172-u0bdvl-CORPUS-DONE-231 t=1792756602439&n=4 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T11:56:40.338+00:00 ACCESS POST /beacon/V172-u0bdvl-CORPUS-DONE-231?t=1792756602439&n=4 204
+2026-10-23T11:56:59.690+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:57:02.718+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:57:03.348+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:57:24.821+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:57:38.313+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-23T11:57:40.978+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-23T11:57:45.195+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:57:45.376+00:00 DNS BLOCK ppr-crl.rnps.dl.playstation.net 1
+2026-10-23T11:57:51.534+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T11:58:03.010+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-23T11:58:06.273+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:58:26.933+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:58:46.700+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:59:09.000+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:59:28.582+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T11:59:48.850+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:00:08.214+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:00:29.475+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:00:35.949+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-23T12:00:36.127+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T12:00:36.128+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T12:00:51.133+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:01:11.599+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:01:21.087+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-23T12:01:31.295+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:01:50.480+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-23T12:01:53.214+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T12:01:57.235+00:00 DNS Q telemetry-console.api.playstation.com 1

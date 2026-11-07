@@ -1,0 +1,48 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>canvas9</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex(d, n){ var s=''; for (var i=0;i<n && i<d.length;i++){ var h=d[i].toString(16); s += (h.length<2?'0':'')+h; } return s; }
+function stats(d){ var nz=0; for (var i=0;i<d.length;i++) if (d[i]) { nz++; } return nz; }
+function probe(tag, fn){ try { fn(tag); } catch (e) { b(tag+'-THROW-'+(e.name||'?')+'-'+(e.message||'').slice(0,40).replace(/[^A-Za-z0-9]/g,'')); } }
+function mk(w,h,cs){ var c=document.createElement('canvas'); c.width=w; c.height=h; var o={}; if (cs) o.colorSpace=cs; var x=c.getContext('2d',o); return [c,x]; }
+
+b('C9-START');
+probe('K1-outside', function(tag){
+  var a = mk(320,200); var c=a[0], x=a[1];
+  x.fillStyle='#00ff00'; x.fillRect(0,0,320,200);
+  var d = x.getImageData(5000,5000,64,64).data;
+  b(tag+'-len'+d.length+'-nz'+stats(d)+'-h'+hex(d,16));
+});
+probe('K2-negative', function(tag){
+  var a = mk(320,200); var c=a[0], x=a[1];
+  x.fillStyle='#ff0000'; x.fillRect(0,0,320,200);
+  var d = x.getImageData(-50,-50,64,64).data;
+  b(tag+'-len'+d.length+'-nz'+stats(d)+'-h'+hex(d,16));
+});
+probe('K3-p3-to-srgb', function(tag){
+  var a = mk(320,200,'display-p3'); var c=a[0], x=a[1];
+  if (!x) { b(tag+'-NOCTX'); return; }
+  x.fillStyle='rgb(255,0,0)'; x.fillRect(0,0,320,200);
+  var d0 = x.getImageData(0,0,8,8).data;
+  b(tag+'-native-h'+hex(d0,16));
+  var d = x.getImageData(0,0,64,64,{colorSpace:'srgb'}).data;
+  b(tag+'-len'+d.length+'-nz'+stats(d)+'-h'+hex(d,16));
+});
+probe('K4-srgb-to-p3', function(tag){
+  var a = mk(64,64,'srgb'); var c=a[0], x=a[1];
+  x.fillStyle='#0000ff'; x.fillRect(0,0,64,64);
+  var d = x.getImageData(0,0,64,64,{colorSpace:'display-p3'}).data;
+  b(tag+'-len'+d.length+'-nz'+stats(d)+'-h'+hex(d,16));
+});
+probe('K5-empty-canvas', function(tag){
+  var a = mk(64,64); var c=a[0], x=a[1];
+  var d = x.getImageData(0,0,64,64).data;
+  b(tag+'-nz'+stats(d)+'-h'+hex(d,16));
+});
+probe('K6-big', function(tag){
+  var a = mk(4,4); var c=a[0], x=a[1];
+  var d = x.getImageData(0,0,4096,4096).data;
+  b(tag+'-len'+d.length+'-nz'+stats(d)+'-h'+hex(d,16));
+});
+b('C9-DONE');
+</script></head><body>canvas9</body></html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng5</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url+'?t='+Date.now(); }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function dump(tag,d,n,chunk){ var h=hexAll(d,n); for(var o=0,part=0;o<h.length;o+=chunk,part++) b(tag+'-'+part+'-'+h.substr(o,chunk)); }
+function drawN(w,im,prefill){ var c=document.createElement('canvas'); c.width=w; c.height=1; var g=c.getContext('2d'); if(prefill){g.fillStyle=prefill;g.fillRect(0,0,w,1);} g.drawImage(im,0,0); var d=g.getImageData(0,0,w,1).data; window.__last=c; return d; }
+
+T=[];
+T.push(function(im){ var ws=[8,12,16,24,32,48,64,96,128,192]; for(var k=0;k<ws.length;k++){ var w=ws[k]; try{ var d=drawN(w,im); b('A5-W'+w+'-ok'); dump('A5-W'+w,d,w,700);}catch(e){b('A5-W'+w+'-E-'+e.name);} } });
+T.push(function(im){ try{ var d=drawN(64,im,'#00ff00'); b('A5-PREFILL-ok'); dump('A5-PREFILL',d,64,700);}catch(e){b('A5-PREFILL-E-'+e.name);} });
+T.push(function(im){ var a=[]; for(var i=0;i<6000;i++){ a.push(new Uint32Array(4)); } b('A5-U32KEEP-'+a.length); try{ var d=drawN(64,im); dump('A5-U32KEEP',d,64,700);}catch(e){b('A5-U32KEEP-E-'+e.name);} a.length=0; a=null; });
+T.push(function(im){ var a=[]; for(var i=0;i<6000;i++){ var o={a:1,b:2,c:3,d:4,e:5,f:6}; o.self=o; a.push(o); } b('A5-OBJ-'+a.length); try{ var d=drawN(64,im); dump('A5-OBJ',d,64,700);}catch(e){b('A5-OBJ-E-'+e.name);} a.length=0; a=null; });
+T.push(function(im){ var a=[]; for(var i=0;i<6000;i++){ a.push([1.5,2.5,3.5,4.5]); } b('A5-ARRNUM-'+a.length); try{ var d=drawN(64,im); dump('A5-ARRNUM',d,64,700);}catch(e){b('A5-ARRNUM-E-'+e.name);} a.length=0; a=null; });
+function boot(){
+  b('A5-BOOT');
+  img('/corpus/apng-fw1.png').then(function(im){
+    if(!im){ b('A5-NOIMG'); return; }
+    for(var i=0;i<T.length;i++){ try{ T[i](im); }catch(e){ b('A5-T'+i+'-E-'+e.name); } }
+    b('A5-DONE');
+  });
+}
+boot();
+</script></head><body><p>apng5</p></body></html>

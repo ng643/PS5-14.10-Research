@@ -1,0 +1,8 @@
+2026-10-27T22:22:41.445+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-27T22:22:41.494+00:00 DNS Q qgve.dl.playstation.net 1
+2026-10-27T22:22:41.622+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-27T22:22:41.684+00:00 DNS Q bclog.np.rds.s0.playstation.net 1
+2026-10-27T22:22:41.789+00:00 DNS Q static-resource.np.community.playstation.net 1
+2026-10-27T22:22:42.085+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-27T22:22:46.240+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-27T22:22:46.364+00:00 DNS BLOCK smetrics.aem.playstation.com 1

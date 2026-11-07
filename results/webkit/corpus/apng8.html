@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng8</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url; }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function dump(tag,d,n,chunk){ var h=hexAll(d,n); for(var o=0,part=0;o<h.length;o+=chunk,part++) b(tag+'-'+part+'-'+h.substr(o,chunk)); }
+function drawN(w,im){ var c=document.createElement('canvas'); c.width=w; c.height=1; var g=c.getContext('2d'); g.drawImage(im,0,0); var d=g.getImageData(0,0,w,1).data; window.__last=c; return d; }
+var seq=0;
+function load(im){ return img('/corpus/'+im+'?n='+(++seq)); }
+function fill(n,size,val){ var a=[]; for(var i=0;i<n;i++){ var u=new Uint8Array(size); for(var j=0;j<size;j++) u[j]=val; a.push(u); } return a; }
+function forceGC(){ var junk=[]; for(var i=0;i<24;i++){ junk.push(new ArrayBuffer(4*1024*1024)); } junk=null; for(var i=0;i<8;i++){ var s=''; for(var j=0;j<20000;j++) s+='g'; junk=null; } return 1; }
+function boot(){
+  b('A8-BOOT');
+  load('apng-fw1.png').then(function(i0){
+    if(!i0){ b('A8-NOIMG'); return; }
+    var d0=drawN(64,i0); b('A8-A-ok'); dump('A8-A',d0,64,700);
+    // churn chunks AND force collection so they are really returned
+    var a=fill(6000,256,0x41); b('A8-B-fill-'+a.length); a.length=0; a=null; forceGC(); b('A8-B-gc');
+    load('apng-fw1.png').then(function(i1){
+      var d1=drawN(64,i1); b('A8-B-ok'); dump('A8-B',d1,64,700);
+      var c=fill(6000,256,0x45); b('A8-C-fill-'+c.length); c.length=0; c=null; forceGC(); b('A8-C-gc');
+      load('apng-fw1.png').then(function(i2){
+        var d2=drawN(64,i2); b('A8-C-ok'); dump('A8-C',d2,64,700);
+        b('A8-DONE');
+      });
+    });
+  });
+}
+boot();
+</script></head><body><p>apng8</p></body></html>

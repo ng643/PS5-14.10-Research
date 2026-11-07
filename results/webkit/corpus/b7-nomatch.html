@@ -1,0 +1,67 @@
+<!doctype html><meta charset="utf-8"><title>b7-nomatch</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+function shouldBeArray(a,b,m){if(JSON.stringify(a)!==JSON.stringify(b))throw new Error('FAIL '+m);}
+function shouldBe(a,b,m){if(a!==b)throw new Error('FAIL '+m);}
+function mark(t){var u=location.origin+'/beacon/P176-'+t;try{if(navigator.sendBeacon&&navigator.sendBeacon(u))return;}catch(e){}try{var x=new XMLHttpRequest();x.open('GET',u,true);x.send();}catch(e){}}
+var np = "\u{10000}", lead = "\uD800", trail = "\uDC00";
+
+mark("b7-nomatch-start");
+var t0 = Date.now();
+for (var i = 0; i < 200; i++) {
+try {
+
+shouldBe(/[^"]*X/u.test(np + trail + lead + "aaa"), false, "no match after full backtrack");
+shouldBe(new RegExp("[^\"]{0,4}X", "u").test(np + "aaa"), false, "bounded no match");
+
+} catch (e) { mark('%s-threw-' + e.message); }
+}
+mark("b7-nomatch-end-" + (Date.now() - t0) + "ms");
+</script><p>done</p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-' + location.pathname.replace(/.*\//, ''));
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

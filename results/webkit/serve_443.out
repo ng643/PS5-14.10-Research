@@ -1,0 +1,24 @@
+  corpus run state: C:\PS5contrib\results\webkit\state.json
+serving 18 probes on https://0.0.0.0:443
+  from the console: https://192.168.1.185:443/
+  beacon log: C:\PS5contrib\results\webkit\server_20261021_162153.log
+  unknown paths -> /probe/p172-jsc-corpus-runner.js
+  DNS on udp/53: manuals.playstation.net -> 192.168.1.185, rest via 8.8.8.8
+  DNS blocked -> 0.0.0.0: *.sonyentertainmentnetwork.com, ps5.np.playstation.net, feature.api.playstation.com, smetrics.aem.playstation.com, takedown.api.playstation.com, *.rnps.dl.playstation.net
+  User's Guide needs the DNS redirect; see docs/WEBKIT_FINDINGS.md:95-99
+2026-10-21T15:21:53.586+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-21T15:21:57.783+00:00 DNS Q envelope2.np.dl.playstation.net 12026-10-21T15:21:57.784+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-21T15:21:57.785+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-21T15:21:57.786+00:00 DNS Q envelope2.np.dl.playstation.net 1
+
+2026-10-21T15:21:58.339+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-21T15:21:58.969+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-21T15:21:59.012+00:00 DNS Q qgve.dl.playstation.net 1
+2026-10-21T15:22:05.326+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-21T15:22:12.695+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-21T15:22:31.772+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-21T15:22:46.875+00:00 DNS Q envelope2.np.dl.playstation.net 1
+2026-10-21T15:22:50.855+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-21T15:23:11.675+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-21T15:23:30.104+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-21T15:23:32.845+00:00 DNS Q telemetry-console.api.playstation.com 1

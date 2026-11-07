@@ -1,0 +1,72 @@
+<!doctype html><html><head><meta charset="utf-8"><title>leak catalog</title></head><body>
+<script>
+function mark(t){ try { (new Image()).src = '/beacon/CAT-' + encodeURIComponent(String(t).slice(0,180)) + '?t=' + Date.now(); } catch(e){} }
+function tag(v){
+  try {
+    if (v === null) return 'null';
+    if (v === undefined) return 'undefined';
+    var t = typeof v, s = '?';
+    try { s = Object.prototype.toString.call(v); } catch(e){ s = 'tag-err'; }
+    var k = '';
+    try { k = Object.getOwnPropertyNames(v).slice(0,4).join(','); } catch(e){ k = 'keys-err'; }
+    return t + ':' + s + (k ? ' {' + k + '}' : '');
+  } catch(e) { return 'DERR'; }
+}
+function probe(name, fn){ try { mark(name + ' = ' + tag(fn())); } catch(e){ mark(name + ' ERR ' + (e && e.message)); } }
+
+mark('BOOT');
+
+probe('01-super-proxy', function(){
+  class L { leak(){ return super.foo; } }
+  L.prototype.__proto__ = new Proxy({}, { get: function(t,p,r){ return r; } });
+  var f = L.prototype.leak; return f();
+});
+probe('02-with-proxy', function(){
+  var p = new Proxy({}, { has: function(){ return true; }, get: function(t,k,r){ return r; } });
+  var out; with (p) { out = qqq; } return out;
+});
+probe('03-eval-with', function(){
+  var p = new Proxy({}, { has: function(){ return true; }, get: function(t,k,r){ return r; } });
+  var out; with (p) { out = eval('qqq'); } return out;
+});
+probe('04-arguments', function(){ return (function(){ return arguments; })(1,2); }.call(null));
+probe('05-caller', function(){ function f(){ return f.caller; } return f(); });
+probe('06-callsite', function(){
+  var got; Error.prepareStackTrace = function(e, frames){ got = frames; return 'x'; };
+  var e = new Error(); e.stack; Error.prepareStackTrace = undefined;
+  return got && got[0] ? got[0].getThis() : 'noframes';
+});
+probe('07-iterator-proto', function(){
+  var proto = Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]()));
+  Object.defineProperty(proto, 'zz', { get: function(){ return this; }, configurable: true });
+  var out; for (var x of [1]) { out = x; break; }
+  delete proto.zz; return out;
+});
+probe('08-proxy-gopd', function(){
+  var seen; var p = new Proxy({}, { getOwnPropertyDescriptor: function(t,k){ seen = arguments; return undefined; },
+                                     ownKeys: function(){ return ['a']; } });
+  Object.getOwnPropertyDescriptor(p, 'a'); return seen ? seen[2] : 'nocall';
+});
+probe('09-document-all', function(){ return document.all; });
+probe('10-iframe-realm', function(){
+  var f = document.createElement('iframe'); f.style.display='none'; document.body.appendChild(f);
+  var w = f.contentWindow; var v = w.Object; document.body.removeChild(f); return v;
+});
+probe('11-toPrimitive', function(){
+  var o = {}; o[Symbol.toPrimitive] = function(hint){ return this; };
+  var out; try { out = '' + o; } catch(e){ out = 'threw ' + e.name; } return out;
+});
+probe('12-sort-this', function(){ var seen; [2,1].sort(function(a,b){ seen = this; return a-b; }); return seen; });
+probe('13-construct-proxy', function(){
+  var p = new Proxy(function(){}, { construct: function(t, args, nt){ return nt; } });
+  return new p();
+});
+probe('14-class-scope', function(){
+  var out; class C { constructor(){ out = (function(){ return this; })(); } } new C(); return out;
+});
+probe('15-private-brand', function(){
+  class P { #x = 1; static get(o){ try { return o.#x; } catch(e){ return 'throws'; } } }
+  return P.get(new P());
+});
+mark('DONE');
+</script></body></html>

@@ -1,0 +1,35 @@
+2026-10-20T09:45:32.834+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-20T09:45:32.928+00:00 ACCESS GET /probe/p171-popup-paths.js?only=BLANK&auto=1 302
+2026-10-20T09:45:33.378+00:00 ACCESS GET /status 200
+2026-10-20T09:45:49.673+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-20T09:45:50.134+00:00 ACCESS GET /probe/p166-corpus-runner.js?start=30&count=3 200
+2026-10-20T09:46:54.721+00:00 ACCESS GET /corpus/list.json 200
+2026-10-20T09:47:02.126+00:00 ACCESS GET /corpus/LayoutTests_fast_scrolling_mac_event-dispatcher-timer-close-crash.html 200
+2026-10-20T09:47:09.926+00:00 ACCESS GET /corpus/LayoutTests_fast_scrolling_mac_event-dispatcher-timer-close-crash.html 200
+2026-10-20T09:47:25.135+00:00 ACCESS GET /corpus/LayoutTests_fast_scrolling_mac_event-dispatcher-timer-close-crash.html 200
+2026-10-20T09:47:25.569+00:00 ACCESS GET /status 200
+2026-10-20T09:47:34.651+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-20T09:47:35.013+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T09:48:27.083+00:00 ACCESS GET /probe/p171-popup-paths.js?only=BLANK&cb=1792489198 302
+2026-10-20T09:48:27.142+00:00 ACCESS GET / 200
+2026-10-20T09:48:28.656+00:00 ACCESS GET /document/gb/ps5/ 302
+2026-10-20T09:48:28.708+00:00 ACCESS GET /probe/p166-corpus-runner.js?start=30&count=1000&cb=1792486603 200
+2026-10-20T09:48:28.775+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-20T09:48:28.861+00:00 ACCESS GET /raw/p166-corpus-runner.js?cb=1792486603&start=30&count=1000&cb=1792486603 200
+2026-10-20T09:48:28.900+00:00 ACCESS GET /corpus/list.json?t=1792489707388 200
+2026-10-20T09:48:28.961+00:00 POST V166-sphvrs-BOOT-124-from-30-to-124 t=1792489707450&n=1 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T09:48:28.963+00:00 ACCESS POST /beacon/V166-sphvrs-BOOT-124-from-30-to-124?t=1792489707450&n=1 204
+2026-10-20T09:48:28.970+00:00 POST V166-sphvrs-BEFORE-30 t=1792489707451&n=2 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T09:48:28.974+00:00 ACCESS POST /beacon/V166-sphvrs-BEFORE-30?t=1792489707451&n=2 204
+2026-10-20T09:48:28.998+00:00 ACCESS GET /corpus/LayoutTests_fast_scrolling_mac_event-dispatcher-timer-close-crash.html 200
+2026-10-20T09:48:29.065+00:00 POST V166-sphvrs-OK-30-LayoutTests_fast_scrolling_mac_event-dispatcher-timer-close-crash.html t=1792489707535&n=3 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T09:48:29.067+00:00 ACCESS POST /beacon/V166-sphvrs-OK-30-LayoutTests_fast_scrolling_mac_event-dispatcher-timer-close-crash.html?t=1792489707535&n=3 204
+2026-10-20T09:48:29.114+00:00 POST V166-sphvrs-GAP-30 t=1792489707535&n=4 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-20T09:48:29.116+00:00 ACCESS POST /beacon/V166-sphvrs-GAP-30?t=1792489707535&n=4 204
+2026-10-20T09:48:33.138+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-20T09:49:06.328+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-20T09:49:06.564+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T09:49:13.554+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-20T09:50:11.217+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-20T09:50:27.831+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-20T09:50:27.831+00:00 DNS Q ps5cel.np.dl.playstation.net 1

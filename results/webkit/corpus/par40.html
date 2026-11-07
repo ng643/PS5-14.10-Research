@@ -1,0 +1,48 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>par40</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+var TRIAL = 0, styleEl = null, fired = false;
+function setup(){
+  var name = 'f' + TRIAL;
+  var A = new FontFace(name, 'local(Helvetica)', { unicodeRange: 'U+0041' });
+  document.fonts.add(A);
+  void A.loaded;
+  styleEl = document.createElement('style');
+  styleEl.textContent = "@font-face { font-family: s" + TRIAL + "; src: local(Arial); unicode-range: U+0042; }";
+  document.head.appendChild(styleEl);
+  b('Q' + TRIAL + '-SETUP');
+  if (TRIAL === 1) {
+    var css = '';
+    for (var i = 0; i < 4000; i++)
+      css += "@font-face { font-family: q" + i + "; src: local(Arial); unicode-range: U+0042; }\n";
+    var bulk = document.createElement('style');
+    bulk.textContent = css;
+    document.head.appendChild(bulk);
+    document.body.offsetTop;
+    b('Q1-BULK-' + document.fonts.size);
+  }
+  fired = false;
+  Object.defineProperty(FontFace.prototype, 'then', {
+    configurable: true,
+    get: function(){
+      if (!fired && this === A) {
+        fired = true;
+        b('Q' + TRIAL + '-GETTER');
+        if (styleEl) styleEl.remove();
+        try { document.fonts.delete(this); } catch (e) {}
+        b('Q' + TRIAL + '-DELETED');
+        document.body.offsetHeight;
+        b('Q' + TRIAL + '-LAYOUT');
+      }
+      return undefined;
+    }
+  });
+  document.fonts.load('1em ' + name + ', s' + TRIAL, 'AB').then(function(v){
+    b('Q' + TRIAL + '-RESOLVED-n' + (v ? v.length : -1));
+    next();
+  }, function(){ b('Q' + TRIAL + '-REJECTED'); next(); });
+  b('Q' + TRIAL + '-LOAD-CALLED');
+}
+function next(){ TRIAL++; if (TRIAL < 2) setTimeout(setup, 150); else b('Q-DONE'); }
+setup();
+</script></head><body><p>par40</p></body></html>

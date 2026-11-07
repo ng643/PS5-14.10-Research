@@ -1,0 +1,209 @@
+<!doctype html><meta charset="utf-8"><title>cross-realm-await-thenable-resolve-realm.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error('bad value: ' + actual + ', expected ' + expected);
+}
+
+const results = {};
+
+function setup(label, makePromise) {
+    const other = createGlobalObject();
+    other.MainFunction = Function;
+    other.results = results;
+    other.label = label;
+    const { promise, settle } = makePromise();
+    other.subject = promise;
+    new other.Function(`
+        (async () => {
+            await subject;
+            await { then(f) {
+                results[label] = f.constructor === Function ? "own-realm"
+                    : f.constructor === MainFunction ? "main-realm"
+                    : "unknown";
+                f(0);
+            } };
+            results[label + "-done"] = true;
+        })();
+    `)();
+    return settle;
+}
+
+// An async function awaiting a pending cross-realm vanilla promise must not have
+// its continuation realm poisoned: the resolving functions of a subsequently
+// awaited thenable must belong to the async function's realm.
+const settlePending = setup("pending-vanilla", () => {
+    let resolve;
+    const promise = new Promise((r) => { resolve = r; });
+    return { promise, settle: () => { resolve(1); } };
+});
+
+setup("fulfilled-vanilla", () => ({ promise: Promise.resolve(1), settle: () => {} }));
+
+setup("fulfilled-vanilla", () => ({ promise: Promise.resolve(1), settle: () => {} }));
+
+class SubPromise extends Promise {}
+const settleSubclass = setup("pending-subclass", () => {
+    let resolve;
+    const promise = new SubPromise((r) => { resolve = r; });
+    return { promise, settle: () => { resolve(1); } };
+});
+
+// Adopting a cross-realm promise through a resolving function must not leak the
+// foreign realm into a same-realm promise that an async function is awaiting.
+let settleMainForAdoption;
+{
+    const other = createGlobalObject();
+    other.MainFunction = Function;
+    other.results = results;
+    const mainPending = new Promise((r) => { settleMainForAdoption = () => { r(2); }; });
+    other.subject = mainPending;
+    new other.Function(`
+        let resolveLocal;
+        const local = new Promise((r) => { resolveLocal = r; });
+        (async () => {
+            await local;
+            await { then(f) {
+                results["resolving-function-adoption"] = f.constructor === Function ? "own-realm"
+                    : f.constructor === MainFunction ? "main-realm"
+                    : "unknown";
+                f(0);
+            } };
+            results["resolving-function-adoption-done"] = true;
+        })();
+        resolveLocal(subject);
+    `)();
+}
+
+// Async generators drive awaited values through the same adoption path.
+let settleMainForGenerator;
+{
+    const other = createGlobalObject();
+    other.MainFunction = Function;
+    other.results = results;
+    const mainPending = new Promise((r) => { settleMainForGenerator = () => { r(3); }; });
+    other.subject = mainPending;
+    new other.Function(`
+        async function* generate() {
+            await subject;
+            yield { then(f) {
+                results["async-generator"] = f.constructor === Function ? "own-realm"
+                    : f.constructor === MainFunction ? "main-realm"
+                    : "unknown";
+                f(0);
+            } };
+        }
+        (async () => {
+            for await (const value of generate()) { }
+            results["async-generator-done"] = true;
+        })();
+    `)();
+}
+
+drainMicrotasks();
+settlePending();
+settleSubclass();
+settleMainForAdoption();
+settleMainForGenerator();
+drainMicrotasks();
+
+shouldBe(results["pending-vanilla"], "own-realm");
+shouldBe(results["pending-vanilla-done"], true);
+shouldBe(results["fulfilled-vanilla"], "own-realm");
+shouldBe(results["fulfilled-vanilla-done"], true);
+shouldBe(results["pending-subclass"], "own-realm");
+shouldBe(results["pending-subclass-done"], true);
+shouldBe(results["resolving-function-adoption"], "own-realm");
+shouldBe(results["resolving-function-adoption-done"], true);
+shouldBe(results["async-generator"], "own-realm");
+shouldBe(results["async-generator-done"], true);
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-1138-cross-realm-await-thenable-resolve-realm.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

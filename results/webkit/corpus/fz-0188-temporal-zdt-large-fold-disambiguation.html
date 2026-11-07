@@ -1,0 +1,295 @@
+<!doctype html><meta charset="utf-8"><title>temporal-zdt-large-fold-disambiguation.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`expected ${JSON.stringify(expected)} but got ${JSON.stringify(actual)}`);
+}
+function shouldThrowRangeError(fn) {
+    try { fn(); throw new Error("expected RangeError but no exception thrown"); }
+    catch (e) { if (!(e instanceof RangeError)) throw new Error(`expected RangeError, got ${e}`); }
+}
+
+// Alaska Purchase: Aleutian Islands crossed the date line, -24h fall-back.
+// Before: +12:13:22 (Russian side), After: -11:46:38 (US side).
+// This was the primary failing case (earlier → wrong offset -11:47).
+{
+    const transition = '1867-10-19T00:44:35'; // mid-fold: ambiguous local time
+    const tz = 'America/Adak';
+    const mid = Temporal.PlainDateTime.from(transition);
+
+    // Earlier (pre-fold, Russian side offset) — this was the broken case
+    const e = mid.toZonedDateTime(tz, { disambiguation: 'earlier' });
+    shouldBe(e.offset, '+12:13:22');
+    shouldBe(e.year, 1867); shouldBe(e.month, 10); shouldBe(e.day, 19);
+    shouldBe(e.hour, 0); shouldBe(e.minute, 44); shouldBe(e.second, 35);
+
+    // Later (post-fold, US side offset)
+    const l = mid.toZonedDateTime(tz, { disambiguation: 'later' });
+    shouldBe(l.offset, '-11:46:38');
+    shouldBe(l.year, 1867); shouldBe(l.month, 10); shouldBe(l.day, 19);
+    shouldBe(l.hour, 0); shouldBe(l.minute, 44); shouldBe(l.second, 35);
+
+    const c = mid.toZonedDateTime(tz, { disambiguation: 'compatible' });
+    shouldBe(c.epochNanoseconds, e.epochNanoseconds);
+
+    shouldThrowRangeError(() => mid.toZonedDateTime(tz, { disambiguation: 'reject' }));
+
+    const ef = Temporal.ZonedDateTime.from({ year: 1867, monthCode: 'M10', day: 19,
+        hour: 0, minute: 44, second: 35, timeZone: tz }, { disambiguation: 'earlier' });
+    const lf = Temporal.ZonedDateTime.from({ year: 1867, monthCode: 'M10', day: 19,
+        hour: 0, minute: 44, second: 35, timeZone: tz }, { disambiguation: 'later' });
+    shouldBe(ef.epochNanoseconds, e.epochNanoseconds);
+    shouldBe(lf.epochNanoseconds, l.epochNanoseconds);
+
+    shouldBe(e.with({ offset: l.offset }).epochNanoseconds, l.epochNanoseconds);
+    shouldBe(l.with({ offset: e.offset }).epochNanoseconds, e.epochNanoseconds);
+
+    const diffNs = l.epochNanoseconds - e.epochNanoseconds;
+    shouldBe(diffNs, 86400000000000n);
+}
+
+// Same Alaska Purchase event, different Alaskan city. -24h fall-back.
+{
+    const tz = 'America/Anchorage';
+    const mid = Temporal.PlainDateTime.from('1867-10-19T02:31:37');
+
+    const e = mid.toZonedDateTime(tz, { disambiguation: 'earlier' });
+    const l = mid.toZonedDateTime(tz, { disambiguation: 'later' });
+
+    shouldBe(e.offset, '+14:00:24');
+    shouldBe(l.offset, '-09:59:36');
+    shouldBe(e.epochNanoseconds < l.epochNanoseconds, true);
+    shouldBe(l.epochNanoseconds - e.epochNanoseconds, 86400000000000n); // 24h apart
+
+    const c = mid.toZonedDateTime(tz, { disambiguation: 'compatible' });
+    shouldBe(c.epochNanoseconds, e.epochNanoseconds);
+
+    shouldThrowRangeError(() => mid.toZonedDateTime(tz, { disambiguation: 'reject' }));
+}
+
+// Samoa crossed the date line from east to west, -24h fall-back.
+{
+    const tz = 'Pacific/Apia';
+    const mid = Temporal.PlainDateTime.from('1892-07-04T12:00:00');
+
+    const e = mid.toZonedDateTime(tz, { disambiguation: 'earlier' });
+    const l = mid.toZonedDateTime(tz, { disambiguation: 'later' });
+
+    shouldBe(e.offset, '+12:33:04');
+    shouldBe(l.offset, '-11:26:56');
+    shouldBe(l.epochNanoseconds - e.epochNanoseconds, 86400000000000n); // 24h apart
+
+    shouldBe(e.with({ offset: l.offset }).epochNanoseconds, l.epochNanoseconds);
+    shouldBe(l.with({ offset: e.offset }).epochNanoseconds, e.epochNanoseconds);
+    shouldThrowRangeError(() => mid.toZonedDateTime(tz, { disambiguation: 'reject' }));
+}
+
+// Kwajalein switched sides, ~23h fall-back (not quite 24 due to non-integer offset).
+{
+    const tz = 'Pacific/Kwajalein';
+    const mid = Temporal.PlainDateTime.from('1969-09-30T12:30:00');
+
+    const e = mid.toZonedDateTime(tz, { disambiguation: 'earlier' });
+    const l = mid.toZonedDateTime(tz, { disambiguation: 'later' });
+
+    shouldBe(e.offset, '+11:00');
+    shouldBe(l.offset, '-12:00');
+    shouldBe(e.epochNanoseconds < l.epochNanoseconds, true);
+
+    shouldThrowRangeError(() => mid.toZonedDateTime(tz, { disambiguation: 'reject' }));
+}
+
+// Expanding the fold window must not break standard 1h DST folds.
+{
+    // 2024-11-03 01:30 America/Los_Angeles — fall back from PDT to PST
+    const mid = Temporal.PlainDateTime.from('2024-11-03T01:30:00');
+    const tz = 'America/Los_Angeles';
+
+    const e = mid.toZonedDateTime(tz, { disambiguation: 'earlier' });
+    const l = mid.toZonedDateTime(tz, { disambiguation: 'later' });
+    const c = mid.toZonedDateTime(tz, { disambiguation: 'compatible' });
+
+    shouldBe(e.offset, '-07:00');  // PDT (summer time, earlier UTC)
+    shouldBe(l.offset, '-08:00');  // PST (winter time, later UTC)
+    shouldBe(c.epochNanoseconds, e.epochNanoseconds); // compatible = earlier for fall-back
+    shouldBe(l.epochNanoseconds - e.epochNanoseconds, 3600000000000n); // 1h apart
+
+    shouldThrowRangeError(() => mid.toZonedDateTime(tz, { disambiguation: 'reject' }));
+
+    // with({offset}) switching
+    shouldBe(e.with({ offset: '-08:00' }).epochNanoseconds, l.epochNanoseconds);
+    shouldBe(l.with({ offset: '-07:00' }).epochNanoseconds, e.epochNanoseconds);
+}
+
+{
+    const td = new Temporal.Duration(0, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+    const t = Temporal.Instant.from('1850-01-01T00Z')
+        .toZonedDateTimeISO('America/Adak')
+        .getTimeZoneTransition('next');
+
+    // The transition ZDT itself carries the post-transition (new) offset
+    const after = t.add(td);
+    shouldBe(t.offsetNanoseconds, after.offsetNanoseconds);
+
+    // Wall-clock distance between 1ns before and 1ns after = |offsetChange| + 2ns
+    const before = t.subtract(td);
+    const offsetChange = after.offsetNanoseconds - before.offsetNanoseconds; // -24h in ns
+    const wallBefore = before.toPlainDateTime();
+    const wallAfter  = after.toPlainDateTime();
+    const wallDiffNs = BigInt(wallBefore.until(wallAfter, { largestUnit: 'nanoseconds' }).nanoseconds);
+    // offsetChange is negative (fall-back), so wall diff = offsetChange + 2ns
+    shouldBe(wallDiffNs, BigInt(offsetChange) + 2n);
+}
+
+// Same date-line crossing pattern as Alaska but for Samoa.
+{
+    const tz = 'Pacific/Apia';
+    const mid = Temporal.PlainDateTime.from('1892-07-04T12:00:00');
+    const e = mid.toZonedDateTime(tz, { disambiguation: 'earlier' });
+    const l = mid.toZonedDateTime(tz, { disambiguation: 'later' });
+    shouldBe(e.offset, '+12:33:04');
+    shouldBe(l.offset, '-11:26:56');
+    shouldBe(l.epochNanoseconds - e.epochNanoseconds, 86400000000000n);
+    shouldThrowRangeError(() => mid.toZonedDateTime(tz, { disambiguation: 'reject' }));
+    shouldBe(mid.toZonedDateTime(tz, { disambiguation: 'compatible' }).epochNanoseconds, e.epochNanoseconds);
+}
+
+// ─── Pacific/Midway 1892 (24h fall-back, Midway Islands date-line crossing) ─
+{
+    const tz = 'Pacific/Midway';
+    const mid = Temporal.PlainDateTime.from('1892-07-04T12:00:00');
+    const e = mid.toZonedDateTime(tz, { disambiguation: 'earlier' });
+    const l = mid.toZonedDateTime(tz, { disambiguation: 'later' });
+    shouldBe(e.offset, '+12:37:12');
+    shouldBe(l.offset, '-11:22:48');
+    shouldBe(l.epochNanoseconds - e.epochNanoseconds, 86400000000000n);
+    shouldThrowRangeError(() => mid.toZonedDateTime(tz, { disambiguation: 'reject' }));
+}
+
+// ─── Pacific/Midway 1892 (24h fall-back, Midway Islands date-line crossing) ─
+{
+    const tz = 'Pacific/Midway';
+    const mid = Temporal.PlainDateTime.from('1892-07-04T12:00:00');
+    const e = mid.toZonedDateTime(tz, { disambiguation: 'earlier' });
+    const l = mid.toZonedDateTime(tz, { disambiguation: 'later' });
+    shouldBe(e.offset, '+12:37:12');
+    shouldBe(l.offset, '-11:22:48');
+    shouldBe(l.epochNanoseconds - e.epochNanoseconds, 86400000000000n);
+    shouldThrowRangeError(() => mid.toZonedDateTime(tz, { disambiguation: 'reject' }));
+}
+
+// Tests the expanded fold window also handles large spring-forwards (gaps).
+{
+    const tz = 'Antarctica/Davis';
+    // 1957-01-13T03:30 is in the 7h DST gap (spring forward from UTC+0 to UTC+7)
+    const mid = Temporal.PlainDateTime.from('1957-01-13T03:30:00');
+    const l = mid.toZonedDateTime(tz, { disambiguation: 'later' });
+    const e = mid.toZonedDateTime(tz, { disambiguation: 'earlier' });
+    shouldBe(l.offset, '+07:00');
+    shouldBe(e.offset, '+00:00');
+    // compatible = later for spring-forward (gap)
+    shouldBe(mid.toZonedDateTime(tz, { disambiguation: 'compatible' }).epochNanoseconds, l.epochNanoseconds);
+    shouldThrowRangeError(() => mid.toZonedDateTime(tz, { disambiguation: 'reject' }));
+}
+
+{
+    const tz = 'Antarctica/Casey';
+    const mid = Temporal.PlainDateTime.from('1969-01-01T04:00:00');
+    const l = mid.toZonedDateTime(tz, { disambiguation: 'later' });
+    const e = mid.toZonedDateTime(tz, { disambiguation: 'earlier' });
+    shouldBe(l.offset, '+08:00');
+    shouldBe(e.offset, '+00:00');
+    shouldBe(mid.toZonedDateTime(tz, { disambiguation: 'compatible' }).epochNanoseconds, l.epochNanoseconds);
+    shouldThrowRangeError(() => mid.toZonedDateTime(tz, { disambiguation: 'reject' }));
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-0188-temporal-zdt-large-fold-disambiguation.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

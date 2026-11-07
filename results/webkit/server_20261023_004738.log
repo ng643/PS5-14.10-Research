@@ -1,0 +1,6 @@
+2026-10-22T23:48:37.404+00:00 ACCESS GET / 200
+2026-10-22T23:48:37.446+00:00 ACCESS GET /probe/p450-layout-in-getter.js?cb=1 302
+2026-10-22T23:48:40.931+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-22T23:48:43.237+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-22T23:48:49.753+00:00 DNS Q telemetry-console.api.playstation.com 1
+2026-10-22T23:49:02.317+00:00 DNS Q envelope2.np.dl.playstation.net 1

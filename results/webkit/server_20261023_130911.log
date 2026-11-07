@@ -1,0 +1,6 @@
+2026-10-23T12:09:15.240+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-23T12:09:16.497+00:00 ACCESS GET /corpus/list.json 200
+2026-10-23T12:09:16.549+00:00 ACCESS GET /corpus/retest.json 200
+2026-10-23T12:09:17.419+00:00 POST V172-3os9nd-BOOT-232-from-40-to-232 t=1792757340508&n=161 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-23T12:09:17.421+00:00 ACCESS POST /beacon/V172-3os9nd-BOOT-232-from-40-to-232?t=1792757340508&n=161 204
+2026-10-23T12:09:19.491+00:00 DNS Q telemetry-console.api.playstation.com 1

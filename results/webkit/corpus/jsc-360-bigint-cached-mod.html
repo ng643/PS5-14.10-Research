@@ -1,0 +1,173 @@
+<!doctype html><meta charset="utf-8"><title>bigint-cached-mod.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error(`Expected ${expected} but got ${actual}`);
+}
+
+// Test 1: Repeated modulo with same divisor (triggers caching after 100 iterations).
+{
+    const p = 2n ** 255n - 19n; // ed25519 prime
+    let x = 12345678901234567890123456789n;
+    for (let i = 0; i < 200; i++)
+        x = (x * x) % p;
+    shouldBe(x, 36260996769751896565040950513605801167497797310772705034288993169759633740077n);
+}
+
+// Test 2: Various dividend sizes relative to divisor.
+{
+    const divisor = (1n << 256n) - 189n;
+    let results = [];
+    // Dividend close to divisor size (n digits)
+    let a = (1n << 255n) + 17n;
+    for (let i = 0; i < 150; i++) {
+        a = (a * 3n) % divisor;
+    }
+    results.push(a);
+
+    // Dividend close to 2*divisor size (2n digits)
+    let b = (1n << 500n) + 42n;
+    for (let i = 0; i < 150; i++) {
+        b = (b % divisor);
+        b = b * (1n << 250n) + 1n;
+    }
+    results.push(b % divisor);
+
+    // Verify all results are in range [0, divisor)
+    for (let r of results) {
+        if (r < 0n || r >= divisor)
+            throw new Error(`Result ${r} out of range`);
+    }
+}
+
+// Test 3: Divisor changes mid-loop (cache should invalidate).
+{
+    const p1 = 2n ** 255n - 19n;
+    const p2 = 2n ** 256n - 189n;
+    let x = 999999999999999999999999999999n;
+    for (let i = 0; i < 120; i++)
+        x = (x * x) % p1;
+    let y = x;
+    for (let i = 0; i < 120; i++)
+        y = (y * y) % p2;
+    // Just make sure it doesn't crash and produces a reasonable result.
+    shouldBe(y >= 0n && y < p2, true);
+}
+
+// Test 4: Small divisors that should NOT be cached (single-digit fast path).
+{
+    let x = 2n ** 300n;
+    for (let i = 0; i < 200; i++)
+        x = x % 7n;
+    shouldBe(x, (2n ** 300n) % 7n);
+}
+
+// Test 5: Sign handling with cached mod.
+{
+    const p = 2n ** 255n - 19n;
+    let x = -(2n ** 300n + 1n);
+    for (let i = 0; i < 150; i++)
+        x = x % p;
+    // Negative dividend: result should be negative or zero.
+    shouldBe(x <= 0n, true);
+    shouldBe(-x < p, true);
+}
+
+// Test 6: Exact multiple (result should be 0).
+{
+    const p = 2n ** 255n - 19n;
+    for (let i = 0; i < 150; i++) {
+        let x = p * BigInt(i + 1);
+        shouldBe(x % p, 0n);
+    }
+}
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-360-bigint-cached-mod.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

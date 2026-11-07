@@ -1,0 +1,193 @@
+<!doctype html><meta charset="utf-8"><title>async-iterator-completed-producer-no-double-drive.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+// Regression test for the completed-producer fast path in enqueueAsyncGeneratorFastConsumer
+// (runtime/JSMicrotask.cpp). When a `for await` consumes a genuine async generator that is ALREADY in
+// the Completed state, op_async_iterator_next's fast branch settles { value: undefined, done: true }
+// immediately AND schedules an AsyncGeneratorFastConsumerResume microtask for the consumer frame. That
+// completed branch must still set the consumer's SuppressFastResume flag; otherwise the consumer is
+// driven twice -- once by that microtask, once by the normal await-Promise machinery its own driver
+// (driveAsyncFunction / asyncFunctionGeneratorBodyCall / asyncGeneratorBodyCall) attaches when it
+// suspends at the following op_yield -- re-entering an already-resolving frame and double-advancing it.
+//
+// We exercise every driver: an async-function consumer's initial run (driveAsyncFunction) and its
+// subsequent resumes (asyncFunctionGeneratorBodyCall), plus an async-generator consumer
+// (asyncGeneratorBodyCall), each re-iterating an exhausted genuine async generator. Warmed hot enough
+// to reach the upper JIT tiers. With the bug, the stray extra resume inflates counters / sums, throws,
+// or hangs (main never completes); with the fix every count is exact.
+
+function assert(cond, message) {
+    if (!cond)
+        throw new Error("Assertion failed: " + message);
+}
+
+function makeGen() {
+    return (async function* () {
+        yield 1;
+        yield 2;
+    })();
+}for (let __i = 0; __i < 200; __i++) {
+
+// Counts how many times each consumer's post-loop tail actually executes. A double-drive would run a
+// tail more than once (or corrupt the frame), so these must exactly match the number of calls.
+let tailRuns = 0;}
+
+// Async-function consumer. First loop exhausts g; second loop re-iterates the now-Completed g (body
+// must never run); then a real await forces a second suspension so any stray resume is observable.
+async function reconsume() {
+    const g = makeGen();
+    let sum = 0;
+    for await (const x of g)
+        sum += x;               // 1 + 2
+    for await (const x of g)
+        sum += 1000;            // g Completed -> must NOT run
+    await Promise.resolve();    // suspend again; a stray resume would double-advance past here
+    tailRuns++;
+    return sum;
+}
+
+// Async-function consumer whose very first suspension is the completed-producer next (initial-run path,
+// driven by driveAsyncFunction rather than asyncFunctionGeneratorBodyCall).
+async function consumeAlreadyExhausted(g) {
+    let count = 0;
+    for await (const x of g)
+        count += 1;             // g Completed -> must NOT run
+    tailRuns++;
+    return count;
+}
+
+// Async-generator consumer over a completed producer (asyncGeneratorBodyCall driver).
+async function* genConsumeExhausted(g) {
+    for await (const x of g)
+        yield x;                // g Completed -> must NOT yield
+    yield -1;                   // sentinel, must be produced exactly once
+    tailRuns++;
+}
+
+let done = false;
+let error = null;
+
+async function main() {
+    const N = testLoopCount;
+    let expectedTailRuns = 0;
+
+    for (let k = 0; k < N; k++) {
+        const r = await reconsume();
+        assert(r === 3, "reconsume expected 3, got " + r);
+        expectedTailRuns++;
+
+        const g = makeGen();
+        for await (const _ of g) { }               // exhaust
+        const c = await consumeAlreadyExhausted(g);
+        assert(c === 0, "consumeAlreadyExhausted expected 0, got " + c);
+        expectedTailRuns++;
+
+        const g2 = makeGen();
+        for await (const _ of g2) { }              // exhaust
+        const collected = [];
+        for await (const y of genConsumeExhausted(g2))
+            collected.push(y);
+        assert(collected.length === 1 && collected[0] === -1,
+            "genConsumeExhausted produced " + JSON.stringify(collected));
+        expectedTailRuns++;
+    }
+
+    assert(tailRuns === expectedTailRuns, "tailRuns expected " + expectedTailRuns + ", got " + tailRuns);
+}
+
+main().then(() => { done = true; }, (e) => { error = e; });
+
+drainMicrotasks();
+
+if (error)
+    throw error;
+assert(done, "async main() did not complete");
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-fz-0434-async-iterator-completed-producer-no-dou.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?list=fuzz.json&start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

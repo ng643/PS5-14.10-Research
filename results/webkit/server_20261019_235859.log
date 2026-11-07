@@ -1,0 +1,19 @@
+2026-10-19T22:59:15.997+00:00 GET V163-SMOKE  127.0.0.1 curl/8.21.0
+2026-10-19T22:59:40.426+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-19T22:59:40.616+00:00 DNS Q ena.net.playstation.net 1
+2026-10-19T22:59:45.149+00:00 GET V163-BOOT t=1792450785618 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-19T22:59:45.327+00:00 GET V163-V163-JIT-12.00,12.50,11.50,11.50,12.00,11.50 t=1792450785763 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-19T22:59:45.349+00:00 GET V163-V163-CAPS-wasm=undefined,wasmCompile=absent,wasmStreaming=throw:ReferenceError,sab=undefined,sabNew=absent,atomics=object,crossOriginIsolated=false,webgl=absent,webgl2=absent,webgpu=undefined,offscreen=undefined,webaudio=undefined,indexedDB=undefined,serviceWorker=undefined,rtc=undefined,webcodecs=undefined,cacheStorage=object,notification=undefined,geolocation=undefined,usb=undefined,bluetooth=undefined,gamepad=undefined,worker=function,blobWorker=ok,rab=ok,crypto=object,compression=function,presentation=undefined t=1792450785774 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-19T22:59:45.362+00:00 GET V163-V163-IMPORT-ok t=1792450785780 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-19T22:59:45.552+00:00 GET V163-V163-DONE t=1792450786027 192.168.1.121 Mozilla/5.0 (PlayStation; PlayStation 5/14.10) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15
+2026-10-19T22:59:57.598+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-19T23:00:37.716+00:00 DNS BLOCK smetrics.aem.playstation.com 1
+2026-10-19T23:01:01.060+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-19T23:01:06.900+00:00 DNS BLOCK feature.api.playstation.com 1
+2026-10-19T23:01:26.879+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-19T23:01:43.662+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-19T23:01:43.663+00:00 DNS Q ps5cel.np.dl.playstation.net 1
+2026-10-19T23:04:57.672+00:00 DNS Q uef.np.dl.playstation.net 1
+2026-10-19T23:05:09.976+00:00 DNS BLOCK takedown.api.playstation.com 1
+2026-10-19T23:05:09.977+00:00 DNS BLOCK ps5.np.playstation.net 1
+2026-10-19T23:05:09.983+00:00 DNS BLOCK ps5.np.playstation.net 1

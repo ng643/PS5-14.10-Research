@@ -1,0 +1,125 @@
+<!doctype html><meta charset="utf-8"><title>intl-mathematical-value.js</title>
+<script>
+(function () {
+  var m = /[?&]i=(\d+)/.exec(location.search);
+  if (!m) return;
+  var i = +m[1];
+  var s = null, n = 0;
+  try {
+    s = sessionStorage.getItem('v172s');
+    n = +(sessionStorage.getItem('v172n') || 0);
+  } catch (e) {}
+  if (!s) {
+    s = Math.random().toString(36).slice(2, 8);
+    try { sessionStorage.setItem('v172s', s); } catch (e) {}
+  }
+  window.__v172 = {
+    i: i,
+    mark: function (tag) {
+      n = n + 1;
+      try { sessionStorage.setItem('v172n', n); } catch (e) {}
+      var url = location.origin + '/beacon/V172-' + s + '-' + tag + '?t=' + Date.now() + '&n=' + n;
+      try { if (navigator.sendBeacon && navigator.sendBeacon(url)) return; } catch (e) {}
+      try { var x = new XMLHttpRequest(); x.open('GET', url, true); x.send(); } catch (e) {}
+    }
+  };
+  window.__v172.mark('BEFORE-' + i);
+})();
+</script>
+<script>
+var __ok = 0, __fail = 0, __failNames = [];
+function __is(a, b) { return (a === b) || (a !== a && b !== b); }
+function __eq(a, b) {
+  if (__is(a, b)) return true;
+  if (typeof a === 'bigint' && typeof b === 'bigint') return a === b;
+  try { return JSON.stringify(a) === JSON.stringify(b); } catch (e) { return false; }
+}
+function shouldBe(a, b, msg) { if (__eq(a, b)) { __ok++; } else { __fail++; if (__failNames.length < 5) __failNames.push(String(msg || '') + ' got=' + String(a) + ' want=' + String(b)); } }
+function shouldNotBe(a, b, msg) { if (!__eq(a, b)) { __ok++; } else { __fail++; } }
+function shouldBeTrue(a, msg) { shouldBe(a, true, msg); }
+function shouldBeFalse(a, msg) { shouldBe(a, false, msg); }
+function shouldBeUndefined(a, msg) { shouldBe(a, undefined, msg); }
+function shouldBeNull(a, msg) { shouldBe(a, null, msg); }
+function shouldBeEqualToString(a, b, msg) { shouldBe(a, b, msg); }
+function shouldBeGreaterThan(a, b) { if (a > b) { __ok++; } else { __fail++; } }
+function shouldBeGreaterThanOrEqual(a, b) { if (a >= b) { __ok++; } else { __fail++; } }
+function shouldBeLessThan(a, b) { if (a < b) { __ok++; } else { __fail++; } }
+function shouldBeLessThanOrEqual(a, b) { if (a <= b) { __ok++; } else { __fail++; } }
+function shouldThrow(fn) { try { fn(); __fail++; } catch (e) { __ok++; } }
+function shouldNotThrow(fn) { try { fn(); __ok++; } catch (e) { __fail++; } }
+function shouldThrowError(fn) { shouldThrow(fn); }
+function shouldNotThrowError(fn) { shouldNotThrow(fn); }
+function testPassed() { __ok++; }
+function testFailed(m) { __fail++; if (__failNames.length < 5) __failNames.push(String(m)); }
+function describe() {}
+function debug() {}
+function print() {}
+function noInline(f) { return f; }
+var noDFG = noInline, noFTL = noInline, noOSRExitFuzz = noInline, noTailCalls = noInline;
+var noEagerCompilation = noInline, noExceptions = noInline, noStructureCheck = noInline;
+function evaluate(s) { try { return (0, eval)(s); } catch (e) { return undefined; } }
+function markAndSweep() {}
+function gc() { if (window.GCController) GCController.collectAll(); }
+function drainMicrotasks() {}
+function createGlobalObject() { return {}; }
+function quit(status) { throw new Error('QUIT:' + status); }
+window.onerror = function () { return true; };
+var testLoopCount = 200;
+</script>
+<pre id="err"></pre><script>try{
+function shouldBe(actual, expected) {
+    if (actual !== expected)
+        throw new Error('bad value: ' + actual);
+}
+
+var nf = new Intl.NumberFormat('en-US', {maximumFractionDigits: 20});
+
+shouldBe(nf.format('0x100000'), '1,048,576');
+shouldBe(nf.format('0o100000'), '32,768');
+shouldBe(nf.format('0b100000'), '32');
+shouldBe(nf.format('0X100000'), '1,048,576');
+shouldBe(nf.format('0O100000'), '32,768');
+shouldBe(nf.format('0B100000'), '32');
+
+shouldBe(nf.format('0x10000z'), 'NaN');
+shouldBe(nf.format('0o10000a'), 'NaN');
+shouldBe(nf.format('0b100002'), 'NaN');
+shouldBe(nf.format('0X10000z'), 'NaN');
+shouldBe(nf.format('0O10000a'), 'NaN');
+shouldBe(nf.format('0B100002'), 'NaN');
+
+shouldBe(nf.format('0x1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'), '1,013,065,324,433,836,171,511,818,326,096,474,890,383,898,005,918,563,696,288,002,277,756,507,034,036,354,527,929,615,978,746,851,512,277,392,062,160,962,106,733,983,191,180,520,452,956,027,069,051,297,354,415,786,421,338,721,071,661,056');
+shouldBe(nf.format('0o1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'), '5,678,427,533,559,428,832,416,592,249,125,035,424,637,823,130,369,672,345,949,142,181,098,744,438,385,921,275,985,867,583,701,277,855,943,457,200,048,954,515,105,739,075,223,552');
+shouldBe(nf.format('0b1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'), '178,405,961,588,244,985,132,285,746,181,186,892,047,843,328');
+shouldBe(nf.format('0X1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'), '1,013,065,324,433,836,171,511,818,326,096,474,890,383,898,005,918,563,696,288,002,277,756,507,034,036,354,527,929,615,978,746,851,512,277,392,062,160,962,106,733,983,191,180,520,452,956,027,069,051,297,354,415,786,421,338,721,071,661,056');
+shouldBe(nf.format('0O1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'), '5,678,427,533,559,428,832,416,592,249,125,035,424,637,823,130,369,672,345,949,142,181,098,744,438,385,921,275,985,867,583,701,277,855,943,457,200,048,954,515,105,739,075,223,552');
+shouldBe(nf.format('0B1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'), '178,405,961,588,244,985,132,285,746,181,186,892,047,843,328');
+
+shouldBe(nf.format('-0'), '-0');
+shouldBe(nf.format('+0'), '0');
+shouldBe(nf.format('-Infinity'), '-∞');
+shouldBe(nf.format('+Infinity'), '∞');
+shouldBe(nf.format('Infinity'), '∞');
+}catch(e){var d=document.getElementById('err'); if(d) d.textContent='THROW: '+e;}
+</script><p>ok <script>document.write(__ok)</script> fail <script>document.write(__fail)</script></p><script>
+(function () {
+  var v = window.__v172;
+  if (!v) return;
+  v.mark('OK-' + v.i + '-jsc-694-intl-mathematical-value.html');
+  v.mark('GAP-' + v.i);
+  var m = /[?&]next=(\d+)/.exec(location.search);
+  var next = m ? +m[1] : 0;
+  var c = /[?&]c=(\d+)/.exec(location.search);
+  var sv = /[?&]v=([A-Za-z0-9]+)/.exec(location.search);
+  var g = /[?&]g=(\d+)/.exec(location.search);
+  var e = /[?&]e=(\d+)/.exec(location.search);
+  // The batch ends where the runner said it ends; without that the handoff
+  // would keep the chain alive for ever and `count` would bound nothing.
+  if (e && next >= +e[1]) { v.mark('BATCH-END-' + v.i); return; }
+  setTimeout(function () {
+    location.replace('/probe/p172-jsc-corpus-runner.js?start=' + next +
+                     '&count=' + (c ? c[1] : 40) + '&v=' + (sv ? sv[1] : '') +
+                     '&g=' + (g ? g[1] : 0));
+  }, 60);
+})();
+</script>

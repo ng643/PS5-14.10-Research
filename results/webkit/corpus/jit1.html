@@ -1,0 +1,15 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>jit1</title>
+<script>
+function b(m){try{var x=new XMLHttpRequest();x.open('GET','/beacon/'+m+'?t='+Date.now(),false);x.send(null);}catch(e){}}
+function hot(n){ var s=0; for(var i=0;i<n;i++){ s=(s+i*2654435761)>>>0; } return s; }
+var t0=performance.now(); hot(200000); var t1=performance.now();
+var t2=performance.now(); hot(10000000); var t3=performance.now();
+var t4=performance.now(); hot(10000000); var t5=performance.now();
+b('J-WARM-'+Math.round(t1-t0));
+b('J-COLD-'+Math.round(t3-t2));
+b('J-HOT-'+Math.round(t5-t4));
+b('J-RATIO-'+Math.round(((t3-t2)/(t5-t4))*100)/100);
+b('J-WASM-'+ (typeof WebAssembly));
+b('J-HC-'+navigator.hardwareConcurrency);
+b('J-DONE');
+</script></head><body><p>jit1</p></body></html>
