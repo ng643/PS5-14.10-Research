@@ -1,1213 +1,147 @@
-## 2026-11-05 (static only): the last indexed-load unknown is a linear-sweep artefact, and the read atlas is corrected
-
-**The double-fetch direction was checked before it was started, and it was already closed.** The
-proposal was a census of user pointers read twice across all 679 sysent bodies, raced with a second
-thread. `docs/KERNEL_READ_SEARCH_14_10.md` section 9 already closes the class by inspection (29 body
-0x5328D0 copyins the length once at 0x532925 and writes back the kernel copy; 41/90/92 and 165 use
-constant sizes), and `.local/double_fetch.py` is the script that produced the census. The generic
-"race the syscall" idea is also the AIO 662 TOCTOU, which this tree probed as 65l and which
-`docs` under `.local/tmp/up/docs/2026-10-25/25_GENERATION_CHECK_ANALYSIS.md` line 70 closes for the
-662-vs-662 variant. Nothing was run.
-
-**Sys 341's indexed load at 0x55f0cb is closed.** The census row recorded `mov rax,[rbx+rax*8]` with
-`lea eax,[r14-1]` and r14 = [uap] "after a ret". Both halves are wrong. The block is inside the
-separate function 0x55f010 (`55 48 89 e5`, `sub rsp,0xb8`), whose index is its own argument
-(`0x55f032 mov r14d,edi`); the body's `mov r14,[rsi]` at 0x55ed94 is dead by 0x55ef69 `mov r14,r13`.
-Both `e8` callers pass `edi = eax` from the id-table iterator 0x55c920 (`0x55ef60/0x55ef70` in body
-0x55ed70, `0x4ea5a3/0x4ea5ac` in function 0x4ea300), which walks the bitmap at `[td+0xa0]` with
-exclusion masks at `+0x3b0/+0x3b4/+0x3b8` and returns the next present id. No absolute qword pointer to
-0x55f010 exists in the image. The indexed-load census therefore stands at 176 sites, all bounded or
-gated, with no unknown. `docs/SYS341_INDEXED_LOAD_CLOSURE_14_10.md`.
-
-**`docs/READ_IDEA_ATLAS_14_10.md` carried a stale verdict.** Its Verdict section still ranks P2
-(proc+0xc81 -> 532) as the best idea while its own P2 entry says CLOSED behind `priv_check(0x2aa)`, and
-four rows it lists as open are closed elsewhere (601, 604, P5/H1 YMM, the census unknown). A status
-corrections section now sits above the table. What is actually unrun is P1, P4, P8 and P9, and all four
-are console measurements.
-
-## 2026-11-05 (twenty-eighth boot, continued): the aio mode guard covers every mode
-
-**The last lifetime-census survivor is closed on 14.10.** The census
-(`docs/KERNEL_LIFETIME_CENSUS_14_10.md`) reduced 301 bodies to one lifetime defect - the 663
-`aio_multi_wait` waiter-node escape, where every mode except 1 and 2 relinks the same node onto each
-request, cleanup unlinks it only from the last owner, and the array is freed at `0x3b0f9e`. Probe
-1244a sent the never-measured modes with ids `{0,0}` (id 0 is skipped with `0x80020003`, so nothing is
-waited on): modes 1 and 2 return 0 with two `80020003` words, and modes 0, 3, 4, 5, 6, 7, 8, 0x10,
-0x40 and 0xFF all return -1 with the output array untouched. The controls are repeated after the
-sweep and are unchanged, so the refusals are the handler. The 14.10 guard therefore rejects every
-mode outside {1,2} at count > 1, which is the shared-node path, and the Bagagwa/Relapse class is
-patched in both directions. The census itself found zero double frees and zero use-after-frees after
-validation, with every dismissal recorded against the instruction that kills it.
-
-## 2026-11-05 (twenty-eighth boot, continued): sendfile works, 532 cmd 0x31 is capability-refused,
-## uninitialised-copyout census comes up empty
-
-**393 sendfile is present and it transfers.** With the loader relaunched, probe 1241a opened
-`/app0/eboot.bin` (fd 22), made a socketpair (23/24) and called
-`393(fd=22, s=24, off=0, nbytes=0x100, hdtr=NULL, sbytes=&out)`: `rv=0`, `sbytes=256`, and 256 bytes
-arrived on the peer. This is the first live confirmation of the slot on 14.10 and it retires the
-absence assumption behind one long-standing offline-suite failure. The probe then died in its own
-formatter (uint64 from `memory.read_byte` passed to `format`) - a probe defect, fixed by coercion,
-not a kernel result. The syscall layer stays uninteresting (`copyinuio` at `0x7828a0` caps `iovcnt`
-at 0x400, allocates `cnt*16+0x30`, copies exactly `cnt*16`), so any value in 393 lives in the socket
-`fo_sendfile` path. `docs/SENDFILE_393_STATIC_14_10.md`.
-
-**532 command 0x31 is refused at the privilege gate, one step before the capability test.** Probe
-1242a sent `532(cmd, sel, buf, &index, 0)` with five arguments. Controls route (`cmd 0x18` ->
-`outbuf[0]=0x800D0203`, `cmd 0x20` -> `0x800D0208`, both `ret 0`), while `cmd 0x31` for every selector
-tested, plus `cmd 0x32`, returns `-1` with `errno 1 EPERM` and the buffer untouched, refusal before
-the selector bound. The first reading of that result - "the capability test refused it" - had the
-branch sense backwards: `0xaf00f2 test eax,eax ; 0xaf00f4 je 0xaf011c` sends `eax == 0`, i.e.
-priv_check **success**, into the body, so EPERM can only come from the fallthrough whitelist at
-`0xaf00f6` after `priv_check(0x2aa)` is refused. The capability test at `0xaf0123` is inside the
-granted path and its failure branch builds a `0x800D0202` status and returns 0, never EPERM. The tag
-it tests is an exact 64-bit compare of `cred+0x58` against `0x4800000000010003` by the 25-byte helper
-`0x609080` - not `0x4800000000020002`, which belongs to `0x6091d0` and is unreachable from 532. So
-532 is closed at the privilege gate for a uid-1 process, and `532(cmd=0x31)` is a cheap probe of
-privilege number `0x2aa`, not of the tag. `docs/SYS532_OOB_GATE_14_10.md` section 6.
-
-**Privilege-gate census: 99 gates, all checked, no accidental bug.**
-`docs/PRIV_CHECK_CENSUS_14_10.md` walks all 300 non-nosys bodies: 46 `priv_check`/`priv_check_cred`
-sites and 53 capability sites, every one of them on the path before the operation it guards, zero
-ignored, zero late, zero raw-bit. The survivors it hands forward are same-object shortcuts rather
-than defects: the `0xb2bb00` test that returns ALLOW when `[proc+0x3e8]` is NULL (used by 547, 572,
-591, 608, 674), `671` selector `-1` reading `[proc+0x5c0]` without the bit-62 test, and the fact that
-`532`'s opcodes `0x18-0x1f`/`0x20`/`0x2f` skip both of its gates and jump straight to `0xaf02a6`.
-
-**No uninitialised-stack copyout found in 450 sites.** `docs/UNINIT_COPYOUT_SCAN_14_10.md` censuses
-every stack-source copyout with an immediate length (450 of 539 copyout sites) for a buffer that is
-only partly written. Zero sites have a `bzero` shorter than the length; 56 flagged by a store-coverage
-heuristic, 30 of those cleared by a full-length `bzero`/`memset` found on an aligned re-scan, and every
-hand-inspected survivor (0x4f71e0, 0x73a7b4, 0x73b144, 0xab81fa, 0x7016c3) is cleared by a helper the
-scanner did not model (0x258ff0 bzero, 0x8ae5af30 memset variant). The lesson is in the document: a
-coverage model that only sees `[rbp-disp]` stores in the same function cannot distinguish "unfilled"
-from "filled by a callee", and the dynamic two-run diff described in section 4 is the way to settle it.
-
-## 2026-11-05 (twenty-eighth boot): 532's OOB read is gated four ways; sendfile and 565/566 decoded
-
-**The last unchecked caller-indexed kernel load is closed.** The indexed-load census
-(`docs/KERNEL_INDEXED_LOAD_CENSUS_14_10.md`) left exactly one site where a caller-supplied index
-reaches a kernel load with no bound: syscall 532, body `0xaf0040`, instruction
-`af06d9 movzx eax,word ptr [rax+rcx*2+4]`. Decoding the whole body shows four independent gates
-that all have to pass, and one of them cannot: the command must be `0x31` (14.10 measurement 87a
-reaches only `0x18-0x1E`, `0x20`, `0x2F`), the id must be present in a table at RVA `0x3CF7E38`
-that a 157-reference image sweep shows is written only by boot-time device attach and read by
-nothing else in any sysent body, three boot flags at `0x3AF7C00`/`0x3AF7C04`/`0x3AF7BC0` must carry
-specific values, and `proc+0xc81` must be non-zero to skip the clamp that pins the index to 2 -
-and `c81 == 0` is measured for every process this loader can create. `docs/SYS532_OOB_GATE_14_10.md`.
-
-**syscall 393 (sendfile) exists in the 13.60 table with a real handler.** Entry 393 has `narg = 7`
-and thunk `0x265b88` -> body `0x8340e0`, referenced once image-wide. The body is the standard
-FreeBSD marshalling: `offset < 0` -> EINVAL, a fixed 0x20-byte `copyin` of `sf_hdtr`, two
-`copyinuio` calls whose counts are bounded by that helper, an `fget` with a capability check, and
-a CFI-whitelisted file-type call with nine arguments (three on the stack). No caller-controlled
-copy length exists in it, so the syscall layer is not the surface. The 14.10 presence test
-(`probes/phase17_new_vectors/1241a_sendfile_presence.lua`) is written and **could not be run**:
-the loader was still wedged from the earlier `read()`-with-flags probe (connect accepted, 0 bytes,
-IDLE_TIMEOUT 30.03 s). `docs/SENDFILE_393_STATIC_14_10.md`.
-
-**565 and 566 are the OPMC setters, and the six qwords are PMC slots.** 565 (`0x6034e0`) stores a
-masked value at `[[thread+0x3f8] + idx*8 + 0x160]` for idx 0..5; 566 (`0x603710`) stores an
-**unmasked** 64-bit value at `[[thread+0x3f8] + idx*8 + 0x190]` for idx -1..5, where -1 writes all
-six. Both resolve the thread through `0xb92420(tid, cur_pid)` so only same-process threads are
-reachable, and both then kick it through an IPI path. An earlier revision of this paragraph left the
-block unidentified; the 13.60 name table settles it - 563 `opmc_enable`, 564 `opmc_disable`, 565
-`opmc_set_ctl`, 566 `opmc_set_ctr`, 567 `opmc_get_ctr`, 625 `opmc_set_hw`, 626 `opmc_get_hw` - so the
-two six-entry arrays are per-thread performance-counter control words and counter values, the mask on
-the control words is the reserved/counter-select field set, and the IPI restarts the counters. The
-debug-register reading was tested and rejected on the way (the DR installer at `0xa07860` loads DR0-3
-and DR6/DR7 from globals, not from this structure). Bound is 6 before the store, so no OOB; values
-are never read back, and 177a-177d already showed 567 rejects twelve layouts, so the family is a stub
-with no read side. Closed as a configuration write, not a primitive.
-`docs/SYS565_566_SIX_QWORD_ARRAYS_14_10.md`.
-
-**Loader state at the end of this entry: STUCK.** Every runtime probe from here needs a relaunch.
-
-## 2026-11-05 (twenty-seventh boot): 637's store lands, and physhm was never a mapping
-
-**637 is an unprivileged kernel qword store, and the field it writes is a page limit.** The body at
-`0xabd930` gates on `value >= 17`, on `pid == 0 || pid == p_pid`, on `[proc+0xb0] & 0x2200`, on
-`[proc+0xb8] == 1`, then stores the caller's qword **verbatim** at `[p_vmspace + 0x280]`
-(`00abda0c mov qword [r12 + 0x280], rax`) and calls `0x691c70`. Every earlier probe that recorded
-`637(0, big) = 0` was therefore already performing a kernel write; nothing was observing it.
-
-Both existing explanations of the wedge in `docs/PROC_LOCK_WEDGE_637_14_10.md` are wrong and are
-corrected there. `0x53aa10` is nine bytes - `test byte [rdi+0xb3], 0x10; je <printf(fmt); ud2>` - a
-fatal assert that a returning 637 never enters, not a worker. The wedge is the post-store callee:
-`0x6918a0` compares `[vmspace + 0x280]` against `capacity - (bytes_in_use >> 14)` and, when the limit
-is lower, walks the vm_map entry list calling the pageout path until the comparison is satisfied. The
-value is in **16 KiB pages**, so 17 pages is unreachable for a live process and the loop has no exit.
-That is an unbounded reclaim under a mutex, not a self-deadlock.
-
-The primitive is inert because a 252-site census of `[reg + 0x280]` finds the qword field read in
-exactly one place, as a comparison target - never dereferenced, never indexed, never copied out. The
-A/B experiment (state-and-plan item 4) is withdrawn: every value small enough to change an allocation
-ceiling is inside the wedge window. `docs/FMEM_LIMIT_637_14_10.md`.
-
-**physhm: `mmap` succeeded, and the page does not exist.** Probe 1240a mapped a `629` descriptor
-(`mmap(0, 0x4000, 3, MAP_SHARED, 24, 0)` -> `0x310D3C000`) and asked the *kernel* to read it:
-`write(sock, 0x310D3C000, 0x20)` = **-1 errno 14 EFAULT**. The uaccess guard passes for that address
-(`rsi + rdx <= 0x800000000000`), the `stac` window opens, and the `rep movs` faults anyway - which a
-present supervisor PTE cannot do. The object never populates the mapping; the first touch on either
-side of the privilege boundary is a not-present fault. `docs/CHANGELOG.md:2012`'s
-"supervisor-accessible mapping" reading is corrected in place. Note the test itself was the strongest
-form of the idea and it is now spent: the physhm route is closed for reads *and* writes,
-`docs/PHYSHM_COPYIN_14_10.md`.
-
-**Probe defect, second occurrence of the same class.** 1240a wedged the loader by calling `read`(3)
-with a flags argument on a socket with nothing queued; `read` has no flags and blocks. On this loader
-the non-blocking receive is `recvfrom`(29) with `0x80` = MSG_DONTWAIT - `MSG_WAITALL` is `0x40` and is
-one keystroke away. Rule added: never issue a receive unless the preceding send returned more than
-zero. Probe 1240b (`mincore`-based residency, no faulting child) is written and unrun.
-
-## 2026-11-05 (twenty-sixth boot): the thr_* family is process-scoped, and a probe artifact retired
-
-Probe 1238a closed the last open direction in the thread family. Resolver **0xb92420** is the kernel's
-global thread hash, keyed by a 32-bit tid (`and rcx,[rip+0x31ef9a3]` bucket mask, chain on
-`cmp dword [rax+0x9c],r14d`), and its second argument is a **`p_pid` filter**:
-`mov rdi,[rax+8] ; cmp ebx,-1 ; cmp dword [rdi+0xbc],ebx ; jne <keep walking>`. 632 (body 0x438e30)
-and 633 (0x439070) pass `[curproc+0xbc]`; 634 (0x439150) passes the same. None of the three ever passes
-the `-1` that would disable the filter, so a thread belonging to another process - including any kernel
-thread - can never be named. Measured over 38 calls: own tid -> EINVAL 22, own tid + 2^32 -> EINVAL 22
-(the handler reads the **dword**), and thirty foreign ids (1-12, 16, 20, 24, 32, 40, 48, 64, 80, 96,
-128, 160, 192, 256, 512, 1024, 4096, 0x7FFFFFFF, 0xFFFFFFFF, 0x1_0000_0000) all -> **ESRCH 3 with the
-buffer untouched** and zero supervisor-range qwords. `docs/THR_LOOKUP_14_10.md`.
-
-632 and 633 read arg1 as a qword while the resolver truncates to `edi`, so `tid | 0x100000000` defeats
-the self-check at 0x438e41. What that buys is not a suspend: 632 then sets `or dword [td+0xe4],
-0x80000800`, `mov dword [td+0x400],4` and spins at 0x438ef0 waiting for **the calling thread itself**
-to reach state 3/4. In-kernel spin, loader wedge. 634 reads the dword and has no mismatch.
-
-**Retraction.** 1237b reported that 634 writes `0x0400` at buffer+0 on the ESRCH path, and
-`UCONTEXT_FAMILY_14_10.md` §5.4 recorded it as an output header. It was the probe:
-`0xA5A5A5A5A5A5A5A5` is not representable as a double, `uint64:tonumber()` rounds it to
-`0xA5A5A5A5A5A5A800`, and the equality scan therefore reported all 152 qwords changed on every call.
-634 writes nothing on either error path. Section retracted in place; standing rule added (fill below
-2^53, or scan for supervisor-range values only).
-
-Also recorded from this boot: the safe child exit is a return to an unmapped address, since the loader's
-SIGSEGV chain runs `thr_exit(431)`; a child parked at `jmp $` only starves the loader, and a child that
-is suspended, resumed, finishes its syscall and then faults takes the whole loader down.
-## 2026-11-05 (twenty-fifth boot): the aio guard is a path test - class closed
-
-Probe 1236a, zero ids, `count 2`, modes 0x00-0xFF: mode 0 and **every** mode from 0x03 upward return
-`-1 err 22` with the status buffer untouched, while modes 1 and 2 return 0 with one `0x80020003` per id.
-`count 3` repeats it. So 14.10 refuses `mode not in {1,2}` at `count > 1` - the exact set that reaches
-the shared-node path `0x3b08e5` in the 13.60 body. The aio shared-waiter use-after-free is closed on
-14.10 as a class, not just at the literal mode 0. `docs/AIO_MODE_GUARD_GAP_14_10.md` §8.
-
-Also settled: `aio_multi_wait` blocks until the request completes. Probe 1235b passed a 20-unit timeout
-pointer with one real pending read and never returned (LOADER-STUCK, then zero bytes on a second
-connection). Any aio timing work from here needs the call on a child thread with an exit path.
-
-## 2026-11-05 (twenty-fourth boot): the aio guard is a value test, not a path test
-
-Probe 1235b decoded `aio_multi_wait` (663) from the 13.60 body and found the shape the 14.10 guard sits
-on. `docs/AIO_MODE_GUARD_GAP_14_10.md`.
-
-The dispatch is three lines: `cmp eax,1 / jne 0x3b0839 ; cmp eax,2 / jne 0x3b08e5`. Modes 1 and 2 link
-`r14`, the per-index node of a `count*0x38` array. **Mode 0 and every mode >= 3** fall to `0x3b08e5`,
-which reloads `rcx = [rbx+0x40]` - the fixed array base - every iteration, so the same `node[0]` is
-linked onto every request and its `owner` field is overwritten each pass. The cleanup unlinks the node
-from the list of the *last* owner only, then frees the array at `0x3b0f93`; every earlier request keeps
-`request->waiters` pointing into the freed block, and the node's own `lock`/`chan` fields are the
-departed thread's stack addresses (`[rbx+0x104]`, `[rbx+0xe0]`).
-
-14.10 refuses mode 0 at `count > 1` before copying the id list in. That is a test of the value 0, not of
-the path - and modes 3..0xFF were never measured. Also decoded: the fifth argument is a **pointer to a
-4-byte value**, not a value (`0x3b04f3` is a 4-byte copyin into `[rbx+0x108]`).
-
-Runtime cost: probe 1235b called mode 0 `count 1` with one real pending read and a timeout dword of 20,
-and the call never returned - LOADER-STUCK, and a second connection got zero bytes. A pending request
-does not time out; the wait must be woken by the request completing, so any UAF test needs the 663 call
-on a child thread (child-syscall capability, 1234a) while the parent completes the request.
-
-Probe 1236a is written and non-blocking: zero ids never sleep (the validation loop skips them with
-status `0x80020003`), so a `count 2` sweep over modes 0..0xFF answers "value test or path test" with no
-thread and no wedge. It has not run: the loader needs a relaunch.
-
-## 2026-11-05 (twenty-third boot, cont.): the spinning-child hazard, and 1234b lost to it
-
-1234a built every child with `jmp $` as its return address, so the 60 poll children did not exit when
-their poll returned - they spun. The next probe got **zero bytes** (connection accepted, no answer) and
-`port_witness` reports LOADER-STUCK: the process was starved, not crashed.
-
-The rule: a probe that spawns N children must assume all N are still running when it ends. Children need
-an exit path - the 999a confinement (fault on an unmapped return address, loader chain runs
-`thr_exit(431)`, pid survives) - and a probe that needs a parked child should park exactly one and then
-complete or close the object it waits on.
-
-1234b (fd-number reuse against a blocked read) never ran, but it is written and its design stands: park
-one child in `read(fd0)`, close fd0, take the same descriptor number with a new socketpair, write to
-the new peer, and check the child's buffer. A `0x4B4B4B4B` there would mean the blocked read followed
-the descriptor *number* rather than the file - an fd ABA. Expected "no" because `read` holds an `fget`
-reference, but unmeasured. `docs/CHILD_SYSCALLS_AND_POLL_CLOSE_14_10.md` section 4.
-
-## 2026-11-05 (twenty-third boot): children can issue arbitrary syscalls; poll+close survives 60 races
-
-Two results, one of them a capability. Probe 1234a created a child with `rdi` at ctx+0x48 and `rax = 6`
-at ctx+0x78, RIP at the syscall stub, and the parent's `fstat` on that descriptor came back **EBADF** -
-the child really called `close(fd)`. That pins the GPR block functionally (FreeBSD order, fifteen slots
-from +0x48: rdi, rsi, rdx, rcx, r8, r9, rax, rbx, rbp, r10, r11, r12, r13, r14, r15) and gives the
-corpus something it did not have: **a thread that can issue any syscall with chosen arguments**.
-
-With that, upstream's untested O11 path could be built properly: for 60 iterations a child parked in
-`poll(fd, 1, 3000ms)` while the parent closed the descriptor 2 ms later. All 60 children were created,
-all 60 closes happened under an outstanding poll, and the process stayed alive with no crash, hang or
-corrupted return. At this shape poll's registration holds a reference that survives the close, like
-kevent+close; 60 iterations cannot prove the race absent, but it is the first measurement of the path.
-
-`docs/CHILD_SYSCALLS_AND_POLL_CLOSE_14_10.md`.
-
-## 2026-11-05 (twenty-second boot, close): the stale-handle hunt stops at the missing second reference
-
-Worked the Bagagwa mechanism against 14.10's object families. The public chain needs two ingredients: a
-second reference obtainable **by name** (`osem_open`) and a delete that skips the refcount
-(`osem_delete` with `attr = 0`). 14.10 has neither half: the 549-556 block has create/delete/wait/post/
-cancel and no open-by-name at all (552 returns -1 on a live semaphore, measured in 88a), and a handle is
-typed and generation-checked on every call, so a cross-family retarget is refused.
-
-The three-bit generation wrap (period eight, shared slot table, LIFO free list) is an ABA worth naming
-but not a primitive: the old and new handles are the same 64-bit value, freeing does not advance the
-generation (reuse does, so a live handle never goes stale mid-flight), and the type byte is checked on
-every call. Without a second reference there is nothing to dangle and nothing to double-free.
-
-That closes the object-lifetime route at the same place the public chain starts - a structural answer,
-not a failed probe. The surfaces with an *explicit* shared reference are what remain: file descriptors,
-kqueue knotes, and the aio request's file reference, where a double close or a knote left on a closed
-fd is the analogue of `osem_open`. `docs/STALE_HANDLE_HUNT_14_10.md`.
-
-## 2026-11-05 (twenty-second boot, close): the reader search closes all four copy-shaped classes
-
-Read the three bodies that could still have carried a double fetch. 29 `recvfrom` copies the user
-length **once** (0x532925) and the later reload at 0x532932 is the uap slot, not user memory; 105/118
-do the same through 0x53307D and use the kernel copy at 0x5330D5; 41/90/92 and 165 copy **constant**
-sizes (0x20/0x18 and 0xc/8) into stack buffers. So every repeated copy in the image is either
-constant-sized or reads the length from the kernel's own stack copy - the double-fetch class is empty.
-
-That makes four independent closures of the copy-shaped reader idea: aio (mask rejects a kernel
-address, measured), direct argument dereference (10/10 candidates are kernel loads), double fetch
-(constant sizes / kernel-held lengths), and the interprocedural audit's 0/301 for a user-derived
-copy source or destination. **A reader cannot come from the copy semantics of this syscall table.**
-
-It has to come from a memory-safety bug whose damaged object is then read back through an interface -
-a freed object still referenced, an out-of-bounds index, or a type confusion. The surfaces the corpus
-has not exhausted are the object families whose lifetime the loader can influence (osem, evf,
-namedobj, kqueue knotes) and the blockpool page work, which is closed only because no userland path
-creates the type-0xb object. `docs/KERNEL_READ_SEARCH_14_10.md` sections 9-10.
-
-## 2026-11-05 (twenty-second boot, close): double-copyin census - 43 bodies, 14 with a reused source register
-
-Scanned all 301 handler bodies for two or more copyin calls and recorded which register fed `rdi` at
-each. 43 bodies copy twice or more; 14 of them reuse the *same* register, which is the double-fetch
-shape. The socket-address family (29, 32, 41, 90, 92, 98, 105, 118 - all funnelling through the same
-bodies) copies a user length and a user address in separate calls, which is the canonical layout: the
-length is validated once and the address copied around it. 598/599 copy a descriptor struct twice and
-598 has never been called in this corpus.
-
-That is a lead list, not a reader. It matters because it is the one shape that does not need SMAP to be
-off - both accesses are legitimate user copies, and the bug would be that the second sees different
-bytes. With 632/633 suspend/resume now deterministic, the race can be made controllable: pass a valid
-length, rewrite it from a second thread, and see whether the copy-out returns more than the structure
-holds. The corpus's copyout audits clamp non-constant lengths, so the expectation is "nothing leaks" -
-but they measured the copy length against the buffer, not a re-read of the user length between calls.
-`docs/KERNEL_READ_SEARCH_14_10.md` sections 7-8.
-
-## 2026-11-05 (twenty-second boot, close): all ten deref candidates are kernel loads
-
-Triaged the ten sites from the heuristic one by one. Every one is a kernel load that overwrote the
-tracked register: `td_proc` fields at +0x3e8 and +0x200, thread fields at +0x460/+0x40, stack-canary
-globals behind `lea rip`, and a list node walked from a kernel list. **Zero survivors** - there is no
-handler in the 301 bodies that dereferences an argument value before validating it in the way the
-heuristic guessed.
-
-The structural explanation is SMAP: user accesses go through `stac`/`clac` inside the copy helpers,
-so a raw dereference of a caller-supplied pointer would fault unless the handler had already opened a
-window. The real shape would be a double fetch *inside* such a window, or a pointer stored by one
-syscall and dereferenced by another without the mask.
-
-Reader work therefore moves to three unexplored places, ranked in `docs/KERNEL_READ_SEARCH_14_10.md`
-§6: a correct function-extent pass over the copyin census looking for a second load from the same
-pointer; the OBJECT-sourced copyout set; and cross-syscall stored-pointer dereferences (aio buffer,
-kqueue udata, sigevent function).
-
-## 2026-11-05 (twenty-second boot, cont.): reader hunt - base in hand, aio validated, kernel files absent
-
-The base is now a solved input: upstream's 1001a sweep gives 50 mapped / 462 absent in one connection
-and puts this boot's image at **0xFFFFFFFF85000000 .. 0xFFFFFFFF8B000000** (98 MB), with
-`spawned=512 failed=0 alive`.
-
-That let the aio read idea be tested properly. 1231b proved the mechanism on a user source: `669
-cmd=0x1002` from a marker buffer completes and the exact marker bytes arrive on the peer. 1232a then
-pointed the same field at the image base and at base+4 MB: accepted, state 3, **zero bytes**. The
-`and rdi,0x7fffffffffff` mask turns the kernel address into an unmapped user address, so aio is a
-validated copy in both directions and is not a reader.
-
-The classic files are gone as well: `/proc/kcore`, `/proc/kallsyms`, `/proc/self/mem`,
-`/dev/kmem`, `/dev/mem` and friends all return ENOENT.
-
-So a reader has to be a kernel *dereference* of an influenceable pointer. A first heuristic over the
-301 handler bodies (track `mov rX,[rsi+slot]`, flag a later `mov rY,[rX+disp]` before any call) gives
-ten candidates - 592, 659, 663, 664, 30, 629, 477, 65, 73, 404 - listed in
-`docs/KERNEL_READ_SEARCH_14_10.md` §4. None is triaged yet, and most are likely false positives.
-
-## 2026-11-05 (twenty-second boot, cont.): the base is 0xFFFFFFFF85000000, and aio validates its pointers
-
-Ran the upstream fault-code oracle probe (1001a) rather than re-deriving it: 512 `thr_create`
-children, each faulting at one 2 MB candidate, and the SIGSEGV chain writing the fault context back
-over the probe socket. Parsing `(ctx+0x130 >> 8) & 0xF` gives 50 mapped / 462 unmapped in one
-connection, with the image at **0xFFFFFFFF85000000..0xFFFFFFFF8B000000** (98 MB). That is this boot's
-kernel base, and the sweep costs no relaunch.
-
-With the base in hand the aio read idea could finally be tested properly. 1231b first proved the
-mechanism on a user source: `669(cmd=0x1002)` from a marker buffer completes (state 3) and the exact
-sixteen marker bytes arrive on the peer. (`MSG_DONTWAIT` is **0x80** on FreeBSD - the 0x40 used in
-1231a is `MSG_WAITALL` and is what wedged the loader.) Then 1232a pointed the same field at
-0xFFFFFFFF85000000 and 0xFFFFFFFF85400000: the submit is accepted, the poll reports completion, and
-**not one byte is delivered**. The user-range mask that `copyin` applies turns the kernel address into
-0x7FFFFFFF85000000, an unmapped user address, so the copy takes the bad-pointer path instead of
-reading kernel memory.
-
-**aio_submit_cmd is not a kernel reader**, in either direction, and that is a clean closure - no
-panic, no relaunch. A reader now has to come from a kernel *dereference* of an influenceable pointer,
-not from a copy helper; the OBJECT-sourced copyout set in `docs/INTERPROC_COPYOUT_SOURCES.md` is the
-remaining surface of that shape. `docs/AIO_NOT_A_READER_14_10.md`.
-
-## 2026-11-05 (twenty-second boot): aio cmd=2 runs, and FreeBSD's MSG_DONTWAIT is 0x80
-
-Testing the one idea that directly targets the missing capability - a *reader* - rather than another
-closed bug: `669 aio_submit_cmd` cmd=2 is a **write**, so the kernel reads from the buffer pointer in
-the request. If that copy does not validate the pointer as a user address, a kernel address there
-turns the write into an arbitrary kernel read, with the bytes landing in a socket we own.
-
-Probe 1231a got the first half: cmd=1 submits and polls to state 2, and cmd=0x1002 (write) submits and
-polls to **state 3**, so the source-driven path really executes. The caller's result dword stayed
-untouched. The run then died on a flag bug of mine: `recvfrom(..., 0x40)` is `MSG_WAITALL` on FreeBSD,
-not `MSG_DONTWAIT` - that is **0x80** - so the payload sat in a blocking receive and the loader ended
-up LOADER-STUCK. The corpus's own aio notes already said every parent-side call in this family must be
-non-blocking; the Linux value was the wrong one.
-
-Next: 1231b (written) repeats it with 0x80 and a user marker buffer as the positive control. If the
-marker arrives on the peer, the next run points the same field at the kernel base from the fault
-oracle - EFAULT means the copy validates, code bytes mean a reader, a fault costs a relaunch.
-`docs/AIO_WRITE_SOURCE_14_10.md`.
-
-## 2026-11-05 (twenty-first boot, close): the blockpool family is closed at its entry
-
-Reading the last unread member, 657 `blockpool_batch` (body 0x9A9F40), completes the family: it
-copyin's a 0x20-byte command record from the caller, does `vm_map_lookup` + the class-0xb test, then
-dispatches command 1..5 through a jump table at 0x9AA0C4 to five handlers that each take the map, the
-object and a cursor. Like 654, 655 and 673, it **requires an existing class-0xb mapping**; none of them
-creates one.
-
-The constructor (0x9A75B0) is reached through a function pointer - it has no direct caller in the
-image - and the only descriptor 653 hands out is a control-only cdev that `mmap` refuses with EINVAL
-(probe 1230a: fstat and close succeed, read gives EBADF, ioctl ENOTTY). So route R1 is closed at the
-**entry**: no userland call produces the class-0xb object, and 547's physical-half branch at 0xaba5d4
-is unreachable. If it is ever reopened, the thing to find is whatever invokes the pager at 0x9A75B0.
-
-Also closed this session before they cost a run: 635 `thr_set_ucontext` is an ENOSYS stub
-(`mov eax,0x4e`), and 634's copy is user state only - its layout is now mapped empirically
-(RIP +0x0E0, CS +0x0E8, RFLAGS +0x0F0, RSP +0x0F8, SS +0x100, magic +0x108, +0xC0 kernel-computed).
-`docs/BLOCKPOOL_ROUTE_14_10.md` sections 9-10, `docs/UCONTEXT_FAMILY_14_10.md` section 5.
-
-## 2026-11-05 (twenty-first boot, cont.): the blockpool handle is a control descriptor, not a mappable one
-
-Probe 1230a settles the last ambiguity in route R1. `653 blockpool_open` returns a genuine descriptor:
-`fstat` succeeds on it and `close` succeeds on it. But the device behind it is control-only - `read`
-gives EBADF, `ioctl(FIONBIO)` gives ENOTTY - and `mmap` refuses it with EINVAL for every flags shape
-tried across two probes. So the "mmap the handle, get a type-0xb object" step cannot work on 14.10,
-and `654`/`655` therefore never see the mapping their `vm_map_lookup` + class-0xb test requires.
-
-The family now reads: 653 opens a control descriptor (slots are a small consumable table); 654 and
-655 look up an existing mapping and demand class 0xb; 673 moves pages inside such a mapping; and 657
-`blockpool_batch` is the only unread member - its body starts at 0x9A9F40 and copies 0x20 bytes from
-the caller at 0x9a9fff before dispatching. No userland path to a type-0xb mapping has been found, so
-547's physical-half branch at 0xaba5d4 remains unreachable.
-`docs/BLOCKPOOL_ROUTE_14_10.md` sections 7-8.
-
-## 2026-11-05 (twenty-first boot, cont.): ucontext layout mapped; 635 is ENOSYS
-
-Probe 1229a put a marker in each of the fifteen GPR slots, created a child, suspended it with 632 and
-read it back with 634. The GPR block at +0x48..+0xB8 is preserved verbatim, and the real field
-offsets are **RIP +0x0E0, CS +0x0E8, RFLAGS +0x0F0, RSP +0x0F8, SS +0x100, magic +0x108** - not the
-+0xC0 that 156c's comment claims: +0xC0 is a kernel-computed selector blob (0x1B001300000000) that
-ignores caller writes, and the kernel normalises +0x110/+0x118 from 0x10000/0 to 0x10002/0x20002. No
-supervisor-range value appears anywhere in the 0x4c0 bytes, so the getter mirrors user state and
-cannot be used to freeze-and-read a thread inside a syscall.
-
-Static first: 635 `thr_set_ucontext` is an ENOSYS stub (`mov eax,0x4e ; ret` at 0x4393A0), already
-recorded in the corpus as one of the 78-trampoline family with 619 and 620, so the whole "install a
-caller context into a suspended thread" idea - including smuggling a kernel CS selector through the
-setter - does not exist on 14.10. Reading the body first saved a run for the second time this
-session. `docs/UCONTEXT_FAMILY_14_10.md` section 5.
-
-## 2026-11-05 (twenty-first boot, cont.): copyin-then-sleep census - only aio qualifies, and the extents need work
-
-A static census of the 301 distinct handler bodies for the shape that produced the public aio bug
-(copyin a user struct, sleep, then use it) finds 85 bodies with a copyin, 8 with an msleep, and 6
-with both - every one of them in the aio cluster 0x3AF8E0-0x3B6BA8 (661/662/663/664/666/668/669).
-The two non-aio rows (534 jitshm_alias, and the body the table maps to 643) do not survive scrutiny:
-534 sleeps *before* its copyin, and the 643 row's msleep belongs to a different function that the
-naive "body runs until the next body start" window swallowed.
-
-That window is the caveat: handler bodies are not contiguous, and the second-pass heuristic (stop at
-a ret followed by padding) fails to terminate on this image, reporting the same end for every body.
-So the census establishes the aio family positively and establishes nothing negative about the other
-295 bodies. Finishing it needs a real function-extent pass. Also recorded: capstone returns `call
-rel32` operands as RVAs when the image is disassembled at file offsets; subtracting the kernel base
-from them produces nonsense and cost one pass. `docs/COPYIN_SLEEP_CENSUS_14_10.md`.
-
-## 2026-11-05 (twenty-first boot, cont.): 632/634/633 work, and 634 returns user state only
-
-The thread-context family is now proven end to end for the first time. `430 thr_create` succeeds
-only with the 156c offsets (CS +0xc0, RIP +0xe0, RSP +0xf8, SS +0x100, magic +0x108 = 0x480, flags
-+0x0d0 = 0, type +0x110 = 0x10000); the 156a layout returns EINVAL, which two probes confirmed
-before the index row was re-read. With a live spinning child, `632 thr_suspend_ucontext` returns 0,
-`634 thr_get_ucontext` returns 0 and overwrites the caller's 0xA5-filled buffer, and `633
-thr_resume_ucontext` returns 0 with the thread still alive. That also explains 1227b's EINVAL: 634
-refuses a running thread at `cmp dword [thread+0xe4],0 ; jns error`.
-
-The 0x4c0-byte copy contains **zero supervisor-range qwords** - for a user thread suspended in a
-`jmp $` the saved context is user state only. The "634 leaks the kernel thread structure" hypothesis
-is closed before it cost more runs. Next: dump the context in full to confirm the field layout, then
-exercise `635 thr_set_ucontext` as the inverse direction. `docs/UCONTEXT_FAMILY_14_10.md`.
-
-## 2026-11-05 (twenty-first boot, cont.): dmem container refused, thr_self works, 634 wants a shaped context
-
-`586 dmem_container` answers its query form (rv 1) but refuses every index with EPERM: the
-`priv_check(0x2ad)` at 0x3ce18f runs before the `proc+0x5c4` write, and `559` carries the same check,
-so routes R2 and R3 close together. `628 mmap_dmem` without a container gives EBUSY for prot 3/0 and
-EINVAL for 0x33/0x1002 - a handler past its argument checks with nothing selected.
-
-`thr_self(432)` takes a pointer and works: tid 0x18D99. With a valid tid, `634 thr_get_ucontext`
-returns EINVAL and copies nothing, while a bad tid returns ESRCH, so the lookup is real and the
-context argument is validated - most likely against the same shape `635 thr_set_ucontext` accepts.
-`659 dynlib_get_list2` writes 0x00000000, 0x00000013, 0x00000014 into the buffer before failing with
-EFAULT, which reads as a count and a capacity; a larger buffer is the next call. No supervisor-range
-value appeared in any of them. `docs/DMEM_UCONTEXT_FIRST_CONTACT_14_10.md`.
-
-## 2026-11-05 (twenty-first boot, cont.): 604, 656 and 560 close; 572 stays silent
-
-Four first-contact calls from the route list, plus one full-image reference scan. **604
-dl_get_metadata** returns EPERM for every shape, so the `ctx+0x58` tag is neither `...06` nor
-`...07` and that path is closed. **656 dynlib_get_info_for_libdbg** returns EPERM with the caller's
-0x160 sentinel unwritten, so both debug-unit predicates are false and 672/601-stage-two cannot open.
-**572 virtual_query** accepts (va, flags, out) for five flag words including the strict-mask pair
-and returns 0 with an all-zero buffer, which corroborates the old dead-end rather than overturning
-it. **560 debug_init** is a genuine write-once caller-chosen dword into 0x3543A5C (0x41 -> 0,
-0x41 -> 0, 0x42 -> EBUSY), and the decisive question was whether anything reads it: a full-image
-sweep of 5,343,048 instructions with rip-relative targets resolved finds exactly two references to
-that address, the read and the write inside 560 itself. The value is inert, exactly like 643's
-proc+0xa34 OR. Route R5 closes with a measurement.
-
-Also settled: blockpool handles are slots in a small consumable table (0x16 and 0x17 in the first
-two opens of a fresh session), and `mmap(477)` refuses all eight prot/flags shapes against one.
-`docs/ROUTES_FIRST_CONTACT_14_10.md`, `docs/BLOCKPOOL_ROUTE_14_10.md`.
-
-## 2026-11-05 (twenty-first boot, cont.): the loader process persists, and blockpool slots are consumable
-
-Two operational facts that change how every future probe is run. First, the pid is **80 in every
-probe of this boot** (1213a through 1224b), so the loader reuses one process across TCP connections;
-the "fresh process per connection" assumption this corpus has carried is wrong for this loader, and
-state accumulates. Second, `653 blockpool_open` returns **EMFILE 24** on the first call of a fresh
-connection while `RLIMIT_NOFILE` is 13952, and the three earlier successes returned consecutive
-values 0x17/0x18/0x19 — so the handle is a slot in a small per-process table that is now exhausted,
-not a descriptor from the fd table. The blockpool route needs a game relaunch to continue, and any
-probe that opens slots must count them.
-
-Static follow-up: the type-0xb constructor lives in a page mover that starts at 0x9A75B0, checks a
-privilege threshold at `[proc+0x5d4]`, bumps `[proc+0x58c]`, copies 0x4000-byte pages through
-0x8de950, and only then builds the object. The map insertion that `654`/`655` need is still not
-identified; the next reads are 0x9ABCA0 and the page worker 0x9A97A0.
-
-## 2026-11-05 (twenty-first boot): blockpool_map is a lookup, not a creator
-
-Route R1 was taken live. `653 blockpool_open(0,0)` returns a small per-process handle (0x17, 0x18,
-0x19 in three consecutive runs, then -1 in a fourth with the identical shape, so a precondition
-exists). `mmap(477)` with that handle as `fd` is refused with EINVAL for four prot/flags shapes, and
-`654 blockpool_map` is refused with EINVAL for every VA/access/length combination tried, twelve of
-twelve. The body explains both: 0x9a9560 locks `[proc+0x200]` (the vm_map), calls `vm_map_lookup`
-at 0x9a96a0 with the caller's address, then requires `entry->object->class == 0xb` at 0x9a96cf. It
-manipulates a mapping that must already exist; it never creates one. `655` has the same shape.
-
-So the missing link is whichever call installs a type-0xb object into a user mapping - the only
-instruction that constructs one is `0x9a77c7 mov edi,0xb` inside the blockpool code, and 653 itself
-is the prime suspect once its precondition is met. `docs/BLOCKPOOL_ROUTE_14_10.md` records the
-four probe results, the disassembly, and the three experiments that would find the installer.
-
-Also this boot: socket ioctl is gated rather than missing (`docs/SOCKET_IOCTL_14_10.md`), 638's
-timezone read is a bounded binary search over a counted table (no index can walk it out of the
-array), and the argument-4/trampoline theory was retracted after a stock-vs-trampoline comparison
-came back byte-identical.
-
-## 2026-11-05 (twentieth boot, cont.): socket ioctl is gated, and the Sony net extensions are empty at first contact
-
-Upstream open row O10 said socket-level ioctls had never been swept. They have now. syscall 54 does
-resolve a socket descriptor — `FIONBIO` returns EACCES 13, not ENOTTY — so the old "54 never
-resolves the descriptor" line only ever described device nodes. The request code decides the
-answer: recognised `SIOC*` (0xC02xxxxx) are denied with EACCES 13, legacy 0x89xx fall through to
-ENOTTY 25. That is a permission gate on the network ioctl path, consistent with this process's
-credential context, and it is not bypassable with a different code.
-
-No leak: 37 requests, 0x100-byte zeroed ifreq buffers, **0 supervisor-range qwords**. The Sony
-extensions 102 `netgetsockinfo`, 125 `netgetiflist`, 113 `socketex`, 141 `kqueueex` had never been
-called; 102 keys on the descriptor (rv 1 with a real fd, EBADF with a buffer address), 125 does not,
-and neither copied anything. 113 and 141 were lost to a probe-side Lua type error, not to a kernel
-result. `docs/SOCKET_IOCTL_14_10.md`.
-
-## 2026-11-05: retraction - argument 4 was never broken, and 663's EINVAL is a kernel guard
-
-Probe 1221a ran the same calls through the loader's stock syscall stub and through
-`libkernel+0x3B7` and got byte-identical answers in every row (379 prot 2/8/0x10/0x200 ->
-13/22/45/13; 663 count 1 mode 0 -> 0x80020003; count 2 mode 0 -> untouched + EINVAL; count 2 mode 1
--> 0x80020003). Argument 4 has always been delivered: libkernel's wrapper is
-`mov rax,<num>; mov r10,rcx; syscall; ret`, so the loader's `gettimeofday_import + 7` lands on
-`mov r10, rcx`. Upstream already documented that in `docs/THREADING_ALIVE_14_10.md:130` and
-`docs/PROBE_INDEX.md` row 157a, and this session's `docs/SYSCALL_ARG4_R10_14_10.md` was written
-without checking it. That document is now retracted at the top, with the reasoning error spelled out:
-1211a already showed mode 1 timing out while mode 0 returned EINVAL, which a stale register cannot
-do.
-
-What is real, and not in the upstream tree, is the mechanism behind that EINVAL: `663` refuses
-`mode == 0` with `count > 1` **before it copies the id list in** — the same EINVAL with a NULL id
-pointer (not EFAULT), a NULL timeout, and real pending requests; modes 1 and 2 work at any count.
-The 13.60 body only produces EINVAL at the count bound and the mode bound, and count 2 passes both,
-so 14.10 carries an explicit guard of exactly the shape the public Bagagwa/Relapse bug needs. The
-public aio kernel bug is patched on 14.10. Recorded in `docs/AIO_MODE0_GUARD_14_10.md`.
-
-## 2026-11-05 (twentieth boot): argument 4 works, and it proves the aio bug is patched
-
-The trampoline is real and it is libkernel+0x3B0+7. 1216b's cheap test was ambiguous — a stale r10
-below 3 produces the same 0x80020003 as a delivered mode 0 — so 1218a settled it differentially:
-through `lk+0x3B7`, mode 0 writes 0x80020003 into the status slot while mode 4 leaves it untouched
-and returns EINVAL, on two adjacent calls that share one chain. Argument 4 (r10) is now under
-control for the first time.
-
-The first thing it closed is the aio route. Through the trampoline, `aio_multi_wait` runs mode 0
-with count 1 but returns **EINVAL with the status array untouched** for count 2, 3 and 0x80; modes 1
-and 2 work at any count. The rejection survives a NULL id pointer (EINVAL, not EFAULT) and a NULL
-timeout, so it happens before the id list is read. The 13.60 body only has two EINVAL sites and
-count 2 passes the count bound, so 14.10 adds an explicit `mode == 0 && count > 1` check — exactly
-the Bagagwa/Relapse shape. **The aio_multi_wait use-after-free is patched on 14.10**, and the
-mode-0 dangling-node route is closed for good. Also a correction: 1211a's EINVAL was this guard,
-not a stale r10.
-
-Argument 4's first live use is 379 mtypeprotect. With prot finally delivered, the returns are
-prot-dependent for the first time: 0x00/0x01/0x10/0x40/0x100 give EOPNOTSUPP 45, 0x02..0x07 and
-0x200 give EACCES 13, 0x08 gives EINVAL (the loose-table bit 3 reject the statics predict), and
-0x300 killed the payload on a type-0x33 direct-memory mapping. 0x200 is the plausible PS5 execute
-bit — the body maps bit 9 onto FreeBSD's PROT_EXEC via `((prot>>1)&0x141)|prot` — and it is the one
-accepted-by-the-mask value that still dies inside vm_map_protect. Next: decode 379's return-code
-table from kernel_data.bin, then sweep prot on an anonymous mapping instead of a device one.
-
-## 2026-11-05 (nineteenth boot, cont.): eboot is closed, libc's import table is mapped, and argument 4 has a one-syscall test
-
-The whole 0x494000-byte eboot .text is now dumped and reassembled (`.local/dumps/eboot_full.bin`,
-full coverage). At real instruction boundaries it contains 14 `mov r10, rcx`, 0 `pop r10`, and
-**0 `syscall`** — every `0f 05` byte in the image is a displacement or an immediate, including the
-convincing `0F 05 C1 E6 10 09 CE` at 0x1017E2 and the `0x93CBD` one. A forward walk from each of the
-14 sites, stopping at the first memory operand, call, branch or r10 clobber, reaches a `ret` zero
-times. eboot is therefore closed for argument 4 by construction, not by luck.
-
-libc is the opposite: readable, and its libkernel import slots sit in the gap
-`[libc+0x114000, libc+0x118000)`. The slot at +0x1179A8 held 0x832BDCB50, which pins
-`libkernel_base = 0x832BDC000` and re-confirms stub offset 0xB50 from a second direction. That
-window holds 94 distinct libkernel pointers, and libc reaches them through 94 `jmp [rip+disp]` PLT
-thunks; walking the `call rel32` sites that hit each thunk gives call counts and whether an rcx write
-precedes the call. Four stubs are called with a 4th argument at every site (0x15830 4/4, 0x15900 3/3,
-0x18DF0 3/3, 0x13E60 2/2); 0x3B0 scores 2/1 but 1213a already proved it has no `mov r10, rcx`, so the
-heuristic is advisory only.
-
-The aio-based argument-4 test was the reason the stub walk outlived its client (1216a, LOADER-STUCK).
-The 13.60 body permits a cheaper one: with `count = 1` and `id = 0`, EINVAL 22 can only come from the
-mode bound, while a mode that actually arrives as 0 reaches the id loop and writes 0x80020003 into the
-status slot. One syscall, no descriptors, no requests: probe 1216b walks 0x3B0..0x10F0 at 0x20 stride.
-
-## 2026-11-05 (nineteenth boot): rcx arrives, and the import table is not all stubs
-
-Probe 1213b settles the ambiguity 1213a left open. Three `mov rax, rcx ; ret` gadgets in eboot
-(0xCC627, 0xCC657, 0xD5878) return exactly the rcx value they are handed through
-`native.fcall_with_rax` (0x4444, control 0), so the native fcall handler marshals rcx faithfully and a
-`mov r10, rcx` trampoline would deliver syscall argument 4. The eight verified stubs below 0x1100 are
-therefore genuinely two-or-three-argument stubs.
-
-libkernel module info gives the extent for the first time: text base = libkernel_base with size
-0x48000, data base +0x48000 with size 0x38000, and the segment records are `{u64 base, u32 type, u32
-size}` at mi+0x160 / mi+0x170.
-
-The same probe shows why the harvest cannot be trusted as a stub list: the first getpid test at an
-offset >= 0x1000 killed the payload and wedged the loader. An import slot can point at an ordinary
-libkernel function (`function+7` is then mid-instruction). Blind testing costs a relaunch per
-candidate, so the remaining two routes are the safe ones: finish the eboot census for a
-`mov r10, rcx` shim that reaches `ret` (probe 1213c), or dump libc .text and prove which import slot
-is called with four or more argument registers before touching any address.
-
-Instrument fix: `tools/send_probe.py` died on a cp1252 encode error while writing a dying payload's
-binary output, destroying the tail of the record. stdout is now UTF-8 with errors=replace.
-
-## 2026-11-05 (nineteenth boot): argument 4 is recoverable from the import tables, not from a gadget
-
-The blocker from the last boot is not a missing syscall, it is a missing `mov r10, rcx`. Offline on the
-1 MB eboot dump: `49 89 ca 0f 05` 0 hits, `0f 05 c3` 0 hits, `41 5a c3` 0 hits, `xchg r10,rcx` 0 hits,
-`0f 05` exactly 1 hit and that one is the displacement of `mov qword ptr [rip+0x8e050f], rax` at
-`eboot+0x93CBA` — a byte-scan false positive, not an instruction. 35 `mov r10, r64` sites exist in that
-megabyte and every one of the six `mov r10, rcx` instances continues into strtol/memchr/memcpy
-arithmetic, never into a `ret` and never near a syscall. Sony userland simply never executes `syscall`;
-it calls libkernel stubs. So the gadget hunt is structurally dead rather than unlucky.
-
-What is alive is the stub table itself. `syscall.lua` already jumps at `*libc_gettimeofday_import + 7`,
-and 1183b measured `sa - stub = 7`: the prologue is exactly 7 bytes, so `stub + 7` is an instruction
-boundary for every stub in the table. For a two-argument stub it is `0f 05` (what we have been using);
-for a four-or-more-argument stub it is `49 89 ca ; 0f 05` — a generic `mov r10, rcx ; syscall` trampoline
-that would put argument 4 under control for 663, 379, 547, 572 and everything else the corpus marked
-"arg4 never arrived". Stub addresses are readable even though stub bytes are not: they sit in ordinary
-import tables. Probe 1213a harvests them from the libc window and from eboot's data segments, verifies
-each candidate by asking it for our own pid, and then uses it on 663 mode 0, where the kernel's only
-two EINVAL sites make the answer unambiguous. Written, not yet run: the console was rebooting.
-
-Docs: `docs/SYSCALL_ARG4_R10_14_10.md` sections 10.1-10.6.
-
-## 2026-11-04 (eighteenth boot, cont.): the capability context is write-once, and three pinned-address routes die
-
-Syscall 636 is a timezone table loader that `copyin`s up to 0x200 entries of 16 bytes into a static
-kernel array at RVA 0x3915920 — and it refuses us with EPERM first, because its gate is bit 62 of
-`[ctx+0x60]` where ctx = `[td+0x140]`. The accepted count equals the array size exactly
-(`0x3917920 - 0x3915920 = 0x200 * 16`), so there is no overflow behind the gate either. Measured:
-counts 1, 0x200, 0x201 and 0 all return EPERM, which proves the gate precedes the bound check.
-
-The same connection then showed sys 638 returning real timezone data (`0xE13` = 3603, `0xE10` = 3600,
-`0xF10` = 3856) **while `get_error_string` still reported the previous EPERM**. Errno is written only
-on failure, so a stale code survives a successful call; the output buffer is the only proof of success.
-That correction applies to every measurement in the corpus that trusted the string per call.
-
-Sys 643 is the strongest-looking shape in the table — an unprivileged, unvalidated 32-bit OR into a
-fixed offset of `struct proc` (`or [proc+0xa34], eax`, no gate, no bound) — and it is worthless:
-only bits 0/1/2 of that dword have any reader in the image (five instructions, all branch selectors),
-and a 32-round live sweep that accumulated all 32 bits changed nothing in a seven-call oracle battery.
-
-The structural result: `[td+0x140]` points at a family of predicate stubs at RVA 0x608e00-0x609600
-(bit 62 with **508 call sites**, bit 61 with 3, bit 60 with 3, a range test with 42, and per-tag
-equality tests feeding sys 612/649/594/532/604/535/536/455/466/482/346/253/232/670). Of 1,551
-instructions that load a pointer from `[reg+0x140]`, **zero** store to `[ctx+0x58]` or `[ctx+0x60]`:
-the capability context is installed at process creation and immutable from userland.
-
-Written up in `docs/CAPABILITY_CONTEXT_14_10.md`.
-
-## 2026-11-04 (eighteenth boot): a magic-word gateway into Sony's service dispatcher
-
-Syscall 605 is `service_rpc(magic)`: it whitelists five 32-bit service identifiers and hands the
-winner to the Sony service dispatcher, writing the result straight into `td_retval[0]`. Measured
-live, all five return `0x800d0203` — the code that is materialised at exactly one instruction,
-reached only when the per-process service command table is empty. The table is in .data, absent
-from every dump, and nothing reachable from userland fills it.
-
-The lasting value is the **channel**: the loader hands back 32-bit Sony status codes intact, so
-`0x800d0201` / `0x800d0203` / `0x800d0208` / `0x800d020d` tell us *which guard fired* inside
-kernel code we cannot read. That is a branch oracle for the whole Sony syscall range.
-
-Also this boot: the uap over-read class is measured and closed — three handlers (665, 668, 113)
-read one argument past `narg*8`, but the bytes they read are our own previous arguments, so the
-over-read yields nothing the caller did not supply. Two scan bugs had to be fixed first (walks into
-the next function; no stop at a tail `jmp`), and both had produced plausible fake findings.
-
-## 2026-11-04 (seventeenth boot, cont.): 379 and 547 are measured and closed
-
-- 547 `query_memory_protection` returns **map-entry metadata**, not a PTE: start, end, protection
-  dword 3 and flag dword 0x00610020 for a page we own, identical for an aligned and an unaligned va.
-  No physical address and no kernel pointer, which also proves `proc+0xc81 == 0` at runtime and
-  retires the PTE/physical-address route by measurement rather than by inference.
-- 379 `mtypeprotect` really has no bound check: a kernel address returns **EACCES 13, not EINVAL**,
-  the same as an in-range address with no VMA, so the handler does reach `vm_map_protect` with a
-  kernel address. It cannot act on one, because the map being searched is our own vmspace. Only
-  **id 10** passes the policy gate at 0x8ad833e0, and with id 10 every protection the map accepts
-  comes back EACCES - a refusal, never a mutation. New section 6 and 7 in
-  `docs/ROUTE_379_547_14_10.md`.
-- Copyin length screen: of 432 direct copyin sites, 12 have a stack destination and a non-constant
-  length; eight were a parse artifact (`mov edx, 8` printed without a `0x` prefix) and the remaining
-  three are guarded by `cmp r14,0xa9; jae` immediately above the call, into a frame buffer larger
-  than the bound. No kernel stack smash in the direct call graph. New doc:
-  `docs/COPYIN_LENGTH_SCREEN_14_10.md`.
-
-## 2026-11-04 (seventeenth boot): the return value is not rax, and the devfs ioctl surface was never reached
-
-- Measured the loader's failure path (probe 1200d, reproduced twice, identical): a failing syscall returns
-  **0**, and the real error code is only available through the loader's own `get_error_string()`. Successes
-  return their true value (`fcntl(fd,F_GETFL)` = 2, `open` = the descriptor). Every conclusion in this
-  corpus that was drawn from `rv == 0` (`success`) or `rv == -1` (`unsupported`) is unfounded, and an
-  `open()` failure returns 0 - which is stdin - so probes that tested `fd < 0` then operated on the loader's
-  own socket. New doc: `docs/ERRNO_CHANNEL_14_10.md`.
-- Re-measured the devfs ioctl surface with the working channel: 256 commands x 6 nodes answer **ENOTTY 25**
-  on every command, including `/dev/null`; `/dev/usbctl` open fails EACCES 13; and `ioctl(9999,...)` answers
-  ENOTTY rather than EBADF, which proves syscall 54 as reached from this host never resolves the descriptor.
-  The "19 live commands on /dev/ugen0.2" of probe 288a and the EPERM/ENXIO pairs of 1165a were return-value
-  artifacts. No device driver has ever been entered from userland through ioctl on 14.10 - the surface is
-  reopened, not closed. 615/616/617/618 answer the same for fd 9999 as for a live descriptor; 619/620 are
-  ENOSYS and match their 9-byte static stubs.
-- Corrected two claims in `docs/CREATIVE_ROUTES_II_14_10.md` from the disassembly: 379 `mtypeprotect`
-  **cannot** read `proc+0xc81` (0x4000 is accepted by both the loose and the strict prot table, and every
-  prot the map accepts is accepted by both), and 547's PTE branch needs `c81 != 0` **and**
-  `proc+0x5d8 >= 0x6000000`. The only writer of c81 in the whole image is 0x38f7bf, inside process creation,
-  selected by a launch parameter - not a syscall. New doc: `docs/ROUTE_379_547_14_10.md`.
-- Operational: a dead payload process does not kill the listener (port_witness answers immediately after
-  597 wedges), and a refused connection is not a syscall verdict - the earlier sweep recorded eighteen
-  consecutive "deaths" that were one dead listener. The sweep driver now witnesses before every number and
-  runs one syscall per connection.
-
-## 2026-11-04 (sixteenth boot): the user-access helper family is classified, Route 3 closed
-
-- Enumerated all 17 entries of the uaccess block (`0xffffffff8ac18ff0`-`0xffffffff8ac19bff`) and named
-  each one: copyout, copyin, two `lock cmpxchg` variants, four `fueword`-style reads, `movzx` word/byte
-  reads, three user writes, a validate-only probe, and a `lodsb/stosb` string copy. Every check constant is
-  `0x7fff...` minus the access width.
-- Audit answer: **15 of 15 user-accessing entries validate the same register they dereference.** No operand
-  swap, no width mismatch. Passing a kernel address fails the range check at every entry, so a user-access
-  helper cannot be inverted into a kernel read. `docs/CREATIVE_ROUTES_14_10.md` Route 3 is marked CLOSED.
-  New doc: `docs/USER_ACCESS_FAMILY_AUDIT.md`.
-
-## 2026-11-04 (fifteenth boot, cont.): the function-pointer whitelist gets a census
-
-- Measured the CFI idiom that `docs/THR_CREATE_430_CONTEXT.md` first described: `5,676` `ror rax,3`
-  sequences in the image, `16,396` indirect call sites, `4,794` of them (29.2%) with a whitelist check
-  in the preceding 0x60 bytes. Resolved three `K/N` pairs by hand (`0x267008/0x3a5`, `0x26C670/0x22`,
-  `0x269338/3`) and confirmed the admitted targets are 8-byte-stride `e9 rel32; cc cc cc` stubs. New doc:
-  `docs/CFI_CENSUS_13_60.md`.
-- Conclusion recorded there: a hijacked function pointer can only be redirected to a *whitelisted stub*,
-  i.e. to another legitimate handler, so control-flow hijack is not a substitute for a data-only
-  arbitrary-read/write primitive.
-- Closed audit A's C1: `0x70322d` is an object-fill constructor (five field stores around a bare memcpy),
-  fed by the VOP length out-param in `0x703380`; the destination is a kernel object, never a uap value.
-  Appended to `docs/COPY_SITE_DYNAMIC_LENGTH_TRIAGE.md` §6.
-
-## 2026-11-04 (fifteenth boot): dynamic-length copies triage clean, cdevsw proven absent
-
-- Re-walked the whole syscall layer from the 301 resolved handler bodies (depth-4 CFG-aware BFS, 1,678
-  functions) and classified all 235 copyin/copyout sites by length provenance: 67 non-constant, 38 with no
-  immediate bound. The four read in full (sys 455, sys 80, sys 487, and `0x5581e0`) all recompute the copy
-  length from the field they already validated and size the destination from the same expression.
-  New doc: `docs/COPY_SITE_DYNAMIC_LENGTH_TRIAGE.md`.
-- Recorded the three method traps that produced false-clean runs: `Cs(...)` rejects `detail=True` as a kwarg,
-  `ins.operands[].imm` is sign-extended for kernel VAs (without normalisation the BFS finds 0 edges), and
-  "[body, body+0x4000]" is not a function boundary.
-- Proved the `cdevsw` route dead for static analysis: 0 references to any of 1,295 device-name string VAs in
-  the 4 MB data dump, 0 struct-shaped candidates, and only 2 text-pointing qwords in 524,287 (both
-  coincidences in obfuscated rodata). `kernel_data.bin` is strings, not `.data`. The 2,113 rip-relative
-  device-name references in text are log prefixes.
-- Consequence: driver entry points can only be reached behaviourally, and the shape worth sweeping is
-  magic-gated commands (the 674 lesson), not more command numbers.
-
-## 2026-11-04 (fourteenth boot): 597 is unreachable on 14.10, and its bit has no readers
-
-- 597 killed the process with `arg1` = a mapped buffer holding module id 0x13 and zero tail args (1199b, 8.828 s, no `=== DONE`), after 596 and 608 ran clean in the same connection: the death is not about zero arguments.
-- Static: 597's 13.60 body never reads `uap`, and a whole-image scan finds **zero readers of bit 0x40** - the grant was never a route to kernel memory. Parked with the measurement recorded (`docs/DYNLIB_608_649_14_10.md` §5).
-- The other dword writers at `+0x140` are socket-buffer fields on a different object: 20 sites in 15 functions, only `0x34c88d` touches the loader context.
-
-## 2026-11-04 (thirteenth boot): 608 is a clean record, and 597 dies before it can grant
-
-- 608 `dynlib_get_info_ex` measured for ids 0/0x13/0x14 at flags 0..3: `rv=0` everywhere, records identical, and a kernel-qword scan over the whole `0x1a8` finds **nothing** - every field is a userland VA, so the converter is not a read primitive (`docs/DYNLIB_608_649_14_10.md`).
-- 649 `dynlib_get_obj_member` returns the same eight values field for field (idx 5 and 6 are empty arms returning -1 on 14.10) - two independent converters agreeing is the cross-check that the record layout is real.
-- The 608 privilege oracle is live: level 2 of `[ctx+0x140]` is clear for a plain game process, so grant-then-read is measurable in one connection.
-- 597 `dynlib_prepare_dlclose` killed the process 6.891 s into probe 1199a, on the six-zero shape, before either non-zero shape ran. The unprivileged capability grant stays unmeasured; `1199b` now runs the mapped-pointer shapes first and the known-lethal zeros last.
-- Whole-image disassembly of every `+0x140` memory operand: 2166 hits, 39 immediate writers, and only `0x34c88d` writes the loader context.
-
-## 2026-11-04 (twelfth boot): sys 597 is an unprivileged capability grant
-
-- **The privilege mask has a writer and it is not behind a privilege check.** sys 597 `dynlib_prepare_dlclose`, thunk `0x2655c0` → body `0x34c820`, ends with `[[td_proc+0x3e8]+0x150] = 1` and `or dword [[td_proc+0x3e8]+0x140], 0x40` — the same word `0x8b4ebb00(level)` tests. Gates are a global config bit (`0x8b48ce10`, global at RVA `0x3cc1390`) and `td_proc->[0x578]->[0x118] <= 0xffffff` (`0x8b3b81c0`). Nothing in the image queries bit `0x40`; the 7 reader sites use 1/2/4/8/0x10.
-- **A userland oracle for the mask exists**: 608 zeroes `rec+0x128`/`rec+0x130` exactly when `0x8b4ebb00(2)` returns 1, so a 0x1a8 record dump before and after a candidate call reveals level 2. Staged as probe 1199a (597 last, CRASH_CLASS HIGH — 597 kills on six zeros).
-- **608 `dynlib_get_info_ex` copies raw kernel qwords out** (`[r15+0x78]`, `[r15+0xf8]`, `[r15+0x108]`); 660's tail is a plain 0x14-byte `memcpy`, not a hash, which is why its cookies were unfiltered but bounded. Probe 1198a dumps the full 0x1a8.
-- **Offset collisions worth remembering**: `0x34bff7`'s `mov qword [r14+0x140], 0` is the *record* buffer, not the mask; sys 643 writes `proc+0xa34`, one hop above the loader context, which is why 643(`0xFFFFFFFF`) never moved anything.
-
-## 2026-11-04 (eleventh boot): sys 674 was never dead, it wanted a magic word
-
-- **sys 674 `virtual_query_all` is alive and gated**: `cmp dword [uap+0x20], 0x40000000` at `0x8b47b9d3`
-  returns EINVAL for anything else. With the magic it returns 0 and enumerates our vm_map in 0x48-byte
-  records (`start`, `end`, protection word at +0x18, an ASCII "executable" label near +0x20). Every sweep in
-  this repository passed zeros, so the syscall has been written off since August for the wrong reason.
-- The records contain **no kernel pointers** — 674 is process ground truth, not a leak — but the **class** it
-  exposes is the important part: a `-1` from a Sony handler can mean "wrong magic" rather than "absent", and
-  the loader's return path hides the errno, so the whole range has to be re-swept with structured arguments.
-- 1196b implements that sweep for the 18 info-family syscalls; written, not yet run.
-- Loader died during 1196a because the probe read past its own `memory.alloc(0x800)` while decoding a
-  0x40-record reply (SIGSEGV inside Lua, `pcall` does not catch it). Rule recorded in
-  [VIRTUAL_QUERY_ALL_674_14_10](VIRTUAL_QUERY_ALL_674_14_10.md) §5.
-- New docs: [VIRTUAL_QUERY_ALL_674_14_10](VIRTUAL_QUERY_ALL_674_14_10.md),
-  [SONY_DEBUG_SYSCALLS_13_60](SONY_DEBUG_SYSCALLS_13_60.md) (619 and 635 are hard-coded ENOSYS stubs, 620
-  unmaps the caller's own stack, 634 is a gated 0x4c0-byte ucontext copyout).
-
-## 2026-11-04 (tenth boot): 601 is closed as a route
-
-- 1195a swept all 0x28 commands with `arg3 = 0x28` so that attach's length-gated copyout (`min(arg3,0x28)`) could not hide: **no command writes 0x28 bytes, and none writes `arg3` at all**. Only `0x00` (8 B), `0x0E` (8 B) and `0x1A` (4 B) touch `arg2`. The EPERM set `0A/0F/15/18/24/25/26` is unchanged after a full pass, so no thread flag flipped.
-- Whole-image `e8` scan: the attach body `0x8b6612d5`, the shared tail `0x8b66180c` and the second-stage dispatcher `0x8b662320` have **zero direct callers** in 15,132,096 bytes of text. They are reachable only as entries of the 0x28-slot command jump table at RVA `0x1a51160`, which no dump covers. Since 1195a measured all 0x28 slots and 1194c varied the only discriminator (the type field), the interval is exhausted.
-- Verdict: 14.10's mdbg does not expose the 13.60 second stage to an unprivileged process. `docs/SYS601_SECOND_STAGE_14_10.md` section 9 records the measurement and the closure; the behavioural map stays as the best description of the 14.10 mdbg surface.
-- Measurement hygiene note added to that section: the 601 sweeps print `get_error_string()` without resetting errno, so success rows carry a stale errno and only `rv` is trustworthy there.
-
-## 2026-11-04 (ninth boot): the 601 sweep is measured and the attach is length-gated
-
-- **The 1192a wedge is arg3, not the struct.** 1193c: `601(0x00, zeroed, 0)` and `601(0x00, 0xA5, 0)`
-  both return 0 and both write `0x0000000000000100` to arg2. Anything non-zero in arg3 wedges.
-- **First real 601 errno map (1193a).** Success: 00/07/09/0B/0D/0E/13/14/19/1A/1D/20. EINVAL: 01/10/11/
-  12/1E/21/23. ENOSYS: 02/05/06/16/17/22/28-2F. **EPERM: 0A/0F/15/18/24/25/26** - exactly the arm the
-  flag-clear branch of the second-stage gate produces. EFAULT: 1C/1F. `0x28`-`0x2F` are ENOSYS because
-  the entry rejects `cmd > 0x27`.
-- **Nothing reaches stage two yet.** 1194c found zero flips between an out-of-range type and a valid
-  type-4 struct; 1194e found no command writing the 8-byte stage-two result to arg3. The stage-two entry
-  starts with `copyin(arg2,...,0x3c)`, and 1194d shows only 01/0E/1A/1C/1F/24/25 consume arg2 at all.
-- **Two new loader facts.** There is no kernel-pointer leak on this path: 1194b's only arg2 writers are
-  0x0E (8 zero bytes) and 0x1A (4 zero bytes), and every sentinel byte past them survived. And `0x1C`
-  **kills the process** when arg3 is a mapped pointer (1194e, `LOADER-DEAD`), while it merely returns
-  EFAULT when arg3 is zero.
-- **Why the attach stayed invisible: its copyout is `min(arg3, 0x28)`.** With `arg3 = 0` it writes
-  nothing and is indistinguishable from a no-op. 1195a re-runs the whole space with `arg3 = 0x28`.
-
-## 2026-11-04 (eighth boot): 601 has a second stage, one thread-flag bit away
-
-- **601's second command interface is found, statically.** A single branch in the handler
-  (`0xca0cda: test byte [td+0x529],1; jne 0xca180c`) tail-calls `0xca2320(td, arg2, arg3)`, which
-  copyin's a 0x3c-byte struct, dispatches on `struct+0x24` (types 3,4,5,7 pass without any
-  credential), ingests user blobs into a per-process **0x80000 kernel buffer** (`ctx+0x58`, plain
-  `memcpy`, no stac), hands type 3 to a kernel-side blob processor (`0x8b663e30`), links a 0x58-byte
-  entry into the ctx list and copyout's an 8-byte result to `arg3`. **Types 3 and 7 reach the main
-  body** without the privilege bit — the earlier "everything useful is gated behind attach"
-  conclusion is refuted. New doc: [SYS601_SECOND_STAGE_14_10.md](SYS601_SECOND_STAGE_14_10.md).
-- **The flag has a setter inside 601, and attach takes no kernel pointer.** `0xca131f:
-  or qword [td+0x528], 0x100` runs in a case body that reads `td_proc` from `[td+8]`. The corpus
-  claim that attach needs a kernel `struct proc*` came from commands 0x03/0x04, which are a
-  different family that really does dereference the argument. The detach body at `0xca141e` clears
-  bit 9, not bit 8.
-- **The whole 601 command map is errno-blind.** The loader's syscall path is the libkernel wrapper,
-  which returns -1 for every error; errno is only in libc errno (`get_error_string()`). The handler
-  can return only 0, 1, 4, 0x16, 0x1c, 0x23, 0x3f, 0x4e, so no "-1" ever came from 601. Every
-  "the gate returned EPERM" reading of that table is unsupported until the errno is measured.
-- **1192a cost the loader.** `601(0x00, zeroed 0x3c struct, mapped out pointer)` never returns and
-  wedges the Lua VM (`LOADER-STUCK`, twice, 45 s apart; kernel alive). `601(0x00, buf, 0)` is safe.
-  1193a (written) varies them separately and prints errno for every command.
-
-## 2026-11-04 (seventh boot): the ymm0 clobber is measured and negative
-
-- **H1 is dead for the syscall surface.** 1191a poisons ymm0 in-chain (`eboot+0xDB597`: `vmovups
-  ymm0,[rdi+0x28]; vmovups [rsi+0xc8],ymm0; ...`) from four `0xDEADBEEF0000000N` marker qwords, makes
-  exactly one syscall, then spills with `eboot+0xF7CB7`. For no-syscall, getpid, 638, 196 and
-  `clock_gettime(232)` the spill is **all zero** and the marker stays intact: the kernel preserves user
-  ymm0 (it either never enters vector code on these paths or it xsave/xrstor's around it).
-- **The in-chain raw syscall is proven, and the ordering rule is now known.** 1190a: each chain is
-  `push(SC) -> push_store_rax_into_memory -> push_set_rsi(BUF) -> push(gadget)`, i.e. rsi is reloaded
-  *after* the syscall. All five shapes stored; rax came back 1 / 0xB1 / -1 / 0 / -1 as expected.
-  1189a's two non-stores were rsi being clobbered by the kernel because it was loaded before the call.
-- **Zero after a syscall proves nothing** - a fresh `Thrd_create` thread's XSAVE area is zeroed, and the
-  no-syscall control is also zero. Any future register-residue experiment needs a poison step (1191a).
-- **The kernel's AVX is real but unreachable.** 2,452 `c5`-prefixed L=1 bytes in `kernel_text.bin`,
-  hotspot RVA `0x870000` (850); `0x876870` is VEX-128 scalar float math, and none of the 238 `call`
-  sites into that region lands within 0x2000 of a sysent handler. New doc `docs/YMM0_CLOBBER_14_10.md`.
-
-## 2026-11-04 (fifth/sixth boot): libkernel is execute-only, and eboot carries the ymm0 store
-
-- **libkernel .text cannot be read at all.** `syscall.syscall_address` (`.local/loader_payload/syscall.lua:27`)
-  sits at `libkernel_base + 0xB57` - inside the first page - and the loader `call`s it for every syscall.
-  Reading four bytes there kills the process; executing works forever. Execute-only, so PKU: three probes
-  (1182a, 1183a twice) died for exactly that reason and nobody knew why. New doc
-  `docs/EXEC_ONLY_LIBKERNEL_14_10.md`.
-- **eboot is readable and AVX-dense.** 1184a read it in 1 MB chunks (four clean, then a hole at 0x400000)
-  and counted 704/840/426/28 candidate ymm0 stores with **zero `vzeroupper`** in 4 MB.
-- **The gadget exists and is exact.** 1186a dumped 1 MB of eboot and capstone (with `skipdata=True`,
-  without which it returns zero instructions) found two usable stores:
-  `eboot+0xF7CB7  c5 fc 11 06 c3` = `vmovups [rsi],ymm0 ; ret` and `eboot+0xD4144` (`[r10]`). The
-  `[rsi]` shape is directly reachable from `native.fcall_with_rax`'s fourth argument.
-- **Open, not refuted:** 1187a called the gadget before and after real syscalls and the buffer never
-  changed. Either the call never reached the gadget or rsi was clobbered; 1188a's memcpy positive control
-  is what will separate the two. Also logged: `622` with six zero arguments kills the process.
-## 2026-11-04 (third boot): the sacrificial thread, and 601 closes as a read source
-
-- **The loader ships a throwaway thread and it works.** `run_lua_code_in_new_thread(lua_code,
-  {async=true, client_fd})` (.local/loader_payload/thread.lua:104-279) runs a fresh `lua_State` on a
-  `Thrd_create` thread, and its `print` writes to the fd you pass. Probe `1175a` parked **601 0x0C** on a
-  child while the main thread kept printing and finished: a wedging syscall now costs a thread, not a
-  relaunch. New doc `docs/SACRIFICIAL_THREAD_14_10.md`, including the failure that bounds it — a child
-  doing 2048 native memory operations killed the process with no crash blob (`1176a`), so children do
-  one syscall and one print and the main thread owns the buffer.
-- **601's whole command space is measured and it is closed as an unprivileged read source.** 0x00 writes
-  `{0x100,0}`, 0x0E writes `{0,0}`, 0x1A writes `{0}`, nine commands return 0 and write nothing, 0x08
-  and 0x0C park, 0x1B and 0x27 kill the process, 0x03 and 0x04 panic the console, **everything else in
-  0x00-0xFF returns -1**. Seven argument shapes and three repeat rounds never produced a byte of text;
-  `grep -r mDBG results/` is still zero. `docs/MDBG_601_COMMAND_MAP_14_10.md` has the table, and
-  `docs/HANDLER_SHAPE_HUNT_14_10.md` now carries the correction: the log drain is behind the type gate at
-  `0xca2320`, unlocked only by attach, which needs the kernel `struct proc*` the drain was supposed to leak.
-- **libc is exactly `0x120000` bytes and has neither a `syscall;ret` nor a VEX ymm store.** Probe `1173a`
-  scanned the whole mapping (0 unreadable dwords): one bare `syscall` at `0xBECF8`, zero `syscall;ret`,
-  zero `vzeroupper`, zero `vmov*d [rdi],ymm0`. H1 in `docs/MICROARCH_FEASIBILITY_14_10.md` therefore has
-  no libc gadget to use, and `1182a`'s attempt to look in libkernel faulted inside the first 0x40000 —
-  that scan needs page-at-a-time resumption.
-- **The loader's crash blob is decoded and documented**: magic `0x13371337`, signal number, "crashing
-  address", ucontext pointer, then 0x100 bytes of mcontext starting at ucontext+0x40
-  (`.local/loader_payload/signal.lua:33-75`). The 1173a run died of a read past the end of libc, and the
-  blob's `ctx+0x08` named the boundary. Text-then-binary in a capture is now a reliable crash detector,
-  and `send_probe`'s `COMPLETE` is not a finish signal — only `=== DONE` is.
-- Method lesson worth keeping: two probes compared a sentinel against a hand-derived decimal instead of
-  `0xA5A5A5A5` and reported `changed=1024` for an untouched buffer. Comparisons use hex literals, and
-  every derived counter gets a control column beside it.
-
-## 2026-11-04: 601's command space fights back - 0x08 wedges, 0x27 kills
-
-- Probe `1170a` (one process, ascending) and then `tools/601_arm_bruteforce.py` with probe
-  `1171a` (one command per connection) walked 601's commands looking for the unprivileged log
-  drain of `docs/HANDLER_SHAPE_HUNT_14_10.md` finding 1. Measured: `0x00` writes 8 bytes,
-  `0x01/0x02/0x05/0x06` = -1, `0x07` = 0 and writes nothing, `0x28`..`0x2f` = -1, `0x08` parks
-  forever (`LOADER-STUCK`), `0x27` kills the loader (`LOADER-DEAD`). No command has returned any
-  text, and no capture in this repo has ever contained `mDBG:`.
-- New doc `docs/LOADER_WEDGE_COMMANDS_14_10.md`: the two wedges (`637` mid-range, `601 0x08`), the
-  `IDLE_TIMEOUT` + `LOADER-STUCK` detection pair, the one-command-per-connection rule, and the note
-  that `send_probe` reports `COMPLETE` on any clean close.
-- The 601/attach pair is the reason to keep going: the drain would leak a kernel pointer, and
-  `attach` takes a **raw `struct proc*`** and writes through it (`mtx_lock(arg+0x148)`,
-  `ctx = *(arg+0x568)`). Leak first, then that write is reachable - the one place in the corpus
-  where a userland-controlled kernel pointer becomes a write.
-## 2026-11-04 (second boot): the frame layout is explicit, CPL is closed, and 601 cmd 0x08 wedges the loader
-
-- **The trapframe layout is now read straight off an instruction.** `0xffffffff8b3c7690` builds a frame
-  with `bzero(frame,0x110)` and names every slot: `mov edx,0x43` then `mov [r14+0xf0],rdx` at
-  `0x8b3c772f`/`0x8b3c7783` fixes **tf_cs at +0xf0**, with `tf_rip +0xe8`, `tf_rflags +0xf8`,
-  `tf_rsp +0x100`, `tf_ss +0x108`. This corrects the `+0xf8 = RSP` reading that came from the
-  *thr_create record*, which is a different structure.
-- **CPL cannot change through 417 or 422, and that is now static.** The installer `0x8b3cac60` has
-  exactly two callers in the 15.1 MB text — `0x8b5f79d2` and `0x8b5f7b4c`, both inside 422 — and its
-  complete write set into the frame is the 15 GPRs, four segment words, `+0xe8`, `+0xf8`, `+0x100`,
-  `+0x108`. **There is no write to `+0xf0`.** `417` writes no frame slot at all (no store with the frame
-  as base anywhere in its body, and no `iret`/`sysret`). Probe `1166a` is withdrawn unrun, because the
-  offsets it wrote were the record's, not the frame's. New hazard on record: `tf_ss` *is* taken from the
-  record (`+0xc0` → `+0x108`) unvalidated, so a non-DPL-3 selector there panics the console.
-  Doc: `docs/SIGRETURN_FRAME_LAYOUT_14_10.md`.
-- **601 command `0x08` blocks forever.** Probe `1170a` swept `0x00..0x2f` (minus the lethal `0x03`/`0x04`)
-  with a proved sentinel buffer looking for the log drain: `[00]` wrote 8 bytes, `[01][02][05][06]` = -1,
-  `[07]` = 0 with nothing written, and `0x08` never came back. `port_witness` then answered
-  **`LOADER-STUCK accepted, no reply`** — kernel alive, loader never services again, manual relaunch.
-  Signature identical to `637`'s wedge (`docs/PROC_LOCK_WEDGE_637_14_10.md`): a game process can wedge
-  the console with one call, and nothing in the capture says which command it was until it stops.
-- The mdbg log drain itself is **not yet found**: no capture in this repo has ever contained the string
-  `mDBG:`, and none of the eleven commands measured so far returned text.
-## 2026-11-04: the corrected pcblist MIB is refused too, and the USB commands are scalar getters
-
-- **56l ran again with the corrected MIBs and both leaks are refused at the rnode.**
-  `{4,2,6,11}` (AF_INET/TCPCTL_PCBLIST) and `{1,14,15,pid}` (KERN_PROC_KSTACK) each answer
-  `size query ret=-1 needed=0` (capture `results/phase14_final_push/56l_corrected_mib_probe_20261104_153236.txt`,
-  0.03 s). A wrong-leaf false negative looks like `ret=0 len=0`; this is the refusal signature, so the
-  pcblist KASLR leak was never a MIB-shape problem and the corrected leaf does not reopen it
-  (same wall as `kern.proc.filedesc`/`vmmap`/`kstack`/`kern.file`, `docs/CLAUDE.md:217`). The same capture
-  confirms the ktimer numbering from behaviour: `237` armed a timer `238` then reported live, `236` removed one.
-- **1165a: the USB driver ioctls copy out no structured data.** 27 calls on `/dev/ugen0.2` and `/dev/usbctl`
-  with a proved 0xA5A5A5A5 sentinel (capture `.../1165a_usb_ioctl_copyout_contents_20261104_152913.txt`):
-  all 14 `_IOR-8` commands returned 0 and wrote **nothing**, so 288a's "19 live driver commands" were
-  return-value artefacts. Five `_IOW-4` commands *do* store one dword — 0x40045564→0, 0x40045575→0,
-  0x40045587→0x64, 0x40045592→1, 0x40045594→0 — so the encoding does not tell the direction on this driver,
-  but the values are scalars and no 0xFFFF8xxx-shaped qword came back. The open() contradiction is resolved:
-  `O_RDONLY` succeeds on both nodes (**fd 22**), `O_RDWR` is what fails.
-- **1166a is prepared and was not measured.** It asks whether syscall 417 sanitizes the trapframe **selectors**
-  (`+0xE8` CS, `+0x100` SS) the way 816a showed it sanitizes RFLAGS — CS=0x4B and SS=0x33 only, never a
-  non-DPL-3 selector. It has not produced a result: the loader went `LOADER-DEAD` (connect refused) between
-  probes, its one run returned **0 bytes** (nothing printed, so 417 was not reached), and the console needs a
-  manual relaunch. No result and no attribution yet; do not cite it either way.
-- **S3 (`657 blockpool_batch`) is not a store primitive.** `results/kernel_handlers/decompiled/sys_657.c:16-31`
-  shows the 16-byte store is `store32_259790` publishing `(cursor-start)/32`, reached only after the record's
-  address resolves in `td->proc->map` to an entry whose object byte `+0x9d == 11` — the type-11 object
-  `mmap(477)` cannot create (`docs/GPU_VM_OPS_14_10.md:77`).
-
-## 2026-11-04: the timezone table is 260 records and its policy slot does nothing
-
-- **1164a ran COMPLETE** (`results/phase17_new_vectors/1164a_638_tail_and_policy_20261104_150148.txt`,
-  0.047 s, `pid=80` alive, no panic). The walk past 1161a's horizon finds exactly **2 more records**
-  — `4109878800` and `4128627600` — so 638/639 read a **260-record, `0x1040`-byte** window out of
-  the 512-slot / `0x2000` table. The 638/639 index is bounded by the count global, so every byte
-  they hand userland is inside the table: no OOB, and no way to make one.
-- **The top is confirmed twice**: 639 called from 13 years past the last key clamps to
-  `4128627600` and 638 at `key-1` lands on `4109878800`. 638 and 639 also select the *same*
-  record for the same input — 639 is 638 with a subtraction and one extra destination, not a
-  second walk.
-- **639's policy dword is inert on 14.10**: 0 / 1 / 2 / `0xFFFFFFFF` give an identical key,
-  offset, correction and `nearest` at two different indexes, so the `lo-2` lookback gated by
-  `sys_638.c:389` feeds no copy-out field. `nearest` is also not the record's correction
-  (`corr = 0`, `near = 3600`) — recorded so nobody reads it as a record field.
-- Review caught a blocking measurement bug before the run: the key was rebuilt by sign-extending
-  the two dwords independently, so every key above `2^31` printed negative, `[A]`'s stop test was
-  satisfied by the bug and `[A2]` reported "0 records above the horizon" — the opposite of the
-  truth. Fixed to one `key64` = `si32(high) * 2^32 + u32(low)` with a sentinel check.
-
-## 2026-11-04: 639 measured — five slots, subtraction, guard present, and a table longer than we thought
-
-- **1163a ran COMPLETE on 14.10** (`results/phase17_new_vectors/1163a_639_five_slots_20261104_145220.txt`,
-  0.032 s, process alive, no panic). 639 `localtime_to_utc` takes **five** uap slots and returns
-  `value = input - offset - correction`, with `delta = 0` on three inputs — so the
-  `_DAT_8e4305b0 < 0` branch that would drop the correction is not taken on this firmware.
-- **The `lo < 2` guard is present.** Input `0xFFFFFFFFFF000000` (below the first key) returns record
-  0 with `rv = 0` instead of faulting: `table[-1]` is unreachable, and the zero-extension path that
-  would have put a plain `movslq` on `0x0000000F8E2D5918` (user range, no `pcb_onfault`, kernel
-  `#PF` → panic) is refuted by measurement, not only by the 13.60 body.
-- **Copy order proven from userland:** with a wild address in the *last* slot the call returns
-  `-1 / EFAULT(14)` while the 8-byte value and 16-byte record have already landed — value, record,
-  nearest, each skipped when its pointer is 0.
-- **The timezone table is longer than 1161a walked.** Input `0x100000000` returns key
-  `4128627600`, past 2100-01-01 and past 1161a's `past-2100` stop, so the 258-record figure is a
-  horizon-limited dump, not the table's size. `[E]`'s policy sweep is vacuous too (input 0 gives
-  `lo = 1`, which short-circuits before policy is read). Both are the subject of
-  `probes/phase17_new_vectors/1164a_638_tail_and_policy.lua`.
-
-## 2026-11-04: 639 prepared — five slots, one mode branch, and one call that can panic
-
-- **639 `localtime_to_utc` is now a probe of its own**
-  (`probes/phase17_new_vectors/1163a_639_five_slots.lua`, 254 lines): 1162a died at `637(0,17)`
-  before reaching it, so it has never been called on 14.10.
-- **The ABI is five slots, read from the body:** `{int64 input; int32 policy; int32 pad;
-  value_out@0x10; record_out@0x18; correction_out@0x20}` (`sys_638.c:388`, `:444-460`), with
-  `value = input - offset - correction` (`:443`) — except that `:436` drops the correction when
-  `_DAT_8e4305b0 < 0`, which the probe's `delta` column distinguishes for free.
-- **One call in the file can panic, and it runs last.** `table[lo-2]` is guarded by `(int)lo < 2 ||
-  policy < 0` (`:389`); without that guard the index `-1` is zero-extended to
-  `0x0000000F8E2D5918` (`sys_639.asm:3424-3428`) and the plain `movslq` at `:3430` faults in
-  kernel mode with `pcb_onfault` NULL. `[F2]` (input below the first key) is therefore the last
-  row: a capture that stops there *is* the answer "guard absent".
-- **Two reviewers, both found real defects.** The correctness review caught a vacuous `[G]` control
-  (638 called without a re-fill, printing 639's leftover record), an asserted-not-proved `[D]`
-  "written?" flag whose printed buffers and rv came from two different calls, and a delta that
-  compared the wrong struct fields (`+8/+12` are separate int32s, and `nearest` is not the
-  record's correction). The safety review moved `below-first` out of the mid-probe `[F]` block to
-  the trailing `[F2]`, and confirmed the wrapper is arity-safe (`native.lua:34-41`, slot 11 never
-  read) and that 639 holds no lock across a copy-out — the 637 wedge class does not apply.
-
-## 2026-11-04: the copy-out class is closed — three audits, zero leaks, and the helper body was in the corpus all along
-
-- **Third audit, inline moves (`docs/COPYOUT_INLINE_MOVE_AUDIT.md`, 354 lines).** The class both
-  earlier notes excluded: `rep movs*`, manual scaled stores, `stac` regions. 21 distinct sites in
-  handler-reachable windows, **0 with a uap-derived destination, 0 with a uap-controlled length, 0
-  handler-side `stac`**. Code side is a clean negative; `docs/COPYOUT_CLASS_CLOSED.md` is the
-  one-page summary of all three.
-- **The copy-out helper body *is* in the corpus.** Nine files carry a
-  `SUPPLEMENTAL ORIGINAL KERNEL HELPER BYTES` section; `0x8a9c0000 + 0x2591d0 = 0xffffffff8ac191d0`
-  (and `0x258ff0`/`0x259280` for bzero/copyin) fixes `kernel_text.bin`'s base and turns the
-  argument direction into STATIC: **rdi = kernel source, rsi = user destination, rdx = length**, with
-  the fault handler installed at `gs:0x108` before `stac` (`sys_646.asm:15583` onwards), so a wild
-  user pointer is `EFAULT`, never a kernel write. Whole-corpus `stac` = 18 instructions, all inside
-  copy-out/copy-in at `0x259235`/`0x25930d`.
-- **640 `set_uevt` hides a real bug, of the write kind.** Its table index is `movslq (%r14)` with
-  `r14` a kernel global object (`sys_640.asm:3911`, `:3929`) — not uap-influenced, so the exclusion
-  from the leak class holds. But `0x8b4513d1: add 0x3165688(%rip),%r9` adds a signed 32-bit byte
-  offset with no capacity compare before the `rep movsq` at `0x8b4513f6`/`0x8b45163c`: a corrupted
-  `r14` writes outside the table. Kernel-side only.
-- **Residual #1:** `0xffffffff8ac190b0` (memcpy-ish, 73 call sites) has no body in the corpus; 10/73
-  sampled sites are kernel→kernel with no `stac`. Mechanical check left: disassemble
-  `kernel_text.bin[0x2590b0:0x2591d0]`.
-
-## 2026-11-04: the copy-out audit comes back clean, and it corrects our own corpus count
-
-- **0 provable OOB table reads.** The table-index audit of all copy-out sites
-  (`docs/COPYOUT_TABLE_INDEX_AUDIT.md`, 384 lines, 98 machine-checked instruction
-  quotes) finds every copy source to be a stack frame or a caller array. The only
-  "global table + scaled index" shape is the timezone table of 638/639/636.
-- **"62 handlers call the copy-out helper" was our error.** A substring grep had
-  matched comment lines that merely name the helper's RVA. Byte-level `call
-  ffffffff8ac191d0` exists in **19** asm files, 42 distinct call sites (27
-  decompiled files reference it). The top-10 list in
-  [the 638 note](TZ_TABLE_638_14_10.md) reproduced as zero hits, including
-  `sys_674.asm`, and has been replaced by the audit's result.
-- **Why the tz table cannot drift:** the count global sits exactly
-  `512 * 0x10 = 0x2000` bytes after the table base and 636 accepts `1..512`, so
-  the table window and the count are one fact.
-- **Only hypothetical OOB on this table:** a 638 search exit written `jbe`
-  instead of `jb` would copy `table[count]`, i.e. the count global, leaking 4
-  bytes of `.data`. Recorded as a future-firmware check, not a 14.10 defect.
-- **The extent half is clean as well.** The companion audit
-  (`docs/COPYOUT_PARTIAL_STACK_AUDIT.md`, 428 lines) resolves the 46 listing lines down to
-  **15 distinct `call ffffffff8ac191d0` instructions in 9 function bodies** (616/632/633 are
-  entries into the 634 body at `0x8adf9150`). All 15 sources are stack locals
-  (`lea -0xNN(%rbp)`), **0/15 partially initialised**, **0/15 caller-controlled length** — 14 are
-  immediates, the one computed length is 616's `strnlen(s,0x1f)+1 <= 0x20`, the exact size of the
-  `memcpy` that fills the buffer.
-- **Our own F5 was wrong about the filler.** The `0x500` `bzero` that makes 634's `0x4c0` copy safe
-  is *in* the window (`sys_634.asm:3366-3368`), not "outside the corpus" as the index audit claimed;
-  corrected in place, with a cross-check section now closing the index audit.
-
-## 2026-11-04: 637 at the bottom of its range wedges the console, and 636's gate is argument-proof
-
-- **`637(pid=0, value=17)` never returns.** The first value that clears the
-  `value < 17` guard deadlocks the calling process with the game's process lock
-  (`parent+0x148`) held across `0xffffffff8aefaa10(p)`, and the **loader stops
-  answering as well** — `LOADER-STUCK`, a manual relaunch, no panic. Probe 339a
-  hit the same value on 2026-10-22 and nobody diagnosed it: its capture stops
-  between `637(0, 0x10) = -1` and the next iteration. Values at or above
-  `0x40000000` still return 0 (340a/343a/344a/887a), which is where the earlier
-  "0 for self" reading came from. See [the 637 wedge](PROC_LOCK_WEDGE_637_14_10.md).
-- **636 `set_timezone_info` is the write half of the 638 table, and its gate is
-  first.** `sub_ffffffff8afc8f90(cred)` (bit 62 of `cred+0x60`) returns 1 before
-  `count` is looked at, so seven shapes — `NULL` records, counts 0, 1, 2, 512,
-  513, 65536 — all return `EPERM` and none `EINVAL`. With bit 62 the same call
-  copyins `count*16` bytes into `0xffffffff8e2d5920` and sets the count: a bounded
-  8 KB kernel write at a fixed RVA, not reachable by argument games.
-
-## 2026-11-04: 638 hands userland kernel table bytes — and they are timezone records
-
-- **The last "kernel pointer in userland" candidate is a 1968 date.** 1027a read
-  `FFFFFFFFFDC7BB70 E10` out of `638(0, 0, buf, 0x100)` and 1029a showed the
-  address is mapped. 1160a/1161a measure what it is: 638 is `utc_to_localtime`,
-  its ABI is `{int64 input, value_out, record_out, correction_out}`, the 16-byte
-  `record_out` is a `{key, offset, correction}` entry from a global table, and
-  `0xFFFFFFFFFDC7BB70` is the key `-37242000` (1968-10-26T23:00Z) with
-  `offset = 0xE10 = 3600`. The `rv = -1` in 1027a is `EFAULT` from its literal
-  `0x100` fourth argument, raised *after* the first two copies had landed.
-- **The table is 258 timezone transitions and it is fully walkable.** Keys ascend
-  from 1968 to 2099 at half-year spacing, `offset` is 0 everywhere, `correction`
-  alternates 0/3600 — one zone, daylight saving. 258 records inside the 512 slots
-  the window holds (`count` sits at `table+0x2000`), index bounded `[0, 257]`,
-  so there is no out-of-bounds read here.
-- **This is the first confirmed kernel read on 14.10 that returns real bytes.**
-  Not a presence oracle: 16 bytes of kernel `.data` per call, from
-  `0xffffffff8e2d5920 + 0x10*i`, as uid 1, with no credential in the path. It
-  confirms the unguarded `copy_out` pattern (`0xffffffff8ac191d0`) is live and
-  fixes the shape to audit elsewhere: global table + global count + scaled index +
-  copy_out. See [the 638 analysis](TZ_TABLE_638_14_10.md).
-- **Corpus consequence:** the "no syscall hands userland a kernel pointer" claim
-  now has no exception attached to it, and the 639/638 "memory region" row in
-  `docs/ATTACK_SURFACE.md` is replaced with the real identity.
-
-## 2026-11-04: the twelve devfs refusals are five different things, and we run as uid 1
-
-- **`errno` is readable through the loader.** `get_error_string()` (`.local/loader_payload/misc.lua:156`)
-  decodes TLS errno through libc `__error()` + `strerror`, and the syscall path maintains it, so the
-  `-1` that every capture in this repository records can be split into `EPERM`, `EACCES`, `EBUSY`,
-  `ENODEV` and Sony driver codes. The rule that keeps it honest: read errno only after `rv == -1`.
-- **The twelve devfs nodes that list and refuse are not one gate.** 1150a/1151a measure `EPERM` on
-  `a53mmsys`, `dbggc`, `fttrm`, `duid`, `mp3` (a `priv_check` on our credential), `EACCES` on
-  `sbl_srv`, `encdec`, `lvd3` (devfs mode bits), `EBUSY` on `a53mm` (a system process holds it),
-  `ENODEV` on `acm` (no device attached), and the Sony code `0x8A721003` on `hmd2_image` and
-  `hmd2_slam_trace` — a driver state rejection in Sony's domain, which arrives through `strerror`
-  as `error_code=0x8a721003`. All of them are mode-independent.
-- **We run as uid=euid=gid=1**, in a sandbox credential. That is why the `EPERM` nodes answer the
-  way they do: they test the credential itself, exactly like 622's `0x8002004E`.
-- **622 `0x271` refuses inside the handler.** `rv=0` with status `0x8002004E` and the kernel errno
-  left stale at `78 ENOSYS` (1152a): the gate is a credential-mask predicate in the handler, not a
-  BSD error path, so `strerror` cannot see it and no argument reaches it.
-- **Syscall 48 (`getegid`) is an absent slot on 14.10**, and unshielded it killed the console
-  (`docs/SYSCALL_ABSENT_VS_LETHAL.md`). 47 and 79 work. Probes now install `416` `SIG_IGN` in the
-  prologue and run any number they have not called before **last**.
-## 2026-11-04: syscall 727 identified; the native tail is out of range on 14.10
-
-- **The unnumbered handler next to 670 is syscall 727.** `sub_003b3090` is reached by the
-  `jmp rel32` thunk at RVA `0x265758`, and `docs/sysent-names-13.60.csv:727` names that
-  thunk `get_aio_debug_request_info`; its sibling `0x265750`/`0x3b2d50` is 726,
-  `get_aio_debug_submit_info`. The "no sysent entry names it" premise came from auditing the
-  677-entry compat capture, whose extent ends exactly where an adjacent
-  `(data_ptr, text_ptr)` pair table begins at inner offset `0x8EF0` - which is also what the
-  capture's bogus 677/678 entries (`narg` 2353626712/2353626808) are.
-- **727 exports raw kernel pointers.** uap is `{u32 handle; u32 flags; u64 dest; u32 count;
-  u64 count_out}`; the handler resolves the AIO context through handle class `0x15` and copies
-  `count` records of `0x18` bytes, two fields of which are 64-bit kernel addresses taken at
-  stride `0x28` from the AIO request array. 726 is the same shape with 16-byte records and no
-  pointers. Full layouts in `docs/AIO_DEBUG_726_727_13_60.md`.
-- **Neither is reachable on 14.10.** 677/678 terminate the process *and* panic the console -
-  the signature of an index that runs off the table into the pair table above, not of a
-  present handler - and 662 answers correctly for `count = 1..128`
-  (`results/phase17_new_vectors/486a_aio662_gate_20261024_110855.txt`). The live table ends at
-  677 entries, so the native tail 677-734 is gone. Probe 57a is withdrawn rather than run.
-- **Correction: the AIO delete record pointer never reaches userland.** The 24-byte records
-  that carry `ptr ^ (ptr >> 4)` are a private `malloc` buffer consumed by `0xa3960` and
-  `free`; the function's only copyout (`0x2591d0` at `0x3b018a`) writes `count*4` bytes of
-  status words from a different buffer. Section 9 added to
-  `docs/HANDLER_CLAIM_CORRECTIONS.md`.
+## 2026-11-06: Spectre v1 and kread-survey campaigns indexed as closed
+
+Two campaigns merged via PR #195 (4TheDoctor, 2026-11-05) had saved captures but no
+index entries; both are closed for a kernel read.
+
+- **1199d–1199q (Spectre v1)** — the child-thread cache timer works (1199m: cold/warm
+  1.9x, ~27/53 ns at 5.6 ns/tick) and the kernel's cache footprint is measurable
+  (1199n: ~2.8 ticks per syscall, 2/8 L1 sets evicted after getpid), but all three
+  disclosure shapes show **no observable speculative channel**: OOB-sysent
+  discriminator (1199o), deep-OOB sysent range 695–4095 (1199p), and fd-table lookup
+  via fstat (1199q). Mitigation vs channelless window is not separable by this
+  instrument (cobrajet302gt review). Zenbleed: 0 `vzeroupper` in the 1.5 MB eboot
+  scan (the wrong binary — a Zenbleed read rides the resident kernel's `vzeroupper`);
+  the kernel-image scan on the retained 13.60 capture finds 0 hits of `C5 FC 77`,
+  corroborating pending a 14.10-image scan. 1199e gadget scan: rdtsc at 7 offsets,
+  one `clflush` (any), no `clflush [rdi];ret`, no `lfence;ret`/`mfence;ret`/`clflushopt`.
+- **1300a/1300b (kread survey)** — 660 dynlib_get_info2 answers 3 handles (userland
+  only); 547 query_memory_protection on kernel VA returns -1 for both the stub page
+  and the measured image base (consistent with the fault-oracle finding that
+  supervisor pages are present but unreadable); 656 after debug_init(1) -1 for
+  handles 0–5; 647/623/641/642/611/613/615 all -1. 659 get_list2 returns 3 handles
+  (eboot, libSceFios2, libc), 660 resolves all three, and **591 dynlib_dlsym
+  resolves 0/72 symbols with real handles** — not merely name-blocklisted, it
+  resolves nothing from a game process. Zero kernel pointers anywhere.
+
+Verdict doc: `docs/SPECTRE_KREAD_CAMPAIGN_VERDICT_2026-11-06.md`. Index rows added
+to `docs/PROBE_INDEX.md` for 1199a–c (fault oracle), 1199d–q, and 1300a/b.
+
+## 2026-11-05: stale-documentation sweep after the oracle and the corpus runs
+
+- `README.md` headline counts were three merges behind: 2898/43 HTML/227 docs/140+ PRs become
+  2901/46/231/155. Probe totals now read 2901 (2798 Lua + 57 JS + 46 HTML), `phase13_webkit`
+  is 102 (46 HTML + 56 JS, was listed as 99), `phase17_new_vectors` is 1470 (was 339).
+- The KASLR rows were written before the oracle existed. The "no kernel pointers" wall, the
+  help list and `docs/EXPLOITATION_STATUS.md` now say the image base is measured per boot by
+  the fault-code oracle and that the missing step is a read, not the base. The mermaid chain
+  labels the KASLR box "image base and slide known (presence, not a read)".
+- The `kld*` wall said "lethal". Those slots terminate the caller under the default `SIGSYS`
+  disposition and return `-1` with `SIG_IGN` installed, which `docs/SYSCALL_ABSENT_VS_LETHAL.md`
+  already established; `CLAUDE.md`'s 631/677/678 entries were rewritten the same way, with the
+  AIO 677/678 game crash kept.
+- The corpus section said the JSC corpus had been built but not run. It has been replayed
+  (507 of 510 cases completed, one debug-only assertion) and the 232-page layout replay
+  finished with no memory-safety death, so both the section and the help list say that.
+- Contributor list recorded the merges since #185: ArjunD717 gains #201-203, plus new entries
+  for jsrkamal2002 (#197-198) and Mohabbadi11 (#199). A Ko-fi badge sits next to the PayPal
+  one.
+- The repository listing pointed at paths that do not exist: `probes/phase23_ajm_a53/`,
+  `probes/phase24_kernel_leak_hunt/`, `docs/UPSTREAM_FONTFACE_UAF_ANALYSIS_2026-10-31.md` and
+  `docs/AJM_IOCTL_REVERSAL_13_60.md` were replaced by the directories and documents the tree
+  actually has, and the Quick Start batch example now names
+  `probes/phase17_new_vectors/271g_child_thread_rop_kqueue_race.lua`, because no `271*` file
+  lives under `phase22_threaded_races` (that directory holds 113 probes, not 20).
+- `README.md` gave two offsets for `WeakPtrImpl::m_ptr`: `+0x08` on the front page against the
+  `+0x10` that `docs/WEBKIT_FONTFACE_EXPLOIT_CHAIN_ANALYSIS.md` §1 and
+  `docs/V88_FORGE_GEOMETRY_RECONCILIATION.md` §C4 both settle on. The front page now carries
+  the settled field map and names those two documents.
+- `docs/STRATEGY.md`, `docs/UNTESTED_THEORIES.md` and `docs/EXPLOITATION_STATUS.md` called the
+  Canvas UAF the only live vector and KASLR defeat unsolved; they now match the README (the
+  FontFaceSet UAF is primary, Canvas is its write primitive, and the base is measured per boot).
+  `TODO.md`'s footer, its duplicated p563/p564 item, and its "no browser entry mechanism" item
+  were corrected the same way: the guide redirect is demonstrated in
+  `docs/BROWSER_ENTRY_INFRA_2026-10-19.md`, only unattended automation is open.
+- `docs/PROGRESS_AUDIT.md`'s 1838/26/2029 inventory is now labelled as the 2026-10-24 snapshot
+  it was measured from, and `docs/progress.json` records 46 HTML probes rather than 43. Editing
+  `docs/STRATEGY.md` and `docs/ATTACK_SURFACE.md` re-pinned their `evidence_hashes` entries in
+  the same commit, so `python tools/render_progress.py --check` still passes.
+- Not changed: the "WebKit 605.1.15 / Safari 17.0" claim. `605.1.15` is the frozen user-agent
+  token, and the measured guide build identifies as 616.1.27.211.1; correcting that publicly
+  needs the version evidence published first.
+
+## 2026-11-04: the fault context carries the page-fault error word, so the kernel base is readable per boot
+
+- The loader's `SIGSEGV` handler is handed the faulting thread's context, and `ctx+0x130`
+  inside it holds the x86 page-fault error word: `(value >> 8) & 0xF` is 5 for a mapped
+  supervisor page and 4 for an absent one. An unmapped kernel address and an unmapped user
+  address both answer 4, so this is a mapping verdict, not the signal copied back.
+- A child thread can fault on a kernel-half candidate and die alone while the process
+  survives, so the range is sweepable in one connection. Sweeping upward and bisecting the
+  edges gives base and extent per boot: `0xFFFFFFFF91800000` with a 98 MB (`0x6200000`)
+  image, 2 MB aligned, on one boot, and `0xFFFFFFFFD8000000` after a reboot - a slide of
+  `0x46800000`, different every boot and fixed within one.
+- Presence only. `1006a` ran a stack chain against the stub page and three image addresses;
+  every one faulted and left the `0xDEADBEEF` sentinel intact. The kernel data map is not in
+  our page table, so objects and the sysent table stay out of reach.
+- Two probe defects made the first pass wrong, and both are published with their captures:
+  `1006a`/`1008a` had the ROP stack shifted by one slot (RIP is the first gadget, so the
+  stack starts with its operand), and `1009a`/`1010a` called an undefined `as_addr`, so four
+  calls reported as lethal were never entered. See `docs/FAULT_CODE_ORACLE_14_10.md`.
+
+## 2026-11-04: three probes did not parse under Lua 5.1; the syntax gate now catches it
+
+- `tools/check_lua_syntax.py` read probes as UTF-8, so a leading BOM became
+  U+FEFF and `loadstring` rejected the file; it also crashed converting Lua's
+  error text when that text was not UTF-8. The reader now uses `utf-8-sig` and
+  records an undecodable error as a failure.
+- The checker found three real Lua 5.1 syntax failures: 65b used `goto`
+  (Lua 5.2+), 633f carried an unsubstituted `@K@` template marker, and 142x
+  had `0xPROC` in a numeric literal. All three now parse; 65b's two loops use
+  structured branches, 633f is marked template-only with `KOFF=0`, and 142x
+  drops the placeholder write that was immediately overwritten.
+- `offline-verification.yml` now runs the checker with lupa 2.6. All 2682
+  probes compile with zero failures.
+
+## 2026-11-01: forging one field of the freed CSSFontFace, and what `+0x68` is
+
+A pull request models `+0x68` of the freed object as `m_keyCount`, an integer count,
+and writes `1` there to force iteration of `m_clients`. Measured instead, on the page
+that reclaims reliably (`p563`/`p565`'s first stage), with one forge line added and
+the scan watching the opposite pointer so each load proves its own reclaim, plus
+liveness beacons that separate a death from a load where the `then` getter never ran:
+
+| arm | forged field | loads | reached its engine-write beacon |
+|---|---|---|---|
+| A | `+0x68 = 0` | 14 | 8 |
+| B | `+0x68 = 1` | 12 | 0 |
+| D | `+0x58 = 1` | 4 | 0 |
+
+Fisher exact, A vs B: p = 0.0019. Writing `1` at `+0x68` is exactly as fatal as
+writing `1` at `+0x58`, the field already known to be a `WeakHashSet` impl pointer, so
+`+0x68` is dereferenced rather than read as a count. The result does not separate
+"must be a valid pointer" from "must be non-null", because a load can only be shaped
+in the first stage, before the leaked address is known, and the second stage never
+reclaims on this firmware.
+
+`docs/FONTFACE_MEMBER_MAP_14_10.md` records the offset map, both controls and this
+measurement; `probes/phase13_webkit/p577-fontface-field-forge.html` is the page.
+
+## 2026-10-29: the freed CSSFontFace is reclaimable, and the engine writes heap pointers into it
+
+- p563: with the Finding 12 trigger, thirteen `ArrayBuffer` size classes allocated in
+  the getter after `style.remove()` produce `P563-HIT-b19-s192-o0-n9` - a 192-byte
+  backing store takes the freed chunk and reads back `+0x00 = 1` (the refcount) plus
+  heap pointers at `+0x58` and `+0x68`.  The control page without the removal is
+  byte-clean, and heap churn moves both qwords, so they are addresses written by the
+  engine after our buffer took the chunk, not leftover data.
+- p564: a second stage refills a freshly freed chunk with a template holding those
+  engine pointers and the load resolves with the page alive, i.e. the engine accepts
+  the object.  Poisoning `+0x30`, `+0x58` or `+0x68` with `0x4141…` kills it, so the
+  slots are dereferenced on this path.
+- This corrects the earlier note that ArrayBuffer-backed data does not reach this
+  allocator: `Source/cmake/OptionsPlayStation.cmake` leaves `USE_ISO_MALLOC` off on
+  this port.  One successful run per WebProcess; quit and reopen the guide between
+  attempts.  `docs/FONTFACE_RECLAIM_LEAK_14_10.md`, Finding 13.
 
 ## 2026-10-29: MAP_FIXED over an execute-only entry does not inherit X
 
@@ -1229,44 +163,6 @@ the next function; no stop at a tail `jmp`), and both had produced plausible fak
   joins new `mmap`, file-backed `mmap`, GPU `mmap`, `shm` and `mprotect` as a
   path that yields at most a writable page. Section added to
   `docs/RWX_ORACLE_14_10.md`; probes `951a`, `952a`, `953a`.
-
-## 2026-10-29: the GPU and VM syscalls do not reach page tables
-
-- **654, 655 and 657 reject a userland GPU mapping.** `93a` creates a 64-page
-  GPU region through `mmap(477)`, confirms it is readable and writable, then
-  calls the three range operations: 654 is `-1` for operations 0, 3 and 10-15
-  with every allowed flag combination, 655 is `-1` for `(addr, 64 KiB, 0)`, and
-  657 is `-1` with `processed=0` for opcodes 1-5. The pages still read and write
-  afterwards. Whatever object the handlers' type test selects, a GPU mapping
-  made by `mmap` is not it, and the call is refused before any range work.
-- **`sys 547` is the one working window into a mapping.** It returns `0` and
-  writes three qwords: region start, region end, and a packed word whose low
-  half is the recorded protection (`0x33` for a GPU mapping, `3` for heap). The
-  high half differs between the two kinds and is the only field that tells them
-  apart; it is not the type number the 13.60 handlers test.
-- **`617` and `620` return success and change nothing.** `99a` calls 617 for
-  every byte value 0x00-0xFF and for wide arguments, and 620 once and five
-  times in a row; all return `0`, and the VM operation counter (624) does not
-  move. They have the same shape as 605 and 675, which also answer `0` without an
-  observable effect. This is independent confirmation of the 620 result above.
-- **`653` is unresolved, not exploitable.** On its first run, in a process that
-  had just created a GPU mapping, it returned `22`, `23` and `640` for the three
-  selectors its mask allows; every later run - including the same probe replayed
-  on a fresh process, and `949b`/`949c` with one, two, three and six arguments -
-  returned `-1` for those same selectors. The 13.60 body's default return is
-  `0x16` (22) and its success path returns a dword read from the thread at
-  `+0x5d0`, so the values are consistent with a thread-state read rather than a
-  capability change. No run has changed the protection of any page, and
-  `mprotect` still fails after it.
-- **`MAP_FIXED` over a live GPU mapping is handled cleanly.** `114a` overwrites
-  pages 8-15 of a 32-page GPU region and, separately, four pages with an
-  anonymous mapping: the replaced pages read back zero, the surrounding pages
-  keep their sentinels, and the overlapping mapping reports the same address as
-  the region it replaced. No stale physical page survived into the replacement,
-  and the ten-region spacing sweep confirms the mappings are adjacent with no
-  guard page.
-- New probes `949b` (653 selector sweep) and `949c` (653 argument count); write-up
-  in `docs/GPU_VM_OPS_14_10.md`.
 
 ## 2026-10-28 (late): the filesystem is correct, and the syscall table is compacted
 
@@ -1353,13 +249,33 @@ the next function; no stop at a tail `jmp`), and both had produced plausible fak
   reach no packet.  `docs/IPV6_ANCILLARY_14_10.md`.
 - **Contained objects that were checked and are clean.** `58d` finds
   `shm_open(482)` working end to end while `SHM_LARGEPAGE`, `sendfile` and
-  `fspacectl` all return `-1`; `50e` finds `IPV6_MSFILTER` unimplemented; `932b`/
+  `fspacectl` all return `-1`; `50e` rejects every `IPV6_MSFILTER` shape only because its 148-byte request is
+  misaligned - `50f`'s 152-byte layout is accepted, so that option is implemented; `932b`/
   `933a` show shm unlink/close/remap lifetimes are correct with no UAF; `108a`
   and `105a`/`109a` show `SCM_RIGHTS` and `EVFILT_PROC` return zero kernel
   pointers; `931a` cannot reproduce the one kqueue power-off in five attempts
   (`docs/KQUEUE_PROC_14_10.md`); `930a` maps the reachable filesystem.
-- Probes added: `88a`-`88c`, `96a`-`96f`, `105a`, `108a`, `557a`-`557d`,
-  `928a`-`943a`, `50e`-`50n`, with their captures.
+- Probes added: `88a`, `96a`-`96f`, `105a`, `108a`, `928a`-`943a`, `50e`,
+  `954d`-`954i`, with their captures.
+
+## 2026-10-28: AIO spray dead, kptr_hunt.py results, documentation refresh
+
+- Probes 75a-75e tested IPv6 RTHDR as zone-128 spray for AIO double-free
+  reclamation. 0 overlaps despite 7-92 "doubles" — because the doubles were
+  status reports, not frees. RTHDR 120B works (zone 128), DSTOPTS/HOPOPTS
+  dead, cpuset_getaffinity(487) blocked on 14.10. Socket limit 126 for
+  AF_INET6/SOCK_DGRAM/proto=17.
+- Root cause confirmed: 662-vs-662 race is double-STATUS not double-free.
+  The D exclusive lock in entry_dispose serializes actual frees. This closes
+  the AIO exploit path completely — there is no freed object to spray into.
+- kptr_hunt.py offline analysis: 17 OBJECT-sourced copyout candidates from
+  13.60 decompile. Live testing of accessible ones yielded zero kernel pointers.
+- Upstream merge: AIO dead, osem dead, only WebKit Canvas UAF has traction.
+  Lua loader kernel attack surface is exhausted.
+- Canvas UAF v9 size-class scan deployed (p563), awaiting results.
+- Documentation refresh: corrected 10+ living documents to reflect AIO closure,
+  updated probe counts (2682 probes, 3005 results, 52 phases), re-scored
+  progress audit.
 
 ## 2026-10-27: the aio delete window is gated off on 14.10, not merely hard to win
 
@@ -2171,7 +1087,7 @@ Captures: `results/phase17_new_vectors/{330a_dmem_open,331a_mmap_dmem_matrix,332
 - **Sys 629 `physhm_open` had only ever been called with six zeros.** With its recovered four slots it takes the sentinel `arg0 = 1` and returns a **descriptor** for `arg1 = 2` and `arg3` in `0..3`: `629(1, 2, any, 0..3) -> 22 / 26 / 27`. Every other `arg1` from 0 to 0x120, every page multiple and every power of two is refused; `arg2` is ignored; `arg3 = 0x1000` is refused, so it is a mode enum and not a length.
 - **The path branch is closed**: every path tested (`/`, `/dev`, `/dev/physhm0`, `/physhm0`, `/tmp`, `/app0`, `/dev/physhm`, `/dev/dce`) returns `-1`, `open("/dev/physhm*")` returns `-1` in both modes, and `630 physhm_unlink` returns `-1` for both a path and the sentinel. A game process can only reach the sentinel branch.
 - **The descriptor refuses every file operation**: `FIODTYPE`, `0x4004667B`, `FIONBIO`, `read`, `write` all `-1`, and `628 mmap_dmem` refuses it in four argument positions.
-- **The mapping exists and is fatal on first access**: `mmap(0, 0x1000, RW, MAP_SHARED, fd, 0)` succeeds and returns a full 34-bit address (`0x3_10F10000`), and the first read at that address terminates the process inside `pcall` - four probes, the last using the correct untruncated pointer. A successful `mmap` whose first user access faults is a supervisor-accessible mapping, not user memory, so the object holds nothing reachable and there is no write path. **Correction, 2026-11-05 (probe 1240a): it is not a supervisor-accessible mapping - the page is not present at all.** The kernel's own `copyin` from the mapped address returns `EFAULT` (`write(sock, 0x310D3C000, 0x20)` = -1 errno 14), and a PTE with U/S=0 cannot fault inside a `stac` window. The object never populates the mapping, so `mmap` returns an address and nothing else. Read `docs/PHYSHM_COPYIN_14_10.md` for the measurement and for the standing rule: a successful `mmap` is not evidence of a mapping, only a successful access is.
+- **The mapping exists and is fatal on first access**: `mmap(0, 0x1000, RW, MAP_SHARED, fd, 0)` succeeds and returns a full 34-bit address (`0x3_10F10000`), and the first read at that address terminates the process inside `pcall` - four probes, the last using the correct untruncated pointer. A successful `mmap` whose first user access faults is a supervisor-accessible mapping, not user memory, so the object holds nothing reachable and there is no write path.
 - **Probe bug recorded**: `sgn()` returns only the low 32 bits, so three of those probes read a truncated address. Addresses must be carried as `(high, low)` and rebuilt with `uint64(string.format("0x%X%08X", h, l))`.
 
 

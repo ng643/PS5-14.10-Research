@@ -64,7 +64,7 @@ local function tag_call(name, fn)
     print("  [BEFORE] " .. name)
     local ok, rv = pcall(fn)
     if ok then
-        print(string.format("  [RETURNED] %s rv=%d", name, to_num(rv)))
+        print(string.format("  [RETURNED] %s rv=%s", name, tostring(rv)))
         return true, to_num(rv)
     end
     print(string.format("  [RAISED] %s err=%s", name, tostring(rv)))
@@ -81,14 +81,6 @@ local function write_sin6(buf, b0, b1)
     safe_wb(buf + 23, 1)         -- addr[15] = 1  (ff02::1)
 end
 
--- memory.alloc returns a uint64 handle table; split it into 32-bit halves.
-local function split64(p)
-    local v = p
-    if type(p) == "table" and p.tonumber then v = p:tonumber() end
-    v = tonumber(v) or 0
-    return v % 4294967296, math.floor(v / 4294967296)
-end
-
 -- __msfilterreq at buf: ifindex(4) fmode(4) nsrcs(4) group(128) srcs_ptr(8).
 -- Returns the address of the stored srcs pointer for verification.
 local function write_msfr(buf, ifindex, fmode, nsrcs, srcs_ptr)
@@ -97,7 +89,13 @@ local function write_msfr(buf, ifindex, fmode, nsrcs, srcs_ptr)
     safe_wd(buf + 4, fmode)
     safe_wd(buf + 8, nsrcs)
     write_sin6(buf + 12, 0xff, 0x02)  -- group = ff02::1 (multicast)
-    local lo, hi = split64(srcs_ptr)
+    local lo, hi
+    if type(srcs_ptr) == "table" and srcs_ptr.h then
+        lo, hi = srcs_ptr.l, srcs_ptr.h
+    else
+        lo = srcs_ptr % 4294967296
+        hi = math.floor(srcs_ptr / 4294967296)
+    end
     safe_wd(buf + 140, lo)
     safe_wd(buf + 144, hi)
     return buf + 140

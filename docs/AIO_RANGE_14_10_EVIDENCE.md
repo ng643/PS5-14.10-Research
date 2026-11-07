@@ -1,8 +1,3 @@
-> **Superseded in part (2026-11-05):** probe 1254a measured 661 `aio_submit`, 665
-> `aio_get_data` and 668 `aio_create` as `-1 / ENOSYS` under `SIG_IGN` for SIGSYS, i.e.
-> absent on 14.10, not merely unreachable. No AIO context can be created at all. See
-> `docs/AIO_ABSENT_AND_KILL_LIST_RECLASSIFIED_14_10.md`.
-
 # The AIO 661-670 "hard wall" rests on one syscall
 
 Status: **scope correction.** No new console evidence. This note re-reads the
@@ -15,154 +10,683 @@ numbers in the range were never executed.
 
 ---
 
-## The last-item storm is not yet measured (882a, 2026-10-27)
+## Two deletes report success, but the free is guarded (2026-10-24)
 
-The shape worth trying at high volume: a 2-item block with item0 deleted serially so
-`[T+2] == 1`, then two native spinners looping `662(item1, 1, st)`. A create naming a dead
-fd is state 3 at once (`873b`), so a round needs no socketpair and no waiter - the plan was
-~1e5 rounds at spin rate.
 
-`probes/phase17_new_vectors/882a_aio_last_item_storm.lua` died on its **first spinner
-spawn**: the wire turned to the loader's context dump (`CS 0x43`, `SS 0x3B`, RFLAGS
-`0x202001`, RIP in the heap `0x3110B3E18`), i.e. the child jumped to a heap address instead
-of the chain. This is the third chain-plumbing failure in this shape (after the missing
-`thr_exit` and the `jmp rax` stack walk), and it was not diagnosed before stopping.
+### `aio_multi_wait` (663) validates like the others (2026-10-24)
 
-Diagnosis of the second failure (same probe, guarded rerun `results/phase17_new_vectors/882a_aio_last_item_storm_20261027_000506.txt`): the mmap succeeded (`block=0x31073C000 start=0x31074BE00`), so the chain was well formed; the fault is the loop itself. A `thr_create` child calls the loader stub `fn` with `RSP` pointing into the chain, and the stub's own frame grows **down** from that point, overwriting the chain words just below - including `[start]`, the word the final `ret` uses to restart. A straight-line chain never reads those words again (which is why `881a` works 120/120), but a loop does, so iteration two returns into clobbered data (observed RIP `0x3110B3E18`, a heap address).
+Decoded from the 13.60 body (`0x8ad70384`-`0x8ad70576`, base
+`0xffffffff8a9c0000`):
 
-Looping a stub call therefore needs either a stack switch around the call (`mov rsp` / `xchg rsp` gadget, not found in eboot yet) or two interleaved chain copies far enough apart that one copy's frame cannot reach the other's head.
+```
+70384  rcx = [rbx+0x70]        ; count
+70388  eax = rcx - 0x81
+7038e  cmp eax,0xffffff7f / ja ; EINVAL unless 1 <= count <= 0x80
+703b8  cmp r13d,3 / jae       ; EINVAL for the mode argument >= 3
+703d4  lea eax,[rcx*4+0xf]    ; count >= 2: alloca count*4 on the kernel stack
+70403  call 0x8ac18ff0        ; bzero of that buffer
+70468  call 0x8ac19280        ; copyin(count*4) from the user id array
+704f3  copyin(4)              ; a 4-byte mode/timeout field
+70517  call 0x8b4c78d0        ; the same aio state gate as create/delete
+70540  malloc(count*0x18)     ; one result record per id
+70576  imul rdi,r14,0x38      ; and a count*0x38 block
+```
 
-The fix attempted in `probes/phase17_new_vectors/883a_aio_storm_loop_fixed.lua` pads the chain 0x400 bytes between the argument setup and the call (so the stub frame cannot reach the head word) and calls through a `call rax` gadget (`FF D0`, found at eboot+0x75C11) instead of placing the stub address in the chain. That version still killed the process on spawn, and the reason was a plain mistake: `call rax` was reached with `RAX = 662` (the syscall number), so it jumped to address 662. The stub must be entered by falling through the chain; the most likely cause is that both spinners were looping on **id 0** (`slot 0` in the aio table may be the header), which the probe now avoids by seeding `0xFFFF`. It has not been run on a live process yet.
+The stack allocation is bounded by the same `0x80` count ceiling, so it is not
+the block-mode copyout shape. The wait itself is `0x8b5b1770` on the object's
+event, and on 14.10 a freshly created object is already state 3 (poll returns
+`3` immediately), so a wait returns at once: the submit that would leave an
+object pending is gated. `663` is therefore useful here only as an argument-4
+test - its fourth argument is the timeout - which is what probe 559b uses it
+for via the thread context.
 
-`883b` isolates the construction from the loop and settles the plumbing question: the same padded chain, straight-line, **runs 40/40 rounds without a death**, and the child's `662` reaches the kernel - the status word comes back `0x80020010`, the state gate, i.e. a real kernel answer rather than a fault. So a `thr_create` child can call the loader stub from a padded fall-through chain with `RSP` 0x400 above the head; only the `pop rsp` reset is unproven.
+### The re-lookup compares slot *and* generation (2026-10-24)
 
-`884a` then tried to sidestep the reset by repeating the delete 500 times linearly (72 bytes per repetition) instead of looping. It produced ~1.2 MB of binary output and died, i.e. the long chain itself is a hazard (the child's `RSP` walks 36 KB up the chain and the stub frames write below it).
+The delete's second lookup is `0x8ad5a2a0`, and it does not accept a stale id.
+Decoded from the 13.60 text (`0x8ad5a2a0`, base `0xffffffff8a9c0000`):
 
-`885a` then added the debug channel itself: markers written through a `mov [rdi],rax; ret` gadget, `w[1]` set to that gadget as the loop re-entry, the stub at `w[138]` after a 64-entry pad, and markers `0x4D31` (after the delete) and `0x4D32` (after the reset). It printed only `[0] mov=[rdi],rax=<addr>` and then died, so the fault happens on the child's first pass and before the first marker; the parent's round print never ran. With `883b` proving the same padded chain completes when it is straight-line, the remaining difference is the entry word and the reset, and neither can be bisected further without output from a dying child.
+```
+a2b4  cmp esi,0xffff          ; id must fit 16 bits
+a2d8  and ebx,0x1fff          ; slot   = id & 0x1fff   (13 bits)
+a304  ...  shr eax,7          ; page   = slot >> 7
+a363  r13 = [table + page*8]  ; 0x1800-byte page of 128 x 0x30 slots
+a36b  eax = [r13 + rcx + 0x28]; the slot's generation
+a370  shl eax,0xd             ; generation in id bits 13..15
+a376  or  eax, ebx
+a378  cmp eax, r14d           ; reconstructed id == requested id
+a37b  jne -> not found
+a384  cmp word [r13+0x26],3   ; slot state must be 3 (completed)
+a395  cmp [rbp-0x38], eax     ; and the caller's expected count must match
+```
 
-So the statistical arm remains **unmeasured**, and the honest blocker is measurement quality: a faulting child produces a register dump and nothing else, so each hypothesis costs a relaunch and a guess. A working child would need a debug channel (for example the child writing phase markers into a mapped page that the parent prints afterwards) before further chain work is worth doing. The arithmetic that motivates it: two callers
-must both pass the first lookup before either clears the slot, a span of ~7 instructions out
-of roughly 3,000 per call, so the per-round odds are ~1e-4 and the 4,000 rounds of 872a were
-three orders of magnitude short.
+So an id is `slot | generation << 13`, `0x8ad598e0` hands out pages of
+`0x1800` bytes (128 slots of `0x30`), the generation lives at `slot+0x28` and
+increments on every reuse - which is why successive creates in one slot give
+`0x2234`, `0x4234`, `0x6234`. A delete that started on an old id cannot find a
+slot that was recycled in between: the generation differs and the lookup
+returns NULL, which is the `0x80020003` we measure.
 
-## The waiter can delete at the instant of completion, and it is clean (881a, 2026-10-26)
+The 14.20 note's "generation-ID check rejects a reused slot before freeing"
+therefore describes a check this path already performs on 14.10. What 14.10
+lacks is not a check but a second racing actor that could reuse the slot with
+the *same* id inside the window, and that needs eight create/delete cycles
+between the unlock (`0x8ad6fe63`) and the re-lookup (`0x8ad6fe7c`) - two
+adjacent instructions.
 
-Following the model above, the one caller that provably has the container live at the
-moment of completion is the waiter itself. `probes/phase17_new_vectors/881a_aio_waiter_deletes.lua`
-builds exactly that: one child whose chain is
 
-    663(ids, 1, wout, 0)   ->   662(ids, 1, st)   ->   thr_exit(431)
 
-so the delete is issued microseconds after the same thread's wait returned, while the
-completion path has just finished with the object.
 
-| metric | value |
+### Simultaneous deletes still only produce a double success (probe 562a, 2026-10-24)
+
+Spawn latency is about a millisecond, which is four orders of magnitude wider
+than the free window, so 523c/556a never proved that two deletes cannot
+overlap. `562a_aio_wake_burst_race.lua` removes the skew: every child blocks
+in `_umtx_op` op 2 (`UMTX_OP_WAIT`, value 0) on a shared word and the parent
+releases all of them with one op 3 (`UMTX_OP_WAKE`, n = 16), so the deletes
+enter the kernel inside the same wake batch. (Op numbers matter: 2 is WAIT,
+3 is WAKE, 5 is MUTEX_LOCK - the first revision of this probe used 5 and every
+child simply took the mutex.)
+
+Five children, one id, 100 rounds:
+
+```
+[C] rounds: none=0 one=61 two=13 three=26 spawnfail=false
+    alive=true
+```
+
+A hit round prints the five statuses, for example
+`st=00000000 00000000 80020003 80020003 80020003`. Up to five deletes of the
+same id return success in one round, and 26 rounds had three or more. Every
+one of those rounds was followed by a create/poll/delete health cycle, and
+every hit round by six more; all of them returned `0`.
+
+That health cycle is also the double-free detector. If `C` had been freed
+twice the free list would hold the same `0x30` chunk twice, the next
+`669` would take it for both `T` and `C`, `C`'s initialiser would overwrite
+`[T+0x20]` (the status object `S`) with the CPU id, and the delete's
+`mov r14,[r12+0x20]` would hand a CPU id to the event destructor. It never
+happened in 100 rounds. The losers reach `0x8ad6feb7`, find `[W+0x18]`
+already zero and take the `je` at `0x8ad6fec3`, which returns 0 without
+freeing.
+
+So the delete is a double *success* even under a wake burst, and the only
+remaining shape the 14.20 note describes - a *create* slipping between the two
+lookups - is blocked by the generation check measured in probe 561a.
+
+### The window between the re-lookup and the free is ten instructions
+
+The delete body at `0x8ad6fe7c` calls the id lookup (`0x8ad5a2a0`). Nine
+instructions later it reads the slot again and, a few more on, the context it
+is about to free:
+
+```
+8AD6FE7C  call 0x8ad5a2a0        ; re-lookup by id
+8AD6FE81  test rax, rax / je    ; -> 0x80020003 when the id is gone
+8AD6FE92  movzx r8d, word [rax+2]   ; entry count
+8AD6FE9B  mov [rbx+0x20], rax       ; entry saved
+8AD6FE9F  mov r12, [rcx + rdx*8]    ; work item for the slot, re-read here
+8AD6FEA3  cmp r8w, 1 / jne ...      ; count-1 branch
+8AD6FEB7  mov r14, [r12+0x18]       ; the 0x30 context
+8AD6FEC3  test r14, r14 / je        ; already-cleared guard
+```
+
+Everything a racing thread could disturb - the slot pointer, the entry count,
+the context pointer - is loaded inside those ten instructions. A create that
+reused the slot before `0x8ad6fe9f` would have to carry the *same* generation
+as the id being deleted for the re-lookup to return at all, and one create
+advances the generation by one (probe 561a). That is the whole window: eight
+create/delete cycles inside roughly ten instructions.
+
+### A stale id cannot name a live object (probe 561a, 2026-10-24)
+
+`561a_aio_generation_wrap.lua` runs twelve create/poll/delete cycles in one
+process. Every cycle reuses the same slot and the generation walks `0..7` and
+wraps: ids `00004205, 00006205, 00008205, 0000A205, 0000C205, 0000E205,
+00000205, 00002205, 00004205, ...`. The ninth id is byte-identical to the
+first, so the id space really does recycle after eight uses.
+
+That is exactly the precondition the 14.20 note needs, and it still does not
+produce a hit: with a live object at `0000C205`, deleting the stale
+`00004205` returns `0x80020003` and leaves the live object deletable (`0`).
+Because the id *is* `slot | generation << 13`, two objects in one slot can
+never carry the same id at the same time - the id a stale delete holds can only
+match the object that currently owns it. There is no stale-id handle to swap.
+
+### The last-item race is serialised too (probe 557a)
+
+`557a_aio_block_last_item_race.lua` builds a block group (`flags 0x1001,
+count=4`) so all four items share one `0x30` context, deletes the first three
+serially (`0`, `0`, `0`), then launches two children onto the fourth item -
+the only delete that takes the `count == 1` branch and frees the shared
+context. Result: `0` and `0x80020003`, four follow-up create/poll/delete
+cycles clean. Two `thr_new` children start about a millisecond apart, so a
+single-call race never overlaps; the earlier `both-zero` results come from
+long chains, and the guard makes them harmless.
+
+
+Probe `556a_aio_double_free_followup.lua` (48 polled ids, one 8-delete smoke
+child, then two children each deleting the same 40 ids) produced the familiar
+overlap:
+
+| step | result |
 |---|---|
-| rounds | 120 |
-| spawn failures | 0 |
-| delete returned 0 | **120** |
-| delete gated (`80020010`) | 0 |
-| object gone afterwards (poll `80020003`) | **120** |
-| unexpected results | 0 |
-| process alive at the end | yes |
+| smoke, one child, 8 deletes | 8 x `0`, no other status |
+| race, two children, 40 deletes each | `both-zero=25`, `one-zero=15`, `other=0` |
+| four create / poll / delete / delete-again cycles | status `0`, then `0x80020003` every time |
+| three fresh create/poll/delete cycles afterwards | `0` each |
 
-So the kernel serialises "the waiter's own completion" against "the waiter's delete"
-correctly, even with no gap between them. The remaining shape would need two waiters
-completing the same object at once, which the counter does not permit (`663` consumes a
-token; a second waiter with `n=1` blocks).
+The overlapping statuses are *not* two frees. The delete tail guards both
+destructive operations with a test-and-clear of the same word:
 
-## The read only completes when something waits on it (879a-880b, 2026-10-26)
+```
+3afeb7  mov  r14, [r12+0x18]        ; the 0x30 context
+3afec3  test r14, r14
+3afec6  je   0x3afefe               ; already cleared -> skip refdec and free
+3afec8  mov  rdi, [r14+0x10]
+3afed1  call 0x8ac69670             ; refdec
+3afed6  mov  qword [r14+0x10], 0
+3afee8  call 0x8b5c8df0             ; free(context)
+3afef5  mov  qword [r12+0x18], 0    ; clear, after the free
+3afefe  cmp  word [r8], 1
+3aff09  mov  r14, [r12+0x20]        ; the 0x58 status object
+3aff0e  test r14, r14
+3aff11  je   0x3aff89               ; already cleared -> skip
+3aff17  mov  qword [r12+0x20], 0    ; clear, before use
+```
 
-The last untested ordering was the slot swap: `662` only drops the table lock and
-re-looks-up the id when the work item is armed (`[W+4] != 0`, `[W+0xc] != 0`), and a
-socketpair-backed object is the only kind that really submits. Four attempts to build it:
+A caller that finds `[W+0x18]` already zero jumps to `0x3afefe` and returns
+`0` without touching the context; the same shape protects `[W+0x20]`. Two
+deleters therefore report success twice and free once, which is exactly what
+the follow-up cycles show: the free list carries no duplicate, so the next
+create/delete behaves normally.
 
-| probe | design | result |
+What the 14.20 generation-ID check would close is the other window: the first
+lookup at `0x3afd14` is followed by an unlock and a re-lookup at `0x3afe6c`,
+and if the slot were freed and *reused by a new object* in between, the delete
+would destroy the new object's context. Reaching that needs a create (five
+arguments, so `R8`) to land inside the window from another thread. No readable
+module carries `pop r8`, `pop r9` or `pop r10` (probes `548a`, `554a`), and the
+loader's stub does not translate `RCX` into `R10` (probes `552a`, `553a`), so
+the chain route cannot do it.
+
+## 1. What the captures actually contain
+
+| capture | size | last line |
 |---|---|---|
-| `879a` | pending object + a child hammering `662` + the Lua thread writing the byte | status `80020010` for the whole 24 ms window, never 0 |
-| `880a` | 2000 rounds: create pending, write the byte, delete, retry | **2000/2000 gated on the first delete and 2000/2000 gated on the retry** - the completion never lands inside the retry gap |
-| `880b` | create pending, write, sleep 5 ms, poll to state 3, two children delete, create a replacement | **199/200 rounds never reached state 3 at all**, with or without the sleep |
-| `875a` | pending object + a waiter parked in `663`, then the byte | state flips to 3 within 5 ms |
+| `results/54c_aio_full_attack_20261018_090527.txt` | 190 bytes | `  [BEFORE] sys 661 (event_create, narg=4)` |
+| `results/54f_kaslr_deep_20261018_090603.txt` | 15,257 bytes | `--- G: AIO event subsystem (661/662/668 — obfuscated kptr leak) ---` |
 
-**The model that explains every row:** a socketpair-backed aio read is not driven by the
-socket becoming readable. It is driven by someone **waiting** on the object (`663`), or by
-the completion path that the waiter enters. Write bytes with no waiter and the object sits
-in state 2 forever (`880b`: 200 rounds, 200 unconsumed bytes, state never 3). Add a waiter
-and the same byte completes it at once (`875a`).
+The 54c matrix prints `[BEFORE] sys N`, then calls, then prints either
+`[RETURNED]` or `[ERROR]` (`probes/phase14_final_push/54c_aio_full_attack.lua:180-193`).
+The capture contains the `[BEFORE]` line for 661 and no result line for it and
+nothing at all for 662-670. Section G of 54f iterates `for num = 661, 670`
+(`probes/phase14_final_push/54f_kaslr_deep.lua:461`) and prints a result line
+per iteration; the capture ends at the section header, before the first result.
 
-Consequence for the exploit shape: an object that is still pending cannot be deleted
-(state gate `80020010`), and the only way to complete it is to queue a waiter - which is
-the same event that wakes the waiter. So there is no reachable moment where a completed,
-armed object exists while a delete is mid-flight through the unlock/re-lookup path, and no
-reachable moment where a pending object is deletable. The unlock/re-lookup branch itself
-still requires `[W+4] != 0`, which the gated submit path never sets.
+So the evidence is:
 
-## The completion arm, and why a parked waiter cannot be raced with a delete (873a-877a, 2026-10-26)
+- 661 was entered and the process did not return a value — twice, with two
+  different argument shapes (all-zero in 54c; `(0, outbuf, 0x200, 0, 0, 0)` in
+  54f).
+- 662, 663, 664, 665, 666, 667, 668, 669 and 670 were **never called** in probes 54c/54f.
 
-Three arms were built to reach the one ordering the earlier work left open: a thread
-parked in `663 aio_multi_wait` while the object completes and the same id is deleted.
+**CORRECTION (2026-10-23):** The 352-series probes later called these successfully: 669 (aio_submit) works, 664 (aio_poll) cycles states, 666 (aio_cancel) works, 662 (aio_delete) works. Real data moves via AIO read of /dev/urandom and AIO write into socketpair. 661 stays lethal; 670 unknown. See `results/phase*_352*` captures.
 
-**873a/873b - the state gate.** A create whose descriptor names a dead fd (`-1`) still
-returns `0`, and the object lands in state 3 at once (`id 0000A207`, poll `00000003`,
-delete `00000000`). `666 cancel`, `663 wait(2ms)` and `670` cmds 0/1 changed nothing on it.
-A genuinely pending object (state 2) needs a blocking read, and a state-2 object is refused
-by the delete gate with `0x80020010` (866a).
+This is not a subtle reading of 54c/54f specifically. The capture sizes make it unambiguous: 190 bytes
+cannot hold a ten-number matrix, and section G has no output after its header.
 
-**874a - the ordering, and the structural reason it cannot exist.** The probe parks a
-waiter with `663`, then writes the byte its `read(2)` wants and deletes in the same turn.
-It dies - but a control run that stops before the completion survives, and a run that only
-completes (no delete) dies the same way, so the first reading was "completion is fatal".
-The control inside the 430 parent is that the only way to release a child parked in `read(2)`
-is the byte that **also completes the object's read**. Waking the waiter and completing the
-object are the same event, so there is no state where a waiter is still queued on an object
-the delete gate will accept. The overlap is unreachable by construction, not by timing.
+The same truncation pattern appears in probe 52a
+(`results/phase13_52batch/52a_survey_627_676_20261018_103436.txt`), whose
+capture ends at `P1 num=631 calling now...` after 627-630 returned
+`PCALL-FAIL`. One lethal number ends the connection, so every number after it
+in that connection is unmeasured.
 
-**877a - the retraction.** `877a` calls `663` **200,000 times** on a completed object from
-the ordinary Lua thread: every call returns `0`, status `00010003`, no death. The 874a/876a
-deaths were therefore the raw `thr_create` child (no TCB) looping a handler that sleeps,
-not a kernel fault. Same lesson as the osem UAF and the path-B double free: a raw-child
-harness can look like a kernel bug.
+## 2. Why the truncation is structural, not bad luck
 
-## The delete race at spin rate, and the status-zeroing caveat (870a-872a, 2026-10-26)
+`tools/send_probe.py` opens one TCP connection per probe, and the loader spawns
+a fresh process per connection (`docs/USERLAND_ENTRY.md`). A probe that walks a
+range inside a single connection therefore has exactly one lifetime to spend.
+The first number that terminates the process consumes it, and the remaining
+numbers are never executed — no output, no error, no record that they were
+skipped.
 
-Three more arms were built after the barrier test (817a/817b), all with a persistent
-gadget loop instead of one `thr_create` per attempt, so the two callers issue their
-syscalls microseconds apart instead of milliseconds.
+That is what happened twice. It will happen to every future in-connection
+range walk over a range that contains a lethal number.
 
-**The loop.** A child parks in `read(2)` on a socketpair, then runs
-`pop rdi <id-slot>; pop rsi 1; pop rdx <status-page>; pop rax <sysno>; call <stub>; pop rsp <loop>; ret`.
-The `pop rsp` is mandatory: ending with `pop rax <loop>; jmp rax` restores RIP but not
-RSP, so the second iteration reads uninitialised stack and the process dies with binary
-output on the console (first `872a` run). The parent publishes an id by writing the loop's
-immediate, and prefills the status page with `0xEEEEEEEE` so "not yet attempted" is distinguishable.
+## 3. What this does and does not show about 14.10
 
-| arm | callers | rounds | result |
+**Shown:** syscall 661 terminates the process on 14.10 for at least the two
+argument shapes tested. Two runs, two shapes, same result.
+
+**Not shown:** anything about 662-670. The current verdict generalizes from 661
+to the whole range on the assumption that the numbers form one subsystem with
+uniform behaviour.
+
+That assumption is already questionable from the 13.60 artifacts. Resolving
+every thunk in `docs/dumps_13.60/sysent_index.json` gives:
+
+| syscall | 13.60 body | first instructions | classification |
 |---|---|---|---|
-| `871a` | two children, **different** ids of a fresh 2-item block, spawned per round | 120 (139 s) | `both0=120`, `other=0`, no death, leftovers `0x80020003` |
-| `872a` | two children, different ids, spin loop | 3000 (27 s) | `both0=0`, `mixed=552`, `other=2448`, no death |
-| `872a` | two children, **same** id, spin loop | 4000 | every pair `80020003/80020003` |
-| `872a` | one child **deleting**, one **polling** the same id, spin loop | 4000 (375 s) | 3975 pairs `80020003/80020003`, 23 `EEEEEEEE/00010003`, no death, no corruption |
+| 661 | `0x3af8f0` | `push rbp; mov rbp,rsp; xor esi,esi; pop rbp; jmp 0x265760` | nosys stub |
+| 662 | `0x3af900` | arg shuffle from `[rsi]`/`[rsi+8]`/`[rsi+0x10]`, then `jmp 0x3af920` | AIO batch delete |
+| 663 | `0x3b01f0` | arg shuffle, `jmp 0x3b0210` | AIO batch wait |
+| 664 | `0x3b0fb0` | arg shuffle, `jmp 0x3b0fd0` | AIO batch poll |
+| 665 | `0x3b1670` | `jmp 0x265760` | nosys stub |
+| 666 | `0x3b1680` | arg shuffle, `jmp 0x3b16a0` | batch cancellation |
+| 667 | `0x4a31a0` | own prologue, five callee-saved pushes | process/thread record enumeration |
+| 668 | `0x3af8e0` | `jmp 0x265760` | nosys stub |
+| 669 | `0x3b2060` | `mov eax,[rsi]; mov rdx,[rsi+8]; ...` | separate body |
+| 670 | `0x3b28d0` | own prologue | separate body |
 
-**Why the `both0` counts are not evidence of a double free.** `662` zeroes `status[i]`
-at the top of every iteration (`0xad6fbae mov dword [rdx+r13*4], 0`) and every miss path
-writes nothing, so a status of 0 can mean "the lookup missed". `872a` recorded rounds
-where a child reported 0 for an id that still polled `0x00010003` afterwards. The only
-reliable oracle in this family is the alias test used by `847a` (create a batch after the
-race and check every id is distinct and deletable), which came back clean, plus the
-poll-walk, also clean. Every earlier "both callers returned 0" row (791f, 817a/817b, 847a)
-is consistent with one real delete and one miss.
+Three of the ten are unsupported-syscall stubs and one (667) is not part of the
+AIO cluster at all. The range is not homogeneous in 13.60, so "AIO 661-670" is
+a label, not a subsystem.
 
-**The preemption lever is absent.** `870a` tested every priority syscall under a `SIGSYS`
-shield: `setpriority` (146), `rtprio` (166), `rtprio_thread` (167), `346`, `351`, `352`
-all return `-1` for `who` = 0, 1 and the process pid (only `who = -1` throws). A waiter
-cannot be made higher priority than the current thread, so the winner of the delete cannot
-be descheduled inside the seven-instruction window (`0xad6feb7`..`0xad6fef5`) by that route.
+**The interesting inconsistency:** 661 is a stub that returns ENOSYS in 13.60,
+and it kills the process on 14.10. Those are incompatible behaviours. Either
+14.10's sysent layout differs from 13.60's at this index, or the number is
+handled differently. Either way, the 13.60 map cannot be assumed to describe
+14.10 — which is exactly the assumption the range-wide verdict depends on.
 
-Combined with `866a` (an in-flight object is refused by the state gate, `0x80020010`, so a
-blocked `663` waiter can never overlap the free), the aio delete race is closed from every
-direction this harness can reach: userland threads cannot land two callers inside a window
-that the code itself closes in seven instructions, and the one kernel-side second caller
-(a waiter) is excluded by the state gate before the free path is reached.
+**Counter-check that the range is not simply unreachable:** high syscall
+numbers do work on 14.10. Probe 55e calls 674 and gets `ret=0` with 316 VM
+regions; probe 54f's section B calls 649 and gets `ret=0` with module
+addresses. Lethality at 661 is specific to that entry, not a property of the
+number being large.
+
+## 4. The probe labels in 54c are also wrong
+
+`probes/phase14_final_push/54c_aio_full_attack.lua:165-176` labels the range
+`event_create`, `event_query`, `aio_multi_wait`, `event_signal`, and so on.
+Those names came from the handler analysis that
+[HANDLER_CLAIM_CORRECTIONS.md](HANDLER_CLAIM_CORRECTIONS.md) corrects. Per the
+repo's own `results/kernel_handlers/INDEX.md:144-151`, the names are batch
+delete / batch wait / batch poll / cancellation propagation, and 667 is not in
+the cluster. Any follow-up sweep should use the index names, not the probe's.
+
+## 5. What to do instead
+
+Run one number per connection. `tools/syscall_isolation_sweep.py` does that:
+
+```bash
+python tools/syscall_isolation_sweep.py --ps5-ip 10.0.0.96 --range 661-670 --repeat 2 --save
+```
+
+Each number gets its own connection, its own sentinel line printed before the
+call, and a classification:
+
+| status | meaning |
+|---|---|
+| `RETURNED` | the call returned; the value is recorded |
+| `RAISED` | `pcall` caught a Lua error |
+| `KILLED_IN_CALL` | the sentinel printed and no result followed — the process died inside the call |
+| `NO_OUTPUT` | connected and sent, nothing came back |
+| `CONNECT_FAILED` | could not open a connection; the sweep stops rather than misreporting |
+
+The sentinel is what makes `KILLED_IN_CALL` meaningful: it distinguishes "died
+inside this syscall" from "never got this far", which a bare missing line
+cannot do.
+
+Expected outcomes worth distinguishing:
+
+- 661 kills and the others return → the range was closed on one number; the
+  rest are measurable and should be probed on their own terms.
+- 661 kills and 662-670 also kill → the range verdict was right, and now it has
+  ten data points instead of one.
+- Some numbers return → the range verdict is wrong and there is a new attack
+  surface.
+
+## 6. Limits
+
+- Static artifact analysis plus re-reading existing captures. No console was
+  contacted; no probe was sent for this note.
+- The 13.60 dumps are an unverified acquisition (`docs/dumps_13.60/README.md`),
+  and no authenticated 14.10 kernel image exists in the repository.
+- "661 kills" is established for two argument shapes. Whether a different
+  argument shape returns is untested — the 54c matrix used all-zero arguments
+  and section G used a single buffer layout.
+- The classification table assumes a crash inside the call is the only way to
+  lose the process. A loader-side timeout would also end a connection; the
+  sweep's `NO_OUTPUT` status keeps that case separate from `KILLED_IN_CALL`,
+  but a timeout on the *first* number looks the same as a slow handler.
+
+## First isolation sweep: 662-664 return, 665 kills (2026-10-20)
+
+`tools/syscall_isolation_sweep.py --range 662-670`, one minimal probe per number in
+its own connection, six zero `uint64` arguments (54c's argument shape).
+
+| syscall | status | detail |
+|---|---|---|
+| 662 | RETURNED | `-1` |
+| 663 | RETURNED | `-1` |
+| 664 | RETURNED | `-1` |
+| 665 | KILLED_IN_CALL | process terminated inside the call |
+| 666-670 | not measured | the process was already gone |
+
+Three of the four numbers reached do not kill, which is the first direct evidence
+against the range-wide "AIO hard wall" reading. 665 kills, and 665 is the number the
+13.60 capture labeled a `nosys` stub (`jmp 0x265760`) — a stub that returns ENOSYS in
+13.60 does not terminate the process, so either that label or the 14.10 handler differs.
+
+Capture: `results/phase15_native_sysent/syscall_isolation_sweep_20261020_182830.txt`.
+Measuring 666-670 needs a relaunch before each lethal number, because the process does
+not come back on its own.
+
+## Reinterpretation: the kills were absent slots (2026-10-20)
+
+Probe 173a shows `make_syscall(4095)` also terminates the process. 4095 cannot have a
+handler, so a kill means the slot is absent rather than the handler being hostile. The
+range's lethal numbers 661, 665 and 668 are therefore absent on 14.10 — 665 and 668 are
+labeled `nosys` stubs in the 13.60 capture, which agrees.
+
+That flips the reading of the survivors: 662, 663, 664, 666, 667 and 669 return `-1`,
+which proves those handlers are **present and reachable** and rejected six zero arguments.
+The part of this range worth attacking is the six present handlers, not the three that
+killed the process. See `docs/SYSCALL_ABSENT_VS_LETHAL.md`.
+
+## The batch calls work once they are given their own shape (2026-10-22)
+
+`-1` to six zeros says a handler rejected an empty argument list, not that it cannot
+work. The 13.60 contracts name the shape of three of the six present survivors: an id
+array, a count and an output array.
+
+| syscall | contract | 301a-303a result |
+|---|---|---|
+| 662 | `ids, count, results` | `ret=0`, one status dword per id |
+| 663 | `ids, count, states, wait_mode, timeout_inout` | `ret=0`, same status |
+| 664 | `ids, count, states` | `ret=0`, same status |
+
+`probes/phase17_new_vectors/301a_thread_state_calls.lua` passed `count = 1` with a
+mapped output page and got `ret = 0` with `0x80020000` in the first dword: an id this
+process had invented (`thr_self` had been called with a null out-pointer, so the array
+held `0xFFFFFFFFFFFFFFFF`). `302a` took the real kernel thread id (`0x18E65`) and got
+`0x80020003` instead - a different Sony status, again per id. `303a` tried the process
+id (`0x6A`) and got the same `0x80020003`.
+
+So the three calls read `count` ids, look each one up, and write one status per entry.
+The id they accept is not a kernel thread id and not a process id. In 13.60 the three
+are labelled AIO batch delete, batch wait and batch poll, which makes the ids **AIO
+request ids** - and those can only come from a submission path, which on 14.10 is 661,
+the number that kills before it returns. The batch calls are therefore working code
+guarded by an object this process cannot create.
+
+The two bounds questions were measured and both came back bounded: `count = 0x400`
+against a `0x1000` id page returned `-1` rather than reading out of the page, and
+`count = 4` with the output array ending four bytes before the page boundary returned
+`0` without faulting. Neither is a length the handler trusts past the memory it can
+reach, so there is no overrun to aim.
+
+Captures: `results/phase17_new_vectors/301a_thread_state_calls_20261022_115421.txt`,
+`302a_thread_state_ids_20261022_115439.txt`,
+`303a_thread_state_bounds_20261022_115517.txt`.
+
+## Two threads can delete the same aio id and both report success, and nothing comes of it (2026-10-24)
+
+Two `thr_new(455)` children deleting the same 100 aio ids returned status `0` for both
+of them on 54 ids, while a serialized second delete returns `0x80020003` for all 64 ids
+in the control (`498a`). The obvious reading is that both callers ran the last-item path
+and both freed the `0x30` context `C`, a double free. That reading is wrong, and the
+probes below show it.
+
+What actually happens, from the 13.60 delete body (file offsets):
+
+```
+3afc2a  call 0x8ad59eb0          take the table lock
+3afc67  call 0x8ad59e20          predicate: word[handle+0x22] & 1
+3afd0c  rax = [r12+0x28]          slot array, first re-read
+3afd14  r14 = [rax+rcx*8]         item for this index
+3afd18  test r14,r14 / je        empty slot -> 0x80020003 (0x3aff34)
+3afd72  r14 = [r14+0x20]          S
+3afd76  eax = [r14+8]; add -3     state must be 3 or 4, else 0x80020010 (0x3aff61)
+3afe63  call 0x8ad59eb0          LOCK again
+3afe7c  rax = lookup2(id)         second lookup by id
+3afe9f  r12 = [rcx + rdx*8]       item re-read under the lock
+3afec8  rdi = [r14+0x10]          ref object
+3afecc  test rdi,rdi / je 3afede  null -> skip the release, still free
+3afed1  call 0x8ac69670           release
+3afed6  [r14+0x10] = 0
+3afee8  call 0x8b5c8df0           free(C)
+3afef5  [r12+0x18] = 0            clear C under the lock
+3aff09  r14 = [r12+0x20]          S
+3aff17  [r12+0x20] = 0            clear S under the lock
+```
+
+Every free and every clear happens while the second lock is held, and the item is
+re-read at `0x3afe9f` under that lock. A caller that loses the race therefore finds
+`[W+0x18] = 0` and `[W+0x20] = 0` and frees nothing. Status `0` is not written by the
+kernel on success - the caller's buffer is simply left as it was - so two `0` statuses
+mean "two callers reached the end without an error", not "two frees".
+
+Three probes were run to test the allocator directly:
+
+| probe | what it does | result |
+|---|---|---|
+| `524a` | 25 attempts at a single-id double delete | never overlaps: every attempt one `0`, one `0x80020003` |
+| `524b` | 100-id race, then four objects alive at once, deletes interleaved | 42 double zeros, four objects and their deletes all normal |
+| `525a` | 100-id race while the parent runs 827 create/poll/delete cycles | 55 double zeros, no create/poll/delete anomaly |
+| `525b` | 100-id race while the parent creates 200 objects and never deletes them | 55 double zeros, all 200 created, polled and deleted cleanly |
+
+`524b` is the discriminator: after 42 double zeros, a duplicated `0x30` free entry would
+have been consumed by the next creates' `T` and `C`, so two live requests would share a
+context. Four concurrent requests behaved exactly as they do with zero doubles. The
+allocator never saw a duplicate free.
+
+The `0x80020003` in the serialized control comes from the first lookup (`0x3afca8`) or
+from the empty-item check (`0x3aff34`), and `0x80020010` from the state gate
+(`0x3aff61`). The three statuses are fully accounted for without any corruption.
+
+What a racing thread *can* still do inside the unlocked window is free the slot and have
+a new object take it, because the second lookup is by id and the item is re-read from the
+new object's slot array. `525b` exercises exactly that: 200 creates while 100 shared ids
+are being deleted, so freed slots are refilled continuously. Nothing observable followed.
+
+What this rules out: a double free of `C` from a plain delete-vs-delete race, and any
+allocator effect from the double status. What it does not rule out: a reallocation that
+lands between the first lookup and the second *lock* specifically, with an object whose
+count is 1 and whose id still resolves; that ordering was not hit in 1,027 creates and
+200 deletes, and the lookup-by-id may reject a reused slot before the free is reached.
+
+Captures: `results/phase17_new_vectors/523c_aio_delete_race_fixed_20261024_140951.txt`,
+`524a_aio_double_delete_single_20261024_141445.txt`,
+`524b_aio_double_free_allocator_20261024_141737.txt`,
+`525a_aio_delete_create_swap_20261024_142104.txt`,
+`525b_aio_fill_freed_slots_20261024_142127.txt`.
+Stack rule for a `thr_new` child: `docs/THREADING_ALIVE_14_10.md`.
+
+## Why the two-zero race never frees anything, and how wide the window is (2026-10-24)
+
+Status `0` has two sources in the delete body, and only one of them is a deletion:
+
+```
+3afe7c  call 0x8ad5a2a0          second lookup by id, after the lock drop
+3afe81  test rax,rax
+3afe84  je 0x3affab
+...
+3affab  dword [status] = 0       second lookup failed -> SUCCESS, nothing freed
+```
+
+So a caller whose second lookup finds no item reports success and frees nothing. That,
+not a shared free, is what the 42 and 55 "double zeros" were: the loser's second lookup
+missed. It also explains why `524b`'s four concurrent requests after 42 doubles behaved
+perfectly - no `0x30` chunk was ever freed twice.
+
+The slot allocator makes reuse cheap enough to matter: 24 create/poll/delete cycles
+returned the same eight ids in a fixed rotation -
+
+```
+000003F8 000023F8 000043F8 000063F8 000083F8 0000A3F8 0000C3F8 0000E3F8
+```
+
+- a freed id reappears after exactly **8 creates** (`526b`), about 20 us. So a delete's
+  second lookup has a refilled slot available to it almost immediately.
+
+Two probes then tried to land a create inside the unlocked gap:
+
+| probe | shape | result |
+|---|---|---|
+| `526a` | 3 children x 100 deletes, parent create+poll 400 objects underneath | two-zero 42, `0`x153, `0x80020003`x147, **no `0x80020010`**, all 400 parent objects poll+delete clean |
+| `526c` | 6 children x 100 deletes, parent create+poll 700 objects underneath | two-zero 31, `0`x133, `0x80020003`x467, **no `0x80020010`**, all 700 clean |
+
+`0x80020010` is the signature of the second lookup resolving to a freshly created object
+(state 1, not yet polled): the state gate at `0x3afd76` rejects it. It never appeared in
+900 deletes against 1,100 concurrent creates, so the second lookup never observed a
+swapped slot at all.
+
+Reading: the code does free `[item2+0x18]` from the *second* lookup, so the path in the
+14.20 note is real. But the delete takes the table lock at `0x3afc2a`, holds it through
+the state gate, and drops it at `0x3afe67`; the gap between that drop and the second
+lookup call at `0x3afe7c` is a handful of instructions. A create has to land inside it.
+Racing syscalls cannot do that - 900 attempts with a deterministic 20 us reuse period
+produced nothing. Only a scheduler tick landing in that gap could, which is why the fix
+is described as a revalidation after the lock drop.
+
+Not established: that the gap is unreachable under every scheduler state. A preemption
+inside those few instructions was not observed and was not forced.
+
+**The Lua harness cannot put two callers inside that gap (2026-10-24, `584a`).** The two
+success statuses stop being interesting once the concurrency they need is attempted
+deliberately. Two helper threads that spin on a shared word and release together, then
+each call `662` over the same 96 ids, kill the process during the first round, before any
+status is read - and so does the identical barrier run with the ids split into disjoint
+halves, where no shared id exists at all. Two Lua threads executing at the same instant is
+itself enough; the delete never gets to race because the harness dies first. Without the
+barrier the spawn latency serialises them and the loser reports `0x80020003` on every id,
+which is the same result `498a` gets with no threads at all.
+
+Two more facts that make the earlier numbers easier to read: the status page has to be
+pre-filled (`0x77777777`), because a call that fails before the copyout leaves it
+untouched and a zeroed page then reads as a run of successes - `498a` did that and `568a`
+did not. With pre-fill, thirty rounds of overlap-mode deletes return `two-zero = 0`; the
+42 and 55 doubles in `524b`/`525a`/`525b` came from zeroed pages, not from shared frees.
+
+Probe: `probes/phase17_new_vectors/584a_aio_race_stress.lua` (modes `overlap`,
+`disjoint`, `stagger`; pre-filled status pages; per-round health cycle).
+
+Captures: `results/phase17_new_vectors/526a_aio_slot_swap_window_20261024_144616.txt`,
+`526b_aio_id_reuse_20261024_144701.txt`,
+`526c_aio_swap_oversubscribed_20261024_144736.txt`.
+
+## The table entry, the two lookups, and the eight-generation id wrap (2026-10-24)
+
+The delete path's second lookup is not a bare array read. Both lookups
+(`0x8ad59ee0` and `0x8ad5a2a0`) are the same algorithm:
+
+```
+399ecc  ...                       bucket lock 0x8ae86a00
+399fc8  eax = dword [entry+0x28]  generation
+399fcd  shl eax, 0xd
+399fd0  movzx eax, ax             keep 3 bits above bit 13
+399fd3  or eax, ecx               ecx = index (id & 0x1fff)
+399fd5  cmp eax, r12d             compare with the requested id
+399fd8  jne fail                  -> returns 0
+399fe1  cmp word [entry+0x26], 3  entry type must be 3
+399fed  cmp r14d, -1 / cmp r14d, word [entry+0x20]   caller's tag must match
+399ffd  [entry+0x18] = gs:[0]     stamp the entry with the owning thread
+39a019  bucket unlock
+39a028  mtx_lock ([entry])        take the entry's own lock
+39a036  bucket lock again
+39a03b  cmp [entry+0x18], gs:[0]  revalidate ownership
+39a03f  je success                otherwise unlock and retry the whole lookup
+```
+
+So an id is `(generation << 13) | index`, and the generation that reaches the id
+is only **three bits** of `[entry+0x28]` (`shl 13; movzx ax`). That is why `526b`
+saw exactly eight ids in rotation - `000003F8 000023F8 ... 0000E3F8` - and why a
+deleted id reappears after exactly eight creates: the id space is 8 x 8192 and a
+stale id becomes valid again after eight reuses of its slot.
+
+Two consequences:
+
+- the reused-slot substitution the 14.20 note describes cannot happen by id alone:
+  both lookups compare the current entry's generation with the id, so a slot that
+  was re-created fewer than eight times resolves to no object and the caller
+  takes the `0x3affab` status-0 path;
+- the entry's own mutex is taken *by the lookup* and revalidated after the bucket
+  lock is retaken, so the delete's frees run with the entry locked. The two-zero
+  statuses are two callers that serialised on that mutex, one of which then
+  missed at the second lookup.
+
+Measured agreement: `0x80020010` never appeared in 900 deletes against 1,100
+creates (`526a`/`526c`). It would be the signature of this lookup resolving to a
+fresh unpolled object.
+
+Not established: that the 14.10 build has the same instruction sequence - the
+capture is 13.60. The console behaviour matches it, but the firmware image is not
+available to check byte for byte.
+
+## Block mode writes `count` ids to the caller's out pointer (2026-10-24)
+
+Block mode (`flags & 0x1000`) reports **one id per item**, not one id per call,
+and the create tail copies the whole array to the pointer passed as the fifth
+argument. My first probes sized that page for a single dword, so counts above
+16 overwrote the probe's own Lua heap and the loader died with a fatal signal.
+The 531a/532a deaths were probe defects, not a kernel fault.
+
+The 13.60 tail at `0x3b25c9`:
+
+```
+03b25ec cmp  dword [rbx+0xc], 0   ; flags & 0x1000
+03b25f3 jne  0x3b2604             ; block mode
+03b25f5 mov  r14, [rbx+0x68]      ; user out pointer
+03b25f9 lea  rdi, [rbx+0x7c]      ; &id on the kernel stack
+03b25fd mov  edx, 4               ; one dword
+03b2602 jmp  0x3b2657
+03b2604 lea  rax, [r14*4 + 0xf]   ; r14 = count
+03b260c mov  rdi, rsp
+03b260f lea  rdx, [r14*4]         ; len = count*4
+03b261a and  rax, ~0xf
+03b261e sub  rdi, rax
+03b2621 and  rdi, ~0x1f
+03b2625 mov  rsp, rdi             ; alloca(count*4)
+03b2640 mov  ecx, r15d            ; i << 16
+03b2643 add  r15d, 0x10000
+03b264a or   ecx, esi             ; id | (i<<16)
+03b264c mov  [rdi + rax*4], ecx
+03b2657 mov  rsi, r14             ; user out pointer
+03b265a call 0x8ad73a40           ; copyout(src=rdi, dst=rsi, len=rdx)
+```
+
+A block create of `count` items fills `count` dwords with `id + i*0x10000` and
+copies them out in one call. A caller that passes a four-byte page and a count
+above 16 gets a 64-byte-and-up overwrite of its own address space, which is
+what the `0x13371337` crash records were: the loader's signal handler printing
+a context whose registers pointed into the damaged heap.
+
+Consequences for the earlier probes:
+
+| probe | shape | reading |
+|---|---|---|
+| 528a | block count 4, out page 0x20 | 4 dwords fit, clean |
+| 531a | non-block 0x7F/0x80, out 0x40 | one dword written, clean |
+| 531a | block 0x7F, out 0x40 | 508 bytes into a 64-byte page, process died |
+| 532a | block 0x10, out 0x40 | 64 bytes, exactly fits, clean |
+| 532a | block 0x20, out 0x40 | 128 bytes, overflows, process died |
+
+The boundary 0x10 -> 0x20 is exactly 0x40/4 -> 0x80/4, the signature of the
+undersized out page rather than any count limit in the handler.
+
+What this does not establish: any defect in the block path itself. With an out
+page of `count*4` bytes, block mode should behave like non-block mode and every
+item id should be readable as `base + i*0x10000`.
+
+## Non-block create makes one object, not `count` of them (2026-10-24)
+
+`546a` creates with `flags=1, count=4` and polls every id the block-mode
+numbering would predict:
+
+| id | poll status |
+|---|---|
+| `0x00004205` | `0x00000003` |
+| `0x00014205` | `0x80020003` |
+| `0x00024205` | `0x80020003` |
+| `0x00034205` | `0x80020003` |
+
+`0x80020003` is the missing-object status from the first lookup, so ids
+`base + i*0x10000` exist only in block mode, where the entry count equals the
+item count. Deleting the single non-block id returns 0 and frees the context;
+deleting the three phantom ids returns `0x80020003` and touches nothing. There
+is no live work item left behind to dereference a freed context, so the shared
+context is not a dangling-pointer surface in either mode.
 
 ## Allocating inside the delete window changes nothing (795a, 2026-10-26)
 
@@ -588,179 +1112,6 @@ clean rounds and then wedges the aio subsystem.
 **Not established:** whether any freed object is used by the worker, whether the
 spray ever occupies the freed chunk, and which round wedges the table.
 
-## 1. What the captures actually contain
-
-| capture | size | last line |
-|---|---|---|
-| `results/54c_aio_full_attack_20261018_090527.txt` | 190 bytes | `  [BEFORE] sys 661 (event_create, narg=4)` |
-| `results/54f_kaslr_deep_20261018_090603.txt` | 15,257 bytes | `--- G: AIO event subsystem (661/662/668 — obfuscated kptr leak) ---` |
-
-The 54c matrix prints `[BEFORE] sys N`, then calls, then prints either
-`[RETURNED]` or `[ERROR]` (`probes/phase14_final_push/54c_aio_full_attack.lua:180-193`).
-The capture contains the `[BEFORE]` line for 661 and no result line for it and
-nothing at all for 662-670. Section G of 54f iterates `for num = 661, 670`
-(`probes/phase14_final_push/54f_kaslr_deep.lua:461`) and prints a result line
-per iteration; the capture ends at the section header, before the first result.
-
-So the evidence is:
-
-- 661 was entered and the process did not return a value — twice, with two
-  different argument shapes (all-zero in 54c; `(0, outbuf, 0x200, 0, 0, 0)` in
-  54f).
-- 662, 663, 664, 665, 666, 667, 668, 669 and 670 were **never called**.
-
-This is not a subtle reading. The capture sizes make it unambiguous: 190 bytes
-cannot hold a ten-number matrix, and section G has no output after its header.
-
-The same truncation pattern appears in probe 52a
-(`results/phase13_52batch/52a_survey_627_676_20261018_103436.txt`), whose
-capture ends at `P1 num=631 calling now...` after 627-630 returned
-`PCALL-FAIL`. One lethal number ends the connection, so every number after it
-in that connection is unmeasured.
-
-## 2. Why the truncation is structural, not bad luck
-
-`tools/send_probe.py` opens one TCP connection per probe, and the loader spawns
-a fresh process per connection (`docs/USERLAND_ENTRY.md`). A probe that walks a
-range inside a single connection therefore has exactly one lifetime to spend.
-The first number that terminates the process consumes it, and the remaining
-numbers are never executed — no output, no error, no record that they were
-skipped.
-
-That is what happened twice. It will happen to every future in-connection
-range walk over a range that contains a lethal number.
-
-## 3. What this does and does not show about 14.10
-
-**Shown:** syscall 661 terminates the process on 14.10 for at least the two
-argument shapes tested. Two runs, two shapes, same result.
-
-**Not shown:** anything about 662-670. The current verdict generalizes from 661
-to the whole range on the assumption that the numbers form one subsystem with
-uniform behaviour.
-
-That assumption is already questionable from the 13.60 artifacts. Resolving
-every thunk in `docs/dumps_13.60/sysent_index.json` gives:
-
-| syscall | 13.60 body | first instructions | classification |
-|---|---|---|---|
-| 661 | `0x3af8f0` | `push rbp; mov rbp,rsp; xor esi,esi; pop rbp; jmp 0x265760` | nosys stub |
-| 662 | `0x3af900` | arg shuffle from `[rsi]`/`[rsi+8]`/`[rsi+0x10]`, then `jmp 0x3af920` | AIO batch delete |
-| 663 | `0x3b01f0` | arg shuffle, `jmp 0x3b0210` | AIO batch wait |
-| 664 | `0x3b0fb0` | arg shuffle, `jmp 0x3b0fd0` | AIO batch poll |
-| 665 | `0x3b1670` | `jmp 0x265760` | nosys stub |
-| 666 | `0x3b1680` | arg shuffle, `jmp 0x3b16a0` | batch cancellation |
-| 667 | `0x4a31a0` | own prologue, five callee-saved pushes | process/thread record enumeration |
-| 668 | `0x3af8e0` | `jmp 0x265760` | nosys stub |
-| 669 | `0x3b2060` | `mov eax,[rsi]; mov rdx,[rsi+8]; ...` | separate body |
-| 670 | `0x3b28d0` | own prologue | separate body |
-
-Three of the ten are unsupported-syscall stubs and one (667) is not part of the
-AIO cluster at all. The range is not homogeneous in 13.60, so "AIO 661-670" is
-a label, not a subsystem.
-
-**The interesting inconsistency:** 661 is a stub that returns ENOSYS in 13.60,
-and it kills the process on 14.10. Those are incompatible behaviours. Either
-14.10's sysent layout differs from 13.60's at this index, or the number is
-handled differently. Either way, the 13.60 map cannot be assumed to describe
-14.10 — which is exactly the assumption the range-wide verdict depends on.
-
-**Counter-check that the range is not simply unreachable:** high syscall
-numbers do work on 14.10. Probe 55e calls 674 and gets `ret=0` with 316 VM
-regions; probe 54f's section B calls 649 and gets `ret=0` with module
-addresses. Lethality at 661 is specific to that entry, not a property of the
-number being large.
-
-## 4. The probe labels in 54c are also wrong
-
-`probes/phase14_final_push/54c_aio_full_attack.lua:165-176` labels the range
-`event_create`, `event_query`, `aio_multi_wait`, `event_signal`, and so on.
-Those names came from the handler analysis that
-[HANDLER_CLAIM_CORRECTIONS.md](HANDLER_CLAIM_CORRECTIONS.md) corrects. Per the
-repo's own `results/kernel_handlers/INDEX.md:144-151`, the names are batch
-delete / batch wait / batch poll / cancellation propagation, and 667 is not in
-the cluster. Any follow-up sweep should use the index names, not the probe's.
-
-## 5. What to do instead
-
-Run one number per connection. `tools/syscall_isolation_sweep.py` does that:
-
-```bash
-python tools/syscall_isolation_sweep.py --ps5-ip 10.0.0.96 --range 661-670 --repeat 2 --save
-```
-
-Each number gets its own connection, its own sentinel line printed before the
-call, and a classification:
-
-| status | meaning |
-|---|---|
-| `RETURNED` | the call returned; the value is recorded |
-| `RAISED` | `pcall` caught a Lua error |
-| `KILLED_IN_CALL` | the sentinel printed and no result followed — the process died inside the call |
-| `NO_OUTPUT` | connected and sent, nothing came back |
-| `CONNECT_FAILED` | could not open a connection; the sweep stops rather than misreporting |
-
-The sentinel is what makes `KILLED_IN_CALL` meaningful: it distinguishes "died
-inside this syscall" from "never got this far", which a bare missing line
-cannot do.
-
-Expected outcomes worth distinguishing:
-
-- 661 kills and the others return → the range was closed on one number; the
-  rest are measurable and should be probed on their own terms.
-- 661 kills and 662-670 also kill → the range verdict was right, and now it has
-  ten data points instead of one.
-- Some numbers return → the range verdict is wrong and there is a new attack
-  surface.
-
-## 6. Limits
-
-- Static artifact analysis plus re-reading existing captures. No console was
-  contacted; no probe was sent for this note.
-- The 13.60 dumps are an unverified acquisition (`docs/dumps_13.60/README.md`),
-  and no authenticated 14.10 kernel image exists in the repository.
-- "661 kills" is established for two argument shapes. Whether a different
-  argument shape returns is untested — the 54c matrix used all-zero arguments
-  and section G used a single buffer layout.
-- The classification table assumes a crash inside the call is the only way to
-  lose the process. A loader-side timeout would also end a connection; the
-  sweep's `NO_OUTPUT` status keeps that case separate from `KILLED_IN_CALL`,
-  but a timeout on the *first* number looks the same as a slow handler.
-
-## First isolation sweep: 662-664 return, 665 kills (2026-10-20)
-
-`tools/syscall_isolation_sweep.py --range 662-670`, one minimal probe per number in
-its own connection, six zero `uint64` arguments (54c's argument shape).
-
-| syscall | status | detail |
-|---|---|---|
-| 662 | RETURNED | `-1` |
-| 663 | RETURNED | `-1` |
-| 664 | RETURNED | `-1` |
-| 665 | KILLED_IN_CALL | process terminated inside the call |
-| 666-670 | not measured | the process was already gone |
-
-Three of the four numbers reached do not kill, which is the first direct evidence
-against the range-wide "AIO hard wall" reading. 665 kills, and 665 is the number the
-13.60 capture labeled a `nosys` stub (`jmp 0x265760`) — a stub that returns ENOSYS in
-13.60 does not terminate the process, so either that label or the 14.10 handler differs.
-
-Capture: `results/phase15_native_sysent/syscall_isolation_sweep_20261020_182830.txt`.
-Measuring 666-670 needs a relaunch before each lethal number, because the process does
-not come back on its own.
-
-## Reinterpretation: the kills were absent slots (2026-10-20)
-
-Probe 173a shows `make_syscall(4095)` also terminates the process. 4095 cannot have a
-handler, so a kill means the slot is absent rather than the handler being hostile. The
-range's lethal numbers 661, 665 and 668 are therefore absent on 14.10 — 665 and 668 are
-labeled `nosys` stubs in the 13.60 capture, which agrees.
-
-That flips the reading of the survivors: 662, 663, 664, 666, 667 and 669 return `-1`,
-which proves those handlers are **present and reachable** and rejected six zero arguments.
-The part of this range worth attacking is the six present handlers, not the three that
-killed the process. See `docs/SYSCALL_ABSENT_VS_LETHAL.md`.
-
 ## 662 runs its delete body from a game process (2026-10-24)
 
 Probe `probes/phase17_new_vectors/486a_aio662_gate.lua`, capture
@@ -1117,6 +1468,11 @@ all.
 
 ## The create never submits on 14.10: aio is a bookkeeping surface (2026-10-24)
 
+> **Scope correction (744b-746b).** This section measured non-block creates
+> (`flags = 1` only). A block create (`flags |= 0x1000`) does submit and the queue
+> then holds real requests; what stays gated is only the result-record copyout.
+> See "Block creates do submit, and only the result pointer is unguarded".
+
 > **Superseded.** The submit gate returns 1 on this console: `566b` reads `/dev/urandom` through
 > `669` and gets the bytes back, so create does submit. The "never submits" result came from the
 > wrong descriptor field order in `500a`/`500b`/`566a`. See "The state gate passes at runtime".
@@ -1179,6 +1535,12 @@ Probes: `probes/phase17_new_vectors/500a_aio_descriptor_layout.lua`,
 `results/phase17_new_vectors/`.
 
 ## The free runs unlocked, so both deletes can free the same context (2026-10-24)
+
+> **Correction (707a, 727a-728a).** The unlocked window is real and a follower does
+> reach it, but the `[W+0x18]` guard at `8AD6FEC3` sends every follower down the
+> status-only branch. 599 doubled statuses across 791f left the allocator clean, so
+> the context is not in fact freed twice; see "The double status is a lie, and the
+> allocator proves it".
 
 `523c` gives 54 ids whose overlapping deletes both returned `0`, and the process survives it. The
 13.60 delete body says why: the context free is guarded by a null test on the pointer it is about
@@ -1326,6 +1688,7 @@ and the measured rate depends on how closely the two callers stay in step (100/1
 For a second free to happen the second caller would have to load `[W+0x18]` *after* the first frees
 W, which requires arriving later than the free but before the slot clear - a window on the order of
 one function call, and no measured run has produced it.
+
 ## A second delete is refused unless it runs concurrently (probes 569a, 570a, 568a, 2026-10-24)
 
 The serial control is exact at every block size:
@@ -1459,69 +1822,6 @@ caller-filled and lands in that same class, so the family carries its own reclai
 not yet established is that the duplicate free actually happens in a given race and that `C1 == D2`
 can be forced.
 
-## The delete is item-refcounted, so the context is freed exactly once (2026-10-24)
-
-> **Scope correction.** The refcounting below is real and explains the serialized probes: deleting
-> item 0 of a multi-item object frees only that item, and a later delete of another item does not
-> touch `C`. It does **not** make the context single-free under concurrency. The entry lock is
-> dropped at `8AD6FE67` and the free runs unlocked from `8AD6FEB7`, so two deletes of the *same*
-> item can both pass the null test and both free `C`. See "The free runs unlocked".
-
-The earlier reading in this file said every item's delete frees the shared context
-`C = [W+0x18]`, which would make repeated deletes of a multi-item create a
-single-threaded double free. That is wrong, and four probes said so before the
-disassembly did:
-
-| probe | shape | result |
-|---|---|---|
-| `504b` | create count=4, delete item0, create a filler with `D[0x10]=0`, delete item1, delete the filler, delete items 2-3 | every call `ret=0`, status `0`, filler healthy |
-| `504c` | same, filler `D[0x10]` = mapped page holding `0x41414141`, three fillers, delete item1 | canary `41414141 deadbeef` unchanged |
-| `507a` | create count=2, delete item0, 200 filler creates, delete item1 | canary untouched |
-| `508a` | create count=2, delete item0, 200 fillers, delete item1, then poll/delete all fillers | `polled ok=200 other=0`, `deletes clean=200 bad=0` |
-
-The delete body explains it. After the unlocked second lookup
-(`0x3afe6c`, `0x8ad5a2a0(table, slot, 0x160, &lock)`) the code reads the
-object's **remaining item count** and branches:
-
-- `0x3affbc` — `[obj+2] != 1`: `dec r8d` / `mov [obj+2], r8w`, free the item's
-  `S` when `[W+0x20] != 0`, `call 0x8ad73e90(W)` to free `W`, and clear
-  `[P+index*8]`. **No context free on this path.**
-- `0x3afea3`-`0x3afef5` — `[obj+2] == 1`, the last item: `r14=[W+0x18]` = `C`,
-  release `[C+0x10]` via `0x8ac69670`, zero it, `free(C)` at `0x3afee8`, zero
-  `[W+0x18]`, then free `S` and `W`.
-
-So `[obj+2]` is the number of items still owned by the object, and the context is
-released once, by the last item. After that delete the object is gone from the
-table, and a repeat of the same id returns `0x80020003` (measured in `489c`
-and `498a`: second pass over the same 64 ids is all `0x80020003`). The poll
-status change from `00000003` to `00010003` after one item's delete in `504a` is
-the same count in the low half of the state word.
-
-The 14.20 text remains accurate about the *race*: the second lookup really does
-run after the first unlock, so a concurrent thread that deletes the same slot
-between `0x3afe63` and `0x3afe6c` can make the two lookups observe different
-objects. What the refcount removes is the single-threaded version of that race,
-and that is why `504b`/`504c`/`507a`/`508a` never touched a filler: no context was
-freed while any of them lived.
-
-Two further limits were measured:
-
-- The freed object is a `0x30` context whose fields are all kernel-written
-  (`[C]` per-CPU pointer, `[C+0x10]` a refcounted object, `[C+0x20]` cpu id,
-  `[C+0x28]` the job). The create's user bytes go to the separate
-  `count*0x28` array and the per-item `0x58` states, never into `C`, so even a
-  won race frees an object we cannot fill with chosen bytes.
-- The loader serialises syscalls: `509a` measured 21.44 us per `getpid` for
-  20 000 calls, and a helper thread that issues syscalls kills the process
-  within ~50 ms (`509b`), while a parent blocked in a syscall starves the
-  helper (`506b`, `506c`). The window is a few instructions wide; there is no
-  way to reach it from Lua. `510b` scanned 4 MB of eboot for a `syscall`
-  instruction and found twelve `0F 05` bytes, all in data, so a raw-syscall
-  thread is not available from that module either.
-
-Conclusion for this file: on 14.10 the aio family is a bookkeeping surface. The
-create never submits, the record path is gated by a boot tunable, and the delete
-frees one kernel-owned context exactly once. It is not a route to kernel R/W.
 ## mdbg 601 commands 03 and 04 are lethal (2026-10-24)
 
 With the corrected call shape `601(cmd, ptr, 0)` and a zeroed mapped 0x1000 page as `ptr`
@@ -1536,6 +1836,7 @@ With the corrected call shape `601(cmd, ptr, 0)` and a zeroed mapped 0x1000 page
 
 Each lethal command takes the whole game process, so the remaining commands `05`-`0x27`
 can only be covered one relaunch at a time.
+
 ## Where the block crash comes from (probes 576a, 577a, 2026-10-24)
 
 `576a` created pending socketpair reads in blocks of 8, 16 and 32 inside one process:
@@ -1844,65 +2145,68 @@ caller chooses, with a matching free and no other observable effect. That is
 grooming, not a bug; it matters only if some freed object in that bucket is
 still reachable, and no such path is known.
 
-### Why no storm could ever have won: the lock drop itself is gated (2026-10-27)
+## The delete window is not reachable from userland (817a, 817b, 818a, 2026-10-26)
 
-The delete drops the table lock only when the work item is flagged as in flight. From
-`.local/del662.txt`:
+The 14.20 note describes the pre-fix path exactly: `aio_multi_delete` drops the
+lock, a racing thread frees and reallocates the slot, and the delete then frees
+sub-objects of the swapped object.  Everything up to that point reproduces
+here.  What does not reproduce is a second caller arriving in time.
 
-    8ad6fe4f  cmp dword ptr [rcx + 4], 0     ; the in-flight flag
-    8ad6fe54  jne 8ad6fe5d                   ; clear -> stay under the lock
-    8ad6fe59  cmp byte ptr [rcx + 0xc], 0    ; the poll flag
-    8ad6fe5d  je  ...                        ; not polled -> same
-    8ad6fe63  call 0x8ad59eb0                ; unlock, only on this path
-    8ad6fe6c  ... re-lookup at 0x8ad5a2a0
+The guard is seven instructions.  From the 13.60 delete body (offset `0x3af920`,
+base `0xffffffff8a9c0000`):
 
-`664` sets `[W+0xc]` (poll), but nothing reachable sets `[W+4]`: the submit path that
-would is behind the boot tunable (`0x3b249c call 0x8b4c78d0`), and on 14.10 that gate
-reads a boot-time tunable that never equals 3 or 4. So on this firmware a delete is an
-under-lock teardown, and the TOCTOU window that 14.20 patches does not exist here at
-all - the race was not "hard to win", it was unreachable, which is why 817a, 817b,
-847a, 871a and 872a each produced exactly one winner and a set of first-lookup misses.
+```
+0xad6fe67  call 0x8ad59eb0          ; unlock
+0xad6fe7c  call 0x8ad5a2a0          ; re-lookup (takes the lock again)
+0xad6feb7  mov r14,[r12+0x18]       ; C from the work item
+0xad6fec3  test r14,r14 / je        ; already-cleared test
+0xad6fc8   mov rdi,[r14+0x10]       ; refcount page
+0xad6fed1  call 0x8ac69670          ; lock xadd -1, release chain at zero
+0xad6fee8  call 0x8b5c8df0          ; free C
+0xad6fef5  mov qword [r12+0x18],0   ; window closes here
+```
 
-Supporting measurement (`probes/phase17_new_vectors/886a_suspend_process.lua`,
-capture `results/phase17_new_vectors/886a_suspend_process_20261027_134127.txt`): the
-last candidate for forcing a second caller, `561 suspend_process`, kills the whole
-process within milliseconds when called from a `thr_create` child (the parent never
-reaches its first marker), so it cannot be used as a selective thread stop.
+Two release mechanisms were measured against it, sixteen deleters aimed at a
+single freshly polled id, six rounds each:
 
-Consequence: the public 14.20 note describes a real pre-fix shape, but on 14.10 the
-shape is disabled by the same boot tunable that disables submit. Any 14.10 kernel
-exploit in the wild is therefore **not** this bug, and this file should not be cited as
-the 14.10 vector.
+| probe | release | deleters | statuses of 16 | allocator after |
+|---|---|---|---|---|
+| `817a_aio_window_16.lua` | sixteen separate `write()`s, ~20 us apart | 16 | 1 zero, 15 `0x80020003` | 8 fresh objects, 0 anomalies |
+| `817b_aio_shared_barrier.lua` | one `write()` of 16 bytes, all parked on the same fd | 16 | 1 zero, 15 `0x80020003` | 8 fresh objects, 0 anomalies |
 
-### The race level confirmation: three actors, 150 rounds, one winner (2026-10-28)
+`0x80020003` is the first lookup's miss code, so fifteen callers arrived after
+the winner had already removed the entry.  Removing the release skew changed
+nothing: the winner finishes its whole delete tens of microseconds before any
+follower is scheduled, and the guard window is nanoseconds.
 
-The gate argument above had only ever been tested with deleters. Two probes now race a
-*creator* against the deleter, which is the shape the 14.20 note describes ("a racing
-thread could free and reallocate that slot").
+The re-lookup also refuses a swapped entry. `0x8ad5a2a0` rebuilds the stored id
+as `(generation << 13) | slot` (`0xad5a36b`..`0xad5a376`) and compares it with
+the requested id (`0xad5a378 cmp eax,r14d / jne miss`), then requires state 3
+(`0xad5a384`) and type `0x160` (`0xad5a395`).  A slot can only carry the same id
+again after eight create/delete cycles wrap the three-bit generation (probe
+`561a`), which cannot happen inside the window.
 
-`937b_aio_delete_recreate_race.lua` established two harness facts first. The thread
-context registers are what the child's **first** syscall uses; the chain placed at `RSP`
-runs only after that call returns, so a chain that repeats the first call issues it
-twice (its second `662` returned `0x80020003`). And a child reaches its syscall before
-the parent's next one: the parent's `662` returned `ERRNO`-shaped `0x80020003` in every
-round while the `664` microseconds earlier had reported state 3.
+The other candidate second halves are gated.  `664` frees `[uap+0x40]` only
+behind the same boot tunable (`0x8b4c78d0` at `0x3b1586`), and `666`'s copyout
+and free at `0x3b1dd4`-`0x3b1dde` sit behind it too.  Nothing else in the family
+frees a work item.
 
-`937c_aio_three_actor_race.lua` therefore splits the roles across three actors, each
-issuing exactly one syscall from preloaded registers - child A `662(ids,1,stA)` (free),
-child B `669(0x1001,reqs,1,3,idsB)` (reallocate, LIFO slot reuse confirmed: slot `0x206`
-with generation +1), parent `662(ids,1,stP)` (the deleter whose lock window the fix
-describes). 150 rounds, capture
-`results/phase17_new_vectors/937c_aio_three_actor_race_20261028_200923.txt`:
+`818a_aio_orphan_thread.lua` tested the one lifetime split that needs no race:
+a helper thread creates an object and exits through `thr_exit(431)`, and the
+Lua thread polls and deletes the orphan afterwards.  Sixteen rounds, sixteen
+orphans, every delete `rv=0 status=0`, and an ordinary create/delete health
+check after each round was clean.  The reference taken from the creating
+thread's `gs:[0]+0x140` keeps whatever it points at alive.
 
-    [Z] rounds=150 both=0 aOnly=150 pOnly=0 neither=0
+Two automated audits over all 308 handler spans in the 13.60 table found
+nothing either: `.local/malloc_copyin_precise.py` (allocation size against
+`copyin` length, tracking the destination register) reported no case where the
+copy exceeds the allocation, and `.local/free_then_use.py` (a freed register
+read again before reassignment) reported no use-after-free.
 
-Child A freed the object in every round, the parent's delete was a first-lookup miss in
-every round, and child B's creation succeeded in every round - no round produced the
-double-zero signature (both deleters returning 0), which is what a successful re-lookup
-into a reallocated slot would have to look like. The process survived all 150 rounds.
-
-This is the dynamic counterpart to the static gate: a delete that never blocks (because
-`[W+4]` is never set) cannot hold a window open for a second deleter, and a second
-deleter that always arrives after the first finds nothing. It does not prove the absence
-of every timing in which a re-lookup could match a reused slot, but it removes the only
-ordering reachable from this harness.
+Conclusion: the `aio_multi_delete` race is a real pre-14.20 defect and the local
+disassembly matches the vendor description, but winning it from a CPL 3 thread
+needs a second caller inside a seven-instruction window.  A thread pool,
+a shared-barrier wake and a shared-object lifetime all fail by two orders of
+magnitude, so this surface is closed for exploitation from the Lua loader even
+though it is closed as a bug in 14.20.

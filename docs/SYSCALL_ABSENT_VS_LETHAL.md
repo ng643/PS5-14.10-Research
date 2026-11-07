@@ -106,6 +106,115 @@ The relaunch prompts in the earlier entries were a measurement artefact: the swe
 the first `CONNECT_FAILED` and never sat long enough to observe the recovery. The lesson is
 that "the port refused" is not "the console needs a human" - poll before concluding.
 
+## Not every kill recovers in nine seconds (2026-10-20)
+
+The nine-second restart above is what happens when the loader process dies and the game
+is still running. Some low numbers take more than the process with them:
+
+    sys 1  exit        -> port refused, still down after 150s
+    sys 8  compat.creat -> port refused, still down after 150s
+    sys 9  munmap      -> port refused, still down after 240s (sweep of 9-537 aborted there)
+
+Against 4095, which only ends the loader, the wait was 9.31s every time. The difference is
+consistent with `exit` and the two copies that fault on a null argument doing more than
+ending a thread: they end the game, so nothing is left to spawn a new loader. Treat a kill
+that outlives four minutes as needing a human, and keep `--wait-for-loader` as the fast path
+for the loader-only case rather than a guarantee.
+
+## The recovery slows during a sweep, but not with the number of kills (2026-10-21)
+
+Within one boot the wait climbed while a sweep was running, and a power cycle put it back to
+nine seconds:
+
+| Kills since boot | Window | Behaviour |
+|---|---|---|
+| 0-2 | 462-475 | 9s recoveries, finished in 80s |
+| 3-5 | 476-500 | 37s, 54s, 66s, then over 90s twice; window aborted |
+| (after a power cycle) 0-11 | 492-510 | back to 9s throughout, finished in 401s |
+| 12-18 | 511-519 | 78s with no record and the port refusing; window aborted |
+
+The natural reading was that the console accumulates something per lost process, since the
+loader is a fresh process every time and the count is what grows. The measurement below
+rejects that reading: the interval is a constant for repeated kills and no counter moves.
+
+`tools/restart_pressure.py` measures exactly that, at the cost of one kill per round: it runs
+`probes/phase17_new_vectors/217a_restart_pressure.lua`, which prints one `SAMPLE` line of
+counters a fresh process starts with (624 VM operation counter, 593 module count, 674 VM
+region count, 671 resource classes), kills the loader with 4095, times the recovery, and
+samples again. If 624 or 671 climb across restarts the accumulation is system-wide and shows
+up as a readable number; if every counter resets, it is invisible from userland and only the
+clock sees it. The result also decides how the presence map can be finished: either in one
+window after a power cycle, or with a reboot per handspan of absent slots.
+
+### Result: no leak shows, and the recovery is flat at 24.7s (2026-10-21)
+
+Three back-to-back kills, no gap between them, on a boot that had already lost more than
+twenty processes (`results/phase17_new_vectors/restart_pressure_20261021_133337.txt`):
+
+| Round | Recovery | 624 | 674 | 671 c1 |
+|---|---|---|---|---|
+| 0 (before any kill) | - | 3377 | 316 | 6144/3951 |
+| 1 | 24.3s | 3376 | 317 | 6144/3950 |
+| 2 | 24.9s | 3377 | 316 | 6144/3951 |
+| 3 | 24.7s | 3376 | 317 | 6144/3949 |
+
+Every counter is stable in the same way a fresh process is stable: 624 returns the same two
+values it returns for any new process, 674 alternates by one region between runs, and the
+second 671 field drifts by two out of 3951 without direction. Nothing accumulates.
+
+Two facts follow, and the second one corrects the table above. The recovery for a *repeated
+4095 kill* is a constant ~25s, not a number that grows with the kill count - three kills in a
+row cost the same as the first. And the tens-of-seconds growth seen during the 476-500 window
+was therefore not caused by the kills themselves; the difference between that window and this
+run is that a sweep hammers the port (a connect or a script every two seconds while waiting)
+between kills, while this driver kills and waits. The conservative rule stays - treat a kill
+that outlives four minutes as needing a human - but a slow recovery is a property of the
+waiting, not evidence of a leak, and no kernel resource loses a measurable amount per death.
+
+
+
+## A positive return is the strongest evidence (2026-10-20)
+
+The sweep ran 104-537 and 238 of the 328 numbers it reached returned something. Most of those
+returned the all-ones value the loader prints as `-1`, but six returned a small positive number:
+`125` -> 4, `141` -> 22, `310` -> 54, `330` -> 1, `362` -> 22 and `429` -> 14. Those are FreeBSD
+errno values (EINTR, EINVAL, ECONNRESET, EPERM, EFAULT), which the kernel returns in `RAX` on
+the error path; libc translates them to `-1` for ordinary programs, and a direct `syscall`
+instruction sees the number itself.
+
+That makes the three readings distinguishable for the first time:
+
+| Return | What it shows |
+|---|---|
+| a positive errno | the handler ran, parsed the arguments and rejected them |
+| `0` | the handler ran and accepted six zeros |
+| `-1` | the handler refused, or Sony's filter refused before it; the sweep cannot separate the two |
+| nothing | the loader died or stopped answering; says nothing about the handler |
+
+Capture `results/phase15_native_sysent/syscall_isolation_sweep_20261020_213026.json`.
+
+## The port coming back is not the loader coming back (2026-10-20)
+
+Syscall 94 is labelled with the shared `nosys` stub in the 13.60 capture, and the 10-537 sweep
+stopped on it: two probes connected, sent and received nothing, then the port refused
+connections. A second run did the same at 95. That looked like a parked thread on a syscall
+that should not be able to park anything.
+
+`probes/phase17_new_vectors/188a_sys94_repeat.lua` (capture
+`results/phase17_new_vectors/188a_sys94_repeat_20261020_210214.txt`) on a fresh loader settles
+it. Three rounds of `(0,0,0,0,0,0)`, then fds 1, 2, 0 and 3, then `0x1000` in every slot, with
+`getpid` between every call: every 94 call returns `-1`, every `getpid` after it returns
+`0x334`, and the script reaches its last line. 94 neither parks nor kills; it refuses.
+
+What did happen is a loader state the wait could not see. After 93's kill the listener accepted
+again while the Lua thread never answered: probes were accepted, produced no output at all, and
+the console stayed in that state for minutes across several sends. Only a relaunch cleared it.
+
+`loader_is_up()` checks the socket, `loader_answers()` checks that a `print` comes back, and
+both drivers now resume only on the second (`c9865fb`). A listener without a thread therefore
+reaches a relaunch prompt instead of being swept into. The cost is that this state cannot be
+waited out: the sweep stops with the loader open but silent.
+
 ## A kill does not prove the slot is absent (2026-10-20)
 
 The rule above was written after 4095 showed that an unimplemented slot kills the process. It
@@ -151,93 +260,75 @@ numbers is doing exactly that, and the same policy applied to a privileged call 
 identical from the outside. The practical consequence is the same for all three: a kill is a
 result about the *call*, never a result about the *handler*.
 
-> **Correction (2026-10-25):** the shield used for the sweep below passed `SIG_IGN` as a
-> direct value, `416(12,1,0,0)`, and its return value was never printed. Probe 353a installs the
-> same disposition through a `struct sigaction` pointer and gets `0`; the direct form is
-> unverified. Every `-1` in this section therefore has to be re-taken with a proven shield and
-> the `4095` control (probe `710a_shield_verify.lua`), which must return `-1` instead of killing
-> when the shield is really installed.
+## Resolved (2026-10-22): the kill is SIGSYS, not a policy
 
-## The shield separates absent from blocking (2026-10-25)
+The three readings above are separable, and the instrument is the signal, because an
+absent slot has a body: the shared `nosys` trampoline. Probes 561, 562, 631, 650, 651,
+570 and 573 all decode to the same 4,096 bytes (SHA-256
+`c22afc5c7cc3a6c3a1387f51b7dfa46b1ee55bb4b399853fd85ca6e05596c78e`, entry RVA
+`0x265760`, `jmp 0x5620e0`). That body locks the process, builds a signal record with
+**number 12** at `+0x10` and code `0x10006` at `+0x18`, delivers it, and returns `ENOSYS`.
+Signal 12 is SIGSYS, whose default action is termination. The process does not die because
+the kernel decided to shoot a caller - it dies because an uncaught signal is fatal.
 
-With `sigaction(12, SIG_IGN)` in place (the shield from probe 353a), a sweep of the numbers
-that used to kill reveals a third behaviour besides `-1` and death: the call **blocks and
-never returns**, and because the loader runs one Lua state, the whole loader stops answering
-until the game is relaunched.
+Ignore SIGSYS (`sigaction`, syscall 416, handler `SIG_IGN` = 1) and the same calls return
+(probe 353a, capture `results/phase17_new_vectors/353a_sigsys_nosys_20261022_163648.txt`):
 
-- **619 `test_debug_rwmem`** and **652** answer `-1` for four argument permutations each and
-  leave the output page at its `0xDEADBEEF` prefill. Under the shield that is the absent-slot
-  answer, and the 13.60 capture agrees (`619` is `mov eax,0x4e; ret`). Neither is a kernel
-  read/write slot on 14.10.
-- **561 `suspend_process`** and **562 `resume_process`** do not answer at all. `561` with six
-  zeros prints nothing, the connection times out, a plain `print("PING-OK")` still works
-  afterwards, and the next attempt at `562` is refused. The parsimonious reading is a real
-  handler that suspends or resumes something it was not given, leaving the calling thread
-  parked. The 13.60 capture stubs both (`0x265760`, `jmp 0x5620e0`), so if the behaviour is
-  real it is a **14.10 difference**, and both need a plausible pid before anything can be
-  concluded.
-
-The practical rule is now: under the shield the answers are `-1` (absent), a value (present),
-or **silence** (present and blocking). Silence costs a relaunch, so any sweep has to treat it
-as a stop condition rather than a timeout to retry.
-
-A follow-up on the same day narrows `561` further. Called **without** the shield as
-`561(999999,0,0,0,0,0)` it prints nothing after the probe header and the connection closes;
-the loader then refuses every new connection, so the game is gone. With six zeros the same
-number hangs instead of dying. Two different outcomes for two different arguments means the
-handler ran far enough to read its argument and act on it - an invalid pid takes the
-fatal-signal path, a valid-looking zero parks the caller. That is a real `suspend_process`
-on 14.10, not the 13.60 stub, and the next step is the same call under the shield to see
-whether the invalid-pid death is the SIGSYS path (`-1`) or a genuine fault.
-
-## The shield works, and every "lethal" number is just absent (2026-10-25)
-
-Probe `710a_shield_verify.lua` settled the shape question:
-
-| call | return | meaning |
+| slot | with the default disposition | with SIGSYS ignored |
 |---|---|---|
-| `416(12, 1, 0, 0)` | `-1` | the direct-value form installs **nothing** |
-| `416(12, act, old)` with `act[0] = 1` | `0` | the struct form installs `SIG_IGN` |
-| `4095(...)` after the struct form | `-1` | the absent-slot signal is absorbed, process alive |
+| 562 | terminated | `-1` |
+| 650 | terminated | `-1` |
+| 651 | terminated | `-1` |
+| 665 | terminated | `-1` |
+| 668 | terminated | `-1` |
+| 631 | terminated | `-1` |
+| 661 | terminated | `-1` |
 
-Probe `711a_lethal_under_shield.lua` then re-ran every number that has ever killed
-this process, with that shield in place. All of them return `-1` and the process
-survives: `589`, `590`, `597`, `619`, `631`, `650`, `651`, `652`, `661`, `665`,
-`668`, `677`, `678`, plus the control `4095`.
+The same flip holds for the rest of the death-on-touch set (probe 353b, capture
+`..._353b_lethal_reclassify_20261022_163752.txt`): **189, 306, 307, 308, 337, 570 and 573**
+each returned `-1` instead of ending the process, and so do the four that were still
+unexplained - **568, 569, 571 and 621** - for six zeros and for three pointer-and-length
+shapes each (probe 354a, capture `..._354a_unexplained_kills_20261022_164235.txt`).
 
-That collapses a whole claim class. The death was always the **nosys** path
-delivering `SIGSYS`; there was never a hostile handler that killed on bad
-arguments. `677`/`678` are past the end because they are absent, not because
-thirty-one consecutive numbers were booby-trapped.
+### What this settles and what it does not
 
-The one number that still behaves differently is `561` (`suspend_process`): it
-returns nothing for six zeros and kills on an invalid pid, and no shield changes
-either outcome, so it reads its argument and is genuinely implemented on 14.10
-although the 13.60 image stubs it.
+- **570 and 573 are absent by byte evidence as well as by the flip** - their 13.60 bodies
+  are the shared `nosys` trampoline.
+- **189 is present.** `fstat(fd, buf)` on an open `/app0/eboot.bin` descriptor returned `0`
+  and wrote a stat record (`2909FFAA 00000017 0000816D ...`) **with the default
+  disposition** - no signal was involved (probes 353c/353d, captures
+  `..._353c_absent_or_rejecting_20261022_163852.txt` and
+  `..._353d_fstat_kldstat_20261022_163923.txt`). The "fstat(189) kills the process" record
+  from 152j does not reproduce: `189(0,0,0,0,0,0)` returns `-1` and the process survives
+  (353d section E). That dead-end entry is wrong.
+- **306, 307, 308 and 337 return `-1` for every shape tried** under SIG_IGN, including a
+  `kld_file_stat` whose version field is `0x81C`, `0x60` or `0x1C`, and `kldnext(0)` /
+  `kldfind(0)`. No dossier exists for them in the 13.60 set. The flip plus the absence of
+  any accepted shape is consistent with them being the same trampoline; it is not byte
+  evidence.
+- The trampoline returns `-1` here, not the `78` its 13.60 dossier predicts. Either the
+  14.10 body differs or the value does not survive the fcall path; this is left open rather
+  than assumed.
 
-**Method note for future probes.** `select` (93) blocks forever on
-`select(0,0,0,0,0)`, which wedged a whole-table sweep at number 51-99 and cost a
-relaunch. Never sweep unused numbers with six zeros; skip any call that can wait.
+### The method this changes
 
-## 48 (`getegid`) is absent on 14.10, and it takes the console with it (2026-11-04)
+Any slot that might be absent should be probed with SIGSYS ignored, because with the
+default disposition the experiment destroys its own result. That retires the caution "a
+kill is a result about the call, never about the handler" for the numbers measured here:
+for them the kill was never about the handler at all.
 
-Probe `1151a_devfs_open_modes.lua` run 1 printed `uid`, `euid` and `gid` for the loader and
-then called `getegid` (48) with the **default** `SIGSYS` disposition still in place. The capture
-ends after `[ID] gid=1` and the loader then refused connections: the process died with the game.
-That is the same nosys path as `677`/`678`, on a number nobody had ever called.
+Two exclusions. 677 and 678 take the *game* down rather than just the loader process, so
+they are a different failure and remain untested this way. And a real handler that faults on
+bad arguments still kills the process with SIGSYS ignored - 601's commands 0x03 and 0x04 do
+exactly that - so the flip separates "absent" from "present and faulting", while a plain
+`-1` under `SIG_IGN` still needs an argument shape before it means anything.
 
-Run 2 installed `416` `SIG_IGN` first and moved the call to the end of the probe, after the
-data the probe exists for. With the shield:
+### 619's 13.60 body agrees, and 652 answers the same way
 
-```
-[LATE] getegid(48)   ok=true rv=-1
-[LATE] getgroups(79) ok=true rv=1
-```
-
-So `48` belongs in the absent list next to `589`, `619`, `677`, `678`; `47` (`getgid`) and
-`79` (`getgroups`) work, which makes the gap a single removed entry rather than a removed block —
-the same pattern as the native tail. Two rules come out of it. The shield belongs in the prologue
-of *every* probe that calls a number it has not called before, not just in sweeps. And a probe
-that mixes a known-safe section with an unknown number must run the unknown number **last**, so
-an unshielded death cannot cost the section that carries the result.
-
+The two numbers a shielded sweep still leaves unexplained have the same
+trampoline shape in the capture. `619` (`test_debug_rwmem`) at 13.60 offset
+`0x71b8e0` is `mov eax, 0x4e; ret` - a constant error, no argument is read -
+and probe 706a measured four argument permutations of `619` and `652` with
+`sigaction(12, SIG_IGN)` in place: every one returned `-1` and left the output
+page at its `0xDEADBEEF` prefill. So neither is a kernel read/write slot on
+14.10. (2026-10-25)

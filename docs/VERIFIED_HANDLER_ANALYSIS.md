@@ -7,9 +7,10 @@ Deep reverse engineering of all 115 Sony-specific syscall handlers (532-676) fro
 
 Complements the existing [KERNEL_DUMP_ANALYSIS.md](KERNEL_DUMP_ANALYSIS.md) which covers sysent table structure and handler sizing. This document adds per-handler vulnerability analysis.
 
-> **Correction (2026-10-19).** Claims 1 and 2 do not survive a byte-level
-> re-check against `docs/dumps_13.60/`; both cite handler-relative offsets
-> that resolve into a different handler than the one named.
+> **Correction (2026-10-19).** Claims 1, 2 and 3 do not survive a byte-level
+> re-check against `docs/dumps_13.60/`. Claims 1 and 2 cite handler-relative
+> offsets that resolve into a different handler than the one named; claim 3
+> cites a bounds check whose branch polarity is inverted in this document.
 >
 > - **Claim 1**: the three cited addresses (`0x7dd`, `0x895`, `0x7f4-0x883`)
 >   are relative to syscall 593's entry but land inside syscall 608's body,
@@ -98,7 +99,7 @@ Transform `f(x) = x ^ (x >> 4)` inverted in O(16) nibble operations. Pattern con
 
 **14.10 survivability**: STRUCTURAL — the obfuscation algorithm is the "fix." Unless they change to a real MAC/encryption, the leak persists.
 
-### 3. Stack Clash via Integer Overflow — sys 661/662 [CONFIRMED DEFINITIVE]
+### 3. Stack Clash via Integer Overflow — sys 661/662 [REFUTED — see correction below]
 
 32-bit vs 64-bit arithmetic mismatch in stack allocation:
 
@@ -110,12 +111,15 @@ lea 0x0(,%r13,4),%r12    ; 64-BIT — copyin size (doesn't overflow)
 
 With count=0x40000001: allocates ~19 bytes on stack, copyin writes ~4GB. Bounds check allows counts up to ~0xFFFFFF00. Stack canaries present but overflow is massive.
 
-> **Confirmation with detail:** the guard at `0x3af9fb`-`0x3afa07`
-> (`lea eax,[r15-0x81]; cmp eax,0xffffff7f; ja`) is a *minimum* check —
-> it accepts `count >= 0x81` and rejects the wrap-around half, so
-> `count = 0x40000001` passes, as claimed. The quoted pair sits in the
-> shared helper at `0x3af920`, which 662 reaches; 661's own body is 12 bytes
-> and tail-jumps to the unsupported-syscall stub. See
+> **Correction:** the bounds check does *not* allow counts above `0x80`. At
+> `0x3afa07` the `ja 0x3afa33` jumps to the buffer-setup path; the
+> fall-through at `0x3afa09` sets `r15d = 0x16` (EINVAL) and exits. The
+> accepted set is therefore `1..0x80`, and `count = 0x40000001` is rejected
+> before the `lea` pair is reached. The 32-bit/64-bit width mismatch is real
+> but cannot be triggered from the admitted domain, so there is no stack
+> clash here. The quoted pair also sits in the shared helper at `0x3af920`,
+> reached by 662 only — 661's own body is 12 bytes and tail-jumps to the
+> unsupported-syscall stub. See
 > [HANDLER_CLAIM_CORRECTIONS.md](HANDLER_CLAIM_CORRECTIONS.md) §5.
 
 **14.10 survivability**: Likely PATCHED if Sony audited integer widths. But these patterns are common in game console kernels.
@@ -277,11 +281,11 @@ Step 4: Persistence
 
 ### sys 601 (narg=3) — Process Control Multiplexer [CRITICAL — UNVERIFIED]
 
-40+ sub-commands. Subcmd 0x06 writes user-controlled data directly to process+0x578/0x580 WITHOUT validation — arbitrary process struct write. Inconsistent security: some subcmds check system-process flag at offset 0x529, many do not. Weak 2-byte XOR "auth" on subcmds 0x00/0x24. Subcmd 0x09 allocates 0x480-byte kernel buffers (heap grooming primitive). Largest attack surface in the batch.
+Correction (2026-10-22): the retained 13.60 jump table sends `0x05` and `0x06` to the common error return, so the earlier `0x06` process-write claim is unsupported. The `0x0c` entry reads process state; it is not the claimed two-byte auth path. The live 14.10 read-only survey returned `-1` for `0x05` and `0x10` and no nonzero output for its successful calls. See `SYS601_1360_DISPATCH_AUDIT_2026-10-22.md` for byte offsets and limits. The remaining command meanings and any 14.10 privilege effect are unverified.
 
-### sys 605 (narg=1) — GPU Page R/W + Process Flag OR [CRITICAL — UNVERIFIED]
+### sys 605 (narg=1) — ID-filtered device query in retained 13.60 bytes [14.10 implementation unverified]
 
-Function at offset 0xb60 ORs user-supplied bitmask into process+0xa34 with ZERO privilege check (same primitive as sys 643). GPU page read/write provides information disclosure and potential arbitrary write to GPU-mapped memory (unified GDDR6 on PS5 APU). Device ID whitelist includes crypto processor (0x3cc80700).
+Correction (2026-10-22): the retained sysent 605 thunk leads to a five-ID device query, not the alleged flag-OR or general GPU memory access handler. The write to `thread+0x408` is the syscall return slot, not a process flag. Live 14.10 probe 112b accepted ID `0x19810000` with return 0 and rejected six other tested calls with `-1`; it found no pointer or privilege change. See `SYS605_1360_STATIC_AND_1410_GATE_2026-10-22.md`. The 14.10 implementation remains unknown.
 
 ### sys 558 (narg=2) — Event Flag Subsystem [HIGH — UNVERIFIED]
 
@@ -289,7 +293,7 @@ Complex sorted linked list with callback dispatch using CFI-validated function p
 
 ### sys 603 (narg=2) — Cross-Process FD Duplication [HIGH — UNVERIFIED]
 
-Protected only by priv_check(0x2ab). If priv is bypassed (via sys 605/643 debug flag OR or sys 601 process struct write), enables stealing any fd from any process. Audio pipeline allocates 0x590-byte structures (heap grooming).
+Protected only by priv_check(0x2ab) in the retained 13.60 analysis. Earlier proposed bypass dependencies through syscall 605's flag OR or syscall 601's arbitrary process write were contradicted by the dispatch audits above. Cross-process FD behavior on 14.10 remains unverified.
 
 ### sys 559 (narg=1) — Scheduling Class + Memory Map [MEDIUM-HIGH — UNVERIFIED]
 

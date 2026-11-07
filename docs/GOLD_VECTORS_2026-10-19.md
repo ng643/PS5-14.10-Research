@@ -8,6 +8,8 @@ After a full audit of 90+ probes, all result files, kernel handler RE data, CVE 
 
 ## VECTOR 1: thr_* Family Syscalls on the Panicking Thread (HIGHEST PRIORITY)
 
+**2026-10-19 correction:** The proposed `thr_suspend(442, tid)` race in this section is based on the wrong API signature. [FreeBSD's `thr_suspend(2)`](https://man.freebsd.org/cgi/man.cgi?apropos=0&manpath=FreeBSD+14.4-RELEASE&query=thr_suspend&sektion=2) takes a `struct timespec *timeout` and suspends the **calling** thread, not a target TID. The live [59b survey](../results/phase15_native_sysent/59b_thr_family_survey_20261019_194932.txt) found `thr_suspend(&{0,0})=-1`, consistent with a zero-timeout self-suspend. Probe 78a passes the created TID where a pointer is expected, so its central race cannot test the claimed freeze. It should be redesigned before any console run. The target-specific semantics of Sony's 632/633 variants remain unverified.
+
 **Status:** Probe 59b written, NEVER RUN.
 
 **Why this is gold:** thr_create(430) gives us a kernel thread with a real TID. Before that thread panics the kernel, we have a window where the thread exists in the kernel's thread list. The thr_* family gives us syscalls to interact with that thread:
@@ -32,7 +34,7 @@ After a full audit of 90+ probes, all result files, kernel handler RE data, CVE 
 
 ## VECTOR 2: CVE-2026-49418 msync UAF on GPU mmap (HIGH PRIORITY)
 
-**Status:** Probe 58a written, NEVER RUN. Rated as "strongest CVE applicability" by assessment.
+**Status (updated 2026-10-25, cobrajet302gt bench): RUN AND REFUSED — door closed.** The "58a written, ready to run" line was stale. Corrected-syscall probes 58a/58b/58e/58f and 121e–h/124a ran on 14.10 (syscall 65 per PR #70; the old 226 probes measured nothing). MS_SYNC/MS_ASYNC return 0 (syscalls land, mappings valid); **MS_INVALIDATE returns −1 on every recorded call — ≥11 calls across ≥7 runs, 0 successes — on five mapping classes** (GPU-anon mmap, regular anon, private anon, /dev/dmem0 MAP_SHARED, /dev/gc), and mapping contents are unchanged after every call. Step 1 of the bug (invalidate marks pages invalid) never happens, so the double-insertion sequence cannot start. The CVE's first gate is shut on 14.10; console time can be spent elsewhere.
 
 **Why this is gold:** This is a KNOWN FreeBSD vulnerability (FreeBSD-SA-26:37.vm) that was patched June 30, 2026. PS5 14.10 shipped Sep 16, 2026 — the fix timeline is tight. The bug:
 
@@ -41,15 +43,17 @@ After a full audit of 90+ probes, all result files, kernel handler RE data, CVE 
 3. Next access causes page re-insertion -> double-free on the page list
 4. Kernel heap corruption
 
-We have the exact trigger: GPU mmap creates device-backed pages (confirmed by probe 41c). msync was NEVER successfully tested — probe 42b crashed at the msync section header. Probe 58a isolates the msync call.
+We have the exact trigger: GPU mmap creates device-backed pages (confirmed by probe 41c). msync was NEVER successfully tested — probe 42b crashed at the msync section header. Probe 58a isolates the msync call. [2026-10-25: superseded — see Status above; 58a ran and the INVALIDATE arm was refused on all mapping classes.]
 
-**If msync returns 0:** The vulnerability path is reachable. Next step is the double-invalidate trigger (probe 58b, not yet written).
+**If msync returns 0:** The vulnerability path is reachable. Next step is the double-invalidate trigger (probe 58b, not yet written). [2026-10-25: it did not return 0 on the invalidate arm; 58b ran — no effect, contents intact.]
 
 **The exploit chain:** Double-free -> kernel heap corruption -> overwrite a kernel function pointer or object -> kernel code execution. No KASLR needed for heap corruption; KASLR only needed for the payload.
 
 ---
 
 ## VECTOR 3: thr_create + thr_suspend Race (Combining Vectors 1+Panic)
+
+**2026-10-19 correction:** This proposed race has the same `thr_suspend` signature error described in Vector 1. Do not interpret a run of probe 78a as a valid test of suspending another thread.
 
 **Status:** Never conceived as a probe.
 
@@ -127,6 +131,8 @@ We have the exact trigger: GPU mmap creates device-backed pages (confirmed by pr
 ---
 
 ## VECTOR 9: sys 662-670 Individual Testing
+
+**2026-10-19 live update:** The [AIO evidence note](AIO_14_10_LIVE_2026-10-19.md) documents a reachable syscall lifecycle: `670` initialized once, `669` published sequential request IDs, `664` polled a submitted ID, and `666`/`662` changed its reported state. This supersedes “never individually tested” for these numbers. No stale-handle or kernel-memory primitive has been shown. Syscalls 661/665/668 remain separate hazards/unknowns for this session.
 
 **Status:** NEVER individually tested. sys 661 kills, but 662-670 were never reached.
 
@@ -212,7 +218,7 @@ No kldnext needed. Nearly unprivileged (no priv_check, no securelevel check).
 
 ## Priority Ranking
 
-1. **78a thr_suspend race** — freeze panicking thread, gain live kernel thread (HIGHEST)
+1. **78a thr_suspend race** — DEFERRED: invalid target-TID argument; redesign required before a meaningful test
 2. **78c + sendsig()** — RSP→GPU mmap, kernel writes signal frame with pcb_fsbase/gsbase to our pages (CONFIRMED BY SOURCE)
 3. **57c kldsym(337)** — fileid=0, cmd=1, struct known. Instant KASLR defeat if alive
 4. **79a /dev/dsp** — CVE-2026-49417 mmap UAF, direct kernel R/W if /dev/dsp opens

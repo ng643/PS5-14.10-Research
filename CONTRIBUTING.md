@@ -37,6 +37,85 @@ See the probe template and Lua 5.1 constraints in `CLAUDE.md`. Key rules:
 
 ## Testing
 
+### Hardware-free verification
+
+The required CI command is standard-library-only and has an explicit, sorted
+module list:
+
+```bash
+python3 tools/verify_offline.py
+```
+
+Use `python3 tools/verify_offline.py --list` to review that exact list. It runs
+only read-only evidence/audit/parser tests plus temporary-file fixtures. It does
+not import or invoke sender, sweep, watchdog, swarm, Lua probe, or network
+transport code; it opens no console connection. A nonzero test result is
+returned as the process status, and an empty selected module is rejected rather
+than silently skipped. GitHub Actions runs this bounded command on Python 3.10
+and 3.11.
+
+The verifier needs Python 3.10+ and the tracked research inputs it reads,
+including `docs/dumps_13.60/`, `docs/`, `probes/`, and `results/`. It needs no
+PS5, loader endpoint, credentials, or package installation. Its intentionally
+empty dependency manifest is `requirements-offline.txt`.
+
+### Loopback capture CLI CI
+
+The separate `Capture CLI verification` workflow exercises
+`tools/test_send_probe.py` on Linux, macOS, and Windows with PowerShell 7
+(`pwsh`), plus Windows PowerShell (`powershell`). Each matrix entry selects its
+runtime explicitly and fails if that executable is missing, the selected suite
+is empty, or any selected test is skipped. All jobs run the core Python and
+PowerShell CLI cases; POSIX jobs additionally run duplicate-`realpath` and failed
+canonicalizer regressions, which do not apply on Windows. These tests launch
+the real sender CLIs against a fake loader bound to `127.0.0.1` on an
+OS-assigned port, check framing and raw
+response bytes, and write only temporary fixtures. They never contact a console
+or execute the fixture Lua source. No third-party Python packages are needed.
+This transport test tier does not expand the network-free verifier above.
+
+The same workflow runs `tools/test_capture_collision_safety.py`,
+`tools/test_send_probe_helpers.py` and the tests for the drivers that import the
+loader lifecycle helpers (`bounds_fuzz`, `ioctl_isolation_sweep` and
+`restart_pressure`). The capture suite pins timestamp-collision routing,
+atomic no-replace publication and the symlinked-directory refusal; the helper
+suite covers a port that accepts without a live Lua thread, the readiness
+marker, wait budgets and generated-source transcripts; the driver suites fail
+at import time if one of those public helpers disappears again. All fixtures
+are loopback-only or temporary-directory-only.
+
+Run the loopback batches locally with:
+
+```bash
+python -m unittest discover -s tools -p 'test_send_probe.py' -v
+python -m unittest -v tools.test_capture_collision_safety \
+  tools.test_send_probe_helpers tools.test_bounds_fuzz \
+  tools.test_ioctl_isolation_sweep tools.test_restart_pressure
+```
+
+### Optional broader local checks
+
+The broader tool suite is not part of the no-console gate. It includes
+artifact disassembly and Lua stub-loader tests, which need pinned optional
+packages, and some tests that use an isolated loopback socket fixture. Those
+fixtures never contact a console, but they are deliberately outside the
+network-free verifier.
+
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements-offline-optional.txt
+python -m unittest discover -s tools -p 'test_*.py' -v
+```
+
+`requirements-offline-optional.txt` pins `capstone` for committed-artifact
+disassembly and `lupa` for in-process Lua 5.1 stubs. Both require compatible
+wheels for the selected Python/platform. Do not suppress a failing or missing
+test: report the command, dependency state, and failure separately from the
+bounded CI result.
+
+### Console testing (optional, hardware required)
+
 If you have the setup (PS5 fw 14.10 + userland exploit):
 
 ```bash

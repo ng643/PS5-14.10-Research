@@ -1,65 +1,88 @@
 # Changelog
 
-## First measured sysent presence map: 538-621 (2026-11-05)
+## Phase 25 — Offline 13.60 handler decode + copyout reachability (2026-10-23)
 
-- **Probe 1255a mapped 538-621 with the SIG_IGN oracle in one connection**: 53 present, 26 absent. Present: 538-560, 567, 572, 586-588, 591-596, 598-608, 611-613, 615-618, 620. Absent: 561-562, 568-571, 573-584, 589-590, 597, 609-610, 614, 619, 621. The twelve consecutive absent slots 573-584 are a removed family, the same shape as the earlier 561/562 and 568-571 removals.
-- **Each present handler now has a clean errno for zeroed arguments** — the first such reading for most of the range. EPERM/EACCES rows are the capability gate refusing zeros; `ret=0` rows (548, 560, 596, 602, 606, 617, 620) accept a zero argument and are the only ones that reach real code without a valid argument shape.
-- **622 is a real handler that faults on a NULL first argument.** `622(0,0,...)` (1255a) and `622(0,valid_buf,...)` (1256a) both killed the process under SIG_IGN, so arg1 = 0 is the trigger, not a missing handler. The 55b/55c command sweep used 0x100-0x520 in arg1 and never hit it. 622 must always be called with a non-zero first argument.
-- New doc `docs/SYSENT_PRESENCE_MAP_538_621_14_10.md`; probes `1255a_presence_map_538_676.lua`, `1256a_presence_map_622_676.lua`.
+- Ghidra 12.2 headless project over `kernel_text.bin` (25,617 functions); new
+  `tools/offline/` tooling (thunk resolver, copyout classifier, reachability scanner)
+- Decoded contracts: 591 `dynlib_dlsym` (UNGATED kernel-side symbol resolution —
+  top live candidate), 604 `dl_get_metadata` + 536 shared path (authid triple,
+  metadata-blob copyout), 636 `set_timezone_info` (bit-62, no-op for game creds),
+  656 `dynlib_get_info_for_libdbg` (debug-unit gate, 0x160 struct with segment
+  table), 660 `dynlib_get_info2` (no gate), 593 struct-filler internals
+- Error-code reconciliation: positive SCE return codes map to the userland -1/errno
+  shape — errno capture is now a decoded discriminator
+- Copyout reachability: all 514 copyout sites mapped; 64 reachable from Sony
+  handlers, each tagged with its gate and 14.10 status
+- Live-probe priorities for the next session in `docs/OFFLINE_HANDLER_DECODE_2026-10-23.md`
 
-## AIO is absent on 14.10; 631 and 677/678 are nosys, not hostile (2026-11-05)
+## Phase 23 — Offline ioctl catalog (2026-10-21)
 
-- **`aio_submit`(661), `aio_get_data`(665) and `aio_create`(668) return `-1 / ENOSYS` under `SIG_IGN` for SIGSYS** (probe 1254a): they are absent on 14.10. No AIO ID can ever be created, so the `aio_multi_delete`(662) TOCTOU — the Lapse/Prolapse bug, patched in 14.20 — is unreachable on this firmware despite 14.10 being inside the announced vulnerable range. This supersedes "unreachable by construction": there is no entry point at all.
-- **631, 677 and 678 are `nosys` slots, not lethal handlers.** 631 "killed the process" (52a) and 677/678 "killed the process and crashed the game" (2026-10-20) only because the default SIGSYS disposition terminates the process; with SIG_IGN all three return ENOSYS and the process is untouched. The syscall map's "lethal" column was measuring the process's signal disposition, not the kernel's behaviour, and must be re-derived with the oracle.
-- **628, 629 and 630 are present and rejecting zeros** (EINVAL 22, EFAULT 14, EFAULT 14) — the first clean errno readings for 629/630, which 52a had recorded as PCALL-FAIL.
-- New doc `docs/AIO_ABSENT_AND_KILL_LIST_RECLASSIFIED_14_10.md`; `docs/AIO_RANGE_14_10_EVIDENCE.md` carries a supersession note.
+- Console unreachable from the research host (port 9026 closed, no route); offline work continued.
+- Recovered the full 13.60 capture set from git blobs (kernel_text.bin 15MB, kernel_data.bin 4MB) into `docs/dumps_13.60/` analysis.
+- `tools/extract_ioctl_catalog.py`: scan + capstone verification of ioctl dispatchers in 13.60 kernel text; 9 verified dispatchers, 57-code curated list (`docs/IOCTL_CATALOG_13_60.md`).
+- Probe 271a prepared: ioctl command-code matrix over 10 openable /dev nodes (companion to PR #74's device inventory).
+- Queue when the console returns: 58a (msync CVE-2026-49418 reachability), 271a, 243a (thread slot reclaim).
+- Offline: syscalls 528-531/537 are nosys slots on 13.60; 532 is real (narg 5, permission gate 0x2aa, type bitmask 0x800003d4/0x2a). Probe 272a prepared (`docs/SYSCALL_532_13_60_ANALYSIS.md`).
+- Offline: extracted the full 454 umtx 27-op jump table from the 13.60 capture (ops 0/1 stubbed EOPNOTSUPP, 26 stubbed, table+CFI check documented; `docs/UMTX_OPS_13_60.md`). Probe 273a prepared: op5 waiter vs mmap MAP_FIXED mapping replacement race.
+- Offline: re-read the 13.60 set_mcontext (rva 0xa0ac60) via the recovered text — the context CS field is never read; SS is copied raw. Resolves the 189a contradiction and retires the CS missing-mask narrative; probe 274a prepared.
+- Offline: resolved all 58 sysent tail thunks (677-734) from the 13.60 CSV against the recovered text - 53 real (wait6, cap_*, pipe2, ppoll, numa_*, apr_*, mmap2, virtual_query_by_pid...), 695-699 nosys. Probe 275a prepared: real-args calls into the 14.10 kill range.
+- Offline: decoded syscall 728 virtual_query_by_pid argument shape from its 13.60 handler (pid/addr/flags-0x20000/outbuf/count, two gates). Probe 275b prepared.
+- Offline: decoded the Sony AIO family from the 13.60 capture - 661/668 are nosys stubs, 669 submit_cmd takes (cmd{1,2}, buf, size>=0x81, type{1,2,3}), 670 init takes zeros; 14.10 sweep already showed 670 returning 0. Probe 276a prepared (Relapse surface recheck; see docs/AIO_FAMILY_13_60_DECODE.md).
+- Offline: decoded syscall 725 mmap2 (6-arg mapping variant, extended flag forms, 0x200000 special path, proc+0xc81 gate). Probe 277a prepared: W^X policy through the second mapping entry point.
+- Probe 278a prepared: CClosure control-return gadget ladder (ret / xor-eax-eax / pop-rdi) on rawequal +0x20 with 56c's parser and restore discipline - the Lua stack readback variant is the new primitive.
 
-## The sysent tail is absent, measured; three more static closures (2026-11-05)
+## Phase 22 — Device inventory, ioctl surface, JSC corpus, UMTX high ops (2026-10-21)
 
-- **The 14.10 sysent ends at 676 — measured, not inferred** (probe 1253a). With `SIG_IGN` for SIGSYS installed and verified by read-back, the control number 4095 returns `-1 / ENOSYS` with the process alive, and so do 705 `get_phys_page_size` (called with no arguments), 687 `pipe2`, 690 `ppoll`, 728 `virtual_query_by_pid`, 725 `mmap2` and 715 `ioreq`, each with valid non-faulting arguments. The earlier 677-707 kills were the default SIGSYS disposition, not faulting handlers. The table resolves 677 entries against the 13.60 capture's 735; `wait6`, `procctl`, `apr_*`, `get_phys_page_size`, `begin_app_mount` and the rest of the tail are unreachable. New doc `docs/SYSENT_TAIL_ABSENT_14_10.md`.
-- **Call-aware direct-deref census: 0 bodies** (`.local/deref_callee_saved.py`). Keeping taint across `call` for callee-saved registers, tracking `[rbp+disp]` spills and seeding `rsi = uap`, no body dereferences a user-derived value. The closure holds under the model it was accused of missing; plan rows P1 and P8 lose their justification.
-- **The blockpool installer hypothesis is refuted.** Decoding 0x9a6c00-0x9a7d10 and 0x9a7f00-0x9a9560 gives 68 call targets and **zero** calls to mmap's insert wrapper `0xab9f60` or its apply helper `0x2d2e50`. Blockpool builds a type-0xb `vm_object` and never inserts it into a map.
-- **R1 is dead twice over.** `547(va,out)` returns the non-PTE branch (`out+0x10` low dword 3 = RW), which measures `proc+0xc81 == 0` at runtime; `0xc81` has one writer image-wide, RVA `0x38f7bf`, inside process creation. And 379's `vm_map_protect` only searches the caller's vmspace, so no foreign PTE is reachable. R1 needed the PTE branch, so a type-0xb mapping would not have produced physical addresses.
-- **Four rows the plan still listed as open were already closed**: the 17 OBJECT-sourced copyout candidates (upstream, 2026-10-28, zero kernel pointers), CVE-2026-49412 IPV6_MSFILTER (measured clean, probe 50w), CVE-2026-45251 poll+close (60 raced closes, no corruption, probe 1234a), and socket-level SIOC\* (probe 1222a). New doc `docs/STATIC_CLOSURES_2026_11_05.md`.
+### PRs #74–#75 review summary
 
-## Three more routes closed: Spectre transmitters, 674 bounds, tag provenance (2026-11-05)
+- **34 of 76 /dev nodes open from game process** (PR #74, ng643): First real `/dev` listing via `getdirentries`(196) reveals 32-bit dirent layout (u32/u16/u8/u8). Open: `gc`, `dce`, `ajm`, `ajmi`, `rng`, `gic`, `notification0/6/7`, `camera`, `usb`, `usbctl`, `dmem0-2`, HMD sets, `bt`, `hid`, plus standard nodes. `ioctl(54)` reaches all 34 drivers — they reject commands, not the kernel. Command encoding is not small integers; needs driver table.
+- **AIO(661) confirmed dead with real fd** (PR #74, ng643): `/dev/zero` fd + full `aiocb` struct still kills. Third argument shape tested. Dead.
+- **UMTX ops 16-22 all block** (PR #74, ng643): Sentinel-word experiments show ops 18-21 leave words untouched (thread didn't return). op 19 wrote 0x1 non-deterministically in one run. Blocked/returned threads indistinguishable.
+- **518-case JSC crash corpus ready** (PR #75, ng643): `webkit_crash_corpus.py` scrapes 397 WebKit commits after Safari 17.0 branch, extracts 518 JS test cases. p172 iframe runner built. Popup isolation dead (all kill WebProcess). **No cases run on console yet — high potential.**
 
-- **No Spectre v1 transmitter exists in the 13.60 text.** Full linear capstone sweep (6,134,149 instructions) for indexed-load -> shift -> indexed-store on the same register found exactly one hit, and its second access is a load, not a store. The CPU route has no kernel-side gadget to build on.
-- **674's handler is bounded by construction** (thunk `0x265FA0` -> body `0xABB980`, narg=5): `copyout` length is `min(stride,0x48)`, `max` is only a loop bound, and the record is a fixed 0x48-byte stack slot. No integer or count overflow is available there.
-- **Every capability tag is read from a proc field, never from user memory.** Of 239 call sites to the 45 tag helpers, all `rdi` provenance resolves to `[proc+0x40]` or `[proc+0x140]` via `gs:[0]`. Forging a tag to unlock 607 is not possible.
+### New dead ends added
+- Device ioctl sweep (all 34 open nodes, commands 0x00-0xFF return -1)
+- AIO(661) with real fd on /dev/zero — still kills
+- UMTX ops 18-21 block unreadably
+- WebKit popup isolation (all methods kill WebProcess)
 
-## PROT_EXEC is stripped for vnode mappings too; the CPU route is a Meltdown design (2026-11-05)
+### TODOs from this review
+1. **Targeted device ioctl research** — need Sony command codes from 13.60 Ghidra for gc/dce/gic/camera/notification drivers
+2. **Run JSC corpus (p172)** — 518 cases targeting post-Safari-17.0 WebKit bugs
+3. **Repeat UMTX op 19** — non-deterministic 0x1 write deserves more samples
 
-- **674 is now a calibrated oracle that reports EFFECTIVE protection** (probe 1251a). One call with 55f's shape returns 322 regions; the record is start +0x00, end +0x08, prot +0x18, length-prefixed name at +0x20. Calibration against four knowns: anon `prot=7` records as `0x3` rw-, file `prot=5` as `0x1` r--, file `prot=7` as `0x3` rw-, and eboot's own `.text` as `0x5` r-x.
-- **`PROT_EXEC` is dropped at `mmap()` time for vnode objects as well as anon** - a `MAP_PRIVATE` `prot=7` mapping of `/app0/eboot.bin` is recorded `rw-`. `docs/SPECULATION_READ_14_10.md` §4's last live candidate is dead, and **probe 1251b must not be run** (it would be a guaranteed loader kill for a known answer). 1248a's fcall branch now skips unconditionally.
-- **The whole executable surface is measured** (probe 1252a): 322 regions, 41 executable (11.7 MB), and **zero writable** - W+X does not exist anywhere in the process. Four `r-x` regions (eboot text `0x10B4000-0x1548000`, `libc.prx`, `libSceFios2.prx`, one unnamed 0x4000 page) and 37 `--x` XOM library texts that can be called but not read.
-- **The CPU route in the doc is a Meltdown-class design.** Its userland gadget loads a supervisor address and asserts the data is forwarded before the fault retires; that is CVE-2017-5754, which Zen 2 does not do. Spectre v1 requires the out-of-bounds load to be architecturally legal for the code executing it, so a ring-3 gadget can never read supervisor memory. Finding a writable executable page would not have made it work.
-- **Redirected design:** a Spectre v1 kernel read needs a *kernel* syscall path with an attacker-controlled index, a mispredictable bounds check, and a dependent scaled load that stores into a caller-supplied user buffer. That needs no executable user page and is unaffected by PTI. Work moves to a static census of speculatable bounds checks in the 13.60 image.
-- **New doc** `docs/EXEC_SURFACE_AND_SPECULATION_14_10.md`; new probes `1251a_674_calibration.lua`, `1252a_exec_surface_map.lua`.
+## Phase 21 — Object families, thread budget, netcontrol closure, msync fix (2026-10-21)
 
-## 607 is live but gated; 629 is a mapping-level stub; copyin does fault pages in (2026-11-05)
+### PRs #69–#72 review summary
 
-- **Syscall 607 is present on 14.10 and its errno ladder is fully readable** (probe 1249a, repaired). `/app0/eboot.bin` -> EACCES 13; `/dev/null`, `/`, `/app0`, `/dev` -> EINVAL 22; `/user`, `nosuchpath`, `""` -> ENOENT 2; `607(NULL,buf)` -> EFAULT 14; `607(path,NULL)` -> EACCES 13. Order: `copyinstr`, then the VFS lookup at `0xafba6e0`, then the vnode-subtype gate `cmp dword [vnode+0x1d4],1`, then a privilege check that fires **before arg1 is read**. The 0x88 block is unreachable, which confirms the `cred+0x58` prediction in `docs/CAPABILITY_TAG_MAP_14_10.md` dynamically - with the correction that the gate returns EACCES instead of zeroing the block and returning 0. Residual value: 607 is a free filesystem oracle (ENOENT / EINVAL / EACCES = missing / not a regular file / regular file) that leaks nothing and cannot crash.
-- **629 arg2 is `oflag`, not a size** (probe 1250b). `629(1,2,0)` returns a real descriptor (23, 24, 25 across three calls in probe 1250c); every other oflag value returns EINVAL because of the decoded `test r15d,0xffdff1fc` mask and the `test r15b,1` O_WRONLY rejection. Probe 1250a's nine uniform EINVALs were an artifact of sending `0x4000` as oflag.
-- **629 is a stub at the mapping level too** (probe 1250c). `fstat(23)` fills a FreeBSD-11 `struct stat` with `st_size = 0x4000` at `+0x58`, and `477(..., MAP_SHARED, 23, 0)` returns `0x310D44000` with no error - but the first userland read of that page faults with `tf_err = 0x4` (P=0, W=0, U=1, `T_PAGEFLT`) at CR2 = the mapping, so the vm_object has no pager and no swap backing. Reading a 629 mapping **kills the game**, not just the Lua process; the probe was filed CRASH_CLASS: LOW and should have been MEDIUM.
-- **`copyin` DOES fault demand-zero pages in** (probe 1250b). A never-touched anonymous page copied out as zeros through `write(sock, va, 8)`; only a genuinely unmapped VA gives EFAULT. Probe 1240a's "the mapping is not present / PTE absent" inference is **withdrawn**.
-- **674 is now the gate for the fatal exec test** - `1248a` was changed to skip its fcall whenever the oracle is unavailable or self-contradictory, so it can no longer spend a crash on a guess. `1251a_674_calibration.lua` calibrates the oracle against four knowns (anon prot3, anon prot7 which 1245a proved dead, file prot1/5/7 of eboot, eboot's own RX .text); `1251b_force_exec_call.lua` is the isolated deliberate-crash test.
-- **674 argument shapes are not interchangeable** - a blind three-shape sweep in the first draft of `1251a` returned from the known-good shape and then took the loader *and the game* down on one of the alternatives (`arg5 = 0`, or the plain-number variant; no capture, so the fatal step is unidentified). The probe now calls 674 exactly once with 55f's shape (`STRIDE=72`, `MAX=512`, `arg5=0x40000000`) into a `STRIDE*MAX+0x100` buffer, creates every mapping before the snapshot, and prints a `step N ok` marker after each section. Also recorded: `memory.read_dword`/`read_byte` return uint64 tables, so every read needs `N()` before comparison or formatting.
-- **New doc** `docs/SHM_629_AND_COPYIN_14_10.md` with the full errno matrix, the fstat layout, the fault trapframe table and the copyin table.
-- **New probes:** `1250b_shm_shape_and_copyin.lua`, `1250c_shm_object_inventory.lua`, `1251a_674_calibration.lua`, `1251b_force_exec_call.lua`. Repaired for Lua 5.1: `1248a`, `1249a`, `1250a` (no `&`, no `uint64.get_addr`/`uint64.new`, no `%016X` on a double, `N(memory.alloc(n))` for buffer addresses).
+- **★ msync syscall number corrected 226→65** (PR #70, DEM9N101): sysent rebuild from 13.60 dump shows entry 226 is nosys, real msync is 65 with sy_narg=3 and 16KB page-aligned MS_INVALIDATE path. Prevents a false negative on the CVE-2026-49418 device-pager UAF probe (58a). Also corrects fspacectl 580→572. **This is the gold: the device-pager UAF path via msync(65) on GPU-mmap pages is the next CVE-class test.**
+- **Netcontrol reference leak CONFIRMED — UAF is DEAD on 14.10** (PR #69, ng643): 12 probes (223a–234a) show register takes a socket reference that leaks on close-before-unregister. No double-free, no dangling pointer. The public Poops/ExploitNetControlImpl chain's precondition does not hold. ifindex -1 queue is permanently wedged until power cycle.
+- **Sony object families exhausted — all dead** (PR #72, ng643): 10 probes sweep jitshm(533/534), dl_get_list/info(535/536), osem(549–556), namedobj(557/558), set_vm_container(559), debug_init(560), suspend_process(561), evf set-vs-cancel race. Every family is unreachable, lacks name-keyed lookup, or is a no-op query.
+- **Thread budget measured + EVF clarified** (PR #71, ng643): 14 probes (235a–248a). Safe budget is ≤8 children. EVF holds exactly one waiter (second gets immediate refusal). thr_get_ucontext(634) writes nothing. blockpool_batch(657) returns status only. query_memory_protection(547) is userland-only — no KASLR oracle. 238a–240a crash retracted (probe bug, not kernel fault — fixed by parking child on `jmp $` gadget).
 
+### New dead ends added
+- netcontrol(99) netevent queue UAF (14.10 leaks reference, no free)
+- jitshm(533/534), osem(549–556), debug_init(560), suspend_process(561)
+- namedobj(557/558) name collision (not name-keyed, no UAF path)
+- thr_get_ucontext(634), blockpool_batch(657), query_memory_protection(547)
 
-## Uaccess helpers decoded; 619 dead; 532-P2 and dmem closed (2026-11-05)
+### TODOs from this review
+1. **Run probe 58a** with corrected msync(65) — test CVE-2026-49418 device-pager UAF on GPU-mmap pages
+2. **Run probe 243a** (thread slot reclaim) — queued but never executed
+3. **Threaded UMTX PI-mutex races** with corrected parking pattern (≤8 children)
+4. **Multi-flag EVF waiter races** (one waiter per flag, N flags)
+5. **Syscalls 530–532, 537** still unmeasured from the Sony object range
 
-- **New doc** `docs/UACCESS_HELPERS_14_10.md` — semantics of all thirteen helpers in `0x2590b0..0x259b60`, the whole-image stac/clac census (17 stac, only three outside the helper block), the syscall liveness map (703 live / 32 dead of 735), the pmap A/D walker and the `0xffff800000000000` DMAP base, and the dmem re-check.
-- **`copyout` semantics:** the destination is masked with `0x7fffffffffff` after a carry test; the **source is never masked or range-checked**. The only remaining way to abuse that is a kernel object that stores a user pointer and later supplies it as the source — `COPYOUT_SOURCE_PROVENANCE_14_10` measured 93 sites with zero attacker-controlled sources.
-- **Unguarded `copystr` (`0x2599f0`) is unreachable from userland**: its dispatcher `0x782760` is called only by `0x7064e0`, which is only reached from the blockpool three-string builder `0x7063f0` (`0x9a6c19`, `0x9a6e53`).
-- **The unmasked 8-byte `[rdi]→[rsi]` copy at `0x2581a0`** (stac, fault recovery returning EFAULT) has seven callers, all inside execve (body `0x6e2dc0`); every address it reads is `img_firstpage` + a 16/32-bit ELF offset, so it cannot reach supervisor space.
-- **Syscall 619 `test_debug_rwmem` is DEAD** — body `0xa37650` is the `mov eax,0x4e` ENOSYS stub. Any plan built on a debug read/write syscall is void. `obs_vread`/`obs_vtrace` are also nosys.
-- **532 P2 is dead:** decoding `0xaf0040` from the body start shows `priv_check(td, 0x2aa)` at `0xaf00e6` precedes the `c81` clamp, the indexed load at `0xaf06d9` and the ±4 GB read; probe 1242a measured that privilege as REFUSED. `READ_IDEA_ATLAS_14_10` P2 marked closed.
-- **dmem re-check:** 586 `set_vm_container` resolves an index into a fixed ≤5-entry global table and needs priv `0x2ad`; 628 `mmap_dmem` *passes* its three capability checks but its worker `0x3cb450` requires the requested physical range (`r8 < 0x5000000000`, `r8+len <= 0x5000000000`) to be **inside an already-allocated container descriptor** (`cmp byte [desc+0x69],0xfe`, `desc+0x48 <= r8 < desc+0x50`). No descriptor can be created without priv, so arbitrary physical mapping is closed.
-- **Indexed-load "W" class emptied:** all 11 variable-bound rows are fd-table lookups guarded by `cmp <idx>, [table] / jae` before the load.
-- New scripts under `.local/`: `uaccess_callers.py`, `copystr_sites.py`, `w7064e0.py`, `w7063f0.py`, `resolve619.py`, `liveness.py`, `stac.py`, `stac3.py`, `pmap.py`, `dpmap2.py`, `d532gates.py`, `d586.py`, `d628b.py`, `d628c.py`.
+## Phase 19 — UMTX SHM reachability + thr_create CS=0x43 confirmation (2026-10-20)
+
+- **UMTX_OP_SHM(25) on syscall 454 CONFIRMED REACHABLE** (probe 151a): all sub-ops (create=1, destroy=4, alive=8) return 0 on 14.10. CVE-2024-43102 attack surface is open.
+- **thr_create CS=0x43 PREVENTS KERNEL PANIC** (probe 80a, 5 runs): zeroed ucontext panics (CS=0), but CS=0x43/SS=0x3B yields rv=-1 with real TIDs and no panic. Thread creation fails (rv=-1) but the process survives — the panic root cause (13.60 decompile PRs #30/#31) is confirmed on 14.10.
+- **PS5 mcontext offsets differ from standard FreeBSD**: MC_RIP=0x90, MC_CS=0x98, MC_RSP=0xA8, MC_SS=0xB0 (all -0x10 from textbook amd64). Probe 146a had wrong offsets — fixed layout needed.
+- **kernel.lua source dumped** (probe 150a): full ipv6_kernel_rw module, kernel_offset table, native.fcall/fcall_with_rax APIs confirmed.
+- **native.fcall_with_rax CONFIRMED WORKING**: getpid=0x22a, socket=0x16, close=0x0 all return correct values.
+- **Thrd_create (C11 threading) CONFIRMED**: 5+ concurrent threads, join works, Atomic_fetch_add_8 as entry point verified.
+- Probes 151b-151e crashed from resource exhaustion (too many allocs/pipes/fstat). 152a/153a designed with safety constraints.
+- New probes written: 152a (SHM heap race + GPU reclaim), 153a (threaded SHM race with Thrd_create)
 
 ## Cross-link — related WebKit research (2026-10-19)
 

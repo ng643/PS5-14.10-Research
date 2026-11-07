@@ -136,7 +136,7 @@ if TEST_SECTION == "A" then
 
     -- A1: Write distinct sentinels to each region
     print("")
-    print("[A1] Writing sentinels: A=0x56123, B=0x31072")
+    print("[A1] Writing sentinels: A=0xAAAAxxxx, B=0xBBBBxxxx")
     for pg = 0, 7 do
         safe_wd(region_a + pg * PAGE_SIZE, 0xAAAA0000 + pg)
         safe_wd(region_b + pg * PAGE_SIZE, 0xBBBB0000 + pg)
@@ -263,12 +263,10 @@ elseif TEST_SECTION == "B" then
     print(string.format("  Read second half[0]: %s (expected 0xFACE0008)",
         still_alive and string.format("0x%08X", still_alive) or "UNREADABLE"))
 
-    -- Do NOT read the unmapped half: this loader dies on a fault even inside pcall
-    -- (measured in 114b).  Ask the kernel instead - sys 547 reports the region.
-    local qout = memory.alloc(0x40)
-    local qr = pcall(function() return make_syscall(547)(uint64(region), uint64(qout)) end)
-    print(string.format("  547 on unmapped first half: ok=%s ret=%s", tostring(qr),
-        qr and tostring(safe_rd(qout)) or "n/a"))
+    -- Can we read the unmapped first half? (should fail)
+    local dead_read = safe_rd(region)
+    print(string.format("  Read unmapped first half: %s (should be nil/crash)",
+        dead_read and string.format("0x%08X", dead_read) or "UNREADABLE (expected)"))
 
     -- B2: mmap something NEW at the old address with MAP_FIXED
     print("")
@@ -290,7 +288,7 @@ elseif TEST_SECTION == "B" then
 
         -- CRITICAL: check if writing to new region affects second half
         -- (would indicate shared physical backing or TLB confusion)
-        safe_wd(remap + 7 * PAGE_SIZE, 0xC2055010)
+        safe_wd(remap + 7 * PAGE_SIZE, 0xC0550001)
         local cross_check = safe_rd(second_half)
         print(string.format("  After writing remap[end]: second_half[0] = %s",
             cross_check and string.format("0x%08X", cross_check) or "UNREADABLE"))
@@ -307,19 +305,17 @@ elseif TEST_SECTION == "B" then
     for round = 1, 10 do
         local r = gpu_mmap(4)
         if r then
-            safe_wd(r, 0x17713 + round)
+            safe_wd(r, 0xC1C1E000 + round)
             local before = safe_rd(r)
             do_munmap(r, 4 * PAGE_SIZE)
-            -- Reading the unmapped page kills this loader, so the remap is what
-            -- we test: does the kernel hand the same address back?
-            local again = gpu_mmap(4)
-            if again then
-                local same = (again == r)
-                print(string.format("  Round %d: munmap=%s remap=0x%X same_va=%s stale_before=0x%X",
-                    round, tostring(before ~= nil), again, tostring(same), before or 0))
-                do_munmap(again, 4 * PAGE_SIZE)
+            -- Immediately try to read the unmapped page
+            local after = safe_rd(r)
+            if after then
+                print(string.format("  Round %d: STALE READ 0x%08X after munmap!", round, after))
             else
-                print(string.format("  Round %d: remap failed", round))
+                if round <= 3 or round == 10 then
+                    print(string.format("  Round %d: properly unmapped", round))
+                end
             end
         end
     end
@@ -344,7 +340,7 @@ elseif TEST_SECTION == "C" then
 
     -- Write sentinels across all pages
     for pg = 0, 31 do
-        safe_wd(base + pg * PAGE_SIZE, 0x63676 + pg)
+        safe_wd(base + pg * PAGE_SIZE, 0xBA5E0000 + pg)
     end
 
     -- C1: MAP_FIXED in the middle of existing region
@@ -359,7 +355,7 @@ elseif TEST_SECTION == "C" then
         -- Check what happened to surrounding pages
         for pg = 0, 31 do
             local v = safe_rd(base + pg * PAGE_SIZE)
-            local expected = 0x63676 + pg
+            local expected = 0xBA5E0000 + pg
             if not v then
                 print(string.format("  page %d: UNREADABLE (was 0x%08X)", pg, expected))
             elseif v ~= expected then
@@ -368,7 +364,7 @@ elseif TEST_SECTION == "C" then
         end
 
         -- Write to overlapped region
-        safe_wd(overlap, 0x22390)
+        safe_wd(overlap, 0x0AEE0000)
         local ov = safe_rd(overlap)
         local orig = safe_rd(base + 8 * PAGE_SIZE)
         print(string.format("  overlap[0] = 0x%08X, base[8] = 0x%08X", ov or 0, orig or 0))
@@ -397,10 +393,10 @@ elseif TEST_SECTION == "C" then
             -- Read: is it zeroed (new anonymous) or GPU sentinel?
             local new_val = safe_rd(anon_over_gpu)
             print(string.format("  Value: 0x%08X (GPU sentinel was 0x%08X)",
-                new_val or 0, 0x63128))
+                new_val or 0, 0xBA5E0010))
             if new_val == 0 then
                 print("  Zeroed — anonymous mapping replaced GPU backing")
-            elseif new_val == 0x63128 then
+            elseif new_val == 0xBA5E0010 then
                 print("  *** STILL GPU SENTINEL — backing unchanged ***")
             end
 
@@ -461,13 +457,13 @@ elseif TEST_SECTION == "D" then
         print("[D2] Cross-type boundary write test:")
         -- Write to last GPU page
         local last_gpu_page = gpu + 15 * PAGE_SIZE
-        safe_wd(last_gpu_page, 0x44386)
+        safe_wd(last_gpu_page, 0x6A570001)
         -- Write to first anon page
-        safe_wd(anon, 0x54169)
+        safe_wd(anon, 0xA1100001)
 
         -- Try writing past GPU boundary
         local past_gpu = gpu + 16 * PAGE_SIZE
-        local ok_past = safe_wd(past_gpu, 0x48271)
+        local ok_past = safe_wd(past_gpu, 0xFA570001)
         local read_past = safe_rd(past_gpu)
         print(string.format("  Write past GPU end: ok=%s read=0x%08X",
             tostring(ok_past), read_past or 0))
@@ -476,7 +472,7 @@ elseif TEST_SECTION == "D" then
         if al2 == gl + 16 * PAGE_SIZE then
             -- Adjacent! Check if GPU write affected anon
             local anon_val = safe_rd(anon)
-            print(string.format("  Anon[0] = 0x%08X (expected 0x54169)", anon_val or 0))
+            print(string.format("  Anon[0] = 0x%08X (expected 0xA1100001)", anon_val or 0))
         end
     end
 
@@ -517,7 +513,7 @@ elseif TEST_SECTION == "E" then
     for i = 1, 50 do
         local r = gpu_mmap(4)
         if r then
-            safe_wd(r, 0x27976 + i)
+            safe_wd(r, 0xC1C10000 + i)
             local unmap = do_munmap(r, 4 * PAGE_SIZE)
             if unmap then cycle_ok = cycle_ok + 1 else cycle_fail = cycle_fail + 1 end
         else

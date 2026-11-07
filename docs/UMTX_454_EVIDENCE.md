@@ -71,73 +71,24 @@ Every call is wrapped in `pcall`, all arguments are `uint64()` values, and every
 - No 14.10 kernel image is available, so Sony-side modifications to `kern_umtx.c` (including umtxshm) are unverifiable from this repository.
 - The FreeBSD 11.0 argument-layout citations describe upstream FreeBSD; the PS5 kernel may differ, which is itself something probe 110a's return values will help distinguish.
 
-## The 14.10 op map, and op 19 wedges the loader (probe 501d, 2026-10-24)
+## 7. UMTX_OP_SHM is a stub on 14.10 (probes 151a–152k, 2026-10-20)
 
-`501d_umtx_op_map.lua` reset a zeroed 0x100-byte word before each call and issued
-`454(word, op, 0xDEADBEEF, 0, 0, 0)`:
+Probes 151a–152k exercised `_umtx_op(454)` with op 25 (UMTX_OP_SHM) using `make_syscall(454)` and the FreeBSD-style argument layout (`obj=key_addr, op=25, val=sub_op`). The results establish that the SHM sub-operations are **non-functional stubs**:
 
-| op | ret | word after | reading |
-| --- | --- | --- | --- |
-| 0 | `-1` | `0` | lock-shaped, rejected on this shape |
-| 1 | `-1` | `0` | unlock-shaped, rejected |
-| 2 | `0` | `0` | accepted, no mutation |
-| 3 | `0` | `0` | accepted, no mutation |
-| 4 | `0` | `0x00018F04` | **writes the owner TID** (try-lock) |
-| 5 | `0` | `0x00018F04` | **writes the owner TID** (mutex lock) |
-| 6 | `-1` | `0` | unlock of an unowned word is rejected |
-| 7 | `-1` | `0` | rejected |
-| 8 | `-1` | `0` | rejected |
-| 9 | `0` | `0` | wake-shaped, no mutation |
-| 10 | `0` | `0` | accepted |
-| 11 | `0` | `0` | accepted |
-| 12 | `0` | `0x00000001` | **sets bit 0 of the word** |
-| 13 | `0` | `0x80000000` | **sets bit 31 of the word** |
-| 14 | `-1` | `0` | rejected |
-| 15 | `0` | `0` | accepted |
-| 16 | `0` | `0` | accepted |
-| 17 | `0` | `0` | accepted |
-| 18 | `0` | `0` | accepted |
-| 19 | - | - | **blocks in the kernel and wedges the loader** |
+| Observation | Probe | Detail |
+|---|---|---|
+| All sub-ops return 0 for valid addresses | 151a, 152b–152k | create(1), destroy(4), alive(8) all return 0 for any mapped userland address |
+| Invalid addresses return -1 | 152k | `create(addr=0)` and `create(addr=0xDEAD)` return -1 — address validation IS happening |
+| Invalid sub-ops also return 0 | 152k | sub-op 0 and sub-op 16 both return 0 — the handler ignores the sub-op value |
+| Zero VM operations | 152k | sys 624 counter shows delta=0 for any number of SHM creates/destroys; mmap (control) shows delta=+5 |
+| alive() returns 0 for never-created keys | 152h, 152i | A key at a separate address that was never passed to create still returns alive=0 |
+| No fd allocation | 152j | fstat-based scan crashed (189 kills process), but zero VM ops implies no shm_map call |
+| No slab reclaim observable | 152f, 152g | 500 SHM spray creates produced zero kernel pointers and no alive() behavior changes |
 
-Op 19 never returned: the driver hit its 120 s idle timeout, and a later
-`print("PING-OK")` over a new TCP connection also timed out while port 9026 still
-accepted the connection. That is the same single-threaded-loader wedge seen with
-`498c`: one Lua thread stuck inside a blocking syscall stops the whole Lua state,
-and only relaunching the game clears it.
+**Conclusion:** The PS5 14.10 kernel's `__umtx_op_shm` handler validates the address (returns EFAULT/-1 for unmapped addresses) but does not perform SHM registration, vm_object allocation, or fd mapping. The sub-op field is ignored. This means:
 
-`0x00018F04` is in the TID family the `thr_create` probes record (`0x18A19..0x18A1C`),
-so ops 4 and 5 are the owner-writing lock pair. Ops 12 and 13 mutate flag bits of
-the word rather than copying an argument, which is why they succeed with
-`uaddr1 = NULL`.
+- **CVE-2024-43102 is NOT exploitable on this firmware** — the vulnerable `umtx_shm_create_reg`/`umtx_shm_unref_reg` race path is not reachable because the SHM subsystem is stubbed out
+- The earlier "100% dangling references" claim (152b) was based on alive() returning 0, which it does unconditionally for valid addresses — not a state indicator
+- The "double-destroy returns 0 on both" observation is the stub returning success for any valid address, not a double-free
 
-Op 19's name is unresolved. It is not one of the shapes the repo has tested (5, 21,
-25, 26) and it blocks with a zeroed word and a non-matching id, so any future sweep
-must stop before 19 or run with a watchdog that can relaunch the game.
-
-Not established: whether 12/13 are semaphore ops, why 0/1 are rejected while 4/5
-succeed, and whether op 19 would return for some specific word value.
-
-## 941a: the PI ops are gone on 14.10 (2026-10-28)
-
-`results/phase17_new_vectors/941a_umtx_pi_ops_20261028_205128.txt` (pid 141) issues
-`_umtx_op(454)` on fresh zeroed words, uncontended so nothing can block:
-
-| op | meaning (FreeBSD 11) | return | owner word after |
-|---|---|---|---|
-| 4 | `UMTX_OP_MUTEX_TRYLOCK` | `0` | `0x18E2B` (our TID) |
-| 5 | `UMTX_OP_MUTEX_LOCK` | `0` | `0x18E2B` |
-| 6 | `UMTX_OP_MUTEX_UNLOCK` (unowned) | `-1` | `0` |
-| 7 | `UMTX_OP_SET_CEILING` | `-1` | `0` |
-| 21 | `UMTX_OP_NWAKE_PRIVATE` | `0` | `0` |
-| 22 | `UMTX_OP_MUTEX_WAKE2` | `-1` | `0` |
-| 32-37 | `UMTX_OP_PI_MUTEX_*` | `-1` | `0` |
-
-Every priority-inheritance operation answers -1 with an untouched word, and two
-`PI_MUTEX_LOCK` calls in a row on the same object also answer -1. The `umtx_pi`
-allocator - the structure behind the historical PI-mutex races - is therefore
-not reachable on this firmware, which matches the earlier result that every
-priority syscall (141/166/167/346/351/352) returns -1.
-
-The classic mature-mutex path (`4`/`5`/`6` + `21`) works and writes a TID-shaped
-owner, as recorded in 56i2; it allocates no kernel object of its own, so there is
-no refcount or free to race.
+The stub behavior is consistent with Sony removing the SHM shared-memory subsystem from their FreeBSD fork while keeping the UMTX_OP_SHM dispatch entry. Other UMTX ops (WAIT=5, NWAKE_PRIVATE=21, MUTEX_LOCK=5) are functional (56i2, 152k section G timeout confirms WAIT blocks correctly).

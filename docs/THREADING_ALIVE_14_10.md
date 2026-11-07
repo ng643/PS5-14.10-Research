@@ -5,52 +5,6 @@ in `results/phase17_new_vectors/`; the probes are `156a`–`156d` in
 `probes/phase17_new_vectors/`. The loader process answered throughout with the
 same pid (91) and the console never restarted.
 
-## A native child can run a syscall, and two can be released together (712c-720a, 2026-10-25)
-
-A `thr_create(430)` child normally only runs its own code, because the Lua harness serialises syscalls (509b) and a helper thread that issues them kills the process. Both limits are gone as long as the child is pointed at the loader's own trampoline.
-
-**A child makes real syscalls.** `syscall.pipe.fn_addr` read in Lua is *code* (ASLR-relocated; `0x808858B57`, `0x804640B57`, `0x800430B57` in three runs). Set the context `RIP` to that address, `RAX` to the syscall number, `RDI`/`RSI`/`RDX` to the arguments, and point `RSP` at a chain on the child's own stack. The first `ret` after the syscall pops the chain (712c, marker = the child's own `getpid`):
-
-```
-[A] fn_addr=0x826BC0B57
-[A] mov [rsi],rax;ret=0x6E614BA9 jmp$=0x6E489481
-[B] thr_create ok=true rv=0 tid=0x18F76
-[B] marker=0xAE        <- 174, the child's pid
-```
-
-Note that two different things are called `fn_addr`: the pipe string's `fcall_stub.fn_addr` (`0x310c49fd0`) is a heap stack frame the loader chain pivots into; `syscall.pipe.fn_addr` as read in Lua is the executable trampoline. Passing `tonumber(fn_addr)` to `native.fcall_with_rax` kills the process, and reading bytes at it kills too - the text is execute-only.
-
-**Chain gadgets in eboot** (`0x494000` bytes; scan with `memory.read_buffer` + `string.find(.., 1, true)`, never a per-dword walk - that walk once ran past the region and killed the game):
-
-| gadget | file offset | count |
-|---|---|---|
-| `pop rax; ret` (`58 C3`) | `+0x992` | 15 |
-| `pop rdi; ret` (`5F C3`) | `+0xC9DFE` | 18 |
-| `pop rsi; ret` (`5E C3`) | `+0xD77D` | 18 |
-| `pop rdx; ret` (`5A C3`) | `+0x3B02D7` | 3 |
-| `pop rcx; ret` (`59 C3`) | `+0xE64` | 18 |
-| `pop rsp; ret` (`5C C3`) | `+0x9A2` | 15 |
-| `jmp $` (`EB FE`) | `+0x15481` | 19 |
-| `mov [rsi],rax; ret` | `+0x1A0BA9` | 1 |
-| `mov [rdi],rax; ret` | `+0x92C67` | 4 |
-| `mov [rdx],rax; ret` | - | **0** |
-
-There is no `syscall; ret` in eboot; the trampoline is the only way in.
-
-**Looping children starve the process.** A chain that repeats `fn(662) -> pop rax,662 -> fn -> pop rsp,<chain>` keeps a thread inside a table-locking syscall forever. Four of them made the loader silent for minutes and needed a relaunch (717a). Every child should end with `thr_exit(431)`.
-
-**Two children can be released together with one umtx wake.** `_umtx_op` (454) blocks on a word and op 3 wakes it, so the children sleep in the kernel and one parent wake releases all of them in the same lock batch:
-
-```
-child:  fn(454 WAIT on W, expected 0) -> pop rdi,<id> -> pop rsi,1 -> pop rdx,<out>
-        -> fn(662) -> pop rax,431 -> fn        (no spinning thread left)
-parent: wake 8x -> read the out pages
-```
-
-719b proves the gate alone (the child waits, is woken, and stores its pid); 719a/720a use it to put two to four children into the same `aio_multi_delete` at once.
-
-Two details that cost a run each: the context enters `fn` with `RAX` already set, so a chain that starts by loading `240` again sleeps twice (718a v1 slept 240 ms against a 200 ms wait and every status page stayed untouched); and after a `_umtx_op` the argument registers still hold the umtx arguments, so *every* register the next call needs must be reloaded from the chain, not just `RDI` (719a v1 ran the delete with `count=2` and a NULL status pointer). `nanosleep` (240) itself works from a child - 718a v2 used it as the release timer.
-
 ## Result
 
 `thr_create(430)` starts a second userland thread on 14.10 when the context
@@ -99,11 +53,34 @@ supplies the offsets; 14.10 now confirms them by acceptance and by execution.
 | flags | `+0x0d0` (dword) | `0` | validator, must be `<= 7` |
 | type | `+0x110` (qword) | `0x10000` | validator, `0x10000` or `0x10002` |
 | subtype | `+0x118` (qword) | — | checked only for type `0x10002` |
-| GPRs | `+0x048`..`+0x0B8` | `rdi, rsi, rdx, rcx, r8, r9, rax, rbx, rbp, r10, r11, r12, r13, r14, r15` | register copy |
+| GPRs | `+0x048`..`+0x0B8` | see GP register layout below | register copy |
 | CS | `+0x0c0` | `0x43` | `tf_cs` |
 | RIP | `+0x0e0` | our gadget | `tf_rip` |
 | RSP | `+0x0f8` | our stack | `tf_rsp` |
 | SS | `+0x100` | `0x3b` | `tf_ss` |
+
+### GP register layout (confirmed 2026-10-21, probe 91u)
+
+The 13.60 Ghidra decode lists the GPR order as `rdi, rsi, rdx, rcx, r8, r9, rax, ...`
+(standard mcontext), but **14.10 behavioral testing proves Sony uses syscall argument
+order**. Probe 91u scanned R10 across offsets +0x048..+0x0B8 with a setsockopt(5 args)
+child; only +0x060 produced the correct result (IPV6_UNICAST_HOPS changed 42→77).
+
+| offset | register | role |
+|--------|----------|------|
+| `+0x048` | RDI | arg1 |
+| `+0x050` | RSI | arg2 |
+| `+0x058` | RDX | arg3 |
+| `+0x060` | **R10** | **arg4** (NOT rcx — Sony skips rcx, places R10 here) |
+| `+0x068` | R8 | arg5 |
+| `+0x070` | R9 | arg6 (probable, untested directly) |
+| `+0x078` | RAX | syscall number |
+| `+0x080`..`+0x0B8` | remaining GPRs | rbx, rbp, rcx(?), r11-r15 (order uncertain) |
+
+**Key discovery**: the context does NOT follow FreeBSD `mcontext_t` register order.
+Sony reordered the GPRs into syscall calling convention: `RDI, RSI, RDX, R10, R8, R9, RAX`.
+This means `+0x060` is R10 (not rcx as the 13.60 mcontext decode implied) and `+0x068`
+is R8 (confirmed by 91u's setsockopt requiring both optval pointer and optlen).
 
 The 430 body copies `0x500` bytes, and the id out-pointer is written **before**
 the context is validated. That is why `rv = -1` arrives together with a fresh
@@ -134,12 +111,74 @@ instead of creating.
   measured single-variable result. The clean control — `CS = 0` with a valid
   `RIP` — would reboot the console and has not been run.
 - **Thread lifetime.** The child keeps running after the probe returns;
-  `thr_suspend(442)` returned `-1` for it, so there is no userland way yet to
-  stop it. Two probes left two spinning threads in the loader process.
+  `thr_suspend(442)` returned `-1` for it, and `thr_kill(tid, 9)` ends the whole
+  process rather than the one thread, so a thread can only be removed by ending
+  the session. Two probes left two spinning threads in the loader process;
+  user-mode spinners did not stop the loader from accepting later connections, a
+  child left looping inside the kernel did.
 - **No TLS.** The child starts with whatever FS base the thread inherits; no
   probe has exercised a libc call inside the new thread.
 - **No scheduling or signal work.** Priority, affinity, signal delivery and
   `thr_exit` from the child are untested.
+
+## A thread that loops in the kernel (157a)
+
+`thr_create` hands the child a full register context, so the child can be aimed
+at a syscall instead of at a gadget. The loader publishes the entry it uses for
+its own calls: `syscall.syscall_address` is `gettimeofday_import + 7`, one byte
+past the wrapper's `mov rax, 116`, so `syscall_address - 7` is
+`mov rax, 116; mov r10, rcx; syscall; ret` inside libkernel.
+
+- Child `RIP` = `syscall_address - 7`, `RDI` = a zeroed `struct timeval`, and
+  `RSP` = a 1 MB mapping pre-filled with that same address, so every `ret`
+  re-enters the wrapper. The thread is inside the kernel almost continuously.
+- Result (`results/phase17_new_vectors/157a_syscall_loop_thread_20261020_172245.txt`):
+  `sec = 1792513365 usec = 199514` on the first read, `usec = 220516` twenty
+  milliseconds later, `thr_create rv = 0` with tid `0x18d04`, `thr_kill(tid, 0) = 0`,
+  canary answering with pid 110. The child executed roughly 21 ms of
+  `gettimeofday` calls while the main thread kept running.
+- Syscall 624 stayed flat across the run (`delta = 0`) because `gettimeofday`
+  performs no VM work; the same probe's `mmap` sanity check moved the counter by
+  the usual `+5`, so the oracle is live and simply not sensitive to this call.
+
+The wrapper is fixed to `gettimeofday`. Aiming the child at another syscall needs
+a `mov rax, <n>` sequence in front of a `syscall` instruction, and eboot has no
+`syscall` instruction at all — a 1 MB scan for `0f 05 c3` found none
+(`results/phase17_new_vectors/157a_syscall_loop_thread_20261020_171551.txt`), so
+the entry has to come from libkernel rather than from the game.
+
+## The child picks its own syscall number (159a, 2026-10-20)
+
+The 158 series concluded that every syscall issued from a child thread came back as
+`gettimeofday`. That conclusion was wrong, and the fault was in the probe: it started
+the child at `syscall_address - 7`.
+
+`syscall.syscall_address` is `memory.read_qword(libc_addrofs.gettimeofday_import) + 7`,
+i.e. it points *past* the `mov rax, <number>` that precedes the `syscall` instruction.
+Starting a thread at `syscall_address - 7` therefore re-enters that `mov rax, 116` and
+overwrites the number in `RAX` before the `syscall` executes. Every call became 116.
+
+159a started the same thread at `syscall_address` itself:
+
+```
+[2] A make_syscall(20)  -> ok=true rv=133          (the process pid)
+[2] B make_syscall(116) -> ok=true rv=0 sec=0x6AD79F5D
+[3] E thr_create: ok=true rv=0 tid=0x00000000_00018E41
+[3] E buf=0x00000000_00018E41                       (thr_self wrote its own tid)
+```
+
+A thread with `RAX = 432` (`thr_self`), `RDI = buf` and `RIP = syscall_address` wrote
+its own thread id into `buf` — the same value `thr_create` reported. The number in
+`RAX` reaches the kernel unchanged; argument registers behave the same way (158b's
+`gettimeofday` rows were correct, only misread).
+
+Correction to the 158 rows: `158a`'s `RAX = 20` marker of `0` and `158b`'s
+`RAX = 432` buffer containing time seconds are both `gettimeofday` results, caused by
+entering at `syscall_address - 7`, not by a kernel-side override.
+
+159a's `fcall` rows (C and D) did not run: the probe tested `type(fcall) ~= "function"`,
+but `fcall` is a table with a `__call` metamethod. The child-thread row E settled the
+question without them.
 
 ## Reproduce
 
@@ -148,13 +187,139 @@ python tools/send_probe.py probes/phase17_new_vectors/156c_thr_create_correct_of
     --ip <console> --port 9026 --save --metadata --timeout 150
 python tools/send_probe.py probes/phase17_new_vectors/156d_thr_create_child_executes.lua \
     --ip <console> --port 9026 --save --metadata --timeout 150
+python tools/send_probe.py probes/phase17_new_vectors/157a_syscall_loop_thread.lua \
+    --ip <console> --port 9026 --save --metadata --timeout 150
 ```
 
 156c prints `THREAD EXISTS` when `thr_kill(tid, 0)` answers `0`; 156d prints
 `CHILD EXECUTED` when the marker page receives `0xDEADBEEFCAFE`. Both take about
 a second of console time after the eboot scan, which is the slow part (a 1 MB
 byte scan over the loader bridge; pass `--timeout 150` so the client does not
-give up while the scan runs).
+give up while the scan runs). 157a prints `CHILD LOOPED IN THE KERNEL` when the
+`timeval` it passes advances between two reads; it leaves the child looping
+inside the kernel, so the session only ends when the game is relaunched.
+
+## The kernel selector is sanitized (448a-452a, 2026-10-23)
+
+`156c`/`156d` established the working context with `CS = 0x43`. The open question was whether the
+selector is copied verbatim, because `set_mcontext` in the 13.60 decode copies `CS` from the user
+ucontext without OR-ing `SEL_RPL_MASK`. If it were verbatim, `CS = 0x40` - the same index with RPL 0 -
+would start the child at CPL 0 with our `RIP`.
+
+Measured:
+
+| probe | what it shows |
+|---|---|
+| `448a` | `CS = 0x40` with a valid `RIP`/`RSP`/gates: **the child executes** eboot's `mov [rdi], rax; ret` and writes the marker, no panic |
+| `449a`, `450a`, `451a` | no `mov cr0`/`cr3`/`cr4`, no `swapgs`, no `rdmsr; ret` in eboot's `0x494000` bytes; `EC C3` (`in al, dx; ret`) exists and is used |
+| `452a` | `CS = 0x40`, `RIP = in al, dx; ret`, `RDX = 0x80`: the child **faults**, marker stays zero, the process survives |
+
+`in al, dx` is illegal at CPL 3 and legal at CPL 0. It did not run, so the thread was at CPL 3.
+**The firmware replaces or masks the selector**; `CS = 0x40` is equivalent to `0x43`.
+
+Consequences:
+
+- A malformed segment selector is not a privilege-raise path. The only observable outcome of a bad
+  context remains the panic recorded for `CS = 0` in `58e` section D.
+- Any future claim that `CS` selection matters has to show a privileged instruction executing, not
+  just a thread starting.
+
+## `RFLAGS` is filtered too (453a, 2026-10-23)
+
+`397a` proved the `RFLAGS` field reaches the CPU when the bit is user-legal (`IF = 0` stops the core
+scheduling). The next question was whether the *illegal* bits survive. `453a` repeats `452a` with
+`RFLAGS = 0x3202`, setting `IOPL = 3`; at `CPL 3` with `IOPL = 3`, `in`/`out`/`cli`/`sti` are all
+legal for user code.
+
+The child faulted again - marker zero, same fault dump. So **`IOPL` is forced to 0** and a game
+process does not gain port I/O through `thr_create`. The filter is selective: `IF` is copied,
+`IOPL` is not.
+
+Read together with `452a`, the picture is a validator that forces the user-mode invariants rather
+than a raw `memcpy` of `mcontext_t`: `CS` ends up with `RPL 3` whatever we send, and `RFLAGS` keeps
+only the user-owned bits. That is the opposite of the 13.60 `set_mcontext` reading that started this
+line, and it is the measured behaviour on 14.10.
+
+## The stack-initialisation branch is unreachable (454a, 2026-10-23)
+
+The 13.60 decode gives the consumer a second path: when the byte at `proc+0xc81` is nonzero and the
+`flags` field at `ctx+0xd0` is `>= 4`, it validates a stack length at `ctx+0x498` against
+`[global]-0x200` and `copyin`s that many bytes from `ctx+0x490` into the new thread's stack.
+
+`454a` walks the boundary with a context that otherwise works: `flags` 0, 1 and 3 return `0`, while
+4, 5 and 7 return `-1` for every stack length tried (`0`, `8`, `0x80`, `0x1000`). So the branch is
+unreachable from a game process: either `proc+0xc81` is zero and the code path rejects on the flag
+check alone, or the check fails before the length is even examined. Either way there is no
+user-controlled stack `copyin` through `thr_create`.
+
+With `flags = 0` the two stack fields are ignored entirely (`454a` [C]: a filled `0x490`/`0x498` still
+returns `0`).
+
+## A `thr_new` child starts at the top of its stack (523a-523c, 2026-10-24)
+
+The `thr_new(455)` parameter block is `+0x00 = RIP`, `+0x10 = stack base`, `+0x18 = stack size`
+(`385a`). The child enters at `RIP` with `RSP = stack_base + size` and runs a return-oriented chain
+upward from there, so the **first chain qword must sit exactly at `stack_base + size`**, outside the
+region the size describes.
+
+`523a` (300 iterations, three children) worked because each chain was about 200 bytes and landed in
+whatever allocation followed the 0x4000 stack block. `523b` and `523c` built 8 and 2 children with
+120-200 deletes each (8.7-14.4 KB) from `rsp = top - 8`, wrote over the neighbouring allocations, and
+the process died inside the first `thr_new`.
+
+The working layout is one allocation of `stack + chain` bytes: let `stack_base` be its start, `size`
+the reserved (unused) stack part, and write the chain from `stack_base + size` upward inside the same
+block. `523c` uses `memory.alloc(0x8000 + 0x8000)`, `size = 0x8000`, chain at `+0x8000`.
+
+The size also bounds what the child can run before it writes into its own stack region: with the chain
+above the top, `rsp` never moves down into the reserved part, so the size only needs to cover the
+signal frame.
+
+## A native child can run a syscall, and two can be released together (712c-720a, 2026-10-25)
+
+A `thr_create(430)` child normally only runs its own code, because the Lua harness serialises syscalls (509b) and a helper thread that issues them kills the process. Both limits are gone as long as the child is pointed at the loader's own trampoline.
+
+**A child makes real syscalls.** `syscall.pipe.fn_addr` read in Lua is *code* (ASLR-relocated; `0x808858B57`, `0x804640B57`, `0x800430B57` in three runs). Set the context `RIP` to that address, `RAX` to the syscall number, `RDI`/`RSI`/`RDX` to the arguments, and point `RSP` at a chain on the child's own stack. The first `ret` after the syscall pops the chain (712c, marker = the child's own `getpid`):
+
+```
+[A] fn_addr=0x826BC0B57
+[A] mov [rsi],rax;ret=0x6E614BA9 jmp$=0x6E489481
+[B] thr_create ok=true rv=0 tid=0x18F76
+[B] marker=0xAE        <- 174, the child's pid
+```
+
+Note that two different things are called `fn_addr`: the pipe string's `fcall_stub.fn_addr` (`0x310c49fd0`) is a heap stack frame the loader chain pivots into; `syscall.pipe.fn_addr` as read in Lua is the executable trampoline. Passing `tonumber(fn_addr)` to `native.fcall_with_rax` kills the process, and reading bytes at it kills too - the text is execute-only.
+
+**Chain gadgets in eboot** (`0x494000` bytes; scan with `memory.read_buffer` + `string.find(.., 1, true)`, never a per-dword walk - that walk once ran past the region and killed the game):
+
+| gadget | file offset | count |
+|---|---|---|
+| `pop rax; ret` (`58 C3`) | `+0x992` | 15 |
+| `pop rdi; ret` (`5F C3`) | `+0xC9DFE` | 18 |
+| `pop rsi; ret` (`5E C3`) | `+0xD77D` | 18 |
+| `pop rdx; ret` (`5A C3`) | `+0x3B02D7` | 3 |
+| `pop rcx; ret` (`59 C3`) | `+0xE64` | 18 |
+| `pop rsp; ret` (`5C C3`) | `+0x9A2` | 15 |
+| `jmp $` (`EB FE`) | `+0x15481` | 19 |
+| `mov [rsi],rax; ret` | `+0x1A0BA9` | 1 |
+| `mov [rdi],rax; ret` | `+0x92C67` | 4 |
+| `mov [rdx],rax; ret` | - | **0** |
+
+There is no `syscall; ret` in eboot; the trampoline is the only way in.
+
+**Looping children starve the process.** A chain that repeats `fn(662) -> pop rax,662 -> fn -> pop rsp,<chain>` keeps a thread inside a table-locking syscall forever. Four of them made the loader silent for minutes and needed a relaunch (717a). Every child should end with `thr_exit(431)`.
+
+**Two children can be released together with one umtx wake.** `_umtx_op` (454) blocks on a word and op 3 wakes it, so the children sleep in the kernel and one parent wake releases all of them in the same lock batch:
+
+```
+child:  fn(454 WAIT on W, expected 0) -> pop rdi,<id> -> pop rsi,1 -> pop rdx,<out>
+        -> fn(662) -> pop rax,431 -> fn        (no spinning thread left)
+parent: wake 8x -> read the out pages
+```
+
+719b proves the gate alone (the child waits, is woken, and stores its pid); 719a/720a use it to put two to four children into the same `aio_multi_delete` at once.
+
+Two details that cost a run each: the context enters `fn` with `RAX` already set, so a chain that starts by loading `240` again sleeps twice (718a v1 slept 240 ms against a 200 ms wait and every status page stayed untouched); and after a `_umtx_op` the argument registers still hold the umtx arguments, so *every* register the next call needs must be reloaded from the chain, not just `RDI` (719a v1 ran the delete with `count=2` and a NULL status pointer). `nanosleep` (240) itself works from a child - 718a v2 used it as the release timer.
 
 ## The loader's own thread class runs two concurrent syscalls (probe 631a, 2026-10-24)
 
@@ -210,7 +375,6 @@ refuted. The kernel window itself (the ten instructions between the re-lookup at
 `0x8ad6fe7c` and the `[W+0x18]` guard at `0x8ad6fec3`) is unchanged and still
 the target.
 
-
 ## The loader makes every syscall through a heap ROP chain (2026-10-25)
 
 `tostring(syscall.pipe)` prints the chain it uses, and probe `712a` caught it whole:
@@ -265,7 +429,12 @@ killed the whole process from inside the child. With the earlier `561(0)` hang a
 kill, that makes `561`/`562` a handler that ends the process rather than one that blocks, and no
 amount of thread isolation changes it. Do not call either number again.
 
-## The thread context carries RFLAGS, and the kernel masks it (769a-770b, 2026-10-25)
+## `+0x0f0` is the RFLAGS field, and the mask is the one 453a found (769a-770b, 2026-10-25)
+
+That `IOPL` is forced to 0 for a `thr_create` child was already recorded above
+("`RFLAGS` is filtered too", 453a), which established the filter but not where
+the value lives in the context. These probes fill that hole and add one
+negative result.
 
 `thr_create` takes a 0x500-byte context whose known fields are GP registers at
 `+0x048..+0x0b8`, `CS` at `+0x0c0`, `RIP` at `+0x0e0`, `RSP` at `+0x0f8` and `SS`

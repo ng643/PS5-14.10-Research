@@ -87,9 +87,37 @@ U56-ALIVE-600
 ```
 
 Exactly one buffer non-zero — the face chunk, with the refcount and the two pointers —
-and the other fifteen untouched. So the engine's allocation came from elsewhere and
-this route to a self-address does not open by itself. It would need the spray to be
-retimed or enlarged to sit on that allocation's free list as well.
+and the other fifteen untouched.
+
+The first reading of that result, "the engine's allocation came from elsewhere", is
+wrong, and the correction matters: the natural client table is
+`zeroedMalloc(metadataSize + 8 x 8)` = **80 bytes** (`HashTable.h:1158`,
+`minimumTableSize = 8`, `HashTraits.h:52`), a class this spray never requested. A
+192-byte lane cannot take an 80-byte block, so the scan says nothing about whether
+that allocation was reclaimed. Testing it needs a second lane: `p581` sprays
+16 x 192 (the face) followed by 32 x 80 (the table) in the same window and scans
+both.
+
+`p581` runs that second lane and the answer is negative:
+
+```
+P581-SPRAY-16x192-32x80
+P581-CHECK-RETURNED
+P581-FACE-T90-b2-58_20938d0010000000-68_d0237e0010000000-rc_1   (0x10008d9320)
+```
+
+The face lane lands as always; none of the thirty-two 80-byte buffers receives a
+byte. That is not a scheduling accident but the shape of the write: the table is
+allocated *inside* `check()` (the consumption that also writes `+0x58`), so anything
+sprayed before that call sits on the free list that the allocation then draws from —
+it cannot be the block the engine hands to itself. Catching the table would need an
+allocation made during the consumption, and there is no synchronous JavaScript hook
+there.
+
+The remaining way to make the engine use memory we own is to have `+0x58` in the
+reclaimed face already point at a table we control, which is the same missing value:
+an address of our own buffer. The 80-byte discovery changes which object that address
+has to name, not whether we need one.
 
 ## Controls: the write and the crash both require the free
 
@@ -144,5 +172,55 @@ address is not yet known, so the arms forge `0` and `1` blind. That separates
 Stage 2 — where a same-page leaked pointer would be available — never reclaims here
 (`S2-b` = 0 across every log), so the stronger test is not reachable in that page.
 
+> **Scope note (2026-11-06).** "Never reclaims here" is scoped to this page
+> family (the p565/p577/p580 field-forge pages, whose stage 2 is a second
+> `document.fonts.load()` and whose stage-2 scan beacon is `S2-b`). It is not a
+> general limit on second reclaims: the p599 GC-destructor page (fresh
+> `FontFace` + rule per phase, GC between phases) reclaims in stage 2
+> (`P2:HIT` ×3 across v4f/v4i), and p590 records `TWO_UAF=YES`. In that page
+> shape the stronger test this paragraph said was unreachable — forging `+0x58`
+> with a same-page leaked pointer — is exactly what p599 v4f run 3 does.
+> See `docs/FONTFACE_SECOND_RECLAIM_RECONCILIATION_2026-11-06.md`.
+
 Pages: `results/webkit/corpus/uaf63_0.html` (A), `uaf63_2.html` (`+0x68 = 0x41`),
 `uaf63_4.html` (D), generated from `results/webkit/corpus/p565.html`.
+
+## Re-entry: the stale object is used exactly once
+
+If the engine walked the freed face again after its first continuation, a page could
+read the leaked `m_clients` pointer from the landing, write a derived value into the
+same buffer and re-enter — a self-address inside one load. It does not.
+
+`p578` armed `+0x68 = 1` in the landed buffer after the hit and called
+`document.fonts.check()` again: the process survived. `p579` did the same with
+`document.fonts.load()`: survived too. `p580` proves the poison went into the right
+place, so the negative is not a wrong-buffer artefact:
+
+```
+P580-PRE-58_80088c0010000000   0x10008c0880   engine WeakHashSet impl
+P580-PRE-68_a0147e0010000000   0x10007e14a0   engine WeakPtr impl
+P580-POST-68_0100000000000000   poison written into that buffer
+P580-ARMED-b2
+P580-REENTRY-SURVIVED
+```
+
+The object is dereferenced once, inside the in-flight `load()` continuation, and
+nothing a page does afterwards reaches it.
+
+## Why a baked address cannot replace that
+
+The obvious fallback is to bake an address from a previous load into the page. Three
+consecutive landings in one warm process:
+
+| load | `+0x58` | `+0x68` |
+|---|---|---|
+| 1 | `0x10008bc880` | `0x10007e14b0` |
+| 2 | `0x10008c0880` | `0x10007e14a0` |
+| 3 | `0x10008c48d0` | `0x10007e1320` |
+
+`+0x58` moves by `0x4000` and then `0x4050`, so the drift per load is not a constant
+and no fixed delta maps a previous load's pointer onto this load's chunk. A blind
+sweep would need thousands of loads inside a 64 KiB page, one landing per load,
+with a crash for every wrong guess.
+
+So the disclosure stands and the next step needs an address from somewhere else.

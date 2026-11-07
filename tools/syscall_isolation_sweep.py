@@ -185,7 +185,7 @@ def tcp_transport(ip, port, lua_source, timeout=DEFAULT_TIMEOUT):
 
 
 def sweep(numbers, transport, delay=DEFAULT_DELAY, sleep=time.sleep,
-          repeat=1, log=None, wait=None, wedge_guard=True):
+          repeat=1, log=None, wait=None, wedge_guard=True, checkpoint=None):
     """Run one connection per number and return per-number records.
 
     ``wait`` is an optional callable that blocks until the loader is back and
@@ -198,13 +198,29 @@ def sweep(numbers, transport, delay=DEFAULT_DELAY, sleep=time.sleep,
     answers nothing twice: a call that parks the Lua thread in the kernel leaves
     the loader accepting connections while every later probe times out, which
     would otherwise burn the whole remaining range in timeouts.
+
+    ``checkpoint`` is called with the record list after every number, including
+    the ones that end the run. A console that freezes takes the whole driver with
+    it, so the measurements have to reach disk before the next number starts.
     """
     log = log or (lambda _msg: None)
     records = []
+
+    def keep(record):
+        records.append(record)
+        if checkpoint is not None:
+            checkpoint(records)
+    killed_before = False
     for num in numbers:
         attempts = []
         waited = False
         wedge_checked = False
+        if killed_before and wait is not None:
+            # A kill restarts the loader; probing straight after it reads as
+            # "the loader answered nothing" and would trip the wedge guard.
+            log("%d died; letting the loader come back before %d" % (records[-1]["num"], num))
+            wait()
+        killed_before = False
         while True:
             for attempt in range(repeat):
                 if attempts or num != numbers[0]:
@@ -233,26 +249,38 @@ def sweep(numbers, transport, delay=DEFAULT_DELAY, sleep=time.sleep,
                     log("sys %d retry: %s%s" % (num, status,
                                                 (" " + detail) if detail else ""))
                     if status == NO_OUTPUT:
-                        records.append({"num": num, "attempts": attempts,
-                                        "status": NO_OUTPUT, "aborted": True})
+                        keep({"num": num, "attempts": attempts,
+                              "status": NO_OUTPUT, "aborted": True})
                         return records
                 break
             if wait is None or waited:
                 # The loader is gone; further numbers would all report the
                 # same thing, which is not information about the syscalls.
-                records.append({"num": num, "attempts": attempts,
-                                "status": CONNECT_FAILED, "aborted": True})
+                keep({"num": num, "attempts": attempts,
+                      "status": CONNECT_FAILED, "aborted": True})
                 return records
             log("sys %d left the loader down; waiting for it to come back" % num)
             if not wait():
-                records.append({"num": num, "attempts": attempts,
-                                "status": CONNECT_FAILED, "aborted": True})
+                keep({"num": num, "attempts": attempts,
+                      "status": CONNECT_FAILED, "aborted": True})
                 return records
             waited = True
         final = attempts[-1]["status"]
-        records.append({"num": num, "attempts": attempts, "status": final,
-                        "aborted": False})
+        keep({"num": num, "attempts": attempts, "status": final,
+              "aborted": False})
+        killed_before = final == KILLED_IN_CALL
     return records
+
+
+def covered_numbers(measurements):
+    """Numbers a previous run really measured.
+
+    Only a returned value or a kill says something about the slot. A connection
+    failure or a silent answer describes the loader, not the syscall, so both are
+    left out and run again.
+    """
+    return {num for num, (_started, status, _ret) in measurements.items()
+            if status in (RETURNED, KILLED_IN_CALL)}
 
 
 def format_report(records):
@@ -359,10 +387,7 @@ def main(argv=None):
 
     if args.resume:
         from gen_presence_map import load_measurements
-        # A CONNECT_FAILED record says nothing about the number, so keep it.
-        covered = {num for num, (_started, status, _ret)
-                   in load_measurements().items()
-                   if status != CONNECT_FAILED}
+        covered = covered_numbers(load_measurements())
         before = len(numbers)
         numbers = [n for n in numbers if n not in covered]
         print("[*] --resume left out %d already measured numbers"
@@ -384,15 +409,24 @@ def main(argv=None):
         from send_probe import wait_for_loader
         waiter = lambda: wait_for_loader(
             args.ps5_ip, args.port, timeout=args.wait_for_loader,
-            log=lambda msg: print(msg, flush=True))
+            log=lambda msg: print(msg, flush=True), answers=True)
+
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    checkpoint = None
+    if args.save:
+        def checkpoint(records):
+            # A freeze mid-range otherwise loses every measurement taken before
+            # it, because the driver never reaches its final save.
+            save_report(format_report(records), records, numbers, stamp=stamp)
 
     records = sweep(numbers, transport, delay=args.delay, repeat=args.repeat,
                     log=lambda msg: print("[*] " + msg, flush=True),
-                    wait=waiter, wedge_guard=args.wedge_guard)
+                    wait=waiter, wedge_guard=args.wedge_guard,
+                    checkpoint=checkpoint)
     report = format_report(records)
     print(report)
     if args.save:
-        txt_path, json_path = save_report(report, records, numbers)
+        txt_path, json_path = save_report(report, records, numbers, stamp=stamp)
         print("[*] wrote %s and %s" % (txt_path, json_path))
     if any(r["aborted"] for r in records):
         print("[!] sweep aborted: the loader stopped accepting connections",

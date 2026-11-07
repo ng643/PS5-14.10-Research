@@ -120,11 +120,14 @@ Three facts the audit establishes, all easy to get wrong by eye:
   rather than `int3` and a linear disassembly crosses the seam silently. The
   audit resolves every thunk to its body and uses the next body start as the
   upper bound.
-- The `sys_662` count guard `lea eax,[r15-0x81]; cmp eax,0xffffff7f; ja` is a
-  *minimum* check: it rejects the wrap-around half and admits every large
-  count, so `0x40000001` passes. Inverting this direction turns a real stack
-  clash into a non-finding, so `count_accepted()` is a named, unit-tested
-  function rather than an inline expression.
+- The `sys_662` count guard `lea eax,[r15-0x81]; cmp eax,0xffffff7f; ja 0x3afa33`
+  is an *upper* bound of 128: the `ja` target is the buffer-setup path and the
+  fall-through sets `r15d = 0x16` (EINVAL), so exactly `1..0x80` is admitted and
+  `0x40000001` is rejected before the allocation. Getting this direction
+  backwards manufactures a stack clash out of a bounded copy, so
+  `count_accepted()` is a named, unit-tested function rather than an inline
+  expression — and the tests assert against the branch targets, not against
+  the function's own prose.
 
 These are static observations over an unverified acquisition. No console is
 contacted and no firmware 14.10 claim is made.
@@ -185,6 +188,19 @@ dynlib handler for the cited module offsets, locates the cited strings in
 `kernel_data.bin`, and pins the sys 640 stub. Claims 17 and 20 are reported as
 unresolved because no artifact names the functions or thresholds they discuss.
 
+## check_lua_syntax.py
+
+Compiles every `probes/**/*.lua` source with Lupa's Lua 5.1 `loadstring`
+without executing it. The reader strips a UTF-8 BOM before compiling, and the
+CI `lua-syntax` job installs `lupa==2.6` and runs the checker. A probe that
+needs Lua 5.2 syntax such as `goto`, or that still contains a template marker,
+fails the job:
+
+```bash
+python -m pip install lupa==2.6
+python tools/check_lua_syntax.py
+```
+
 ## run_session40.py
 
 PC-side raw-packet server for the TCP connect-back fuzz (probe 40). Impersonates a fake LAN host so the Windows stack doesn't RST the connection.
@@ -231,6 +247,11 @@ sentinel line before the call, wraps `make_syscall(N)` (six zero args) in
 table and JSON under `results/phase15_native_sysent/`. See
 `docs/AIO_RANGE_14_10_EVIDENCE.md` for the measurement gap that motivated it.
 
+`--save` writes the record after every number, not only at the end, so a console
+that freezes mid-range still leaves the measurements taken before it on disk. A
+freeze also takes the driver with it, which is how the 462-537 window first
+produced nothing at all.
+
 `--wait-for-loader SECONDS` waits out a process that died and resumes the same
 range once the game has restarted the loader (it comes back on its own in 4-9 s,
 sometimes slower). `--skip 430` leaves out slots that are known to take more than
@@ -241,3 +262,59 @@ the Lua thread in the kernel leaves the socket accepting while every later probe
 times out. `--resume` drops every number that already has a record under
 `results/`, so an interrupted range can be restarted where it stopped rather
 than from the top.
+
+## `bounds_fuzz.py`
+
+Fuzzes the declared buffer size of the present Sony handlers instead of their
+return value. One connection per `(number, layout, size)` triple, because a
+handler that faults takes the loader with it. The generated probe allocates
+0x6000 bytes, canvases them, hands the handler a pointer 0x2000 inside, and after
+the call counts the dwords that changed inside the size it was given and outside
+it, and checks every changed dword against the next one for a qword shaped like
+`0xFFFF8xxx_xxxxxxxx`. A written kernel address is `KERNEL-POINTER` (a copyout
+that returned kernel memory), a write outside the declared size is `OVERFLOW`,
+and a write when the size was zero is `WROTE_AT_ZERO_SIZE`. The report lists the
+first four changed dwords (`sample=offset:value`) so a hit can be inspected
+without re-running the probe. Layouts put the buffer and the size in different
+argument positions (`--layouts`), and `--a1` sets the first argument.
+
+```bash
+python tools/bounds_fuzz.py --ps5-ip 192.168.1.121 --range 574-660 \
+    --layouts a1_buf_size --sizes 0,0x100 --save
+```
+
+Every record is appended to `results/phase17_new_vectors/bounds_fuzz_<stamp>.jsonl`
+as it lands, so a crash, a closed laptop or a console power cycle costs one probe
+instead of the run. `--resume` reads the newest journal (or the one named by
+`--journal`) and skips the triples already in it, so the same command can be
+restarted days later and continues where it stopped. A half-written last line
+from a hard kill is ignored.
+
+**Risk:** a size above 0x10000 asks the kernel to copy far more than the probe
+allocated. If the handler trusts it, the copy crosses into unmapped memory and
+the console panics, which needs a physical power cycle rather than the usual
+relaunch. The default size list stays below that, and going higher prints a
+warning and is an explicit flag.
+
+## `restart_pressure.py`
+
+Measures what a killed loader leaves behind. Every kill costs one loader process,
+and the game needs longer and longer to bring it back as the kills accumulate on
+one boot: nine seconds at first, then tens of seconds, and eventually the port
+stops accepting until the console is power cycled (`docs/SYSCALL_ABSENT_VS_LETHAL.md`).
+
+Each round runs `probes/phase17_new_vectors/217a_restart_pressure.lua`, which prints
+one `SAMPLE` line of the counters a fresh process starts with (624 VM operation
+counter, 593 module count, 674 VM region count, 671 resource classes), kills the
+loader with syscall 4095, times the recovery until the Lua thread answers again,
+and samples once more. A counter that climbs across restarts is system-wide and
+becomes a readout of console state that does not need the game; a counter that
+resets means the accumulation is only visible in the clock.
+
+```bash
+python tools/restart_pressure.py --ps5-ip 192.168.1.121 --rounds 6 --save
+```
+
+Each round is one kill, so `--rounds` stays small on purpose, and the run stops
+early (with the last recovery time recorded) once the loader fails to come back
+inside `--wait` seconds.
