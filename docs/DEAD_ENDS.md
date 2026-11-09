@@ -181,3 +181,31 @@
 - **thr_create child loader stub loop** — a child can call the loader stub from a padded straight-line chain (`RSP` 0x400 above the head) and reach the kernel (883b), but cannot loop: `pop rsp` reset dies, 500-call linear chain dies, and the marker build dies before its first marker. (probes 882a-885a, 2026-10-27)
 - **kptr_hunt.py offline analysis** — 17 OBJECT-sourced copyout candidates identified from the 13.60 decompile. Live testing of the accessible ones yielded zero kernel pointers — all outputs are either blocked or sanitized on 14.10. (2026-10-28)
 - **13.40 community cross-check of the kptr candidates (issue #170)** — an external bench re-ran 536, 601, 604, 656 and 660 with real module handles: 536/601/604/656 denied or wrote no pointer-shaped output, and 660 returned one full module record containing userland segment bases only. It also reports 532 negative and the 593/659 and 661-668 families userland-only. This is a community report, not a local capture; it corroborates the 14.10 negatives without replacing a 14.10 rerun. No kernel-band qword was observed. (2026-11-04, issue #170)
+
+## Which of these rest on a void capture
+
+Everything above was graded against its own capture (2026-11-09): 97 rows in
+`results/INDEX.md`, 84 `M` and 12 `V` from this pass plus the two already graded
+(`1335a` `M`, `55c` `V`). A `V` row means the capture never reached the call that
+carries the claim — the dead end is a *re-run*, not a finding. Fourteen bullets
+are affected; the rest stand on a completed run.
+
+| capture | dead end | what the capture actually shows |
+|---|---|---|
+| `results/phase17_new_vectors/156c_thr_create_correct_offsets_20261020_164129.txt` | Threading via resolve() | the file holds `=== PROBE 80d: thr_create CORRECT OFFSETS + SPIN ===`; no resolve() result is in it |
+| `results/phase17_new_vectors/376a_module_strings_20261022_180910.txt` | GPU device mappings | four lines: header, `77`, fault bytes — no result line |
+| `results/phase8_live_network/42a_kernel_rw_20261016_001156.txt` | kenv | ends at `--- kenv ---`, before the call |
+| `results/43a_kldstat_kaslr_20261016_180703.txt` | kldstat at syscall 306 | ends at `--- Testing kldstat as syscall 308 ---` |
+| `results/54b_jail_bypass_20261018_090446.txt` | sys 629 jail bypass | ends mid blocked-syscall list; no 629 result |
+| `results/phase22_threaded_races/123a_sys637_kernel_write_20261022_182704.txt` | 637 writes a caller-chosen qword | boundary sweep ends at `val=16: ret=-1`; the write is not shown |
+| `results/phase17_new_vectors/339a_637_598_659_20261022_124747.txt` | same claim, second bullet | three lines, dies at `637(0, 0x10) = -1` |
+| `results/phase14_final_push/55d_sys601_process_control_20261018_100435.txt` | 601 commands 0x03/0x04 kill | cmd scan stops at `0x02` |
+| `results/phase19_umtx_454/151a_umtx_shm_race_20261020_075419.txt` | UMTX_OP_SHM (op 25) | op sweep stops at `op=1`; the decisive capture is a `152k` one, itself ungraded |
+| `results/phase22_threaded_races/160f_pi_exit_cascade_20261023_063249.txt` | UMTX PI ownership fraud | ends mid round 1 |
+| `results/phase14_cclosure_redirect/56h_find_thrd_create_20261020_090420.txt` | Timing KASLR via mprotect | capture is a different probe (`find_thrd_create`), not the timing test |
+| `results/phase14_cclosure_redirect/56m_umtx_ops_and_thr_20261020_093600.txt` | ioctl over-copy on gc/dce | UMTX op scan stops at `op=1`; the later `387a` sweep is graded `M` but partial |
+| `results/phase17_new_vectors/524a_aio_double_delete_single_20261024_141445.txt` | VM ops dead | prints `[B] no double delete observed` then `=== PROBE 524a INCOMPLETE ===` |
+| `results/phase30_mapdirect_loader/546a_mapdm_child_20261026_090208.txt` | MapDirectMemory child-thread ROP | ends in a fault dump at `[E] thr_create launch child`; the main-thread `544a` capture is `M` |
+
+`55c` is the fifteenth and is already corrected throughout the tree — see
+`docs/SYSCALL_ABSENT_VS_LETHAL.md` and `1335a`.
