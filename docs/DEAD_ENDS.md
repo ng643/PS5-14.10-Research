@@ -184,11 +184,11 @@
 
 ## Which of these rest on a void capture
 
-Everything above was graded against its own capture (2026-11-09): 97 rows in
-`results/INDEX.md`, 84 `M` and 12 `V` from this pass plus the two already graded
-(`1335a` `M`, `55c` `V`). A `V` row means the capture never reached the call that
-carries the claim — the dead end is a *re-run*, not a finding. Fourteen bullets
-are affected; the rest stand on a completed run.
+Everything above was graded against its own capture (2026-11-09): 111 rows in
+`results/INDEX.md`, 92 `M` and 19 `V`. A `V` row means the capture never reached
+the call that carries the claim — the dead end is a *re-run*, not a finding.
+Fifteen bullets had only a void capture; six of them have a second, complete
+capture that carries the claim, and seven do not.
 
 | capture | dead end | what the capture actually shows |
 |---|---|---|
@@ -200,7 +200,7 @@ are affected; the rest stand on a completed run.
 | `results/phase22_threaded_races/123a_sys637_kernel_write_20261022_182704.txt` | 637 writes a caller-chosen qword | boundary sweep ends at `val=16: ret=-1`; the write is not shown |
 | `results/phase17_new_vectors/339a_637_598_659_20261022_124747.txt` | same claim, second bullet | three lines, dies at `637(0, 0x10) = -1` |
 | `results/phase14_final_push/55d_sys601_process_control_20261018_100435.txt` | 601 commands 0x03/0x04 kill | cmd scan stops at `0x02` |
-| `results/phase19_umtx_454/151a_umtx_shm_race_20261020_075419.txt` | UMTX_OP_SHM (op 25) | op sweep stops at `op=1`; the decisive capture is a `152k` one, itself ungraded |
+| `results/phase19_umtx_454/151a_umtx_shm_race_20261020_075419.txt` | UMTX_OP_SHM (op 25) | op sweep stops at `op=1`; the claim is carried by `152k` instead |
 | `results/phase22_threaded_races/160f_pi_exit_cascade_20261023_063249.txt` | UMTX PI ownership fraud | ends mid round 1 |
 | `results/phase14_cclosure_redirect/56h_find_thrd_create_20261020_090420.txt` | Timing KASLR via mprotect | capture is a different probe (`find_thrd_create`), not the timing test |
 | `results/phase14_cclosure_redirect/56m_umtx_ops_and_thr_20261020_093600.txt` | ioctl over-copy on gc/dce | UMTX op scan stops at `op=1`; the later `387a` sweep is graded `M` but partial |
@@ -209,3 +209,19 @@ are affected; the rest stand on a completed run.
 
 `55c` is the fifteenth and is already corrected throughout the tree — see
 `docs/SYSCALL_ABSENT_VS_LETHAL.md` and `1335a`.
+
+**Carried by a second capture (`M`), so the dead end stands despite the void row:**
+`340a` (`637(0, 0xFFFFFFFF)=0`, `637(0, 0x0)=-1`, every foreign id `-1`) for both
+637 bullets; `152k` (`subop_0 ret=0`, `invalid op 99 ret=-1`) for UMTX op 25;
+`160h` (`canary=OK`) and `160j` (`gpu kptr: clean`) for the PI work — note the
+*5-7 round crash* in `160i` is not in any complete capture; `56i2` for timing
+(`kern_FFFF` flat at ~20.8k ticks); `380a`/`381a` for the GPU mappings (a store to
+an unmapped `0x7F0000000000` reports `ok=true` and the process survives);
+`156d` for the thread half of the resolve() bullet.
+
+**Still with no complete capture — re-run before citing:**
+`kenv` (`42a`, `42g2` — both die at the kenv step); `kldstat` at 306 (`43a`; the
+`kld*` family itself is `M` through `353a`); `629` jail bypass (`54b`); `601`
+commands `0x03`/`0x04` (`55d`); VM ops (`524a`, self-reported `INCOMPLETE`);
+MapDirectMemory child-thread ROP (`546a`, `546d` — both end in fault dumps);
+the resolve() filter itself (`156c`'s file holds probe 80d).

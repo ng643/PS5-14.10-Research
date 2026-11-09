@@ -120,7 +120,6 @@ Grade `?` marks a capture that has been indexed but not yet read and graded.
 | 2026-10-16 07:04 | 42g | - | - | ? | results/phase9_kaslr_defeat/42g_fnaddr_dump_20261016_070424.txt |
 | 2026-10-16 07:05 | 42g | - | - | ? | results/42g_rop_kptr_leak_20261016_070509.txt |
 | 2026-10-16 07:05 | 42h | - | - | ? | results/phase9_kaslr_defeat/42h_code_dump_20261016_070529.txt |
-| 2026-10-16 07:06 | 42g2 | - | - | ? | results/42g2_high_phys_decode_20261016_070600.txt |
 | 2026-10-16 07:06 | 42g3 | - | - | ? | results/42g3_high_phys_only_20261016_070632.txt |
 | 2026-10-16 07:07 | 42g4 | - | - | ? | results/42g4_minimal_high_20261016_070704.txt |
 | 2026-10-16 07:07 | 42i | - | - | ? | results/phase9_kaslr_defeat/42i_vmquery_20261016_070711.txt |
@@ -584,7 +583,6 @@ Grade `?` marks a capture that has been indexed but not yet read and graded.
 | 2026-10-20 10:37 | 152g | - | - | ? | results/phase19_umtx_454/152g_shm_same_type_reclaim_20261020_103742.txt |
 | 2026-10-20 10:39 | 152h | - | - | ? | results/phase19_umtx_454/152h_shm_thread_pressure_20261020_103935.txt |
 | 2026-10-20 10:41 | 152i | - | - | ? | results/phase19_umtx_454/152i_shm_key_semantics_20261020_104133.txt |
-| 2026-10-20 10:45 | 152k | - | - | ? | results/phase19_umtx_454/152k_shm_side_channel_20261020_104543.txt |
 | 2026-10-20 10:51 | 153b | - | - | ? | results/phase19_umtx_454/153b_umtx_safe_sweep_20261020_105149.txt |
 | 2026-10-20 14:48 | hello | - | - | ? | results/hello_probe_20261020_144853.txt |
 | 2026-10-20 15:17 | 92a | - | - | ? | results/92a_run_b_20261020_151718.txt |
@@ -1178,7 +1176,6 @@ Grade `?` marks a capture that has been indexed but not yet read and graded.
 | 2026-10-22 12:45 | 335a | - | - | ? | results/phase17_new_vectors/335a_info_family_shapes_20261022_124546.txt |
 | 2026-10-22 12:45 | 336a | - | - | ? | results/phase17_new_vectors/336a_evf_handle_20261022_124514.txt |
 | 2026-10-22 12:45 | 338a | - | - | ? | results/phase17_new_vectors/338a_evf_handle_space_20261022_124527.txt |
-| 2026-10-22 12:53 | 340a | - | - | ? | results/phase17_new_vectors/340a_dynlib_out_637_limit_20261022_125339.txt |
 | 2026-10-22 12:53 | 341a | - | - | ? | results/phase17_new_vectors/341a_named_objects_create_20261022_125357.txt |
 | 2026-10-22 12:57 | 343a | - | - | ? | results/phase17_new_vectors/343a_fmem_limit_effect_20261022_125753.txt |
 | 2026-10-22 12:58 | 344a | - | - | ? | results/phase17_new_vectors/344a_fmem_limit_gpu_20261022_125834.txt |
@@ -1310,8 +1307,6 @@ Grade `?` marks a capture that has been indexed but not yet read and graded.
 | 2026-10-22 18:14 | 362b | - | - | ? | results/phase17_new_vectors/362b_socket_state_20261022_181426.txt |
 | 2026-10-22 18:14 | 378a | - | - | ? | results/phase17_new_vectors/378a_jail_artifacts_20261022_181438.txt |
 | 2026-10-22 18:14 | 379a | - | - | ? | results/phase17_new_vectors/379a_socket_targets_20261022_181453.txt |
-| 2026-10-22 18:17 | 380a | - | - | ? | results/phase17_new_vectors/380a_gpu_mapping_write_20261022_181716.txt |
-| 2026-10-22 18:18 | 381a | - | - | ? | results/phase17_new_vectors/381a_gpu_write_control_20261022_181839.txt |
 | 2026-10-22 18:19 | 122a3 | - | - | ? | results/phase22_threaded_races/122a3_physhm_prot_test_20261022_181919.txt |
 | 2026-10-22 18:20 | 122a4 | - | - | ? | results/phase22_threaded_races/122a4_physhm_offset_args_20261022_182057.txt |
 | 2026-10-22 18:22 | 382a | - | - | ? | results/phase17_new_vectors/382a_gpu_refs_20261022_182200.txt |
@@ -1461,11 +1456,7 @@ Grade `?` marks a capture that has been indexed but not yet read and graded.
 | 2026-10-23 00:37 | 447a | - | - | ? | results/phase17_new_vectors/447a_debug_rwmem_20261023_003742.txt |
 | 2026-10-23 00:39 | 441b | - | - | ? | results/phase17_new_vectors/441b_socket_recheck_20261023_003941.txt |
 | 2026-10-23 06:29 | 160f | - | - | ? | results/phase22_threaded_races/160f_pi_exit_cascade_20261023_062904.txt |
-| 2026-10-23 06:35 | 160g | - | - | ? | results/phase22_threaded_races/160g_pi_exit_diag_20261023_063550.txt |
-| 2026-10-23 06:42 | 160h | - | - | ? | results/phase22_threaded_races/160h_dead_owner_rescue_20261023_064240.txt |
 | 2026-10-23 06:46 | 160i | - | - | ? | results/phase22_threaded_races/160i_pi_ownership_fraud_20261023_064652.txt |
-| 2026-10-23 06:50 | 160i | - | - | ? | results/phase22_threaded_races/160i_pi_ownership_fraud_20261023_065002.txt |
-| 2026-10-23 07:02 | 160j | - | - | ? | results/phase22_threaded_races/160j_pi_fraud_diag_20261023_070221.txt |
 | 2026-10-23 07:10 | 353a | - | - | ? | results/phase17_new_vectors/353a_aio_async_detect_20261023_071045.txt |
 | 2026-10-23 07:13 | 353b | - | - | ? | results/phase17_new_vectors/353b_aio_fd_close_race_20261023_071305.txt |
 | 2026-10-23 07:41 | 353c | - | - | ? | results/phase17_new_vectors/353c_aio_cancel_race_20261023_074144.txt |
@@ -1488,7 +1479,6 @@ Grade `?` marks a capture that has been indexed but not yet read and graded.
 | 2026-10-23 10:11 | 56h | - | - | ? | results/phase13_53batch/56h_rdtsc_gadget_20261023_101119.txt |
 | 2026-10-23 10:12 | 56h2 | - | - | ? | results/phase13_53batch/56h2_timing_kaslr_20261023_101231.txt |
 | 2026-10-23 10:14 | 56i | - | - | ? | results/phase13_53batch/56i_thread_timer_kaslr_20261023_101400.txt |
-| 2026-10-23 10:14 | 56i2 | - | - | ? | results/phase13_53batch/56i2_timing_stability_20261023_101431.txt |
 | 2026-10-23 10:19 | 56j | - | - | ? | results/phase13_53batch/56j_untested_530_531_537_20261023_101932.txt |
 | 2026-10-23 10:20 | 56k | - | - | ? | results/phase13_53batch/56k_mprotect_kernel_anomaly_20261023_102031.txt |
 | 2026-10-23 10:22 | 243a | - | - | ? | results/phase17_new_vectors/243a_thread_slot_reclaim_20261023_102230.txt |
@@ -2407,7 +2397,6 @@ Grade `?` marks a capture that has been indexed but not yet read and graded.
 | 2026-10-25 12:50 | 531m | - | - | ? | results/phase27_phys_memory/531m_thr_test_20261025_125031.txt |
 | 2026-10-25 12:51 | 531n | - | - | ? | results/phase27_phys_memory/531n_thr_diag_20261025_125138.txt |
 | 2026-10-25 12:52 | 531o | - | - | ? | results/phase27_phys_memory/531o_thr_heap_20261025_125214.txt |
-| 2026-10-25 12:53 | 156d | - | - | ? | results/phase17_new_vectors/156d_thr_create_child_executes_20261025_125313.txt |
 | 2026-10-25 12:54 | 531p | - | - | ? | results/phase27_phys_memory/531p_thr_nosig_20261025_125402.txt |
 | 2026-10-25 12:54 | 531q | - | - | ? | results/phase27_phys_memory/531q_sig_test_20261025_125439.txt |
 | 2026-10-25 12:54 | 793a | - | - | ? | results/phase17_new_vectors/793a_sys557_stale_id_20261025_125435.txt |
@@ -2673,7 +2662,6 @@ Grade `?` marks a capture that has been indexed but not yet read and graded.
 | 2026-10-26 12:38 | 816a | - | - | ? | results/phase17_new_vectors/816a_rflags_iopl_20261026_123814.txt |
 | 2026-10-26 12:42 | 816b | - | - | ? | results/phase17_new_vectors/816b_frame_control_20261026_124248.txt |
 | 2026-10-26 12:44 | 816c | - | - | ? | results/phase17_new_vectors/816c_frame_readback_20261026_124415.txt |
-| 2026-10-26 13:43 | 546d | - | - | ? | results/phase30_mapdirect_loader/546d_mapdm_fixed_20261026_134339.txt |
 | 2026-10-26 14:05 | 547b | - | - | ? | results/phase30_mapdirect_loader/547b_phys_scan_20261026_140531.txt |
 | 2026-10-26 14:06 | 547c | - | - | ? | results/phase30_mapdirect_loader/547c_large_phys_map_20261026_140657.txt |
 | 2026-10-26 14:07 | 547d | - | - | ? | results/phase30_mapdirect_loader/547d_dense_scan_20261026_140739.txt |
@@ -3983,3 +3971,15 @@ Grade `?` marks a capture that has been indexed but not yet read and graded.
 | 2026-11-09 09:14 | 803c | sys 548 W^X bypass attempt | [D] alive pid=140 | M | results/phase17_new_vectors/803c_mmap_548_protect_20261026_115236.txt |
 | 2026-11-09 09:14 | 813a | sigreturn privilege escalation | [*] alive pid=157 | M | results/phase17_new_vectors/813a_sigreturn_gate_20261026_122338.txt |
 | 2026-11-09 09:14 | 883b | thr_create child loader stub loop | [Z] alive pid=134 | M | results/phase17_new_vectors/883b_aio_padded_chain_single_20261027_001203.txt |
+| 2026-11-09 09:30 | 380a | GPU mapping read kills past pcall; the store before it reported ok | [A dump-area] write ok=true then fault bytes | M | results/phase17_new_vectors/380a_gpu_mapping_write_20261022_181716.txt |
+| 2026-11-09 09:30 | 381a | a store to an unmapped 0x7F0000000000 reports ok=true and the process stays alive — the write path swallows faults | [D unmapped] 0x7F0000000000 <- 0x44444444 ok=true / still alive | M | results/phase17_new_vectors/381a_gpu_write_control_20261022_181839.txt |
+| 2026-11-09 09:30 | 42g2 | void: dies at the kenv step header, no kenv result | --- STEP 1: KENV (syscall 390) --- | V | results/42g2_high_phys_decode_20261016_070600.txt |
+| 2026-11-09 09:30 | 152k | UMTX op 25 sub-ops answer without allocating: subop_0 ret=0, invalid op 99 ret=-1 | subop_0: ok=true ret=0x0 / invalid_op(99): ret=-1 | M | results/phase19_umtx_454/152k_shm_side_channel_20261020_104543.txt |
+| 2026-11-09 09:30 | 340a | 637 accepts a caller qword for id 0 (0x7FFFFFFF and 0xFFFFFFFF return 0) and refuses 0x0 and every foreign id | 637(0, 0xFFFFFFFF)=0 / 637(0, 0x0)=-1 / 637(1..5, 0xFFFFFFFF)=-1 | M | results/phase17_new_vectors/340a_dynlib_out_637_limit_20261022_125339.txt |
+| 2026-11-09 09:30 | 160i | void: rounds print uret=0 and the capture stops mid-run; no crash measured | R7: a=0x18A09 uret=0x0 m=0x0 | V | results/phase22_threaded_races/160i_pi_ownership_fraud_20261023_065002.txt |
+| 2026-11-09 09:30 | 160j | PI fraud diagnostic completes: gpu kptr clean, canary OK | gpu kptr: clean / canary=OK / === 160j COMPLETE === | M | results/phase22_threaded_races/160j_pi_fraud_diag_20261023_070221.txt |
+| 2026-11-09 09:30 | 160g | void: stops at the dead-owner lock step | [4] Main LOCKs mutex with dead child owner | V | results/phase22_threaded_races/160g_pi_exit_diag_20261023_063550.txt |
+| 2026-11-09 09:30 | 160h | dead-owner PI rescue completes cleanly | canary=OK / === 160h COMPLETE === | M | results/phase22_threaded_races/160h_dead_owner_rescue_20261023_064240.txt |
+| 2026-11-09 09:30 | 56i2 | mprotect timing on kernel addresses is flat across batches — noise, not signal | kern_FFFF 20817 20645 21869 20968 20696 20999 | M | results/phase13_53batch/56i2_timing_stability_20261023_101431.txt |
+| 2026-11-09 09:30 | 546d | void: fault dump during polling, no MapDM result | [F] Polling... then fault bytes | V | results/phase30_mapdirect_loader/546d_mapdm_fixed_20261026_134339.txt |
+| 2026-11-09 09:30 | 156d | child executes via marker write through make_syscall thr_create; the resolve() filter is not measured here | === PROBE 156d COMPLETE === | M | results/phase17_new_vectors/156d_thr_create_child_executes_20261025_125313.txt |
