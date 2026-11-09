@@ -83,7 +83,7 @@ This section scopes the current claims; older notes describe their cited probe s
 ### What We Have (Confirmed Working)
 | Primitive | How |
 |-----------|-----|
-| Tested raw syscall invocation | make_syscall(N) bypasses the Lua syscall.resolve() filter for tested numbers; kernel-side restrictions still apply |
+| Tested raw syscall invocation | make_syscall(N) reaches any number the kernel answers; there is no per-call Lua filter (1341a2: `resolve()` installs any name→number pair, the loader's table just carries 26 names); kernel-side restrictions still apply |
 | Heap R/W (256+ pages) | GPU mmap adjacency, no guard pages |
 | Userland module-base discovery | dynlib_get_info(593) returned base information for 39 userland modules; kernel ASLR is separate |
 | Kernel image base per boot | Fault-context oracle: `ctx+0x130` page-fault error word distinguishes mapped from absent supervisor pages, so a one-connection sweep yields base and extent (995a-1006a, 1008a-1010a; `docs/FAULT_CODE_ORACLE_14_10.md`) |
@@ -130,7 +130,7 @@ This section scopes the current claims; older notes describe their cited probe s
 - **ROP-shaped metadata role is unknown** — tested calls persisted after selected fn_addr and chain mutations; do not treat the fields as a function-call primitive
 
 ### Tested raw syscall behavior
-The Lua loader's resolver filter blocks some syscall names. Selected calls still returned results through make_syscall(); this bypasses the Lua-side filter only for those tested calls, and kernel-side restrictions remain. The full dispatch implementation is unknown.
+The loader's `syscall` table carries 26 names, and `syscall.resolve({name=num})` installs any pair a probe invents (1341a2 measured a fabricated `zzz20 = 20` becoming callable), so there is no per-number Lua filter to bypass: a named call and `make_syscall(num)` return the same thing. Numbers the loader does not name are still reachable through `make_syscall`. Kernel-side restrictions remain, and the full dispatch implementation is unknown.
 
 ## How to Write Probes
 
@@ -188,6 +188,7 @@ end
 5. **Fresh ASLR every connection** — never hardcode addresses. Always re-derive from `dynlib_get_info` or `tostring(syscall.pipe)`.
 6. **memory.alloc(N)** for heap buffers. Always zero them before use.
 7. **Kernel pointer detection:** `h >= 0xFFFF8000` where `h, l = get_hi_lo(val)`. Values like `0xFFFFFFFF_00000000` and `0xFFFFFFFF_FFFFFFFF` are bitmasks/sentinels, NOT real kernel pointers.
+8. **A child contains an ordinary fault, not a call that terminates the process.** 1331a spawns 512 children that each fault on a kernel VA: the loader's handler dumps the child's ucontext to the socket and the parent keeps running. But `601(cmd 0x04)` called from a child killed the whole process before the parent's own `thr_new` returned, and 9026 then refused connections (1341d). So a child is a valid fault container, never a safety net for an unknown number: measure a new syscall in the main thread unless containment itself is what you are measuring.
 
 ### How make_syscall Works
 ```lua
@@ -273,7 +274,7 @@ docs/
 - **sigaltstack kernel write** — copyout() validates destinations
 - **mprotect(EXEC)** — always fails, hard W^X
 - **XOM gadget scan** — reading XO pages crashes past pcall
-- **Threading via resolve()** — fork/rfork/thr_new all -1. `thr_create(430)` via make_syscall starts a real thread once the gates and the `CS`/`RIP`/`RSP`/`SS` offsets are right (156c/156d); a zeroed ucontext still panics. See `docs/THREADING_ALIVE_14_10.md`.
+- **Threading via resolve()** — refuted (1341a2): the table holds 26 names and no thread names, `resolve()` installs any pair, and named `thr_new`/`thr_create` return `0` with real TIDs; `fork`/`rfork` are `-1` on both paths, so that refusal is the kernel's. `thr_create(430)` via make_syscall starts a real thread once the gates and the `CS`/`RIP`/`RSP`/`SS` offsets are right (156c/156d); a zeroed ucontext still panics. See `docs/THREADING_ALIVE_14_10.md`.
 - **AIO (sys 661)** — 661 is the shared `nosys` trampoline and dies by SIGSYS (353a). The batch submit is **669**, and it works: `669(cmd, reqs, count 1..128, class 1..3, ids)`, stride `0x28`, `cmd=1` read / `cmd=2` write, result word = bytes moved, destination range-checked but **count not clamped to buffer** (0x14000 into 4KB overwrites heap — self-corruption, not boundary break). 662/664/666 drive and reap requests (probes 352a-352k, 2026-10-22). Read the result word, not the return value: 669 returns `0` even when it queued nothing. See `docs/AIO_BATCH_14_10.md`.
 - **kqueue** — fd allocates; kevent works with zero timeout (split and combined calls, probes 20/21), only the 100ms-timeout call returns -1 (probe 30c). See `docs/KEVENT_TIMEOUT_VARIABLE.md`.
 - **ioctl via resolve()** — all blocked (untested via make_syscall)
@@ -283,7 +284,7 @@ docs/
 - **msync via syscall 226** — 226 is a nosys stub. Real msync is syscall 65 (PR #70, DEM9N101). Earlier probes called dead air. Probe 58a corrected and queued.
 - **memfd_create** — stub, does nothing
 - **/dev/dmem0** — opens but all operations fail (GPU partition only)
-- **kenv** — outcome unverified: 42a/42g2 captures stop at the kenv header without a call result or kill record
+- **kenv (390)** — it blocks rather than killing: `390(0, "kernel", buf, 0x100)` from a child thread never returned, and the loader then executed no script at all until a relaunch (1341c, 2026-11-09). Return value still unmeasured; 42a/42g2 had stopped at the kenv header.
 - **TCB (FS base)** — userland only (0x88xxxxxxxx)
 - **libkernel data segment scan** — no kernel pointers
 - **kldstat at syscall 306** — 306 is `kldfind` (crashed on bad arg). Real FreeBSD `kldstat` is 308; sweep 02 had 367. Probe 43a tests both.
