@@ -4,6 +4,11 @@
 
 Earlier findings describe their cited probe sets, not a uniform current capability state. Later observations may answer earlier open questions; the 2026-10-17 audits remain dated snapshots.
 
+> **Finding-number collision:** Findings 91–95 are used twice. The 2026-10-23
+> AIO/threading block (AIO 662, `thr_new`) and the later UMTX/W^X block both
+> start at Finding 91. Cite the finding title alongside the number; renumbering
+> is pending a maintainer decision.
+
 ## Finding 1: W^X + Execute-Only Memory (XOM)
 
 **Probes:** 26, 26b, 26c, 26d, 26e
@@ -631,6 +636,7 @@ Probe 43i records writes/readback of `fn_addr` and slot0. Its source restores sl
 - Various argument patterns (null, 1, -1): all zero
 - Syscall 620: ret=0 (another live Sony syscall, unknown function)
 - Syscalls 615, 616, 618, 619: all ret=-1
+- **Update (2026-11-06):** for 615, the `-1` here was measured with zero/invalid output pointers, so it is an untested contract, not a closed one. Later evidence (113a/185a/186a + the 13.60 contract decode in `docs/SYS_611_613_615_STATS_FAMILY_13_60.md`) shows 615's self path (`615(0, &a, &b)` / self pid) skips the credential gate on 14.10 and writes the class-0 resident count into the first output pointer; the observed `-1` in those runs is the second copyout faulting on the size-slot value. 616/618/619 remain untested contracts.
 
 **Conclusion:** CpuUsage returns success but no data — likely requires specific argument structures or calling conventions not yet discovered. Syscall 620 is alive but unknown.
 
@@ -1289,7 +1295,13 @@ Thread budget: 25/11/9 measured ceilings per loader (242a/244a/245a). Child thre
 
 ---
 
-## Finding 92: ★ AIO aio_multi_delete TOCTOU Double-Free CONFIRMED — added 2026-10-23
+## Finding 92: AIO aio_multi_delete TOCTOU Double-Free — RETRACTED 2026-10-28 (added 2026-10-23)
+
+> **RETRACTED — the 65l pairs are double-STATUS, not double-free.**
+> The delete path drops its lock only when the work item's in-flight flag is set,
+> and the submit path that would set it is behind a boot tunable that never
+> enables on 14.10. See `docs/AIO_GATE_14_10.md`. The text below is the
+> historical record.
 
 **Probes:** 65d-65l (development), **65l** (confirmation)
 

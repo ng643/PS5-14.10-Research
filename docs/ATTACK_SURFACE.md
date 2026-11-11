@@ -73,10 +73,10 @@
 | `aio_suspend` | 315 | Blocked — kills process (confirmed 2026-10-18) |
 | `aio_cancel` | 316 | Blocked — kills process (confirmed 2026-10-18) |
 | `aio_error` | 317 | Blocked — kills process (confirmed 2026-10-18) |
-| Sony AIO 661 (event_create) | 661 | **LETHAL** — instantly kills process (54c, 54f) |
+| Sony AIO 661 (event_create) | 661 | **Absent slot** — dies by SIGSYS under the default disposition; the shared `nosys` trampoline, not a hidden AIO handler (54c, 54f; `docs/SYSCALL_ABSENT_VS_LETHAL.md`) |
 | Sony AIO 669 (batch submit) | 669 | **WORKS** — queues AIO requests, `cmd=1` read / `cmd=2` write, stride `0x28` (352a-352k) |
 | Sony AIO 664 (poll) | 664 | **WORKS** — returns per-ID request states |
-| Sony AIO 662 (multi_delete) | 662 | **★ EXPLOITABLE** — TOCTOU double-free confirmed (65l). Two concurrent child threads on same ID array: 65/480 double-freed, 26/30 iters. See `docs/AIO_DOUBLE_FREE_14_10.md` |
+| Sony AIO 662 (multi_delete) | 662 | **CLOSED** — the 65l "double-free" is double-STATUS. 662 drops its lock only when the work item's in-flight flag is set; the submit path that would set it is behind a boot tunable that never enables on 14.10 (70e, 760b-886a). See `docs/AIO_GATE_14_10.md` |
 | Sony AIO 663 (multi_wait) | 663 | **WORKS** — returns per-ID states and timeout |
 | Sony AIO 666/667 (readback) | 666/667 | **WORKS** — additional AIO status readback paths |
 | Sony AIO 670 (init) | 670 | **WORKS** but **poisons 662 delete path** — must NEVER call before 662 race |
@@ -92,8 +92,8 @@
 | `fcntl F_SETOWN` | — | Truly blocked (F_GETOWN stays -1) |
 | `sigprocmask` | 340 | No-op: returns 0 but never modifies mask |
 | `kevent` with nonzero timeout | 363 | Returns -1 with a 100ms timeout (probe 30c, PART 6). Zero-timeout register, poll, batch register, and delivery all work: 3+ events (probe 20), 31 signals, 20 user, 2000 knotes (probe 21) — including combined add+poll calls. See [the kevent analysis](KEVENT_TIMEOUT_VARIABLE.md). |
-| `kldstat` | 308 | Instantly kills process (probes 56k4, 2026-10-18) |
-| `kldnext` | 307 | Instantly kills process (probe 56k5, 2026-10-18) |
+| `kldstat` | 308 | Absent slot: SIGSYS by default, `-1` with `SIG_IGN` installed (probes 56k4, 710a, 2026-10-18) |
+| `kldnext` | 307 | Absent slot: SIGSYS by default, `-1` with `SIG_IGN` installed (probe 56k5, 711a, 2026-10-18) |
 | Sony sys 548 (batch VM ops) | 548 | ret=-1, processed=0 for all opcodes (probe 55b, 2026-10-18) |
 | Sony sys 622 (device control) | 622 | **ABI corrected (241a-247a, 2026-10-21)**: six slots are `cmd, sub, buffer, secondary address, size <= 0x40, extra`. `0x200-0x270` and `0x813` run and return `0` with `0xFFFFFFFF`; `0x400-0x493` kills whenever the `copyin` from `arg3` succeeds, at any size. No data, no overrun, no pointer |
 | Sony sys 601 (process control) | 601 | Most commands ret=-1, no init state (probe 55d, 2026-10-18) |
@@ -305,7 +305,7 @@ Capture: `results/phase15_native_sent/syscall_isolation_sweep_20261020_194148.tx
 | 602 | `randomized_path` | 0 |
 | 603 | `rdup` | -1 |
 | 604 | `dl_get_metadata` | -1 |
-| 605 | `workaround8849` | -1 |
+| 605 | `workaround8849` | 0 for ID `0x19810000`, -1 for neighbouring IDs; no output written (984a) |
 | 606 | `is_development_mode` | 0 |
 | 607 | `get_self_auth_info` | -1 |
 | 608 | `dynlib_get_info_ex` | -1 |
@@ -315,14 +315,14 @@ Capture: `results/phase15_native_sent/syscall_isolation_sweep_20261020_194148.tx
 | 612 | `get_proc_type_info` | -1 |
 | 613 | `get_resident_count` | -1 |
 | 614 | `prepare_to_suspend_process` | kills |
-| 615 | `get_resident_fmem_count` | -1 |
+| 615 | `get_resident_fmem_count` | -1 on zero/six-zero shapes; **self path (`615(0,&a,&b)` / self pid) skips the credential gate and writes the class-0 resident count into the first output pointer** (113a/185a/186a, 13.60 contract decode `docs/SYS_611_613_615_STATS_FAMILY_13_60.md`) — credential-free self-stat channel, `-1` in those runs is copyout 2 faulting on the size slot |
 | 616 | `thr_get_name` | -1 |
 | 617 | `set_gpo` | 0 |
 | 618 | `get_paging_stats_of_all_objects` | -1 |
 | 619 | `test_debug_rwmem` | -1 |
 | 620 | `free_stack` | 0 |
 | 621 | `suspend_system` | kills |
-| 622 | `ipmimgr_call` | kills (returns 0 with a real request, `55c`) |
+| 622 | `ipmimgr_call` | kills; dispatches once the size field is <= 0x40 (`1335a`). `55c` is void: every call passed `arg4=0x100`, rejected at the entry check |
 | 623 | `get_gpo` | -1 |
 | 624 | `get_vm_map_timestamp` | 3377 |
 | 625 | `opmc_set_hw` | -1 |

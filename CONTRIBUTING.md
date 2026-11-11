@@ -2,6 +2,14 @@
 
 This is an open community research project. Everyone is welcome to contribute.
 
+## Where contributors talk
+
+Discord: **[discord.gg/aznssydKrx](https://discord.gg/aznssydKrx)**
+
+Use it for anything that needs a human faster than a pull request: asking for console time on a 14.10 machine, checking whether a capture has already been mined before writing a probe, or flagging a claim that contradicts a saved result. Each console accepts one connection at a time and an unknown syscall can take the game process down, so a few messages before a run are cheaper than a relaunch.
+
+Chat is not the record. A finding still lands in this repository as a probe, a capture, a ledger row and a graded claim — see [docs/RESEARCH_EVIDENCE.md](docs/RESEARCH_EVIDENCE.md).
+
 ## What We Need
 
 ### High Priority
@@ -74,10 +82,23 @@ response bytes, and write only temporary fixtures. They never contact a console
 or execute the fixture Lua source. No third-party Python packages are needed.
 This transport test tier does not expand the network-free verifier above.
 
-Run the default available PowerShell runtime locally with:
+The same workflow runs `tools/test_capture_collision_safety.py`,
+`tools/test_send_probe_helpers.py` and the tests for the drivers that import the
+loader lifecycle helpers (`bounds_fuzz`, `ioctl_isolation_sweep` and
+`restart_pressure`). The capture suite pins timestamp-collision routing,
+atomic no-replace publication and the symlinked-directory refusal; the helper
+suite covers a port that accepts without a live Lua thread, the readiness
+marker, wait budgets and generated-source transcripts; the driver suites fail
+at import time if one of those public helpers disappears again. All fixtures
+are loopback-only or temporary-directory-only.
+
+Run the loopback batches locally with:
 
 ```bash
 python -m unittest discover -s tools -p 'test_send_probe.py' -v
+python -m unittest -v tools.test_capture_collision_safety \
+  tools.test_send_probe_helpers tools.test_bounds_fuzz \
+  tools.test_ioctl_isolation_sweep tools.test_restart_pressure
 ```
 
 ### Optional broader local checks

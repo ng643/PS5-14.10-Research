@@ -102,10 +102,12 @@ belongs to also records `/dev/null`, `/dev/zero` and `/dev/urandom` opening
 successfully, so the block is specific to those nodes rather than to `open()`.
 
 Separately, `ioctl` (54) itself is listed as blocked in
-`docs/ATTACK_SURFACE.md:59`, and probe 55c showed the one ioctl multiplexer
+`docs/ATTACK_SURFACE.md:59`, and probe 55c reported the one ioctl multiplexer
 that was reachable (sys 622) returning Sony error `0x800E0001` for every
-command (`docs/PROBE_INDEX.md:169`). So both halves of the precondition have
-failed on tested paths.
+command - but 55c is **void**: `0x100` in the size field is rejected at 622's
+entry check before dispatch, so it never reached the multiplexer
+(`docs/PROBE_INDEX.md:173`; `1335a` dispatches at `0x40`). So both halves of the
+precondition remain unproven on tested paths.
 
 **Verdict:** blocked at the tested open path. The specific `CONS_HISTORY`
 command has never been issued, and no vt device has been opened.
@@ -119,8 +121,10 @@ command has never been issued, and no vt device has been opened.
 
 **Repo evidence.** Nothing in this repository addresses either half:
 
-- No probe in `probes/**/*.lua` issues `execve` (59) or any `exec*` variant,
-  and no result records one.
+- Reachability probes `93d5`, `93d6`, `93d7`, and `93d8` call `execve` (59) or
+  `fexecve` (492) with null/zero arguments only. The recorded `93d5`/`93d8`
+  calls returned -1, and no probe supplies a real executable path; no probe
+  executes a file.
 - No document records a setuid binary on the PS5 filesystem, an ELF header
   with the setuid bit, or a PIE binary reachable for exec.
 

@@ -1,0 +1,115 @@
+P559 RAB OOB Values — On-Device Results
+======================================================
+Probe:    probes/phase13_webkit/p559-rab-oob-values.js
+Target:   PS5 14.10 (AppleWebKit/605.1.15, Version/17.0)
+Date:     2026-10-27
+Delivery: host.py DNS spoofing + HTTPS (User Guide redirect)
+Source:   Reconstructed from Engram observation #2962
+
+NOTE: This file is reconstructed from session memory. The original beacon
+data was received via host.py stdout (transient) and not persisted to disk
+at the time of execution.
+
+=== RESULTS ===
+
+--- Phase A: Shrink+regrow zeroing ---
+Shrink from 16 to 4 elements, then regrow back to 16.
+All OOB positions zeroed after regrow: preserved=0/12.
+Virgin region = all zeros. Regrow ALWAYS zeroes.
+
+--- Phase B: forEach OOB values ---
+forEach returns `undefined` at OOB indices (4-15).
+JS [[Get]] bounds-checks against current byteLength.
+SAFE — no data leak via forEach.
+
+--- Phase C: every OOB values ---
+every returns `undefined` at OOB indices.
+JS [[Get]] bounds-checks. SAFE.
+
+--- Phase D: reduce OOB values ---
+reduce returns `undefined` at OOB indices.
+JS [[Get]] bounds-checks. SAFE.
+
+--- Phase E: Sort comparator OOB values (CRITICAL) ---
+Sort comparator received REAL SENTINEL VALUES from OOB positions.
+Setup: 16-element Float64Array on RAB, indices 4-15 filled with
+sentinels (333-4000 range). Shrink from 16 to 4 elements at
+comparison #5.
+  Total comparisons: 32
+  Post-shrink comparisons: 20
+  Individual values in post-shrink pairs: 40
+  OOB sentinels received by comparator: 32 of 40
+  NaN values: 0
+  undefined values: 0
+JSC's sort C++ implementation reads directly from the ArrayBuffer
+backing store WITHOUT bounds-checking against current byteLength.
+SORT OOB READ CONFIRMED.
+
+--- Phase F: map OOB values ---
+map returns `undefined` at OOB indices.
+JS [[Get]] bounds-checks. SAFE.
+
+--- Phase G: Direct indexed write at OOB ---
+arr[idx] = value at OOB positions: BLOCKED.
+JS [[Set]] revalidates bounds against current byteLength.
+writes=0. SAFE.
+
+=== SUMMARY ===
+
+Verdict: SORT OOB READ CONFIRMED. All other iteration methods SAFE.
+
+The discriminator: JSC's sort accesses backing store memory directly
+(C++ fast path), bypassing the JS [[Get]] bounds check that protects
+forEach/every/some/find/findIndex/map/filter/reduce. Sort reads real
+data from OOB positions; all other methods return undefined.
+
+Shrink WITHOUT regrow preserves data in backing store memory (sort
+proves this). Regrow zeroes the region.
+
+Sort OOB WRITES need P560 to verify — if writes also bypass bounds,
+this is a controlled OOB write primitive.
+
+Stability: All 7 tests completed, no crash.
+
+=== SUBSEQUENT PHASE E EVIDENCE QUALIFICATION (2026-11-07 UTC) ===
+
+The original reconstructed account above is preserved. Phase E's reported
+comparator values and counts do not establish a post-shrink out-of-bounds
+read from the original backing store. Values collected before shrinking
+can remain in private scratch arrays and reach later comparator calls.
+Public WebKit revision caa31552bab4d322ec1ced2f059d93f2c2fd45b4,
+Source/JavaScriptCore/builtins/TypedArrayPrototype.js:170-243, implements
+that comparator-present resizable-view path: it copies live values before
+comparator callbacks, merges through scratch arrays, and bounds final
+writeback by the current live view length. Identity with Sony firmware
+14.10's shipping binary or the reviewer's exact WebKit-1400 drop is not
+established.
+
+The probe sets eResized before resize(32), silently catches resize errors,
+and logs no resulting dimensions; successful shrink is not independently
+confirmed. It includes call five's already-received arguments in ePostVals,
+although those arguments predate the resize attempt. ePostVals retains at
+most 20 pairs, so postPairs=20 is a capped retained-pair count, not the total
+number of comparator invocations after successful shrink. Only the first
+eight pairs would be emitted as E-PAIRS; their original beacons were not
+persisted.
+
+The reported 32/40 figure counts rounded operand occurrences in the
+inclusive numeric range [300,4050], not unique source indices or physical
+memory reads. The numerator cannot be independently recomputed from the
+retained reconstruction. Phase E has no explicit NaN or undefined counters,
+so the reconstructed zero-count statements are not independently
+recoverable counter outputs. An undefined argument would throw during
+toFixed formatting before that pair is retained.
+
+Consequently, the historical Phase E "SORT OOB READ CONFIRMED" verdict,
+direct C++ backing-store-read explanation, and sort-based inference of
+surviving hidden backing data are unsupported by the retained evidence.
+This note adds no console measurements, does not establish Sony memory
+safety or the absence of a vulnerability, and does not independently
+reclassify the reported outcomes of Phases A/B/C/D/F/G.
+
+Pinned public source:
+https://github.com/WebKit/WebKit/blob/caa31552bab4d322ec1ced2f059d93f2c2fd45b4/Source/JavaScriptCore/builtins/TypedArrayPrototype.js
+Related P560 qualification:
+https://github.com/ZigZagBoi1/PS5-14.10-Research/pull/230
